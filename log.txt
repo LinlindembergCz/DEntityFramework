@@ -1,0 +1,46 @@
+INTERBASE - isc_dsql_allocate_statement
+INTERBASE - isc_start_transaction
+Select Descricao, Unidade, PrecoVenda, Id From Produto
+
+INTERBASE - isc_dsql_prepare
+INTERBASE - isc_dsql_describe_bind
+INTERBASE - SQLDialect = 3
+INTERBASE - isc_dsql_execute
+INTERBASE - isc_dsql_fetch
+INTERBASE - isc_commit_transaction
+INTERBASE - isc_dsql_free_statement
+INTERBASE - isc_start_transaction
+INTERBASE - SQLDialect = 3
+INTERBASE - isc_dsql_execute
+INTERBASE - isc_dsql_fetch
+INTERBASE - isc_commit_transaction
+INTERBASE - isc_dsql_free_statement
+INTERBASE - isc_start_transaction
+INTERBASE - isc_dsql_allocate_statement
+insert into "PRODUTO"
+  ("DESCRICAO", "UNIDADE", "PRECOVENDA")
+values
+  (?, ?, ?)
+
+INTERBASE - isc_dsql_prepare
+INTERBASE - isc_dsql_sql_info
+INTERBASE - isc_portable_integer
+INTERBASE - isc_dsql_describe_bind
+INTERBASE - SQLDialect = 3
+INTERBASE - isc_dsql_execute
+INTERBASE - isc_dsql_free_statement
+INTERBASE - isc_dsql_free_statement
+INTERBASE - isc_commit_transaction
+INTERBASE - isc_start_transaction
+INTERBASE - SQLDialect = 3
+INTERBASE - isc_dsql_execute
+INTERBASE - isc_dsql_fetch
+INTERBASE - isc_dsql_fetch
+INTERBASE - isc_commit_transaction
+INTERBASE - isc_dsql_free_statement
+INTERBASE - isc_start_transaction
+INTERBASE - SQLDialect = 3
+INTERBASE - isc_dsql_execute
+INTERBASE - isc_commit_transaction
+INTERBASE - isc_dsql_free_statement
+INTERBASE - isc_dsql_free_statement

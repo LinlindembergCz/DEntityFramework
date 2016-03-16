@@ -1,0 +1,65 @@
+
+
+class function TMapper.GetAttributies(E: TEntity): String;
+var
+   Prop   : TRttiProperty;
+   Fields : string;
+   Field :TRttiField;
+   ctx , ctx2 : TRttiContext;
+   Atributo: TCustomAttribute;
+begin
+  try
+      ctx := TRttiContext.Create;
+      TypObj := ctx.GetType( E.ClassInfo);
+      for Prop in TypObj.GetProperties do
+      begin
+        ctx2 := TRttiContext.Create;
+        for Atributo in Prop.GetAttributes do
+        begin
+          if Atributo is LinqField then
+          begin
+            if Fields = '' then
+               Fields :=  Reference(Atributo).Name
+            else
+               Fields := Fields +', '+ Reference(Atributo).Name;
+          end;
+        end;
+      end;
+   finally
+     result := Fields;
+     ctx.Free;
+   end;
+end;
+
+class function TMapper.GetValuesFields(E: TEntity): String;
+var
+   Prop   : TRttiProperty;
+   Fields : string;
+   ctx : TRttiContext;
+begin
+  try
+     ctx := TRttiContext.Create;
+     TypObj := ctx.GetType(E.ClassInfo);
+     for Prop in TypObj.GetProperties do
+     begin
+       if Fields = '' then
+          Fields := TMapper.GetValueAtribute(E, Prop.Name)
+       else
+          Fields := Fields +','+ TMapper.GetValueAtribute(E, Prop.Name);
+     end;
+  finally
+     result:= fields;
+     ctx.Free;
+  end;
+end;
+
+
+procedure TDataContext.Save(Entity: TEntity);
+var
+  SQLInsert: string;
+begin
+ SQLInsert:= 'Insert into '+ TMapper.GetTableName(Entity.ClassType)+
+                        ' ('+ TMapper.GetAttributies(Entity) +') values ( '+
+                              TMapper.GetValuesFields(Entity) +' )';
+ Conn.ExecutarSQL(SQLInsert);
+end;
