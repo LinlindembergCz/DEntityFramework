@@ -3,13 +3,19 @@ unit ServiceBase;
 interface
 
 uses
-System.Classes, DB, EntityBase, InterfaceService, InterfaceRepository, Context;
+System.Classes, DB, EntityBase, InterfaceService, InterfaceRepository, Context,
+Winapi.Windows;
 
 type
-  TServiceBase = class(TInterfacedObject, IService)
+  {$M+}
+  TServiceBase = class(TInterfacedPersistent, IServiceBase)
+  private
+    FRefCount: Integer;
   protected
     Repository: IRepositoryBase;
   public
+    constructor Create( pRepository: IRepositoryBase);virtual;
+
     procedure RefresData;virtual;
     function  Load(iId:Integer = 0): TDataSet;virtual;
     function  LoadEntity(iId: Integer = 0): TEntityBase;virtual;
@@ -19,26 +25,23 @@ type
     function GetEntity: TEntityBase;virtual;
     procedure InputEntity(Contener: TComponent);virtual;
     procedure InitEntity(Contener: TComponent); virtual;
-    constructor Create( pRepository: IRepositoryBase);virtual;
-    destructor Destroy;override;
+
     function FieldList:TFieldList;virtual;
     procedure ReadEntity(Contener: TComponent);virtual;
     function ChangeCount:Integer;virtual;
-  end;
 
+    function _AddRef: Integer; stdcall;
+    function _Release: Integer; stdcall;
+  end;
+  {$M-}
 implementation
 
 uses AutoMapper;
 
 constructor TServiceBase.Create(pRepository: IRepositoryBase);
 begin
+  Inherited Create;
   Repository:= pRepository;
-end;
-
-destructor TServiceBase.Destroy;
-begin
-  inherited;
-  Repository._Release;
 end;
 
 procedure TServiceBase.Post(State: TEntityState);
@@ -50,7 +53,6 @@ procedure TServiceBase.Persist;
 begin
   Repository.Commit;
 end;
-
 
 procedure TServiceBase.Delete;
 begin
@@ -100,6 +102,20 @@ end;
 procedure TServiceBase.RefresData;
 begin
   Repository.RefreshDataSet;
+end;
+
+function TServiceBase._AddRef: Integer;
+begin
+  Result := inherited _AddRef;
+  InterlockedIncrement(FRefCount);
+end;
+
+function TServiceBase._Release: Integer;
+begin
+  Result := inherited _Release;
+  InterlockedDecrement(FRefCount);
+  if FRefCount <=0 then
+    Free;
 end;
 
 end.

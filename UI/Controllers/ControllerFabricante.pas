@@ -13,4 +13,8 @@ type
 
 implementation
 
+
+initialization RegisterClass(TControllerFabricante);
+finalization UnRegisterClass(TControllerFabricante);
+
 end.

@@ -15,4 +15,7 @@ implementation
 
 { ServiceFornecedor }
 
+initialization RegisterClass(TServiceFornecedor);
+finalization UnRegisterClass(TServiceFornecedor);
+
 end.

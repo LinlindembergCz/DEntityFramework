@@ -8,16 +8,20 @@ uses
   EntityFramework, EnumEntity, InterfaceRepository, EntityBase, Context;
 
 type
-  TRepository<T:TEntityBase> = class(TInterfacedObject, IRepository<T>)
+   {$M+}
+  TRepository<T:TEntityBase> = class(TInterfacedPersistent, IRepository<T>)
+  private
+    FRefCount: integer;
   protected
     FEntity: T;
-    FDbContext: TContext;
+    FDbContext: Context.TContext;
   private
     function GetEntity: T;
-    function GetContext:TContext;
+    function GetContext:Context.TContext;
   public
-    constructor Create(dbContext: TContext);
+    constructor Create(dbContext: Context.TContext);virtual;
     destructor Destroy;override;
+
     procedure RefreshDataSet;virtual;
     function  LoadDataSet(iId:Integer = 0) : TDataSet;virtual;
     function  LoadEntity(iId: Integer = 0): T;virtual;
@@ -25,15 +29,21 @@ type
     procedure AddOrUpdate( State:TEntityState);virtual;
     procedure Commit;virtual;
     property Entity: T read GetEntity;
-    property Context: TContext Read GetContext;
+    property Context: Context.TContext Read GetContext;
+
+    function _AddRef: Integer; stdcall;
+    function _Release: Integer; stdcall;
   end;
+  {$M-}
 
 implementation
 
+uses Winapi.Windows;
 { TRepository }
 
-constructor TRepository<T>.Create(dbContext: TContext);
+constructor TRepository<T>.Create(dbContext: Context.TContext);
 begin
+    Inherited Create;
   FDbContext := dbContext;
   FEntity    := dbContext.Entity as T;
 end;
@@ -62,10 +72,14 @@ end;
 destructor TRepository<T>.Destroy;
 begin
   inherited;
-  FDbContext.Free;
+ if FDbContext <> nil then
+  begin
+    FDbContext.Free;
+    FDbContext:= nil;
+  end;
 end;
 
-function TRepository<T>.GetContext: TContext;
+function TRepository<T>.GetContext: Context.TContext;
 begin
   result := FDbContext;
 end;
@@ -95,5 +109,19 @@ begin
    FDbContext.RefreshDataSet;
 end;
 
+
+function TRepository<T>._AddRef: Integer;
+begin
+  Result := inherited _AddRef;
+  InterlockedIncrement(FRefCount);
+end;
+
+function TRepository<T>._Release: Integer;
+begin
+  Result := inherited _Release;
+  InterlockedDecrement(FRefCount);
+  if FRefCount <=0 then
+    Free;
+end;
 
 end.

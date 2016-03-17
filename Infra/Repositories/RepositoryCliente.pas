@@ -3,14 +3,14 @@ unit RepositoryCliente;
 interface
 
 uses
-Repository, classCliente, RepositoryBase, InterfaceRepositoryCliente, InterfaceRepository,  Context, EntityBase;
+Classes, Repository, classCliente, RepositoryBase, InterfaceRepositoryCliente, InterfaceRepository,  Context, EntityBase;
 
 type
   TRepositoryCliente = class(TRepositoryBase ,IRepositoryCliente)
   private
     _RepositoryCliente:IRepository<TCliente>;
   public
-    Constructor Create(dbContext:TContext);
+    Constructor Create(dbContext:TContext);override;
     function GetEntity: TCliente;
   end;
 
@@ -28,5 +28,8 @@ function TRepositoryCliente.GetEntity: TCliente;
 begin
   result:= _RepositoryCliente.Entity;
 end;
+
+initialization RegisterClass(TRepositoryCliente);
+finalization UnRegisterClass(TRepositoryCliente);
 
 end.

@@ -3,14 +3,14 @@ unit RepositoryFabricante;
 interface
 
 uses
-Repository, classFabricante, RepositoryBase, InterfaceRepositoryFabricante, InterfaceRepository,  Context, EntityBase;
+Classes, Repository, classFabricante, RepositoryBase, InterfaceRepositoryFabricante, InterfaceRepository,  Context, EntityBase;
 
 type
   TRepositoryFabricante = class(TRepositoryBase ,IRepositoryFabricante)
   private
     _RepositoryFabricante:IRepository<Fabricante>;
   public
-    Constructor Create(dbContext:TContext);
+    Constructor Create(dbContext:TContext);override;
     function GetEntity: Fabricante;
   end;
 
@@ -29,5 +29,8 @@ function TRepositoryFabricante.GetEntity: Fabricante;
 begin
   result:= _RepositoryFabricante.Entity;
 end;
+
+initialization RegisterClass(TRepositoryFabricante);
+finalization UnRegisterClass(TRepositoryFabricante);
 
 End.

@@ -8,7 +8,7 @@ uses
 
 
 type
-  IControllerBase = interface
+  IControllerBase = interface(IInterface)
     ['{0CA799B5-84C6-49D5-8615-ED1278D3043A}']
     procedure SetContener(const Value: TComponent);
     function GetContener:TComponent;

@@ -6,7 +6,7 @@ uses
 System.Classes, DB, EntityBase, InterfaceRepository, Context;
 
 type
-  IService = interface
+  IServiceBase = interface(IInterface)
     ['{A357A937-D549-41B1-89C9-A80FCDB1C05A}']
     procedure RefresData;
     function  Load(iId:Integer = 0): TDataSet;

@@ -6,7 +6,7 @@ uses
 InterfaceService;
 
 type
-  IServiceFabricante = interface(IService)
+  IServiceFabricante = interface(IServiceBase)
 
  end;
 

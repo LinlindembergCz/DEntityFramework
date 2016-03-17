@@ -115,7 +115,7 @@ Type
   public
     ClientDataSet: TClientDataSet;
     function GetQuery(QueryAble: TQueryAble): string;
-    constructor Create(proConnection: TEntityConn = nil );overload;
+    constructor Create(proConnection: TEntityConn = nil );virtual;
     destructor Destroy; override;
     property Connection: TEntityConn read FConnection write FConnection;
     property ProviderName: string read FProviderName write FProviderName;

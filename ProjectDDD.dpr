@@ -32,7 +32,6 @@ uses
   Atributies in 'Domain\Entities\Atributies\Atributies.pas',
   EntityTypes in 'Domain\Entities\types\EntityTypes.pas',
   InterfaceRepositoryCliente in 'Domain\IRepositories\InterfaceRepositoryCliente.pas',
-  InterfaceService in 'Domain\IService\InterfaceService.pas',
   ServiceBase in 'Service\ServiceBase.pas',
   RepositoryCliente in 'Infra\Repositories\RepositoryCliente.pas',
   Context in 'Infra\Contexto\Context.pas',
@@ -40,8 +39,8 @@ uses
   CPF in 'Domain\ValuesObjects\CPF.pas',
   AutoMapper in 'Infra\DEntityFramework\AutoMapper.pas',
   FactoryService in 'Domain\Factories\FactoryService.pas',
-  InterfaceClienteService in 'Domain\IService\InterfaceClienteService.pas',
-  ClienteService in 'Service\ClienteService.pas',
+  InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
+  ServiceCliente in 'Service\ServiceCliente.pas',
   classCliente in 'Domain\Entities\classCliente.pas' {/unit in Caminho.pas},
   ClassFornecedor in 'Domain\Entities\ClassFornecedor.pas',
   InterfaceRepositoryFornecedor in 'Domain\IRepositories\InterfaceRepositoryFornecedor.pas',
@@ -55,7 +54,8 @@ uses
   InterfaceServiceFabricante in 'Domain\IService\InterfaceServiceFabricante.pas',
   ServiceFabricante in 'Service\ServiceFabricante.pas',
   ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' {/unit in Caminho.pas},
-  ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante};
+  ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
+  InterfaceService in 'Domain\IService\InterfaceService.pas';
 
 {R *.RES}
 
@@ -65,10 +65,10 @@ var
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   Application.CreateForm(TFormViewFabricante, FormViewFabricante);
-  DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
-  DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante (*Entity*) ]);
-  DataContext.Free;
+  //DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
+  //DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante (*Entity*) ]);
+  //DataContext.Free;
   Application.run;
 //DUnitTestRunner.RunRegisteredTests;
-//  ReportMemoryLeaksOnShutdown := true;
+ // ReportMemoryLeaksOnShutdown := true;
 end.

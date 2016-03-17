@@ -3,14 +3,14 @@ unit RepositoryFornecedor;
 interface
 
 uses
-Repository, classFornecedor, RepositoryBase, InterfaceRepositoryFornecedor, InterfaceRepository,  Context, EntityBase;
+Classes, Repository, classFornecedor, RepositoryBase, InterfaceRepositoryFornecedor, InterfaceRepository,  Context, EntityBase;
 
 type
   TRepositoryFornecedor = class(TRepositoryBase ,IRepositoryFornecedor)
   private
     _RepositoryFornecedor:IRepository<Fornecedor>;
   public
-    Constructor Create(dbContext:TContext);
+    Constructor Create(dbContext:TContext);override;
     function GetEntity: Fornecedor;
   end;
 
@@ -29,5 +29,8 @@ function TRepositoryFornecedor.GetEntity: Fornecedor;
 begin
   result:= _RepositoryFornecedor.Entity;
 end;
+
+initialization RegisterClass(TRepositoryFornecedor);
+finalization UnRegisterClass(TRepositoryFornecedor);
 
 End.

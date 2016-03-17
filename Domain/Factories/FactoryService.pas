@@ -3,29 +3,46 @@ unit FactoryService;
 interface
 
 uses
-    EnumEntity, InterfaceService;
+    EnumEntity, InterfaceService, Dialogs, Sysutils;
 
 type
    TFactoryService = class
+  private
+    class function GetServiceClassName(E: TEnumEntities): string; static;
    public
-     class function GetService( E: TEnumEntities ):IService;
+     class function GetService( E: TEnumEntities ):IServiceBase;
    end;
 
 implementation
 
-uses ClienteService, FactoryRepository, InterfaceRepository, ServiceFornecedor,
-  ServiceFabricante;//ServiceEntity;
+uses  FactoryRepository, InterfaceRepository, ServiceBase, AutoMapper;//ServiceEntity;
 
 { TFactoryService }
 
-class function TFactoryService.GetService(E: TEnumEntities): IService;
+class function TFactoryService.GetServiceClassName( E: TEnumEntities):string;
 begin
   case E of
-    tpCliente: result:= TClienteService.Create( TFactoryRepository.GetRepository( E ) );
-    tpFornecedor: result:= TServiceFornecedor.Create( TFactoryRepository.GetRepository( E ) );
-    tpFabricante: result:= TServiceFabricante.Create( TFactoryRepository.GetRepository( E ) );
-//tpEntity: result:= TServiceEntity.Create( TFactoryRepository.GetRepository( E ) );
+     tpCliente   : result:= 'ServiceCliente.TServiceCliente';
+     tpFornecedor: result:= 'ServiceFornecedor.TServiceFornecedor';
+     tpFabricante: result:= 'ServiceFabricante.TServiceFabricante';
+  else
+    begin
+      showmessage('Verificar declaração "initialization RegisterClass" requerido do Service !');
+      abort;
+    end;
+  end;
+end;
 
+class function TFactoryService.GetService(E: TEnumEntities): IServiceBase;
+var
+  Service     : IServiceBase;
+  Instance      : TObject;
+begin
+  Instance := TAutoMapper.GetInstance( GetServiceClassName( E ) );
+  if Instance <> nil then
+  begin
+    Service :=  TServiceBase( Instance ).create( TFactoryRepository.GetRepository(E) );
+    result:= Service;
   end;
 end;
 

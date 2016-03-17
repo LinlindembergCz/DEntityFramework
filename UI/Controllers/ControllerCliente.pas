@@ -13,5 +13,8 @@ type
 
 implementation
 
+initialization RegisterClass(TControllerCliente);
+finalization UnRegisterClass(TControllerCliente);
+
 
 end.

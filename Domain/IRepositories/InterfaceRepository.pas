@@ -7,7 +7,7 @@ uses
 
 
 type
-  IRepositoryBase = interface
+  IRepositoryBase = interface(IInterface)
     ['{5E02D175-02F4-4DA3-9201-AC1DEC6CA3C1}']
     procedure RefreshDataSet;
     function  LoadDataSet(iId:Integer = 0): TDataSet;
@@ -19,7 +19,7 @@ type
   end;
 
 
- IRepository<T:TEntityBase> = interface
+ IRepository<T:TEntityBase> = interface(IInterface)
     ['{0CA799B5-84C6-49D5-8615-ED1278D3043A}']
     procedure RefreshDataSet;
     function  LoadDataSet(iId:Integer = 0): TDataSet;

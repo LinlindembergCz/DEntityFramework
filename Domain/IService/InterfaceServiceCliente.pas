@@ -1,4 +1,4 @@
-unit InterfaceClienteService;
+unit InterfaceServiceCliente;
 
 interface
 
@@ -6,7 +6,7 @@ uses
 InterfaceService;
 
 type
-  IClienteService = interface(IService)
+  IServiceCliente = interface(IServiceBase)
     ['{81D6040C-CC9E-4805-8E62-0215D3FA49B8}']
   end;
 

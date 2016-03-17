@@ -13,4 +13,7 @@ type
 
 implementation
 
+initialization RegisterClass(TControllerFornecedor);
+finalization UnRegisterClass(TControllerFornecedor);
+
 end.

@@ -26,6 +26,7 @@ type
     FCalcRenda: TFloat;
   public
     constructor Create;override;
+    destructor Destroy;
     procedure Validation; override;
   published
     [EntityField('Nome','varchar(50)',false)]
@@ -70,6 +71,11 @@ constructor TCliente.Create;
 begin
   inherited;
   Email:= TEmail.Create;
+end;
+
+destructor TCliente.Destroy;
+begin
+  Email.free;
 end;
 
 procedure TCliente.Validation;

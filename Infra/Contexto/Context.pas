@@ -11,7 +11,7 @@ type
 
   TContext = class(TDataContext)
   public
-    constructor Create(E: TEnumEntities);
+    constructor Create(E: TEnumEntities);reintroduce;
   end;
 
 

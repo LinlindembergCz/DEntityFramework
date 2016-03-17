@@ -15,4 +15,7 @@ implementation
 
 { ServiceFabricante }
 
+initialization RegisterClass(TServiceFabricante);
+finalization UnRegisterClass(TServiceFabricante);
+
 end.

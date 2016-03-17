@@ -38,7 +38,6 @@ type
     procedure grdEntityDblClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FE: TEnumEntities;
     procedure SetAutoApplyUpdate(const Value: boolean);
@@ -67,11 +66,6 @@ begin
   Controller.EntityToDBGrid(grdEntity);
   pgPrincipal.ActivePageIndex:= 0;
   AutoApplyUpdate := true;
-end;
-
-procedure TFormViewBase.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  Controller._Release;
 end;
 
 procedure TFormViewBase.grdEntityDblClick(Sender: TObject);

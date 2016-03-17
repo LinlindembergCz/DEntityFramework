@@ -10,20 +10,22 @@ uses
                     //Está aqui temporariamente
                     //devido o metodo LoadLookUp
 type
-  TControllerBase = class(TInterfacedObject, IControllerBase)
+  {$M+}
+  TControllerBase = class(TInterfacedPersistent, IControllerBase)
   private
+    FRefCount: Integer;
     procedure SetContener(const Value: TComponent);
     function GetContener: TComponent;
   protected
     FState: TEntityState;
     FContener: TComponent;
   //EntityDataSet: TClientDataSet;
-    Service:IService;
+    Service:IServiceBase;
     procedure CleanComponents;
     procedure UpdateState(const ValueState: TEntityState);
   public
-    constructor Create( pService:IService );virtual;
-    destructor Destroy; override;
+    constructor Create( pService:IServiceBase );virtual;
+
     function Load(iId:Integer = 0): TDataSet; virtual;
     procedure Refresh; virtual;
     procedure Read; virtual;
@@ -37,7 +39,11 @@ type
     procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ; DataSource: TDataSource; E:TEnumEntities);
     property State: TEntityState read FState write FState;
     property Contener: TComponent read GetContener write SetContener;
+
+    function _AddRef: Integer; stdcall;
+    function _Release: Integer; stdcall;
   end;
+  {$M-}
 
 implementation
 
@@ -46,15 +52,10 @@ implementation
 uses  FactoryEntity, ViewBase, EntityConnection, FactoryConnection, FactoryRepository, AutoMapper,
   FactoryService;
 
-constructor TControllerBase.Create(pService:IService);
+constructor TControllerBase.Create(pService:IServiceBase);
 begin
+  Inherited Create;
   Service   := pService;
-end;
-
-destructor TControllerBase.Destroy;
-begin
-  inherited;
-   Service._Release;
 end;
 
 procedure TControllerBase.EntityToDBGrid(Grid: TDBGrid);
@@ -213,4 +214,20 @@ begin
   end;
 end;
 
+function TControllerBase._AddRef: Integer;
+begin
+  Result := inherited _AddRef;
+  InterlockedIncrement(FRefCount);
+end;
+
+function TControllerBase._Release: Integer;
+begin
+  Result := inherited _Release;
+  InterlockedDecrement(FRefCount);
+  if FRefCount <=0 then
+    Free;
+end;
+
+
 end.
+

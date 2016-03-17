@@ -128,7 +128,6 @@
         <DCCReference Include="Domain\Entities\Atributies\Atributies.pas"/>
         <DCCReference Include="Domain\Entities\types\EntityTypes.pas"/>
         <DCCReference Include="Domain\IRepositories\InterfaceRepositoryCliente.pas"/>
-        <DCCReference Include="Domain\IService\InterfaceService.pas"/>
         <DCCReference Include="Service\ServiceBase.pas"/>
         <DCCReference Include="Infra\Repositories\RepositoryCliente.pas"/>
         <DCCReference Include="Infra\Contexto\Context.pas"/>
@@ -136,8 +135,8 @@
         <DCCReference Include="Domain\ValuesObjects\CPF.pas"/>
         <DCCReference Include="Infra\DEntityFramework\AutoMapper.pas"/>
         <DCCReference Include="Domain\Factories\FactoryService.pas"/>
-        <DCCReference Include="Domain\IService\InterfaceClienteService.pas"/>
-        <DCCReference Include="Service\ClienteService.pas"/>
+        <DCCReference Include="Domain\IService\InterfaceServiceCliente.pas"/>
+        <DCCReference Include="Service\ServiceCliente.pas"/>
         <DCCReference Include="Domain\Entities\classCliente.pas">
             <Form>/unit in Caminho.pas</Form>
         </DCCReference>
@@ -159,6 +158,7 @@
             <Form>FormViewFabricante</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Domain\IService\InterfaceService.pas"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txvpck"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txaPackage"/>
         <None Include="ModelSupport_Project2Tests\LinqXE\default.txvpck"/>

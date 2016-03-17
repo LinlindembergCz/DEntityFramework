@@ -3,12 +3,12 @@ unit FactoryRepository;
 interface
 
 uses
-  Sysutils, EnumEntity, InterfaceRepository;
+  Sysutils, EnumEntity, InterfaceRepository, Dialogs;
 
 type
   TFactoryRepository = class
   private
-
+    class function GetRepositoryClassName(E: TEnumEntities): string; static;
   public
     class function GetRepository(E: TEnumEntities): IRepositoryBase;
   end;
@@ -16,16 +16,35 @@ type
 implementation
 
 { TFactoryEntity }
-uses Context, RepositoryCliente, RepositoryFornecedor, RepositoryFabricante;//RepositoryEntity;
+uses Context , AutoMapper, RepositoryBase;//RepositoryEntity;
 
-class function TFactoryRepository.GetRepository(E: TEnumEntities): IRepositoryBase;
+
+class function TFactoryRepository.GetRepositoryClassName( E: TEnumEntities):string;
 begin
   case E of
-    tpCliente : result:= TRepositoryCliente.Create( TContext.Create(E) ) as IRepositoryBase;
-    tpFornecedor : result:= TRepositoryFornecedor.Create( TContext.Create(E) ) as IRepositoryBase;
-    tpFabricante: result:= TRepositoryFabricante.Create( TContext.Create(E) ) as IRepositoryBase;
-//tpEntity: result := TRepositoryEntity.Create( TContext.Create(E) ) as IRepositoryBase;
+     tpCliente   : result:= 'RepositoryCliente.TRepositoryCliente';
+     tpFornecedor: result:= 'RepositoryFornecedor.TRepositoryFornecedor';
+     tpFabricante: result:= 'RepositoryFabricante.TRepositoryFabricante';
+  else
+    begin
+      showmessage('Verificar declaração "initialization RegisterClass" requerido do Repository !');
+      abort;
+    end;
   end;
 end;
+
+class function TFactoryRepository.GetRepository(E: TEnumEntities): IRepositoryBase;
+var
+  Repository     : IRepositoryBase;
+  Instance      : TObject;
+begin
+  Instance := TAutoMapper.GetInstance( GetRepositoryClassName( E ) );
+  if Instance <> nil then
+  begin
+    Repository :=  TRepositoryBase( Instance ).create( TContext.Create(E) )as IRepositoryBase;
+    result:= Repository;
+  end;
+end;
+
 
 end.
