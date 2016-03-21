@@ -16,7 +16,7 @@ type
 implementation
 
 { TFactoryEntity }
-uses Context , AutoMapper, RepositoryBase;//RepositoryEntity;
+uses Context , AutoMapper, RepositoryBase;
 
 
 class function TFactoryRepository.GetRepositoryClassName( E: TEnumEntities):string;
@@ -25,6 +25,8 @@ begin
      tpCliente   : result:= 'RepositoryCliente.TRepositoryCliente';
      tpFornecedor: result:= 'RepositoryFornecedor.TRepositoryFornecedor';
      tpFabricante: result:= 'RepositoryFabricante.TRepositoryFabricante';
+       tpAluno : result:= 'RepositoryAluno.TRepositoryAluno';
+//tpEntity: result:= RepositoryEntity.TRepositoryEntity;
   else
     begin
       showmessage('Verificar declaração "initialization RegisterClass" requerido do Repository !');

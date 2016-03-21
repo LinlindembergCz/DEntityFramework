@@ -25,7 +25,7 @@ uses
   ViewBase in 'UI\Views\ViewBase.pas' {FormViewBase},
   viewCliente in 'UI\Views\viewCliente.pas' {FormViewCliente},
   viewFornecedor in 'UI\Views\viewFornecedor.pas' {FormViewFornecedor},
-  FactoryRepository in 'Domain\Factories\FactoryRepository.pas',
+  FactoryRepository in 'Infra\Factories\FactoryRepository.pas',
   InterfaceRepository in 'Domain\IRepositories\InterfaceRepository.pas',
   Email in 'Domain\ValuesObjects\Email.pas',
   EntityBase in 'Domain\Entities\EntityBase.pas',
@@ -38,7 +38,7 @@ uses
   RepositoryBase in 'Infra\Repositories\RepositoryBase.pas',
   CPF in 'Domain\ValuesObjects\CPF.pas',
   AutoMapper in 'Infra\DEntityFramework\AutoMapper.pas',
-  FactoryService in 'Domain\Factories\FactoryService.pas',
+  FactoryService in 'Service\Factories\FactoryService.pas',
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   ServiceCliente in 'Service\ServiceCliente.pas',
   classCliente in 'Domain\Entities\classCliente.pas' {/unit in Caminho.pas},
@@ -55,7 +55,14 @@ uses
   ServiceFabricante in 'Service\ServiceFabricante.pas',
   ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' {/unit in Caminho.pas},
   ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
-  InterfaceService in 'Domain\IService\InterfaceService.pas';
+  InterfaceService in 'Domain\IService\InterfaceService.pas' {/unit in Caminho.pas},
+  ClassAluno in 'Domain\Entities\ClassAluno.pas',
+  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
+  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
+  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
+  ServiceAluno in 'Service\ServiceAluno.pas',
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno};
 
 {R *.RES}
 
@@ -64,10 +71,9 @@ var
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
-  Application.CreateForm(TFormViewFabricante, FormViewFabricante);
-  //DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
-  //DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante (*Entity*) ]);
-  //DataContext.Free;
+  DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
+  DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
+  DataContext.Free;
   Application.run;
 //DUnitTestRunner.RunRegisteredTests;
  // ReportMemoryLeaksOnShutdown := true;

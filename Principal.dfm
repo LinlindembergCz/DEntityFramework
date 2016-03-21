@@ -2,7 +2,7 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'FormPrincipal'
-  ClientHeight = 243
+  ClientHeight = 317
   ClientWidth = 150
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,8 +24,8 @@ object FormPrincipal: TFormPrincipal
     OnClick = Button2Click
   end
   object Button4: TButton
-    Left = 5
-    Top = 73
+    Left = 8
+    Top = 95
     Width = 137
     Height = 49
     Caption = 'Fornecedor'
@@ -34,11 +34,20 @@ object FormPrincipal: TFormPrincipal
   end
   object Button1: TButton
     Left = 8
-    Top = 128
+    Top = 170
     Width = 137
     Height = 49
     Caption = 'Fabricante'
     TabOrder = 2
     OnClick = Button1Click
+  end
+  object Button3: TButton
+    Left = 8
+    Top = 234
+    Width = 137
+    Height = 49
+    Caption = 'Aluno'
+    TabOrder = 3
+    OnClick = Button3Click
   end
 end

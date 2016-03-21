@@ -25,6 +25,7 @@ begin
      tpCliente   : result:= 'viewCliente.TFormViewCliente';
      tpFornecedor: result:= 'viewFornecedor.TFormViewFornecedor';
      tpFabricante: result:= 'ViewFabricante.TFormViewFabricante';
+     tpAluno: result:= 'viewAluno.TFormViewAluno';
   else
     begin
       showmessage('Verificar declaração "initialization RegisterClass" requerido no form !');

@@ -28,6 +28,7 @@ begin
     tpCliente    : result := TEntityBase( TAutoMapper.GetInstance( 'classCliente.TCliente' )).Create;
     tpFornecedor : result := TEntityBase( TAutoMapper.GetInstance( 'ClassFornecedor.Fornecedor' )).Create;
     tpFabricante : result := TEntityBase( TAutoMapper.GetInstance( 'ClassFabricante.Fabricante' )).Create;
+    tpAluno : result := TEntityBase( TAutoMapper.GetInstance( 'ClassAluno.Aluno' )).Create;
 //tpEntity: result := TEntityBase( TAutoMapper.GetInstance( 'classEntity.TEntity' )).Create;
   end;
 end;

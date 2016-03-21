@@ -57,7 +57,6 @@ Type
   private
     FTypeConnetion: TTypeConnection;
   protected
-
     FSWhere: String;
     FSOrder: string;
     FSSelect: string;

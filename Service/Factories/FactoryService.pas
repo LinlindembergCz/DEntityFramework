@@ -25,6 +25,8 @@ begin
      tpCliente   : result:= 'ServiceCliente.TServiceCliente';
      tpFornecedor: result:= 'ServiceFornecedor.TServiceFornecedor';
      tpFabricante: result:= 'ServiceFabricante.TServiceFabricante';
+       tpAluno : result:= 'ServiceAluno.TServiceAluno';
+//tpEntity: result:= ServiceEntity.TServiceEntity;
   else
     begin
       showmessage('Verificar declaração "initialization RegisterClass" requerido do Service !');

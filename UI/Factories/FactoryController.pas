@@ -26,6 +26,8 @@ begin
      tpCliente   : result:= 'ControllerCliente.TControllerCliente';
      tpFornecedor: result:= 'ControllerFornecedor.TControllerFornecedor';
      tpFabricante: result:= 'ControllerFabricante.TControllerFabricante';
+         tpAluno : result:= 'ControllerAluno.TControllerAluno';
+//tpEntity: result:= ControllerEntity.TControllerEntity;
   else
     begin
       showmessage('Verificar declaração "initialization RegisterClass" requerido do Controller !');

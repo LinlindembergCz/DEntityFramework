@@ -12,9 +12,11 @@ type
     Button2: TButton;
     Button4: TButton;
     Button1: TButton;
+    Button3: TButton;
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -39,6 +41,11 @@ end;
 procedure TFormPrincipal.Button2Click(Sender: TObject);
 begin
   TFactoryForm.GetForm( tpCliente );
+end;
+
+procedure TFormPrincipal.Button3Click(Sender: TObject);
+begin
+  TFactoryForm.GetForm( tpAluno );
 end;
 
 procedure TFormPrincipal.Button4Click(Sender: TObject);

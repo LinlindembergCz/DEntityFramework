@@ -18,8 +18,6 @@ type
     class function PropIsInstance(Prop: TRttiProperty): boolean; static;
     class function SetComponentValueProp(Componente: TComponent;
       Prop: TRttiProperty; Entity: TEntityBase): boolean; static;
-
-
   public
     class function CreateObject(AQualifiedClassName: string): TObject; overload;
     class function CreateObject(ARttiType: TRttiType): TObject;overload;
