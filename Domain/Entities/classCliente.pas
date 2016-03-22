@@ -26,7 +26,7 @@ type
     FCalcRenda: TFloat;
   public
     constructor Create;override;
-    destructor Destroy;
+    destructor Destroy;override;
     procedure Validation; override;
   published
     [EntityField('Nome','varchar(50)',false)]
