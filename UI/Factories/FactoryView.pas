@@ -53,6 +53,7 @@ var
   Form          : TFormViewBase;
   Instance      : TObject;
 begin
+  result:= nil;
   Instance := TAutoMapper.GetInstance( GetFormClassName( E ) );
   if Instance <> nil then
   begin
@@ -60,7 +61,10 @@ begin
     if Form <> nil then
     begin
       ShowForm( Form , modal);
-      result:= Form;
+      if Form is TFormViewBase then
+        result:= Form
+      else
+        showmessage('Formulário não implementado!');
     end
     else
       showmessage('Formulário não implementado!');

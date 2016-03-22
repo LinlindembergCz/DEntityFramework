@@ -125,6 +125,7 @@ Type
   private
     procedure CreateTables(aClass: array of TClass);
     procedure AlterTables(aClass: array of TClass);
+    procedure FreeObjects;
   public
     procedure InputEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
@@ -216,40 +217,50 @@ begin
   qryQuery.Free;
 end;
 
+procedure TDataContext.FreeObjects;
+begin
+  if ClientDataSet <> nil then
+    ClientDataSet.free;
+  if drpProvider <> nil then
+    drpProvider.free;
+  if qryQuery <> nil then
+    qryQuery.free;
+end;
+
 function TDataContext.GetDataSet(QueryAble: TQueryAble): TClientDataSet;
 var
    Keys:TStringList;
 begin
-  FEntity := TCustomDataContext(QueryAble).Entity;
-  FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+  try
+    try
+      FreeObjects;
+      if FProviderName = '' then
+      begin
+        Keys := TAutoMapper.GetAttributiesPrimaryKeyList( FEntity  );
+        FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+        qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
+        CreateProvider(qryQuery,
+                        trim(fStringReplace(TCustomDataContext(QueryAble).SEntity,
+                        trim(StrFrom), '')));
 
-  if ClientDataSet <> nil then
-    FreeAndNil(ClientDataSet);
-  if drpProvider <> nil then
-    FreeAndNil(drpProvider);
-  if qryQuery <> nil then
-    FreeAndNil(qryQuery);
+        CreateClientDataSet(drpProvider);
+      end
+      else
+      begin
+        CreateClientDataSet( nil, GetQuery(QueryAble));
+      end;
 
-  Keys := TAutoMapper.GetAttributiesPrimaryKeyList( QueryAble.FEntity );
-
-  if FProviderName = '' then
-  begin
-    qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
-
-    CreateProvider(qryQuery,
-                    trim(fStringReplace(TCustomDataContext(QueryAble).SEntity,
-                    trim(StrFrom), '')));
-
-    CreateClientDataSet(drpProvider);
-  end
-  else
-  begin
-    CreateClientDataSet( nil, GetQuery(QueryAble));
+      TAutoMapper.DataToEntity( ClientDataSet, FEntity );
+      result := ClientDataSet;
+    except
+    on E:Exception do
+      begin
+        showmessage(E.message);
+      end;
+    end;
+  finally
+    Keys.free;
   end;
-
-  TAutoMapper.DataToEntity( ClientDataSet, FEntity );
-
-  result := ClientDataSet;
 end;
 
 function TDataContext.GetList(QueryAble: TQueryAble): TList<TEntityBase>;
