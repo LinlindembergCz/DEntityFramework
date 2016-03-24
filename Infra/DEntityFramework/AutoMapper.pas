@@ -15,9 +15,16 @@ type
       : string; static;
     class function ValidComponent(Comp: TComponent): boolean; static;
     class function GetMaxLengthValue(E: TEntityBase; aProp: string): variant; static;
-    class function PropIsInstance(Prop: TRttiProperty): boolean; static;
     class function SetComponentValueProp(Componente: TComponent;
       Prop: TRttiProperty; Entity: TEntityBase): boolean; static;
+    class function PropIsInstance(Prop: TRttiProperty): boolean; static;
+    class function PropIsFloat(Prop: TRttiProperty): boolean; static;
+    class function PropIsInteger(Prop: TRttiProperty): boolean; static;
+    class function PropIsString(Prop: TRttiProperty): boolean; static;
+    class function PropIsDate(Prop: TRttiProperty): boolean; static;
+    class function PropIsVisible(prop: TRttiProperty): boolean; static;
+    class function PropNameEqualComponentName(Prop: TRttiProperty;
+      Componente: TComponent): boolean; static;
   public
     class function CreateObject(AQualifiedClassName: string): TObject; overload;
     class function CreateObject(ARttiType: TRttiType): TObject;overload;
@@ -67,6 +74,31 @@ uses
 
 { TAutoMapper }
 
+class function TAutoMapper.PropIsFloat(Prop: TRttiProperty): boolean;
+begin
+   result:= UpperCase(prop.PropertyType.ToString) = 'TFLOAT';
+end;
+
+class function TAutoMapper.PropIsInteger(Prop: TRttiProperty): boolean;
+begin
+   result:= UpperCase(prop.PropertyType.ToString) = 'TINTEGER';
+end;
+
+class function TAutoMapper.PropIsString(Prop: TRttiProperty): boolean;
+begin
+   result:= UpperCase(prop.PropertyType.ToString) = 'TSTRING';
+end;
+
+class function TAutoMapper.PropIsDate(Prop: TRttiProperty): boolean;
+begin
+   result:= UpperCase(prop.PropertyType.ToString) = 'TENTITYDATETIME';
+end;
+
+class function TAutoMapper.PropIsVisible(prop: TRttiProperty):boolean;
+begin
+  result:= Prop.Visibility in [mvPublished];
+end;
+
 class function TAutoMapper.GetListAtributes(Obj: TClass): TList;
 var
   ctx: TRttiContext;
@@ -81,17 +113,14 @@ var
   begin
     New(Atributies);
     Atributies^.Name := Prop.Name;
-    if UpperCase(prop.PropertyType.ToString) = 'TSTRING' then
-       Atributies^.Tipo := 'varchar(50)'
+    if PropIsString(Prop) then Atributies^.Tipo := 'varchar(50)'
     else
-    if UpperCase(prop.PropertyType.ToString) = 'TINTEGER' then
-       Atributies^.Tipo := 'integer'
+    if PropIsInteger( prop )  then Atributies^.Tipo := 'integer'
     else
-    if UpperCase(prop.PropertyType.ToString) = 'TFLOAT' then
-       Atributies^.Tipo := 'Float'
+    if PropIsFloat ( prop )  then Atributies^.Tipo := 'Float'
     else
-    if UpperCase(prop.PropertyType.ToString) = 'TENTITYDATETIME' then
-       Atributies^.Tipo := 'Date';
+    if PropIsDate ( prop ) then  Atributies^.Tipo := 'Date';
+
     Atributies^.IsNull := not ( UpperCase(prop.Name) = 'ID');
     Atributies^.PrimaryKey :=  UpperCase(prop.Name) = 'ID';
 
@@ -224,8 +253,7 @@ begin
            ctx2 := TRttiContext.Create;
            for Atributo in Prop.GetAttributes do
            begin
-             if ((Prop.Visibility in [mvPublished]) and
-                 (OnlyPublished)) or (not OnlyPublished) then
+             if (PropIsVisible(Prop) and (OnlyPublished)) or (not OnlyPublished) then
              begin
                FoundAttribute:= false;
                if Atributo is EntityField then
@@ -275,7 +303,7 @@ var
   FoundAttribute:boolean;
 begin
   try
-    L := TStringList.Create;
+    L := TStringList.Create(true);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(E);
     for Prop in TypObj.GetProperties do
@@ -288,7 +316,7 @@ begin
          tempStrings.Clear;
       end
       else
-      if ((Prop.Visibility in [mvPublished]) and (OnlyPublished)) or
+      if (PropIsVisible(Prop) and (OnlyPublished)) or
         (not OnlyPublished) then
       begin
         FoundAttribute:= false;
@@ -333,7 +361,7 @@ var
   FoundAttribute:boolean;
 begin
   try
-    L := TStringList.Create;
+    L := TStringList.Create(true);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(E.ClassInfo);
     for Prop in TypObj.GetProperties do
@@ -346,7 +374,7 @@ begin
          tempStrings.Clear;
       end
       else
-      if ((Prop.Visibility in [mvPublished]) and (OnlyPublished)) or
+      if (PropIsVisible(Prop) and (OnlyPublished)) or
         (not OnlyPublished) then
       begin
         FoundAttribute:= false;
@@ -382,7 +410,7 @@ var
   FoundAttribute: boolean;
 begin
   try
-    L := TStringList.Create;
+    L := TStringList.Create(true);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(E.ClassInfo);
     for Prop in TypObj.GetProperties do
@@ -565,7 +593,7 @@ var
   FoundAtribute:boolean;
 begin
   try
-    L := TStringList.Create;
+    L := TStringList.Create(true);
     for Prop in ctx.GetType(E.ClassType).GetProperties do
     begin
       FoundAtribute := false;
@@ -606,7 +634,7 @@ var
   Atributo: TCustomAttribute;
 begin
   try
-    L := TStringList.Create;
+    L := TStringList.Create(true);
     for Prop in ctx.GetType(E.ClassType).GetProperties do
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
@@ -1052,8 +1080,8 @@ begin
         begin
           if not PropIsInstance(prop)  then
           begin
-             if (Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name),
-               length(Componente.Name))) then
+             //Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name), length(Componente.Name)))
+             if PropNameEqualComponentName(Prop,Componente ) then
              begin
                  if SetDefaultValue then
                    Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
@@ -1166,6 +1194,11 @@ begin
     result:= true;
 end;
 
+class function TAutoMapper.PropNameEqualComponentName( Prop: TRttiProperty; Componente: TComponent):boolean;
+begin
+  result:= Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name), length(Componente.Name));
+end;
+
 class procedure TAutoMapper.Puts(Component: TComponent; Entity: TEntityBase);
 var
   J: integer;
@@ -1183,8 +1216,7 @@ begin
         for J := 0 to Component.componentcount - 1 do
         begin
            Componente := Component.components[J];
-           if Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name),
-            length(Componente.Name)) then
+           if PropNameEqualComponentName( Prop, Componente) then
            begin
               if SetComponentValueProp(Componente,Prop, Entity ) then
                  break;
@@ -1214,8 +1246,7 @@ begin
         for J := 0 to ComponentControl.ControlCount- 1 do
         begin
           Componente := ComponentControl.Controls[J];
-          if Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name),
-            length(Componente.Name)) then
+          if PropNameEqualComponentName( Prop, Componente) then
           begin
             if SetComponentValueProp(Componente,Prop, Entity ) then
              break;
@@ -1310,11 +1341,95 @@ var
   Labels: Array[1..100] of TLabel;
   Edits: Array[1..100] of TEdit;
   Memos: Array[1..100] of TMemo;
-  Datas: Array[1..100] of TDateTimePicker;
-  Check: Array[1..100] of TCheckBox;
+  Dates: Array[1..100] of TDateTimePicker;
+  Checks: Array[1..100] of TCheckBox;
   Combos: Array[1..100] of TComboBox;
+  LookUpCombos: Array[1..100] of TDBLookUpComboBox;
 
   i,c, altura: integer;
+
+  procedure CreateLabel;
+  begin
+    Labels[c] := TLabel.Create(Form);
+    Labels[c].Parent := Form;
+    Labels[c].Left := 40;
+    Labels[c].Top := altura;
+    Labels[c].Width := 50;
+    Labels[c].Height := 13;
+    Labels[c].Caption := prop.name;
+  end;
+
+  procedure CreateEdit(Name: string);
+  begin
+    Edits[c] := TEdit.Create(Form);
+    Edits[c].Parent := Form;
+    Edits[c].Left := 40;
+    Edits[c].Top := altura;
+    Edits[c].Width := 100;
+    Edits[c].Height := 21;
+    Edits[c].TabOrder := c;
+    Edits[c].NumbersOnly := (PropIsInteger(prop)) and(PropIsFloat(prop));
+    Edits[c].Name:= name;
+  end;
+
+  procedure CreateCheckBox(Name: string);
+  begin
+    Checks[c] := TCheckBox.Create(Form);
+    Checks[c].Parent := Form;
+    Checks[c].Left := 40;
+    Checks[c].Top := altura;
+    Checks[c].Width := 100;
+    Checks[c].Height := 21;
+    Checks[c].TabOrder := c;
+    Checks[c].Caption := prop.name;
+    Checks[c].Name:= 'chk'+name;
+  end;
+
+  procedure CreateMemo(Name: string);
+  begin
+    Memos[c] := TMemo.Create(Form);
+    Memos[c].Parent := Form;
+    Memos[c].Left := 40;
+    Memos[c].Top := altura;
+    Memos[c].TabOrder := c;
+    Memos[c].Name:= 'memo'+name;
+  end;
+
+  procedure CreateDatetimePick(Name: string);
+  begin
+    Dates[c] := TDateTimePicker.Create(Form);
+    Dates[c].Parent := Form;
+    Dates[c].Left := 40;
+    Dates[c].Top := altura;
+    Dates[c].Width := 100;
+    Dates[c].Height := 21;
+    Dates[c].TabOrder := c;
+    Dates[c].Name:= 'date'+name;
+  end;
+
+  procedure CreateCombobox(Name: string);
+  begin
+    Combos[c] := TCombobox.Create(Form);
+    Combos[c].Parent := Form;
+    Combos[c].Left := 40;
+    Combos[c].Top := altura;
+    Combos[c].Width := 100;
+    Combos[c].Height := 21;
+    Combos[c].TabOrder := c;
+    Combos[c].Name:= 'cbo'+name;
+  end;
+
+  procedure CreateLookUpCombobox(Name: string);
+  begin
+    LookUpCombos[c] := TDBLookUpCombobox.Create(Form);
+    LookUpCombos[c].Parent := Form;
+    LookUpCombos[c].Left := 40;
+    LookUpCombos[c].Top := altura;
+    LookUpCombos[c].Width := 100;
+    LookUpCombos[c].Height := 21;
+    LookUpCombos[c].TabOrder := c;
+    LookUpCombos[c].Name:= 'cbo'+name;
+  end;
 
 begin
   try
@@ -1325,32 +1440,17 @@ begin
     altura := 10;
     for Prop in TypObj.GetProperties do
     begin
-       if not PropIsInstance(prop)  then
+       if (not PropIsInstance(prop)) and (PropIsVisible(prop)) then
        begin
           for Atrib in Prop.GetAttributes do
           begin
-            Labels[c] := TLabel.Create(Form);
-            Labels[c].Parent := Form;
-            Labels[c].Left := 40;
-            Labels[c].Top := altura;
-            Labels[c].Width := 50;
-            Labels[c].Height := 13;
-            Labels[c].Caption := prop.name;
+            CreateLabel;
+
           //Labels[c].Font.Color := clred;
             if Atrib is Edit then
             begin
                 Altura := altura + 15;
-                Edits[c] := TEdit.Create(Form);
-                Edits[c].Parent := Form;
-                Edits[c].Left := 40;
-                Edits[c].Top := altura;
-                Edits[c].Width := 100;
-                Edits[c].Height := 21;
-                Edits[c].TabOrder := c;
-                {Edits[c].NumbersOnly := ClientDataSet1.Fields[c].DataType in [ftInteger,
-                                                                               ftFloat,
-                                                                               ftCurrency ,
-                                                                               ftSmallint];}
+                CreateEdit(prop.name);
                //Edits[c].MaxLength :=  ClientDataSet1.Fields[c].Size;
               break;
             end
@@ -1358,25 +1458,14 @@ begin
             if Atrib is CheckBox then
             begin
               Altura := altura + 15;
-              Check[c] := TCheckBox.Create(Form);
-              Check[c].Parent := Form;
-              Check[c].Left := 40;
-              Check[c].Top := altura;
-              Check[c].Width := 100;
-              Check[c].Height := 21;
-              Check[c].TabOrder := c;
-              Check[c].Caption := prop.name;
+              CreateCheckBox(prop.name);
               break;
             end
             else
             if Atrib is Memo then
             begin
               Altura := altura + 15;
-              Memos[c] := TMemo.Create(Form);
-              Memos[c].Parent := Form;
-              Memos[c].Left := 40;
-              Memos[c].Top := altura;
-              Memos[c].TabOrder := c;
+              CreateMemo(prop.name);
               //Memos[c].MaxLength :=  ClientDataSet1.Fields[c].Size;
               break;
             end
@@ -1384,26 +1473,21 @@ begin
             if Atrib is  DateTimePicker then
             begin
               Altura := altura + 15;
-              Datas[c] := TDateTimePicker.Create(Form);
-              Datas[c].Parent := Form;
-              Datas[c].Left := 40;
-              Datas[c].Top := altura;
-              Datas[c].Width := 100;
-              Datas[c].Height := 21;
-              Datas[c].TabOrder := c;
+              CreateDateTimePick(prop.name);
               break;
             end
             else
             if Atrib is  Combobox then
             begin
               Altura := altura + 15;
-              Combos[c] := TCombobox.Create(Form);
-              Combos[c].Parent := Form;
-              Combos[c].Left := 40;
-              Combos[c].Top := altura;
-              Combos[c].Width := 100;
-              Combos[c].Height := 21;
-              Combos[c].TabOrder := c;
+              CreateCombobox(prop.name);
+              break;
+            end
+            else
+            if Atrib is  LookupCombobox then
+            begin
+              Altura := altura + 15;
+              CreateLookupCombobox(prop.name);
               break;
             end;
 
