@@ -349,7 +349,7 @@ var
   ListAtributes: TList;
   TableList: TStringList;
 begin
-  TableList := TStringList.Create;
+  TableList := TStringList.Create(true);
   FConnection.GetTableNames(TableList);
   for i := 0 to length(aClass) - 1 do
   begin
@@ -365,8 +365,8 @@ begin
             TFirebird.CreateTable(FConnection, ListAtributes, Table);
       end;
   end;
-  //ListAtributes.Free;
   TableList.Free;
+  //ListAtributes.clear;
 end;
 
 procedure TDataContext.AlterTables(aClass: array of TClass);
@@ -384,30 +384,36 @@ var
   end;
 
 begin
-  TableList := TStringList.Create;
-  FieldList := TStringList.Create;
-  FConnection.GetTableNames(TableList);
-  for i := 0 to length(aClass) - 1 do
-  begin
-    Table := TAutoMapper.GetTableAttribute(aClass[i]);
-    if TableList.IndexOf(Table) <> -1 then
+  try
+    TableList := TStringList.Create(true);
+    FieldList := TStringList.Create(true);
+    FConnection.GetTableNames(TableList);
+    for i := 0 to length(aClass) - 1 do
     begin
-      FConnection.GetFieldNames(FieldList, Table);
-      List := TAutoMapper.GetListAtributes(aClass[i]);
-      for K := 0 to List.Count - 1 do
+      Table := TAutoMapper.GetTableAttribute(aClass[i]);
+      if TableList.IndexOf(Table) <> -1 then
       begin
-        if FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) = -1 then
+        FConnection.GetFieldNames(FieldList, Table);
+        List := TAutoMapper.GetListAtributes(aClass[i]);
+        for K := 0 to List.Count - 1 do
         begin
-          if PParamAtributies(List.Items[K]).Tipo <>'' then
+          if FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) = -1 then
           begin
-            AlterTable(Table, PParamAtributies(List.Items[K]).Name,
-            PParamAtributies(List.Items[K]).Tipo,
-            PParamAtributies(List.Items[K]).IsNull);
+            if PParamAtributies(List.Items[K]).Tipo <>'' then
+            begin
+              AlterTable(Table, PParamAtributies(List.Items[K]).Name,
+              PParamAtributies(List.Items[K]).Tipo,
+              PParamAtributies(List.Items[K]).IsNull);
+            end;
           end;
         end;
       end;
     end;
+  finally
+    TableList.free;
+    FieldList.free;
   end;
+
 end;
 
 procedure TDataContext.InsertDirect;
@@ -535,6 +541,8 @@ begin
      oFrom.Free;
   if Entity <> nil then
      Entity.Free;
+  if FConnection <> nil then
+     FConnection.Free;
 end;
 
 procedure TCustomDataContext.DataSetProviderGetTableName(Sender: TObject;
