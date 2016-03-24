@@ -145,6 +145,9 @@ type
   DateTimePicker = class(TCustomAttribute)
   end;
 
+  LookupCombobox = class(TCustomAttribute)
+  end;
+
 implementation
 
 
