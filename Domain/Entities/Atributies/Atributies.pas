@@ -130,6 +130,21 @@ type
     Value: string;
   end;
 
+  Edit = class(TCustomAttribute)
+  end;
+
+  Combobox = class(TCustomAttribute)
+  end;
+
+  CheckBox = class(TCustomAttribute)
+  end;
+
+  Memo = class(TCustomAttribute)
+  end;
+
+  DateTimePicker = class(TCustomAttribute)
+  end;
+
 implementation
 
 

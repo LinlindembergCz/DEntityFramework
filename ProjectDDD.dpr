@@ -76,5 +76,5 @@ begin
   DataContext.Free;
   Application.run;
 //DUnitTestRunner.RunRegisteredTests;
- // ReportMemoryLeaksOnShutdown := true;
+  ReportMemoryLeaksOnShutdown := true;
 end.

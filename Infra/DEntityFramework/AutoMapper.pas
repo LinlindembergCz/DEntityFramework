@@ -3,7 +3,7 @@ unit AutoMapper;
 interface
 
 uses
-   Atributies, EntityBase, EntityTypes,  RTTI, Classes,  SysUtils,
+   Forms, Atributies, EntityBase, EntityTypes,  RTTI, Classes,  SysUtils,
    Vcl.Controls, DB, System.Contnrs,  StdCtrls, strUtils, math;
 
 type
@@ -56,6 +56,7 @@ type
     class procedure SetFieldValue(Entity: TEntityBase; Campo: TRttiProperty;
      Valor: variant);overload;static;
     class function GetInstance(const Str_Class: TValue): TObject; static;
+    class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm);
   end;
 
 implementation
@@ -1294,6 +1295,127 @@ begin
   { Second solution, dirty and fast }
   // Result := TObject(ARttiType.GetMethod('Create')
   // .Invoke(ARttiType.AsInstance.MetaclassType, []).AsObject);
+end;
+
+class procedure TAutoMapper.CreateDinamicView(Entity: TEntityBase; Form: TForm);
+//TAutoMapper.CreateDinamicView( TCliente.create , Self );
+var
+  J: integer;
+  Prop: TRttiProperty;
+  Componente: TComponent;
+  ctx: TRttiContext;
+  Value: string;
+  Atrib: TCustomAttribute;
+
+  Labels: Array[1..100] of TLabel;
+  Edits: Array[1..100] of TEdit;
+  Memos: Array[1..100] of TMemo;
+  Datas: Array[1..100] of TDateTimePicker;
+  Check: Array[1..100] of TCheckBox;
+  Combos: Array[1..100] of TComboBox;
+
+  i,c, altura: integer;
+
+begin
+  try
+    ctx := TRttiContext.Create;
+    TypObj := ctx.GetType(Entity.ClassInfo);
+
+    c := 0;
+    altura := 10;
+    for Prop in TypObj.GetProperties do
+    begin
+       if not PropIsInstance(prop)  then
+       begin
+          for Atrib in Prop.GetAttributes do
+          begin
+            Labels[c] := TLabel.Create(Form);
+            Labels[c].Parent := Form;
+            Labels[c].Left := 40;
+            Labels[c].Top := altura;
+            Labels[c].Width := 50;
+            Labels[c].Height := 13;
+            Labels[c].Caption := prop.name;
+          //Labels[c].Font.Color := clred;
+            if Atrib is Edit then
+            begin
+                Altura := altura + 15;
+                Edits[c] := TEdit.Create(Form);
+                Edits[c].Parent := Form;
+                Edits[c].Left := 40;
+                Edits[c].Top := altura;
+                Edits[c].Width := 100;
+                Edits[c].Height := 21;
+                Edits[c].TabOrder := c;
+                {Edits[c].NumbersOnly := ClientDataSet1.Fields[c].DataType in [ftInteger,
+                                                                               ftFloat,
+                                                                               ftCurrency ,
+                                                                               ftSmallint];}
+               //Edits[c].MaxLength :=  ClientDataSet1.Fields[c].Size;
+              break;
+            end
+            else
+            if Atrib is CheckBox then
+            begin
+              Altura := altura + 15;
+              Check[c] := TCheckBox.Create(Form);
+              Check[c].Parent := Form;
+              Check[c].Left := 40;
+              Check[c].Top := altura;
+              Check[c].Width := 100;
+              Check[c].Height := 21;
+              Check[c].TabOrder := c;
+              Check[c].Caption := prop.name;
+              break;
+            end
+            else
+            if Atrib is Memo then
+            begin
+              Altura := altura + 15;
+              Memos[c] := TMemo.Create(Form);
+              Memos[c].Parent := Form;
+              Memos[c].Left := 40;
+              Memos[c].Top := altura;
+              Memos[c].TabOrder := c;
+              //Memos[c].MaxLength :=  ClientDataSet1.Fields[c].Size;
+              break;
+            end
+            else
+            if Atrib is  DateTimePicker then
+            begin
+              Altura := altura + 15;
+              Datas[c] := TDateTimePicker.Create(Form);
+              Datas[c].Parent := Form;
+              Datas[c].Left := 40;
+              Datas[c].Top := altura;
+              Datas[c].Width := 100;
+              Datas[c].Height := 21;
+              Datas[c].TabOrder := c;
+              break;
+            end
+            else
+            if Atrib is  Combobox then
+            begin
+              Altura := altura + 15;
+              Combos[c] := TCombobox.Create(Form);
+              Combos[c].Parent := Form;
+              Combos[c].Left := 40;
+              Combos[c].Top := altura;
+              Combos[c].Width := 100;
+              Combos[c].Height := 21;
+              Combos[c].TabOrder := c;
+              break;
+            end;
+
+          end;
+          Altura := altura + 23;
+          c := c+1;
+       end;
+     end;
+  finally
+    ctx.Free;
+  end;
+
 end;
 
 end.
