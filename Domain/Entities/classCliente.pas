@@ -70,7 +70,6 @@ type
     [EntityField('Observacao','varchar(500)',true)]
     [Memo]
     property Observacao:TString read FObservacao write FObservacao;
-    [EntityField('Email','varchar(100)',true)]
     [Edit]
     property Email:TEmail read FEmail write FEmail;
     [EntityExpression('CalcRenda','Renda * 2')]

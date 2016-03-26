@@ -174,16 +174,20 @@ begin
 end;
 
 procedure TControllerBase.UpdateState(const ValueState: TEntityState);
+var
+  Modified:boolean;
 begin
-  if FContener is TForm then
+  if FContener is TFormViewBase then
   begin
     with FContener as TFormViewBase do
     begin
-      btnNew.enabled    := not(ValueState in [esInsert, esEdit]);
-      btnEdit.enabled   := not(ValueState in [esInsert, esEdit]);
-      btnRemove.enabled := not(ValueState in [esInsert, esEdit]);
-      btnCancel.enabled := ValueState in [esInsert, esEdit];
-      btnPost.enabled   := ValueState in [esInsert, esEdit];
+      Modified := ValueState in [esInsert, esEdit];
+
+      btnNew.enabled    := not(Modified);
+      btnEdit.enabled   := not(Modified);
+      btnRemove.enabled := not(Modified);
+      btnCancel.enabled := Modified;
+      btnPost.enabled   := Modified;
       if ValueState <> esBrowser then
          pgPrincipal.ActivePageIndex := 1;
       btnApply.enabled := Service.ChangeCount > 0;

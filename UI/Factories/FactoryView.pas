@@ -51,13 +51,13 @@ end;
 class function TFactoryForm.GetForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
 var
   Form          : TFormViewBase;
-  Instance      : TObject;
+  Instance      : TFormViewBase;
 begin
   result:= nil;
-  Instance := TAutoMapper.GetInstance( GetFormClassName( E ) );
+  Instance := TFormViewBase( TAutoMapper.GetInstance( GetFormClassName( E ) ) );
   if Instance <> nil then
   begin
-    Form := TFormViewBase( Instance ).Create( TFactoryController.GetController( E ) );
+    Form := Instance.Create( TFactoryController.GetController( E ) );
     if Form <> nil then
     begin
       ShowForm( Form , modal);

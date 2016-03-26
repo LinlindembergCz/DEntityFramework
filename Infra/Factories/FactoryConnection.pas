@@ -32,7 +32,7 @@ begin
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',
-                                                 'D:\Lindemberg\DDD\DBLINQ.FDB');
+                                                 'D:\Lindemberg\EntityFramework\DBLINQ.FDB');
   end;
   result:= FConnection;
 end;

@@ -3,7 +3,7 @@ unit Email;
 interface
 
 uses
-   EntityTypes, SysUtils, Dialogs, EntityBase;
+   EntityTypes, SysUtils, Dialogs, EntityBase, Atributies;
 
 type
   TEmail = class(TEntityBase)
@@ -12,6 +12,8 @@ type
     procedure Setvalue(const Value: TString);
   public
     procedure validar;
+  published
+   [EntityField('Email','varchar(100)',true)]
     property value: TString read Fvalue write Setvalue;
   end;
 

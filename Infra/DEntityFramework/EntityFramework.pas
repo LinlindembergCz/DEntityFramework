@@ -355,6 +355,7 @@ begin
   begin
       ListAtributes  := nil;
       ListAtributes  := TAutoMapper.GetListAtributes(aClass[i]);
+
       Table := TAutoMapper.GetTableAttribute(aClass[i]);
       if TableList.IndexOf(Table) = -1 then
       begin
@@ -541,8 +542,6 @@ begin
      oFrom.Free;
   if Entity <> nil then
      Entity.Free;
-  if FConnection <> nil then
-     FConnection.Free;
 end;
 
 procedure TCustomDataContext.DataSetProviderGetTableName(Sender: TObject;
