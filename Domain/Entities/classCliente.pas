@@ -14,7 +14,7 @@ type
     FIdade: TInteger;
     FNome: TString;
     FRG: TString;
-    FDataNascimento: TEntityDatetime;
+    FDataNascimento: TTDatetime;
     FAtivo: TString;
     FNomeFantasia: TString;
     FApelido: TString;
@@ -51,7 +51,7 @@ type
     property RG: TString read FRG write FRG;
     [EntityField('DataNascimento','Date',true)]
     [DateTimePicker]
-    property DataNascimento:TEntityDatetime read FDataNascimento write FDataNascimento;
+    property DataNascimento:TTDatetime read FDataNascimento write FDataNascimento;
     [EntityField('Ativo','varchar(1)',true)]
     [CheckBox]
     property Ativo: TString read FAtivo write FAtivo;
