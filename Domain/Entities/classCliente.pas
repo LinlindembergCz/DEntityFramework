@@ -72,8 +72,8 @@ type
     property Observacao:TString read FObservacao write FObservacao;
     [Edit]
     property Email:TEmail read FEmail write FEmail;
-    [EntityExpression('CalcRenda','Renda * 2')]
-    property CalcRenda:TFloat read FCalcRenda;
+    //[EntityExpression('CalcRenda','Renda * 2')]
+    //property CalcRenda:TFloat read FCalcRenda;
   end;
 
 implementation
@@ -86,13 +86,13 @@ end;
 
 destructor TCliente.Destroy;
 begin
-  Email.free;
+  inherited;
 end;
 
 procedure TCliente.Validation;
 begin
   inherited;
-  //Email.validar;
+  Email.validar;
 end;
 
 initialization RegisterClass(TCliente);

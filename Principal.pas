@@ -31,16 +31,18 @@ implementation
 {$R *.dfm}
 
 uses
-  FactoryView, EnumEntity;
+  FactoryView, EnumEntity, AutoMapper, viewTeste, ClassAluno, FactoryEntity,
+  ViewBase;
+
+
+procedure TFormPrincipal.Button2Click(Sender: TObject);
+begin
+  TFactoryForm.GetDinamicForm( tpCliente );
+end;
 
 procedure TFormPrincipal.Button1Click(Sender: TObject);
 begin
   TFactoryForm.GetForm( tpFabricante );
-end;
-
-procedure TFormPrincipal.Button2Click(Sender: TObject);
-begin
-  TFactoryForm.GetForm( tpCliente );
 end;
 
 procedure TFormPrincipal.Button3Click(Sender: TObject);

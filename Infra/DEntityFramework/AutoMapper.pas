@@ -66,7 +66,7 @@ type
      Valor: variant);overload;static;
 
     class function GetInstance(const Str_Class: TValue): TObject; static;
-    class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm);
+    class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
   end;
 
   Const
@@ -119,6 +119,7 @@ var
   Atributies: PParamAtributies;
   List: TList;
   Found:Boolean;
+  tempList:TList;
 
   procedure AddFieldByDefault;
   begin
@@ -145,7 +146,14 @@ begin
     TypObj := ctx.GetType(Obj.ClassInfo);
     for Prop in TypObj.GetProperties do
     begin
-      if not PropIsInstance(Prop) then
+      if PropIsInstance(Prop) then
+      begin
+         tempList := GetListAtributes( Prop.Propertytype.AsInstance.MetaclassType);
+         if tempList.Count > 0 then
+            List.Add( tempList[0] );
+         //tempList.Clear;
+      end
+      else
       begin
         Found:= false;
         for Atributo in Prop.GetAttributes do
@@ -336,7 +344,7 @@ begin
       if  PropIsInstance(prop)  then
       begin
          //tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
-         tempStrings:= ( GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );         
+         tempStrings:= ( GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
@@ -1382,7 +1390,7 @@ begin
   // .Invoke(ARttiType.AsInstance.MetaclassType, []).AsObject);
 end;
 
-class procedure TAutoMapper.CreateDinamicView(Entity: TEntityBase; Form: TForm);
+class procedure TAutoMapper.CreateDinamicView(Entity: TEntityBase; Form: TForm;Parent:TWinControl = nil);
 //TAutoMapper.CreateDinamicView( TCliente.create , Self );
 var
   J: integer;
@@ -1405,7 +1413,10 @@ var
   procedure CreateLabel(Name: string;cont:integer; top:integer);
   begin
     Labels[cont] := TLabel.Create(Form);
-    Labels[cont].Parent := Form;
+    if Parent = nil then
+       Labels[cont].Parent := Form
+    else
+       Labels[cont].Parent := Parent;
     Labels[cont].Left := 40;
     Labels[cont].Top := top;
     Labels[cont].Width := 50;
@@ -1416,7 +1427,11 @@ var
   procedure CreateEdit(Name: string; cont:integer; top:integer; IsNumeric:boolean; MaxLength:integer);
   begin
     Edits[cont] := TEdit.Create(Form);
-    Edits[cont].Parent := Form;
+    if Parent = nil then
+       Edits[cont].Parent := Form
+    else
+       Edits[cont].Parent := Parent;
+
     Edits[cont].Left := 40;
     Edits[cont].Top := top;
     Edits[cont].Width := 100;
@@ -1424,14 +1439,17 @@ var
     Edits[cont].TabOrder := cont;
     Edits[cont].NumbersOnly :=  IsNumeric;
     Edits[cont].Name:= name;
-    if MaxLength > 0 then    
+    if MaxLength > 0 then
        Edits[cont].MaxLength := MaxLength;
   end;
 
   procedure CreateCheckBox(Name: string; cont:integer; top:integer);
   begin
     Checks[cont] := TCheckBox.Create(Form);
-    Checks[cont].Parent := Form;
+    if Parent = nil then
+       Checks[cont].Parent := Form
+    else
+       Checks[cont].Parent := Parent;
     Checks[cont].Left := 40;
     Checks[cont].Top := top;
     Checks[cont].Width := 100;
@@ -1444,7 +1462,10 @@ var
   procedure CreateMemo(Name: string; cont:integer; top:integer);
   begin
     Memos[cont] := TMemo.Create(Form);
-    Memos[cont].Parent := Form;
+    if Parent = nil then
+       Memos[cont].Parent := Form
+    else
+       Memos[cont].Parent := Parent;
     Memos[cont].Left := 40;
     Memos[cont].Top := top;
     Memos[cont].TabOrder := cont;
@@ -1454,7 +1475,10 @@ var
   procedure CreateDatetimePick(Name: string; cont:integer; top:integer);
   begin
     Dates[cont] := TDateTimePicker.Create(Form);
-    Dates[cont].Parent := Form;
+    if Parent = nil then
+       Dates[cont].Parent := Form
+    else
+       Dates[cont].Parent := Parent;
     Dates[cont].Left := 40;
     Dates[cont].Top := top;
     Dates[cont].Width := 100;
@@ -1466,7 +1490,10 @@ var
   procedure CreateCombobox(Name: string; cont:integer; top:integer);
   begin
     Combos[cont] := TCombobox.Create(Form);
-    Combos[cont].Parent := Form;
+    if Parent = nil then
+       Combos[cont].Parent := Form
+    else
+       Combos[cont].Parent := Parent;
     Combos[cont].Left := 40;
     Combos[cont].Top := top;
     Combos[cont].Width := 100;
@@ -1478,7 +1505,10 @@ var
   procedure CreateLookUpCombobox(Name: string; cont:integer; top:integer);
   begin
     LookUpCombos[cont] := TDBLookUpCombobox.Create(Form);
-    LookUpCombos[cont].Parent := Form;
+    if Parent = nil then
+       LookUpCombos[cont].Parent := Form
+    else
+       LookUpCombos[cont].Parent := Parent;
     LookUpCombos[cont].Left := 40;
     LookUpCombos[cont].Top := top;
     LookUpCombos[cont].Width := 100;

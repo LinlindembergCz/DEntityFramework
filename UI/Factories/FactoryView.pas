@@ -10,14 +10,16 @@ type
   private
     class function GetFormClassName(E: TEnumEntities): string; static;
     class procedure ShowForm(Form: TForm; modal: boolean);
+
   public
     class function GetForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
+    class function GetDinamicForm(E: TEnumEntities; modal: boolean = true): TFormViewBase; static;
   end;
 
 implementation
 
 uses
-InterfaceController, FactoryController, AutoMapper;
+InterfaceController, FactoryController, AutoMapper, FactoryEntity;
 
 class function TFactoryForm.GetFormClassName( E: TEnumEntities):string;
 begin
@@ -48,6 +50,26 @@ begin
   end;
 end;
 
+class function TFactoryForm.GetDinamicForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
+var
+  Form          : TFormViewBase;
+begin
+  result:= nil;
+  Form := TFormViewBase.create( TFactoryController.GetController( E ) );
+  if Form <> nil then
+  begin
+    TAutoMapper.CreateDinamicView( TFactoryEntity.GetEntity(E) , Form, Form.TabSheet2);
+    ShowForm( Form , modal);
+    if Form is TFormViewBase then
+      result:= Form
+    else
+      showmessage('Formulário não implementado!');
+  end
+  else
+    showmessage('Formulário não implementado!');
+
+end;
+
 class function TFactoryForm.GetForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
 var
   Form          : TFormViewBase;
@@ -55,9 +77,11 @@ var
 begin
   result:= nil;
   Instance := TFormViewBase( TAutoMapper.GetInstance( GetFormClassName( E ) ) );
+
   if Instance <> nil then
   begin
     Form := Instance.Create( TFactoryController.GetController( E ) );
+
     if Form <> nil then
     begin
       ShowForm( Form , modal);

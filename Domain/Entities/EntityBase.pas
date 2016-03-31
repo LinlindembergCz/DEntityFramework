@@ -3,7 +3,7 @@ unit EntityBase;
 interface
 
 uses
-  RTTI, SysUtils, Atributies, EntityTypes, System.Classes;
+  System.TypInfo, RTTI, SysUtils, Atributies, EntityTypes, System.Classes;
 
 type
   TEntityBase = class(TPersistent)
@@ -15,6 +15,7 @@ type
 
     procedure Validation;virtual;
     constructor Create;virtual;
+    destructor Destroy;virtual;
   published
     [EntityField('ID','integer',false,true, true)]
     property Id:TInteger read FId write FId;
@@ -25,6 +26,11 @@ implementation
 
 { TEntityBase }
 uses AutoMapper;
+
+destructor TEntityBase.Destroy;
+begin
+  FreeAndNilProperties(self);
+end;
 
 procedure TEntityBase.Validation;
 var
