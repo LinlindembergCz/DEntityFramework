@@ -25,14 +25,14 @@ type
 
 implementation
 
-uses EntityFunctions;
+uses EntityFunctions, EntityMSSQL, EntityFirebird;
 
 { TLinqFDConnection }
 
 function TEntityFDConnection.CreateDataSet(prsSQL: string; Keys:TStringList = nil ): TDataSet;
 var
   qryVariavel: TFDQuery;
-  J , I : integer;
+  J : integer;
 begin
   qryVariavel := TFDQuery.Create(Application);
   with TFDQuery(qryVariavel) do
@@ -110,6 +110,10 @@ begin
   FDataBase := aDataBase;
   FUser     := aUser;
   FPassword := aPassword;
+  if FDriver = 'MSSSQL' then
+     CustomTypeDataBase:= TMSSQL.create;
+  if (FDriver = 'Firebird') or (FDriver = 'FB') then
+     CustomTypeDataBase:= TFirebird.create;
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);

@@ -3,20 +3,40 @@ unit EntityMSSQL;
 interface
 
 uses
-  Atributies, AutoMapper, sysutils, classes, strUtils, EntityConnection, Dialogs;
+  Atributies, AutoMapper, sysutils, classes, strUtils, EntityConnection, Dialogs, CustomDataBase;
 
 type
-  TMSSQL = class
+  TMSSQL = class(TCustomDataBase)
+  private
+     function AlterColumn(Table, Field, Tipo: string; IsNull: boolean): string ;override;
   public
-    class procedure CreateTable(Connection: TEntityConn; List: TList; Table: string);
-    class function GetPrimaryKey( Table, Fields: string):string;
+     function CreateTable( List: TList; Table: string;  Key:TStringList = nil): string ;override;
+     function AlterTable( Table, Field, Tipo: string; IsNull: boolean;ColumnExist: boolean): string ;override;
+
+     function GetPrimaryKey( Table, Fields: string):string;
   end;
 
 implementation
 
 { TMSSQLServer }
 
-class procedure TMSSQL.CreateTable(Connection: TEntityConn; List: TList; Table: string);
+function TMSSQL.AlterColumn(Table, Field, Tipo: string;
+  IsNull: boolean): string;
+begin
+   result:= 'Alter table ' + Table + ' Alter Column ' + Field + ' ' +
+                 Tipo + ' ' + ifthen(IsNull, '', 'NOT NULL');
+end;
+
+function TMSSQL.AlterTable(Table, Field, Tipo: string; IsNull: boolean;ColumnExist: boolean): string;
+begin
+  if ColumnExist then
+    result:= AlterColumn( Table , Field, tipo , IsNull)
+  else
+    result:= 'Alter table ' + Table + ' Add ' + Field + ' ' +
+            Tipo + ' ' + ifthen(IsNull, '', 'NOT NULL')
+end;
+
+function TMSSQL.CreateTable( List: TList; Table: string; Key:TStringList = nil ): string;
 var
   J: integer;
 
@@ -25,12 +45,12 @@ var
 
   Name, Tipo: string;
   AutoInc, PrimaryKey, IsNull: boolean;
-  CreateScript , Key :TStringList;
+  CreateScript , ListKey :TStringList;
 
 begin
   CreateScript := TStringList.Create;
-  Key          := TStringList.Create;
-  Key.delimiter := ',';
+  ListKey          := TStringList.Create;
+  ListKey.delimiter := ',';
 
   CreateScript.Clear;
   CreateScript.Add('Create Table ' + uppercase(Table));
@@ -51,12 +71,16 @@ begin
          ifthen(IsNull, '', 'NOT NULL') + ifthen(J < List.Count - 1, ',', ''));
 
         if PrimaryKey then
-          Key.Add(Name);
+        begin
+          ListKey.Add(Name);
+          if Key <> nil then
+             Key.Add(Name);
+        end;
       end;
-      if Key.Count > 0 then
+      if ListKey.Count > 0 then
       begin
-        CreateScript.Add( GetPrimaryKey(Table,Key.DelimitedText) );
-        Connection.ExecutarSQL(CreateScript.Text);
+        CreateScript.Add( GetPrimaryKey(Table,ListKey.DelimitedText) );
+        result:= CreateScript.Text;
       end
       else
         ShowMessage('Primary Key is riquered!');
@@ -66,7 +90,7 @@ begin
   end;
 end;
 
-class function TMSSQL.GetPrimaryKey(Table, Fields: string): string;
+function TMSSQL.GetPrimaryKey(Table, Fields: string): string;
 begin
   result:= ', CONSTRAINT [PK_' + Table +
             '] PRIMARY KEY CLUSTERED([' + Fields +

@@ -3,12 +3,15 @@ unit EntityConnection;
 interface
 
 uses
-  Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils;
+  Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils, CustomDataBase;
 
 type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
 
   TEntityConn = class
+  private
+    FCustomTypeDataBase: TCustomDataBase;
+    procedure SetCustomTypeDataBase(const Value: TCustomDataBase);
   protected
     FCustomConnection : TCustomConnection;
     FDataBase: string;
@@ -23,9 +26,12 @@ type
     procedure GetTableNames(var List: TStringList); virtual; abstract;
     procedure GetFieldNames(var List: TStringList; Table: string); virtual;abstract;
     procedure ExecutarSQL(prsSQL: string); virtual; abstract;
+    procedure AlterTable(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
+    procedure AlterColumn(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
     function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TDataSet; virtual; abstract;
     procedure LoadFromFile(IniFileName: string);virtual; abstract;
     property CustomConnection: TCustomConnection read FCustomConnection write FCustomConnection;
+    property CustomTypeDataBase: TCustomDataBase read FCustomTypeDataBase write SetCustomTypeDataBase;
     property Driver: string read FDriver write FDriver;
     property DataBase: string read FDataBase write FDataBase;
     property Server : string read FServer write FServer;
@@ -103,6 +109,11 @@ begin
     end;
     Field.Name := ADataSet.Name + ADataSet.Fields[i].FieldName;
   end;
+end;
+
+procedure TEntityConn.SetCustomTypeDataBase(const Value: TCustomDataBase);
+begin
+  FCustomTypeDataBase := Value;
 end;
 
 end.

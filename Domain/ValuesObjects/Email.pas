@@ -13,7 +13,7 @@ type
   public
     procedure validar;
   published
-   [EntityField('Email','varchar(100)',true)]
+   [EntityField('Email','varchar(200)',true)]
     property value: TString read Fvalue write Setvalue;
   end;
 

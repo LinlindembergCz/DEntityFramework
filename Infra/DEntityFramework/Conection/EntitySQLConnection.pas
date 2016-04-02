@@ -20,6 +20,9 @@ type
 
 implementation
 
+uses
+ EntityMSSQL, EntityFirebird;
+
 { TEntitySQLConnection }
 
 constructor TEntitySQLConnection.Create(aDriver,aUser,aPassword,aServer,aDataBase: string);
@@ -33,6 +36,10 @@ begin
   FDataBase := aDataBase;
   FUser     := aUser;
   FPassword := aPassword;
+  if FDriver = 'MSSSQL' then
+     CustomTypeDataBase:= TMSSQL.create;
+  if (FDriver = 'Firebird') or (FDriver = 'FB') then
+     CustomTypeDataBase:= TFirebird.create;
 end;
 
 function TEntitySQLConnection.CreateDataSet(prsSQL: string; Keys:TStringList = nil): TDataSet;

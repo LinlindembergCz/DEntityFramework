@@ -347,23 +347,31 @@ var
   i: integer;
   Table: string;
   ListAtributes: TList;
-  TableList: TStringList;
+  TableList, KeyList: TStringList;
 begin
   TableList := TStringList.Create(true);
+
   FConnection.GetTableNames(TableList);
   for i := 0 to length(aClass) - 1 do
   begin
       ListAtributes  := nil;
       ListAtributes  := TAutoMapper.GetListAtributes(aClass[i]);
-
       Table := TAutoMapper.GetTableAttribute(aClass[i]);
       if TableList.IndexOf(Table) = -1 then
       begin
-         if FConnection.Driver = 'MSSQL' then
-            TMSSQL.CreateTable(FConnection, ListAtributes, Table)
-         else
-         if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
-            TFirebird.CreateTable(FConnection, ListAtributes, Table);
+         try
+           KeyList   := TStringList.Create(true);
+           FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateTable( ListAtributes, Table, KeyList) );
+           if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
+           with TFirebird(FConnection.CustomTypeDataBase) do
+           begin
+             FConnection.ExecutarSQL( CreateGenarator(Table , trim(KeyList.text)) );
+             FConnection.ExecutarSQL( SetGenarator(Table , trim(KeyList.text)) );
+             FConnection.ExecutarSQL( CrateTriggerGenarator(Table , trim(KeyList.text)) );
+           end;
+         finally
+           KeyList.free;
+         end;
       end;
   end;
   TableList.Free;
@@ -377,13 +385,7 @@ var
   List: TList;
   TableList: TStringList;
   FieldList: TStringList;
-
-  procedure AlterTable(Table, Field, Tipo: string; IsNull: boolean);
-  begin
-    FConnection.ExecutarSQL('Alter table ' + Table + ' Add ' + Field + ' ' +
-      Tipo + ' ' + ifthen(IsNull, '', 'NOT NULL'));
-  end;
-
+  ColumnExist:boolean;
 begin
   try
     TableList := TStringList.Create(true);
@@ -398,14 +400,15 @@ begin
         List := TAutoMapper.GetListAtributes(aClass[i]);
         for K := 0 to List.Count - 1 do
         begin
-          if FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) = -1 then
+          if PParamAtributies(List.Items[K]).Tipo <>'' then
           begin
-            if PParamAtributies(List.Items[K]).Tipo <>'' then
-            begin
-              AlterTable(Table, PParamAtributies(List.Items[K]).Name,
-              PParamAtributies(List.Items[K]).Tipo,
-              PParamAtributies(List.Items[K]).IsNull);
-            end;
+             ColumnExist:= FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) <> -1;
+             FConnection.ExecutarSQL(  FConnection.CustomTypeDataBase.AlterTable(
+                                       Table,
+                                       PParamAtributies(List.Items[K]).Name,
+                                       PParamAtributies(List.Items[K]).Tipo,
+                                       PParamAtributies(List.Items[K]).IsNull,
+                                       ColumnExist) );
           end;
         end;
       end;
@@ -414,7 +417,6 @@ begin
     TableList.free;
     FieldList.free;
   end;
-
 end;
 
 procedure TDataContext.InsertDirect;
