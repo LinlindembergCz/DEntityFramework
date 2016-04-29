@@ -37,8 +37,8 @@ uses
 
 procedure TFormPrincipal.Button2Click(Sender: TObject);
 begin
-  //TFactoryForm.GetDinamicForm( tpCliente );
-  TFactoryForm.GetForm( tpCliente);
+  TFactoryForm.GetDinamicForm( tpCliente );
+  //TFactoryForm.GetForm( tpCliente);
 end;
 
 procedure TFormPrincipal.Button1Click(Sender: TObject);
@@ -48,7 +48,8 @@ end;
 
 procedure TFormPrincipal.Button3Click(Sender: TObject);
 begin
-  TFactoryForm.GetForm( tpAluno );
+  TFactoryForm.GetDinamicForm( tpAluno );
+  //TFactoryForm.GetForm( tpAluno );
 end;
 
 procedure TFormPrincipal.Button4Click(Sender: TObject);

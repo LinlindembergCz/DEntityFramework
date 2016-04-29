@@ -62,7 +62,8 @@ uses
   InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
   ServiceAluno in 'Service\ServiceAluno.pas',
   ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
-  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno};
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
+  CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas';
 
 {R *.RES}
 
@@ -72,7 +73,7 @@ var
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
-  DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
+  DataContext.UpdateDataBase([ TCliente (*Entity*) ]);
   DataContext.Free;
   Application.run;
 //DUnitTestRunner.RunRegisteredTests;
