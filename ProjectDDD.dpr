@@ -63,7 +63,8 @@ uses
   ServiceAluno in 'Service\ServiceAluno.pas',
   ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
-  CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas';
+  CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
+  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas';
 
 {R *.RES}
 
