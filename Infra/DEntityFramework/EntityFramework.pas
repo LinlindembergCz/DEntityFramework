@@ -5,9 +5,8 @@ interface
 uses
   MidasLib, System.Classes, strUtils, RTTI, SysUtils, Variants,  Dialogs,  DateUtils,
   Datasnap.Provider, Forms, Datasnap.DBClient, System.Contnrs, Data.DB,
-  System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls,
-  EntityConsts, EntityConnection, EntityTypes,  Atributies , EntityBase,
-  EntityFunctions, LinqSQL;
+  System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls, EntityConsts,
+  EntityConnection, EntityTypes,  Atributies , EntityBase, EntityFunctions, LinqSQL;
 
 Type
   TDataContext = class(TCustomQueryAble)
@@ -16,7 +15,6 @@ Type
     drpProvider: TDataSetProvider;
     FConnection: TEntityConn;
     FProviderName: string;
-
     FTypeConnetion: TTypeConnection;
     procedure CreateTables(aClass: array of TClass);
     procedure AlterTables(aClass: array of TClass);
@@ -55,7 +53,6 @@ Type
     function ChangeCount:Integer;
     function GetFieldList: Data.DB.TFieldList;
   published
-
     property Connection: TEntityConn read FConnection write FConnection;
     property ProviderName: string read FProviderName write FProviderName;
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
@@ -107,13 +104,10 @@ begin
       FreeObjects;
       if FProviderName = '' then
       begin
-        Keys := TAutoMapper.GetAttributiesPrimaryKeyList( FEntity  );
-        FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+        Keys     := TAutoMapper.GetAttributiesPrimaryKeyList( Entity  );
+        SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
-        CreateProvider(qryQuery,
-                        trim(fStringReplace(TCustomQueryAble(QueryAble).SEntity,
-                        trim(StrFrom), '')));
-
+        CreateProvider( qryQuery, trim(SEntity) );
         CreateClientDataSet(drpProvider);
       end
       else
@@ -121,7 +115,7 @@ begin
         CreateClientDataSet( nil, GetQuery(QueryAble));
       end;
 
-      TAutoMapper.DataToEntity( ClientDataSet, FEntity );
+      TAutoMapper.DataToEntity( ClientDataSet, Entity );
       result := ClientDataSet;
     except
     on E:Exception do
@@ -131,6 +125,7 @@ begin
     end;
   finally
     Keys.free;
+    QueryAble.free;
   end;
 end;
 
@@ -140,8 +135,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    FEntity := TCustomQueryAble(QueryAble).Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+    Entity := TCustomQueryAble(QueryAble).Entity;
+    SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
 
     List := TList<TEntityBase>.Create;
     DataSet := TClientDataSet.Create(Application);
@@ -164,8 +159,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    FEntity := TCustomQueryAble(QueryAble).Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+    Entity := TCustomQueryAble(QueryAble).Entity;
+    SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
 
     List := TList<T>.Create;
     DataSet := TClientDataSet.Create(Application);
@@ -187,8 +182,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    FEntity := TCustomQueryAble(QueryAble).Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+    Entity := TCustomQueryAble(QueryAble).Entity;
+    SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
 
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := GetData(QueryAble);
@@ -294,9 +289,9 @@ procedure TDataContext.InsertDirect;
 var
   SQLInsert: string;
 begin
-  SQLInsert := 'Insert into ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) +
-    ' (' + TAutoMapper.GetAttributies(FEntity) + ') values ( ' +
-    TAutoMapper.GetValuesFields(FEntity) + ' )';
+  SQLInsert := 'Insert into ' + TAutoMapper.GetTableAttribute(Entity.ClassType) +
+    ' (' + TAutoMapper.GetAttributies(Entity) + ') values ( ' +
+    TAutoMapper.GetValuesFields(Entity) + ' )';
   Connection.ExecutarSQL(SQLInsert);
 end;
 
@@ -304,11 +299,11 @@ procedure TDataContext.Insert;
 var
   ListField, ListValues: TStringList;
 begin
-  FEntity.Validation;
+  Entity.Validation;
   if ClientDataSet <> nil then
   begin
-    ListField := TAutoMapper.GetAttributiesList(FEntity);
-    ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
+    ListField := TAutoMapper.GetAttributiesList(Entity);
+    ListValues := TAutoMapper.GetValuesFieldsList(Entity);
     ClientDataSet.append;
     pParserDataSet(ListField, ListValues, ClientDataSet);
     ClientDataSet.Post;
@@ -327,11 +322,11 @@ procedure TDataContext.UpdateDirect;
 var
   SQL: string;
 begin
-  SQL := 'Update ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) + ' Set ' +
-    fParserUpdate(TAutoMapper.GetAttributiesList(FEntity),
-    TAutoMapper.GetValuesFieldsList(FEntity)) + ' Where ' +
-    fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(FEntity),
-    TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity));
+  SQL := 'Update ' + TAutoMapper.GetTableAttribute(Entity.ClassType) + ' Set ' +
+    fParserUpdate(TAutoMapper.GetAttributiesList(Entity),
+    TAutoMapper.GetValuesFieldsList(Entity)) + ' Where ' +
+    fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(Entity),
+    TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity));
   Connection.ExecutarSQL(SQL);
 end;
 
@@ -339,9 +334,9 @@ procedure TDataContext.InputEntity(Contener: TComponent);
 begin
   //refatorar
   if Contener is TForm then
-     TAutoMapper.Puts(Contener, FEntity)
+     TAutoMapper.Puts(Contener, Entity)
   else
-     TAutoMapper.PutsFromControl(Contener as TCustomControl, FEntity);
+     TAutoMapper.PutsFromControl(Contener as TCustomControl, Entity);
 end;
 
 procedure TDataContext.ReadEntity(Contener: TComponent;
@@ -349,18 +344,18 @@ procedure TDataContext.ReadEntity(Contener: TComponent;
 begin
   //Refatorar
   if DataSet <> nil then
-    TAutoMapper.Read(Contener, FEntity, false, DataSet)
+    TAutoMapper.Read(Contener, Entity, false, DataSet)
   else if not ClientDataSet.IsEmpty then
-    TAutoMapper.Read(Contener, FEntity, false, ClientDataSet)
+    TAutoMapper.Read(Contener, Entity, false, ClientDataSet)
   else
-    TAutoMapper.Read(Contener, FEntity, false);
+    TAutoMapper.Read(Contener, Entity, false);
 end;
 
 procedure TDataContext.InitEntity(Contener: TComponent);
 begin
   //FEntity:= TEntityBase.create;
   Entity.Id:= 0;
-  TAutoMapper.Read(Contener, FEntity, true);
+  TAutoMapper.Read(Contener, Entity, true);
 end;
 
 procedure TDataContext.ReconcileError(DataSet: TCustomClientDataSet;
@@ -375,8 +370,8 @@ var
 begin
   if ClientDataSet <> nil then
   begin
-    ListField := TAutoMapper.GetAttributiesList(FEntity);
-    ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
+    ListField := TAutoMapper.GetAttributiesList(Entity);
+    ListValues := TAutoMapper.GetValuesFieldsList(Entity);
     ClientDataSet.Edit;
     pParserDataSet(ListField, ListValues, ClientDataSet);
     ClientDataSet.Post;
@@ -389,9 +384,9 @@ procedure TDataContext.DeleteDirect;
 var
   SQL: string;
 begin
-  SQL := 'Delete From ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) + ' ' +
-        ' Where ' + fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(FEntity),
-    TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity));
+  SQL := 'Delete From ' + TAutoMapper.GetTableAttribute(Entity.ClassType) + ' ' +
+        ' Where ' + fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(Entity),
+    TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity));
   Connection.ExecutarSQL(SQL);
   // verificar aqui se é o mesmo  registro
   if ClientDataSet <> nil then
@@ -411,8 +406,6 @@ begin
      drpProvider.Free;
   if qryQuery <> nil then
      qryQuery.Free;
-  if oFrom <> nil then
-     oFrom.Free;
   if Entity <> nil then
      Entity.Free;
 end;
@@ -420,7 +413,7 @@ end;
 procedure TDataContext.DataSetProviderGetTableName(Sender: TObject;
   DataSet: TDataSet; var TableName: string);
 begin
-  TableName := uppercase(FSEntity);
+  TableName := uppercase(SEntity);
 end;
 
 procedure TDataContext.Delete;

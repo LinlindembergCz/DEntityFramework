@@ -73,9 +73,9 @@ var
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
-  DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
+  {DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
   DataContext.UpdateDataBase([ TCliente (*Entity*) ]);
-  DataContext.Free;
+  DataContext.Free;}
   Application.run;
 //DUnitTestRunner.RunRegisteredTests;
   ReportMemoryLeaksOnShutdown := true;
