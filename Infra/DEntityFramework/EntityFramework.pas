@@ -5,20 +5,25 @@ interface
 uses
   MidasLib, System.Classes, strUtils, RTTI, SysUtils, Variants,  Dialogs,  DateUtils,
   Datasnap.Provider, Forms, Datasnap.DBClient, System.Contnrs, Data.DB,
-  System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls, EntityConsts,
-  EntityConnection, EntityTypes,  Atributies , EntityBase, EntityFunctions, LinqSQL;
+  System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls,
+  EntityConsts, EntityConnection, EntityTypes,  Atributies , EntityBase,
+  EntityFunctions, LinqSQL, System.TypInfo, System.threading;
 
 Type
   TDataContext = class(TCustomQueryAble)
   private
+    Classes: array of TClass;
+    TableList:TStringList;
     qryQuery: TDataSet;
     drpProvider: TDataSetProvider;
     FConnection: TEntityConn;
     FProviderName: string;
     FTypeConnetion: TTypeConnection;
-    procedure CreateTables(aClass: array of TClass);
-    procedure AlterTables(aClass: array of TClass);
+    FClientDataSet: TClientDataSet;
+    procedure CreateTables;//(aClass: array of TClass);
+    procedure AlterTables;
     procedure FreeObjects;
+    procedure CriarTabela(i: integer);
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet;
       var TableName: string); virtual;
@@ -29,13 +34,13 @@ Type
     procedure CreateProvider(var proSQLQuery: TDataSet;
       prsNomeProvider: string);
   public
-    ClientDataSet: TClientDataSet;
     destructor Destroy; override;
     constructor Create(proConnection: TEntityConn = nil );virtual;
+
     procedure InputEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
     procedure InitEntity(Contener: TComponent);
-    procedure UpdateDataBase(aClass: array of TClass);
+    procedure UpdateDataBase(aClasses: array of TClass);
     function GetEntity(QueryAble: TQueryAble): TEntityBase; overload;
     function GetEntity<T: Class>(QueryAble: TQueryAble): T; overload;
     function GetData(QueryAble: TQueryAble): OleVariant;
@@ -53,6 +58,7 @@ Type
     function ChangeCount:Integer;
     function GetFieldList: Data.DB.TFieldList;
   published
+    property ClientDataSet: TClientDataSet read FClientDataSet write FClientDataSet;
     property Connection: TEntityConn read FConnection write FConnection;
     property ProviderName: string read FProviderName write FProviderName;
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
@@ -104,10 +110,13 @@ begin
       FreeObjects;
       if FProviderName = '' then
       begin
-        Keys     := TAutoMapper.GetAttributiesPrimaryKeyList( Entity  );
-        SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+        Keys := TAutoMapper.GetAttributiesPrimaryKeyList( FEntity  );
+        FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
-        CreateProvider( qryQuery, trim(SEntity) );
+        CreateProvider(qryQuery,
+                        trim(fStringReplace(TCustomQueryAble(QueryAble).SEntity,
+                        trim(StrFrom), '')));
+
         CreateClientDataSet(drpProvider);
       end
       else
@@ -115,7 +124,7 @@ begin
         CreateClientDataSet( nil, GetQuery(QueryAble));
       end;
 
-      TAutoMapper.DataToEntity( ClientDataSet, Entity );
+      TAutoMapper.DataToEntity( ClientDataSet, FEntity );
       result := ClientDataSet;
     except
     on E:Exception do
@@ -125,7 +134,6 @@ begin
     end;
   finally
     Keys.free;
-    QueryAble.free;
   end;
 end;
 
@@ -135,8 +143,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    Entity := TCustomQueryAble(QueryAble).Entity;
-    SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    FEntity := TCustomQueryAble(QueryAble).Entity;
+    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     List := TList<TEntityBase>.Create;
     DataSet := TClientDataSet.Create(Application);
@@ -159,8 +167,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    Entity := TCustomQueryAble(QueryAble).Entity;
-    SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    FEntity := TCustomQueryAble(QueryAble).Entity;
+    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     List := TList<T>.Create;
     DataSet := TClientDataSet.Create(Application);
@@ -182,8 +190,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    Entity := TCustomQueryAble(QueryAble).Entity;
-    SEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    FEntity := TCustomQueryAble(QueryAble).Entity;
+    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := GetData(QueryAble);
@@ -208,90 +216,128 @@ begin
   end;
 end;
 
-procedure TDataContext.CreateTables(aClass: array of TClass);
+procedure TDataContext.CriarTabela(i:integer);
+  var
+    Table: string;
+    ListAtributes: TList;
+    KeyList: TStringList;
+    classe:TClass;
+begin
+   classe := Classes[i];
+   Table := TAutoMapper.GetTableAttribute(classe);
+   if Pos(uppercase(Table), uppercase(TableList.Text) ) = 0 then
+   begin
+     try
+        ListAtributes  := nil;
+        ListAtributes  := TAutoMapper.GetListAtributes(classe);
+        KeyList   := TStringList.Create(true);
+        if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
+        begin
+          with TFirebird(FConnection.CustomTypeDataBase) do
+          begin
+            FConnection.ExecutarSQL( CreateGenarator(Table , trim(KeyList.text)) );
+            FConnection.ExecutarSQL( SetGenarator(Table , trim(KeyList.text)) );
+            FConnection.ExecutarSQL( CrateTriggerGenarator(Table , trim(KeyList.text)) );
+          end;
+        end
+        else
+           FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateTable( ListAtributes, Table, KeyList) );
+        //ListAtributes.Free;
+     finally
+        KeyList.Free;
+     end;
+   end;
+end;
+
+procedure TDataContext.UpdateDataBase(aClasses: array of TClass);
+var
+   I:integer;
+begin
+   if FConnection <> nil then
+   begin
+      TableList := TStringList.Create( true );
+      FConnection.GetTableNames( TableList );
+      SetLength( Classes , length(aClasses) );
+      for I := 0 to length(aClasses)-1 do
+      begin
+         Classes[i] := aClasses[i];
+      end;
+      if length(aClasses) > 0 then
+      begin
+        CreateTables;
+        AlterTables;
+      end;
+   end;
+end;
+
+procedure TDataContext.CreateTables;
 var
   i: integer;
   Table: string;
-  ListAtributes: TList;
-  TableList, KeyList: TStringList;
+  List: TList;
+  FieldList: TStringList;
+  ColumnExist:boolean;
+      ListAtributes: TList;
+    KeyList: TStringList;
 begin
-  TableList := TStringList.Create(true);
+  TParallel.for( 0, length(Classes) - 1 ,
+                  procedure (Idx: Integer)
+                  var Thr:TThread;
+                  begin
+                     Thr:= TThread.CurrentThread;
 
-  FConnection.GetTableNames(TableList);
-  for i := 0 to length(aClass) - 1 do
-  begin
-      ListAtributes  := nil;
-      ListAtributes  := TAutoMapper.GetListAtributes(aClass[i]);
-      Table := TAutoMapper.GetTableAttribute(aClass[i]);
-      if TableList.IndexOf(Table) = -1 then
-      begin
-         try
-           KeyList   := TStringList.Create(true);
-           FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateTable( ListAtributes, Table, KeyList) );
-           if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
-           with TFirebird(FConnection.CustomTypeDataBase) do
-           begin
-             FConnection.ExecutarSQL( CreateGenarator(Table , trim(KeyList.text)) );
-             FConnection.ExecutarSQL( SetGenarator(Table , trim(KeyList.text)) );
-             FConnection.ExecutarSQL( CrateTriggerGenarator(Table , trim(KeyList.text)) );
-           end;
-         finally
-           KeyList.free;
-         end;
-      end;
-  end;
-  TableList.Free;
-  //ListAtributes.clear;
+                     Thr.Queue( Thr,
+                                    procedure
+                                    begin
+                                       CriarTabela(Idx);
+                                    end);
+                  end);
 end;
 
-procedure TDataContext.AlterTables(aClass: array of TClass);
+procedure TDataContext.AlterTables;
 var
   i, K: integer;
   Table: string;
   List: TList;
-  TableList: TStringList;
   FieldList: TStringList;
   ColumnExist:boolean;
 begin
-  try
-    TableList := TStringList.Create(true);
-    FieldList := TStringList.Create(true);
-    FConnection.GetTableNames(TableList);
-    for i := 0 to length(aClass) - 1 do
-    begin
-      Table := TAutoMapper.GetTableAttribute(aClass[i]);
-      if TableList.IndexOf(Table) <> -1 then
-      begin
-        FConnection.GetFieldNames(FieldList, Table);
-        List := TAutoMapper.GetListAtributes(aClass[i]);
-        for K := 0 to List.Count - 1 do
-        begin
-          if PParamAtributies(List.Items[K]).Tipo <>'' then
-          begin
-             ColumnExist:= FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) <> -1;
-             FConnection.ExecutarSQL(  FConnection.CustomTypeDataBase.AlterTable(
-                                       Table,
-                                       PParamAtributies(List.Items[K]).Name,
-                                       PParamAtributies(List.Items[K]).Tipo,
-                                       PParamAtributies(List.Items[K]).IsNull,
-                                       ColumnExist) );
-          end;
-        end;
-      end;
+    try
+       FieldList := TStringList.Create(true);
+       for i := 0 to length(Classes) - 1 do
+       begin
+         Table := TAutoMapper.GetTableAttribute(Classes[i]);
+         if TableList.IndexOf(Table) <> -1 then
+         begin
+           FConnection.GetFieldNames(FieldList, Table);
+           List := TAutoMapper.GetListAtributes(Classes[i]);
+           for K := 0 to List.Count - 1 do
+           begin
+             if PParamAtributies(List.Items[K]).Tipo <>'' then
+             begin
+                ColumnExist:= FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) <> -1;
+                FConnection.ExecutarSQL(  FConnection.CustomTypeDataBase.AlterTable(
+                                          Table,
+                                          PParamAtributies(List.Items[K]).Name,
+                                          PParamAtributies(List.Items[K]).Tipo,
+                                          PParamAtributies(List.Items[K]).IsNull,
+                                          ColumnExist) );
+             end;
+           end;
+         end;
+       end;
+    finally
+      FieldList.Free;
     end;
-  finally
-    TableList.free;
-    FieldList.free;
-  end;
 end;
 
 procedure TDataContext.InsertDirect;
 var
   SQLInsert: string;
 begin
-  SQLInsert := 'Insert into ' + TAutoMapper.GetTableAttribute(Entity.ClassType) +
-    ' (' + TAutoMapper.GetAttributies(Entity) + ') values ( ' +
-    TAutoMapper.GetValuesFields(Entity) + ' )';
+  SQLInsert := 'Insert into ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) +
+    ' (' + TAutoMapper.GetAttributies(FEntity) + ') values ( ' +
+    TAutoMapper.GetValuesFields(FEntity) + ' )';
   Connection.ExecutarSQL(SQLInsert);
 end;
 
@@ -299,11 +345,11 @@ procedure TDataContext.Insert;
 var
   ListField, ListValues: TStringList;
 begin
-  Entity.Validation;
+  FEntity.Validation;
   if ClientDataSet <> nil then
   begin
-    ListField := TAutoMapper.GetAttributiesList(Entity);
-    ListValues := TAutoMapper.GetValuesFieldsList(Entity);
+    ListField := TAutoMapper.GetAttributiesList(FEntity);
+    ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
     ClientDataSet.append;
     pParserDataSet(ListField, ListValues, ClientDataSet);
     ClientDataSet.Post;
@@ -312,31 +358,25 @@ begin
   InsertDirect;
 end;
 
-procedure TDataContext.UpdateDataBase(aClass: array of TClass);
-begin
-  CreateTables(aClass);
-  AlterTables(aClass);
-end;
-
 procedure TDataContext.UpdateDirect;
 var
   SQL: string;
 begin
-  SQL := 'Update ' + TAutoMapper.GetTableAttribute(Entity.ClassType) + ' Set ' +
-    fParserUpdate(TAutoMapper.GetAttributiesList(Entity),
-    TAutoMapper.GetValuesFieldsList(Entity)) + ' Where ' +
-    fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(Entity),
-    TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity));
-  Connection.ExecutarSQL(SQL);
+    SQL := 'Update ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) + ' Set ' +
+    fParserUpdate(TAutoMapper.GetAttributiesList(FEntity),
+    TAutoMapper.GetValuesFieldsList(FEntity)) + ' Where ' +
+    fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(FEntity),
+    TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity));
+    Connection.ExecutarSQL(SQL);
 end;
 
 procedure TDataContext.InputEntity(Contener: TComponent);
 begin
   //refatorar
   if Contener is TForm then
-     TAutoMapper.Puts(Contener, Entity)
+     TAutoMapper.Puts(Contener, FEntity)
   else
-     TAutoMapper.PutsFromControl(Contener as TCustomControl, Entity);
+     TAutoMapper.PutsFromControl(Contener as TCustomControl, FEntity);
 end;
 
 procedure TDataContext.ReadEntity(Contener: TComponent;
@@ -344,18 +384,18 @@ procedure TDataContext.ReadEntity(Contener: TComponent;
 begin
   //Refatorar
   if DataSet <> nil then
-    TAutoMapper.Read(Contener, Entity, false, DataSet)
+    TAutoMapper.Read(Contener, FEntity, false, DataSet)
   else if not ClientDataSet.IsEmpty then
-    TAutoMapper.Read(Contener, Entity, false, ClientDataSet)
+    TAutoMapper.Read(Contener, FEntity, false, ClientDataSet)
   else
-    TAutoMapper.Read(Contener, Entity, false);
+    TAutoMapper.Read(Contener, FEntity, false);
 end;
 
 procedure TDataContext.InitEntity(Contener: TComponent);
 begin
   //FEntity:= TEntityBase.create;
   Entity.Id:= 0;
-  TAutoMapper.Read(Contener, Entity, true);
+  TAutoMapper.Read(Contener, FEntity, true);
 end;
 
 procedure TDataContext.ReconcileError(DataSet: TCustomClientDataSet;
@@ -370,8 +410,8 @@ var
 begin
   if ClientDataSet <> nil then
   begin
-    ListField := TAutoMapper.GetAttributiesList(Entity);
-    ListValues := TAutoMapper.GetValuesFieldsList(Entity);
+    ListField := TAutoMapper.GetAttributiesList(FEntity);
+    ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
     ClientDataSet.Edit;
     pParserDataSet(ListField, ListValues, ClientDataSet);
     ClientDataSet.Post;
@@ -384,9 +424,9 @@ procedure TDataContext.DeleteDirect;
 var
   SQL: string;
 begin
-  SQL := 'Delete From ' + TAutoMapper.GetTableAttribute(Entity.ClassType) + ' ' +
-        ' Where ' + fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(Entity),
-    TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity));
+  SQL := 'Delete From ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) + ' ' +
+        ' Where ' + fParserWhere(TAutoMapper.GetAttributiesPrimaryKeyList(FEntity),
+    TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity));
   Connection.ExecutarSQL(SQL);
   // verificar aqui se é o mesmo  registro
   if ClientDataSet <> nil then
@@ -406,14 +446,18 @@ begin
      drpProvider.Free;
   if qryQuery <> nil then
      qryQuery.Free;
+  if oFrom <> nil then
+     oFrom.Free;
   if Entity <> nil then
      Entity.Free;
+  if TableList <> nil then
+     TableList.Free;
 end;
 
 procedure TDataContext.DataSetProviderGetTableName(Sender: TObject;
   DataSet: TDataSet; var TableName: string);
 begin
-  TableName := uppercase(SEntity);
+  TableName := uppercase(FSEntity);
 end;
 
 procedure TDataContext.Delete;
@@ -436,14 +480,13 @@ end;
 
 function TDataContext.ChangeCount: Integer;
 begin
-  result := ClientDataSet.changeCount;
+  result := FClientDataSet.changeCount;
 end;
 
 constructor TDataContext.Create(proConnection: TEntityConn = nil);
 begin
   FConnection := proConnection;
 end;
-
 
 procedure TDataContext.CreateProvider(var proSQLQuery: TDataSet;
   prsNomeProvider: string);
@@ -482,7 +525,6 @@ begin
 end;
 
 { TLinq }
-
 
 function From(E: TEntityBase): TFrom;
 begin

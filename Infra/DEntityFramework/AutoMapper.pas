@@ -141,7 +141,7 @@ var
 
 begin
   try
-    List := TObjectList.Create;
+    List := TObjectList.Create(true);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Obj.ClassInfo);
     for Prop in TypObj.GetProperties do
@@ -434,7 +434,6 @@ var
   ctx, ctx2: TRttiContext;
   Atrib: TCustomAttribute;
   L: TStringList;
-  FoundAttribute: boolean;
 begin
   try
     L := TStringList.Create(true);
@@ -907,6 +906,7 @@ begin
           try
             if Atrib is EntityField then
             begin
+              Found := true;
               TAutoMapper.SetAtribute(Entity, Prop.Name,
                 TAutoMapper.GetTableAttribute(Entity.ClassType) + '.' +
                 EntityField(Atrib).Name, InContext);
@@ -926,7 +926,6 @@ begin
               result := true;
         end;
       end;
-
     end;
   finally
     ctx.Free;

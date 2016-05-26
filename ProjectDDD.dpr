@@ -6,6 +6,7 @@ program ProjectDDD;
 
 uses
   DUnitTestRunner,
+  System.Classes,
   Forms,
   Vcl.Themes,
   Vcl.Styles,
@@ -64,19 +65,21 @@ uses
   ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
-  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas';
+  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas',
+  Frame in 'UI\Views\Frame.pas' {Frame1: TFrame};
 
 {R *.RES}
 
 var
-  DataContext: TDataContext;
+ DataContext: TDataContext;
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
-  {DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
-  DataContext.UpdateDataBase([ TCliente (*Entity*) ]);
-  DataContext.Free;}
+  DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
+  DataContext.UpdateDataBase([ TCliente , Fornecedor, Fabricante (*Entity*) ]);
+
   Application.run;
+  DataContext.Free;
 //DUnitTestRunner.RunRegisteredTests;
- // ReportMemoryLeaksOnShutdown := true;
+  ReportMemoryLeaksOnShutdown := true;
 end.

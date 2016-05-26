@@ -86,7 +86,8 @@ begin
         ShowMessage('Primary Key is riquered!');
   finally
      CreateScript.Free;
-     Key.Free;
+     ListKey.Free;
+     //Key.Free;
   end;
 end;
 

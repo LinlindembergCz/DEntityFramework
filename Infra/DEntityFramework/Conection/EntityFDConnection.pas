@@ -6,9 +6,9 @@ uses
   Forms,EntityConnection,FireDAC.Phys.FBDef, FireDAC.UI.Intf, FireDAC.VCLUI.Wait, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
-  FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Phys.IBBase, FireDAC.Stan.Param,
-  FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
-  DBClient, classes, Data.DB, SysUtils;
+  FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Phys.MSSQLDef,FireDAC.Phys.MSSQL,
+  FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet, DBClient, classes, Data.DB, SysUtils;
 
 type
   TEntityFDConnection = class(TEntityConn)
@@ -26,6 +26,11 @@ type
 implementation
 
 uses EntityFunctions, EntityMSSQL, EntityFirebird;
+
+resourcestring
+  StrMSSQL = 'MSSQL';
+  StrFirebird = 'Firebird';
+  StrFB = 'FB';
 
 { TLinqFDConnection }
 
@@ -105,18 +110,21 @@ begin
   CustomConnection := TFDConnection.Create(application);
   CustomConnection.LoginPrompt:= false;
   CustomConnection.BeforeConnect:= BeforeConnect;
+
   FDriver   := aDriver;
   FServer   := aServer;
   FDataBase := aDataBase;
   FUser     := aUser;
   FPassword := aPassword;
-  if FDriver = 'MSSSQL' then
+  if FDriver = StrMSSQL then
      CustomTypeDataBase:= TMSSQL.create;
-  if (FDriver = 'Firebird') or (FDriver = 'FB') then
+  if (FDriver = StrFirebird) or (FDriver = StrFB) then
      CustomTypeDataBase:= TFirebird.create;
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);
+var
+i:integer;
 begin
   with TFDConnection(CustomConnection) do
   begin
@@ -126,6 +134,8 @@ begin
     Params.Values['DataBase']   := FDataBase;
     Params.Values['User_Name']  := FUser;
     Params.Values['Password']   := FPassword;
+   //if Params.Find('yes',I) then
+    Params.Values['OSAuthent']  := 'yes';
   end;
 end;
 

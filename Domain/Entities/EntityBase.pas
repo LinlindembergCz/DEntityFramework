@@ -12,10 +12,9 @@ type
     Mapped: boolean;
   //FDataCadastro: TEntityDatetime;
   public
-
     procedure Validation;virtual;
     constructor Create;virtual;
-    destructor Destroy;virtual;
+    destructor Destroy;override;
   published
     [EntityField('ID','integer',false,true, true)]
     property Id:TInteger read FId write FId;

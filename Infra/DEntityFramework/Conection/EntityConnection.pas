@@ -11,7 +11,6 @@ type
   TEntityConn = class
   private
     FCustomTypeDataBase: TCustomDataBase;
-    procedure SetCustomTypeDataBase(const Value: TCustomDataBase);
   protected
     FCustomConnection : TCustomConnection;
     FDataBase: string;
@@ -31,7 +30,7 @@ type
     function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TDataSet; virtual; abstract;
     procedure LoadFromFile(IniFileName: string);virtual; abstract;
     property CustomConnection: TCustomConnection read FCustomConnection write FCustomConnection;
-    property CustomTypeDataBase: TCustomDataBase read FCustomTypeDataBase write SetCustomTypeDataBase;
+    property CustomTypeDataBase: TCustomDataBase read FCustomTypeDataBase write FCustomTypeDataBase;
     property Driver: string read FDriver write FDriver;
     property DataBase: string read FDataBase write FDataBase;
     property Server : string read FServer write FServer;
@@ -109,11 +108,6 @@ begin
     end;
     Field.Name := ADataSet.Name + ADataSet.Fields[i].FieldName;
   end;
-end;
-
-procedure TEntityConn.SetCustomTypeDataBase(const Value: TCustomDataBase);
-begin
-  FCustomTypeDataBase := Value;
 end;
 
 end.

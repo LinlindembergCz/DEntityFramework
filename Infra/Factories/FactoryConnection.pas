@@ -23,18 +23,21 @@ class function TFactoryConnection.GetConnection: TEntityConn;
 begin
   If FConnection = nil Then
   begin
-   //DBExpress
-   { FConnection := TEntitySQLConnection.Create('FB',
+    { FConnection := TEntitySQLConnection.Create('FB',
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',
                                                  'D:\Lindemberg\Linq\DDD\DBLINQ.FDB'); }
-    //FireDAC
-      FConnection := TEntityFDConnection.Create('FB',
+   {   FConnection := TEntityFDConnection.Create('FB',
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',
-                                                 'D:\Lindemberg\EntityFramework\DBLINQ.FDB');
+                                                 'D:\Lindemberg\EntityFramework\DBLINQ.FDB');}
+      FConnection := TEntityFDConnection.Create('MSSQL',
+                                                 'sa',
+                                                 '',
+                                                 'CORTEZ\SRV_TSW_STARTISS',
+                                                 'DBLINQ');
   end;
   result:= FConnection;
 end;
