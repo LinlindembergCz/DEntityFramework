@@ -16,7 +16,7 @@ type
      Constructor Create(dbContext:Context.TContext);virtual;
 
      procedure RefreshDataSet; virtual;
-     function  LoadDataSet(iId:Integer = 0): TDataSet;virtual;
+     function  LoadDataSet(iId:Integer; Fields: string = ''): TDataSet;virtual;
      function  LoadEntity(iId: Integer = 0): TEntityBase;virtual;
      procedure Delete;virtual;
      procedure AddOrUpdate( State: TEntityState);virtual;
@@ -58,9 +58,9 @@ begin
    inherited Create;
 end;
 
-function TRepositoryBase.LoadDataSet(iId: Integer): TDataSet;
+function TRepositoryBase.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
 begin
-  result := _RepositoryBase.LoadDataSet(iId)
+  result := _RepositoryBase.LoadDataSet(iId, Fields)
 end;
 
 function TRepositoryBase.LoadEntity(iId: Integer): TEntityBase;

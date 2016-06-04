@@ -492,7 +492,7 @@ procedure TDataContext.CreateProvider(var proSQLQuery: TDataSet;
   prsNomeProvider: string);
 begin
   drpProvider                := TDataSetProvider.Create(Application);
-  drpProvider.Name           := prsNomeProvider;
+  drpProvider.Name           := prsNomeProvider+ formatdatetime('SS', now);
   drpProvider.DataSet        := proSQLQuery;
   drpProvider.UpdateMode     := upWhereKeyOnly;
 //drpProvider.UpdateMode     := upWhereAll;
@@ -513,7 +513,7 @@ begin
   else
   if FProviderName <> '' then
   begin
-    ClientDataSet.ProviderName := FProviderName;
+    ClientDataSet.ProviderName := FProviderName+ formatdatetime('SS', now);
     ClientDataSet.DataRequest(SQL);
   end
   else

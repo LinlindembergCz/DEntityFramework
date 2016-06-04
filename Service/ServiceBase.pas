@@ -17,7 +17,7 @@ type
     constructor Create( pRepository: IRepositoryBase);virtual;
 
     procedure RefresData;virtual;
-    function  Load(iId:Integer = 0): TDataSet;virtual;
+    function  Load(iId:Integer; Fields: string = ''): TDataSet;virtual;
     function  LoadEntity(iId: Integer = 0): TEntityBase;virtual;
     procedure Delete;virtual;
     procedure Post( State: TEntityState);virtual;
@@ -89,9 +89,9 @@ begin
   result:= Repository.Context.ChangeCount;
 end;
 
-function TServiceBase.Load(iId:Integer = 0): TDataSet;
+function TServiceBase.Load(iId:Integer; Fields: string = ''): TDataSet;
 begin
-  result := Repository.LoadDataSet(iID);
+  result := Repository.LoadDataSet(iID , Fields );
 end;
 
 function TServiceBase.LoadEntity(iId: Integer= 0): TEntityBase;

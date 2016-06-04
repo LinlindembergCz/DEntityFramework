@@ -85,16 +85,24 @@ Coordinates=539,10,58,51
 Coordinates=315,144,47,51
 
 []
-Coordinates=73,212,77,51
-Visible=True
-
-[DataGeneratorAdapter1]
-Visible=True
-Coordinates=1000,70,130,33
-
-[AdapterBindSource1]
 Coordinates=730,70,116,105
+Visible=False
 
-[BindingsList1]
-Coordinates=113,1,82,33
+[edtEmail]
+Coordinates=209,1,57,51
+
+[Label1]
+Coordinates=113,71,46,51
+
+[edtCPFCNPJ]
+Coordinates=94,134,77,51
+
+[Button3]
+Coordinates=113,1,53,51
+
+[Button1]
+Coordinates=394,80,53,51
+
+[Observacao]
+Coordinates=209,71,73,51
 

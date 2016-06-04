@@ -27,7 +27,7 @@ begin
      tpCliente   : result:= 'viewCliente.TFormViewCliente';
      tpFornecedor: result:= 'viewFornecedor.TFormViewFornecedor';
      tpFabricante: result:= 'ViewFabricante.TFormViewFabricante';
-     tpAluno: result:= 'viewAluno.TFormViewAluno';
+     tpAluno     : result:= 'viewAluno.TFormViewAluno';
   else
     begin
       showmessage('Verificar declaração "initialization RegisterClass" requerido no form !');
@@ -55,7 +55,9 @@ var
   Form          : TFormViewBase;
 begin
   result:= nil;
-  Form := TFormViewBase.create( TFactoryController.GetController( E ) );
+
+  Form := TFormViewBase.create( TFactoryController.GetController( E ) ,
+                                TFactoryController.GetController( E ) );
   if Form <> nil then
   begin
     TAutoMapper.CreateDinamicView( TFactoryEntity.GetEntity(E) , Form, Form.TabSheet2);
@@ -80,8 +82,8 @@ begin
 
   if Instance <> nil then
   begin
-    Form := Instance.Create( TFactoryController.GetController( E ) );
-
+    Form := Instance.Create( TFactoryController.GetController( E ) ,
+                             TFactoryController.GetController( E )  );
     if Form <> nil then
     begin
       ShowForm( Form , modal);

@@ -25,8 +25,7 @@ type
     procedure UpdateState(const ValueState: TEntityState);
   public
     constructor Create( pService:IServiceBase );virtual;
-
-    function Load(iId:Integer = 0): TDataSet; virtual;
+    function Load(iId:Integer; Fields: string = '' ): TDataSet; virtual;
     procedure Refresh; virtual;
     procedure Read; virtual;
     procedure Insert(E: TEnumEntities); virtual;
@@ -101,9 +100,9 @@ begin
   end;
 end;
 
-function TControllerBase.Load(iId:Integer = 0): TDataSet;
+function TControllerBase.Load(iId:Integer; Fields: string = ''): TDataSet;
 begin
-  result := Service.Load( iId );
+  result := Service.Load( iId , Fields);
 end;
 
 procedure TControllerBase.Insert(E: TEnumEntities);
@@ -158,14 +157,13 @@ end;
 procedure TControllerBase.Apply;
 begin
   Service.Persist;
-  Refresh;
+  //Refresh;
 end;
 
 procedure TControllerBase.Refresh;
 begin
    UpdateState(esBrowser);
    Service.RefresData;
-   Read;
 end;
 
 procedure TControllerBase.SetContener(const Value: TComponent);
@@ -217,6 +215,7 @@ begin
     LookUpContext.Free;
   end;
 end;
+
 
 function TControllerBase._AddRef: Integer;
 begin

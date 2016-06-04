@@ -121,7 +121,7 @@
         <DCCReference Include="UI\Views\viewFornecedor.pas">
             <Form>FormViewFornecedor</Form>
         </DCCReference>
-        <DCCReference Include="Domain\Factories\FactoryRepository.pas"/>
+        <DCCReference Include="Infra\Factories\FactoryRepository.pas"/>
         <DCCReference Include="Domain\IRepositories\InterfaceRepository.pas"/>
         <DCCReference Include="Domain\ValuesObjects\Email.pas"/>
         <DCCReference Include="Domain\Entities\EntityBase.pas"/>
@@ -134,7 +134,7 @@
         <DCCReference Include="Infra\Repositories\RepositoryBase.pas"/>
         <DCCReference Include="Domain\ValuesObjects\CPF.pas"/>
         <DCCReference Include="Infra\DEntityFramework\AutoMapper.pas"/>
-        <DCCReference Include="Domain\Factories\FactoryService.pas"/>
+        <DCCReference Include="Service\Factories\FactoryService.pas"/>
         <DCCReference Include="Domain\IService\InterfaceServiceCliente.pas"/>
         <DCCReference Include="Service\ServiceCliente.pas"/>
         <DCCReference Include="Domain\Entities\classCliente.pas">
@@ -172,6 +172,12 @@
         <DCCReference Include="UI\Views\viewAluno.pas">
             <Form>FormViewAluno</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Infra\DEntityFramework\Conection\CustomDataBase.pas"/>
+        <DCCReference Include="Infra\DEntityFramework\LinqSQL.pas"/>
+        <DCCReference Include="UI\Views\Frame.pas">
+            <Form>Frame1</Form>
+            <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <None Include="ModelSupport_Project2Tests\Entity\default.txvpck"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txaPackage"/>
@@ -292,13 +298,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule"/>
                 <DeployFile LocalName="..\ProjectDDD.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjectDDD.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule"/>
                 <DeployFile LocalName="..\Linq\ProjectDDD.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjectDDD.exe</RemoteName>

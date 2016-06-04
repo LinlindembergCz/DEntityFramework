@@ -7,7 +7,7 @@ uses
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   ViewBase, Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
   Vcl.ExtCtrls, Datasnap.DBClient,
-  System.Rtti, Vcl.Mask;
+  System.Rtti, Vcl.Mask, Data.Bind.ObjectScope, Data.Bind.Components;
 
 type
   TFormViewCliente = class(TFormViewBase)

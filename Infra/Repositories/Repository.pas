@@ -23,7 +23,7 @@ type
     destructor Destroy;override;
 
     procedure RefreshDataSet;virtual;
-    function  LoadDataSet(iId:Integer = 0) : TDataSet;virtual;
+    function  LoadDataSet(iId:Integer ; Fields: string = '') : TDataSet;virtual;
     function  LoadEntity(iId: Integer = 0): T;virtual;
     procedure Delete;virtual;
     procedure AddOrUpdate( State:TEntityState);virtual;
@@ -48,12 +48,12 @@ begin
   FEntity    := dbContext.Entity as T;
 end;
 
-function TRepository<T>.LoadDataSet(iId: Integer): TDataSet;
+function TRepository<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
 begin
   if iId = 0 then
-     result := FDbContext.GetDataset(From(FEntity).Select) as TDataSet
+     result := FDbContext.GetDataset(From(FEntity).Select( Fields) ) as TDataSet
   else
-     result := FDbContext.GetDataset(From(FEntity).where( FEntity.id = iId ).Select) as TDataSet;
+     result := FDbContext.GetDataset(From(FEntity).where( FEntity.id = iId ).Select( Fields)) as TDataSet;
 end;
 
 function TRepository<T>.LoadEntity(iId: Integer): T;

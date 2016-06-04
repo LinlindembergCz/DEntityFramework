@@ -6,8 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DBXFirebird, Data.DB, Data.SqlExpr,
   Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient, Data.DBXMSSQL,
-  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper,
-  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController, FactoryController, EnumEntity;
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper, strUtils ,
+  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController, FactoryController,
+  EnumEntity, Data.Bind.ObjectScope;
 
 type
   TFormViewBase = class(TForm)
@@ -29,7 +30,6 @@ type
     Button1: TButton;
     Button3: TButton;
     procedure btnNewClick(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure btnApplyClick(Sender: TObject);
     procedure btnEditClick(Sender: TObject);
     procedure btnRemoveClick(Sender: TObject);
@@ -39,38 +39,66 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
-    FE: TEnumEntities;
+    FEnumEntities: TEnumEntities;
     procedure SetAutoApplyUpdate(const Value: boolean);
+    procedure LoadViewModel;
     { Private declarations }
   protected
-    Controller : IControllerBase;
+    ControllerQuery : IControllerBase;
+    ControllerCommand: IControllerBase;
     FAutoApplyUpdate: boolean;
   public
     { Public declarations }
-    property E : TEnumEntities read FE;
+    property EnumEntities : TEnumEntities read FEnumEntities;
     property AutoApplyUpdate : boolean read FAutoApplyUpdate write SetAutoApplyUpdate;
-    constructor Create( pController : IControllerBase );
+    constructor Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase );
   end;
-
 
 implementation
 
 {$R *.dfm}
 
-constructor TFormViewBase.Create( pController : IControllerBase );
+constructor TFormViewBase.Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase );
 begin
-  Controller := pController;
-  Controller.Contener := self;
+  ControllerQuery := pControllerQuery;
+  ControllerCommand := pControllerCommand;
+  ControllerCommand.Contener := self;
   inherited Create(Application);
-  dsEntity.DataSet := Controller.Load;
-  Controller.EntityToDBGrid(grdEntity);
+
+  LoadViewModel;
+
   pgPrincipal.ActivePageIndex:= 0;
   AutoApplyUpdate := true;
 end;
 
+procedure TFormViewBase.LoadViewModel;
+var
+  ViewModelList: TStringList;
+  I: Integer;
+begin
+   ControllerQuery.EntityToDBGrid(grdEntity);
+   ViewModelList := TStringList.Create;
+   ViewModelList.Delimiter := ',';
+   for I := 0 to grdEntity.Columns.Count - 1 do
+   begin
+     ViewModelList.Add( ifthen( grdEntity.Columns[I].ImeName <> '',
+                                grdEntity.Columns[I].ImeName ,
+                                grdEntity.Columns[I].FieldName ) );
+   end;
+   if ViewModelList.Count > 0 then
+   begin
+     dsEntity.DataSet := ControllerQuery.Load(0, ViewModelList.DelimitedText);
+   end
+   else
+   begin
+     dsEntity.DataSet := ControllerQuery.Load(0);
+   end;
+end;
+
 procedure TFormViewBase.grdEntityDblClick(Sender: TObject);
 begin
-  Controller.Read;
+  ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerCommand.Read;
 end;
 
 procedure TFormViewBase.SetAutoApplyUpdate(const Value: boolean);
@@ -80,50 +108,49 @@ end;
 
 procedure TFormViewBase.btnNewClick(Sender: TObject);
 begin
-  Controller.Insert(FE);
+  ControllerCommand.Insert(FEnumEntities);
 end;
 
 procedure TFormViewBase.btnEditClick(Sender: TObject);
 begin
-  Controller.Edit;
+  ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerCommand.Edit;
 end;
 
 procedure TFormViewBase.btnRemoveClick(Sender: TObject);
 begin
-  Controller.Delete;
+  ControllerQuery.Delete;
 end;
 
 procedure TFormViewBase.btnPostClick(Sender: TObject);
 begin
-  Controller.Post;
+  ControllerCommand.Post;
+  ControllerQuery.Refresh;
 end;
 
 procedure TFormViewBase.btnApplyClick(Sender: TObject);
 begin
-  Controller.Apply;
+  ControllerCommand.Apply;
   pgPrincipal.ActivePageIndex:= 0;
 end;
 
 procedure TFormViewBase.btnCancelClick(Sender: TObject);
 begin
-  Controller.Cancel;
-end;
-
-procedure TFormViewBase.Button2Click(Sender: TObject);
-begin
-  Controller.Refresh;
+  ControllerCommand.Cancel;
 end;
 
 procedure TFormViewBase.Button1Click(Sender: TObject);
 begin
   dsEntity.DataSet.prior;
-  Controller.Read;
+  ControllerQuery.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerQuery.Read;
 end;
 
 procedure TFormViewBase.Button3Click(Sender: TObject);
 begin
   dsEntity.DataSet.Next;
-  Controller.Read;
+  ControllerQuery.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerQuery.Read;
 end;
 
 end.
