@@ -108,6 +108,7 @@ end;
 
 procedure TFormViewBase.btnNewClick(Sender: TObject);
 begin
+  ControllerCommand.Load(-1);
   ControllerCommand.Insert(FEnumEntities);
 end;
 

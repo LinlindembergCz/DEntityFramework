@@ -188,7 +188,7 @@ begin
       btnPost.enabled   := Modified;
       if ValueState <> esBrowser then
          pgPrincipal.ActivePageIndex := 1;
-      btnApply.enabled := Service.ChangeCount > 0;
+      btnApply.enabled := true;
     end;
     FState := ValueState;
   end;
