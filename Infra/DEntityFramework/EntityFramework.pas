@@ -233,6 +233,7 @@ begin
         KeyList   := TStringList.Create(true);
         if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
         begin
+          FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateTable( ListAtributes, Table, KeyList) );
           with TFirebird(FConnection.CustomTypeDataBase) do
           begin
             FConnection.ExecutarSQL( CreateGenarator(Table , trim(KeyList.text)) );
@@ -280,7 +281,12 @@ var
       ListAtributes: TList;
     KeyList: TStringList;
 begin
-  TParallel.for( 0, length(Classes) - 1 ,
+  for I := 0 to length(Classes) - 1  do
+  begin
+    CriarTabela(I);
+  end;
+
+  {TParallel.for( 0, length(Classes) - 1 ,
                   procedure (Idx: Integer)
                   var Thr:TThread;
                   begin
@@ -291,7 +297,8 @@ begin
                                     begin
                                        CriarTabela(Idx);
                                     end);
-                  end);
+                  end);  }
+
 end;
 
 procedure TDataContext.AlterTables;

@@ -79,11 +79,14 @@ begin
    ControllerQuery.EntityToDBGrid(grdEntity);
    ViewModelList := TStringList.Create;
    ViewModelList.Delimiter := ',';
-   for I := 0 to grdEntity.Columns.Count - 1 do
+   if grdEntity.Columns.Count > 1 then
    begin
-     ViewModelList.Add( ifthen( grdEntity.Columns[I].ImeName <> '',
-                                grdEntity.Columns[I].ImeName ,
-                                grdEntity.Columns[I].FieldName ) );
+     for I := 0 to grdEntity.Columns.Count - 1 do
+     begin
+       ViewModelList.Add( ifthen( grdEntity.Columns[I].ImeName <> '',
+                                  grdEntity.Columns[I].ImeName ,
+                                  grdEntity.Columns[I].FieldName ) );
+     end;
    end;
    if ViewModelList.Count > 0 then
    begin

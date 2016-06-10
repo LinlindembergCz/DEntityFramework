@@ -2,7 +2,7 @@ object FormViewBase: TFormViewBase
   Left = 0
   Top = 0
   Caption = 'Form'
-  ClientHeight = 385
+  ClientHeight = 454
   ClientWidth = 671
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,17 +18,19 @@ object FormViewBase: TFormViewBase
     Left = 0
     Top = 0
     Width = 671
-    Height = 344
+    Height = 413
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 344
     object TabSheet1: TTabSheet
       Caption = 'Pesquisa'
+      ExplicitHeight = 316
       object grdEntity: TDBGrid
         Left = 0
         Top = 41
         Width = 663
-        Height = 275
+        Height = 344
         Align = alClient
         DataSource = dsEntity
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -59,11 +61,12 @@ object FormViewBase: TFormViewBase
     object TabSheet2: TTabSheet
       Caption = 'Cadastro'
       ImageIndex = 1
+      ExplicitHeight = 316
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 344
+    Top = 413
     Width = 671
     Height = 41
     Align = alBottom
@@ -71,6 +74,7 @@ object FormViewBase: TFormViewBase
     BevelOuter = bvSpace
     BorderStyle = bsSingle
     TabOrder = 1
+    ExplicitTop = 344
     object btnNew: TButton
       Left = 128
       Top = 2
