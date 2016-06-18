@@ -61,11 +61,15 @@ object FormViewBase: TFormViewBase
     object TabSheet2: TTabSheet
       Caption = 'Cadastro'
       ImageIndex = 1
-      ExplicitHeight = 316
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object Panel1: TPanel
     Left = 0
+    Top = 344
     Top = 413
     Width = 671
     Height = 41

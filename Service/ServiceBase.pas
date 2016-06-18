@@ -66,7 +66,7 @@ end;
 
 function TServiceBase.GetEntity: TEntityBase;
 begin
-  //result:= Repository.GetEntity;
+  result:= Repository.Context.Entity;
 end;
 
 procedure TServiceBase.InitEntity(Contener: TComponent);

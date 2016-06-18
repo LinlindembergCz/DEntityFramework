@@ -24,13 +24,14 @@ type
     FObservacao: TString;
     FEmail:TEmail;
     FCalcRenda: TFloat;
-  public
-    constructor Create;override;
-    procedure Validation; override;
   published
     [EntityField('Nome','varchar(50)',false)]
     [Edit]
     property Nome: TString read FNome write FNome;
+  public
+    constructor Create;override;
+    procedure Validation; override;
+
     [EntityField('NomeFantasia','varchar(50)',false)]
     [Edit]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;

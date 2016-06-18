@@ -12,7 +12,7 @@ type
     procedure Setvalue(const Value: TString);
   public
     procedure validar;
-  published
+  public
    [EntityField('Email','varchar(200)',true)]
     property value: TString read Fvalue write Setvalue;
   end;

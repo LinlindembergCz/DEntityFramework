@@ -267,9 +267,15 @@ begin
        TypObj := ctx.GetType(E.ClassInfo);
        for Prop in TypObj.GetProperties do
        begin
-         if (PropIsInstance(Prop)) then
+         if ((PropIsInstance(Prop))) and (PropIsVisible(Prop)) and OnlyPublished then
          begin
-            Attributies := Attributies + ', ' + GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );         
+            try
+               Attributies := Attributies + ', ' +
+               GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );
+            except
+               Attributies := Attributies + ', ' + Prop.Name;
+               Continue;
+            end;
          end
          else
          begin
