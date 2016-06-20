@@ -2,8 +2,8 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'FormPrincipal'
-  ClientHeight = 487
-  ClientWidth = 724
+  ClientHeight = 571
+  ClientWidth = 706
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object FormPrincipal: TFormPrincipal
   object Ribbon1: TRibbon
     Left = 0
     Top = 0
-    Width = 724
+    Width = 706
     Height = 143
     ActionManager = ActionManager2
     ApplicationMenu.Menu = RibbonApplicationMenuBar1
@@ -28,17 +28,19 @@ object FormPrincipal: TFormPrincipal
         Caption = 'RibbonPage1'
         Page = RibbonPage1
       end>
+    ExplicitWidth = 724
     DesignSize = (
-      724
+      706
       143)
     StyleName = 'Ribbon - Luna'
     object RibbonPage1: TRibbonPage
       Left = 0
       Top = 50
-      Width = 723
+      Width = 705
       Height = 93
       Caption = 'RibbonPage1'
       Index = 0
+      ExplicitWidth = 723
       object RibbonGroup1: TRibbonGroup
         Left = 4
         Top = 3
@@ -62,36 +64,24 @@ object FormPrincipal: TFormPrincipal
       ActionManager = ActionManager2
     end
   end
-  inline Frame11: TFrame1
-    Left = 0
-    Top = 143
-    Width = 724
-    Height = 325
-    Align = alClient
-    TabOrder = 1
-    ExplicitTop = 143
-    ExplicitWidth = 724
-    ExplicitHeight = 343
-  end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 468
-    Width = 724
+    Top = 552
+    Width = 706
     Height = 19
     Panels = <
       item
         Text = 'Alo mundo'
         Width = 300
       end>
-    ExplicitLeft = 368
-    ExplicitTop = 256
-    ExplicitWidth = 0
+    ExplicitTop = 468
+    ExplicitWidth = 724
   end
   object ImageList2: TImageList
     Left = 48
     Top = 192
     Bitmap = {
-      494C010103000800200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

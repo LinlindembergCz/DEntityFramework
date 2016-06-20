@@ -135,7 +135,7 @@ begin
     Params.Values['User_Name']  := FUser;
     Params.Values['Password']   := FPassword;
    //if Params.Find('yes',I) then
-    Params.Values['OSAuthent']  := 'yes';
+    //Params.Values['OSAuthent']  := 'yes';
   end;
 end;
 

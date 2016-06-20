@@ -65,8 +65,7 @@ uses
   ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
-  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas',
-  Frame in 'UI\Views\Frame.pas' {Frame1: TFrame};
+  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas';
 
 {R *.RES}
 
@@ -75,11 +74,12 @@ var
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
+
   DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
   DataContext.UpdateDataBase([ TCliente , Fornecedor, Fabricante (*Entity*) ]);
 
   Application.run;
   DataContext.Free;
 //DUnitTestRunner.RunRegisteredTests;
-  ReportMemoryLeaksOnShutdown := true;
+  //ReportMemoryLeaksOnShutdown := true;
 end.

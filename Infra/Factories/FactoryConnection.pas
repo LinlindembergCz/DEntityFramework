@@ -28,16 +28,16 @@ begin
                                                  'masterkey',
                                                  'LocalHost',
                                                  'D:\Lindemberg\Linq\DDD\DBLINQ.FDB'); }
-   {   FConnection := TEntityFDConnection.Create('FB',
+      FConnection := TEntityFDConnection.Create('FB',
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',
-                                                 'D:\Lindemberg\EntityFramework\DBLINQ.FDB');}
-      FConnection := TEntityFDConnection.Create('MSSQL',
+                                                 'D:\Lindemberg\EntityFramework\DBLINQ.FDB');
+      {FConnection := TEntityFDConnection.Create('MSSQL',
                                                  'sa',
                                                  '',
                                                  'CORTEZ\SRV_TSW_STARTISS',
-                                                 'DBLINQ');
+                                                 'DBLINQ');}
   end;
   result:= FConnection;
 end;

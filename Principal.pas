@@ -12,7 +12,9 @@ uses
   FireDAC.Comp.Client, Vcl.ImgList, System.Actions, Vcl.ActnList,
   Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, Vcl.ToolWin, Vcl.ActnCtrls,
   Vcl.Ribbon, Vcl.RibbonLunaStyleActnCtrls, Vcl.ActnMenus, Vcl.RibbonActnMenus,
-  Frame, Vcl.ComCtrls;
+  Vcl.ComCtrls, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.BatchMove, FireDAC.Comp.BatchMove.DataSet,
+  FireDAC.Phys.SQLiteVDataSet, FireDAC.Comp.DataSet, FireDAC.Stan.StorageBin;
 
 type
   TFormPrincipal = class(TForm)
@@ -26,7 +28,6 @@ type
     Action2: TAction;
     Action3: TAction;
     Action4: TAction;
-    Frame11: TFrame1;
     StatusBar1: TStatusBar;
     procedure Button3Click(Sender: TObject);
     procedure Action2Execute(Sender: TObject);
@@ -52,7 +53,7 @@ uses
 
 procedure TFormPrincipal.Action2Execute(Sender: TObject);
 begin
-//TFactoryForm.GetDinamicForm( tpCliente );
+ // TFactoryForm.GetDinamicForm( tpCliente );
   TFactoryForm.GetForm( tpCliente );
 end;
 

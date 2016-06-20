@@ -22,10 +22,8 @@ object FormViewBase: TFormViewBase
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 344
     object TabSheet1: TTabSheet
       Caption = 'Pesquisa'
-      ExplicitHeight = 316
       object grdEntity: TDBGrid
         Left = 0
         Top = 41
@@ -64,12 +62,11 @@ object FormViewBase: TFormViewBase
       ExplicitLeft = 0
       ExplicitTop = 0
       ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 316
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 344
     Top = 413
     Width = 671
     Height = 41
@@ -78,7 +75,6 @@ object FormViewBase: TFormViewBase
     BevelOuter = bvSpace
     BorderStyle = bsSingle
     TabOrder = 1
-    ExplicitTop = 344
     object btnNew: TButton
       Left = 128
       Top = 2

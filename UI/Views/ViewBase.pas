@@ -42,6 +42,7 @@ type
     FEnumEntities: TEnumEntities;
     procedure SetAutoApplyUpdate(const Value: boolean);
     procedure LoadViewModel;
+    function GetViewModel: TStringList;
     { Private declarations }
   protected
     ControllerQuery : IControllerBase;
@@ -64,19 +65,16 @@ begin
   ControllerCommand := pControllerCommand;
   ControllerCommand.Contener := self;
   inherited Create(Application);
-
   LoadViewModel;
-
   pgPrincipal.ActivePageIndex:= 0;
   AutoApplyUpdate := true;
 end;
 
-procedure TFormViewBase.LoadViewModel;
+function TFormViewBase.GetViewModel:TStringList;
 var
-  ViewModelList: TStringList;
-  I: Integer;
+   ViewModelList: TStringList;
+   I: Integer;
 begin
-   ControllerQuery.EntityToDBGrid(grdEntity);
    ViewModelList := TStringList.Create;
    ViewModelList.Delimiter := ',';
    if grdEntity.Columns.Count > 1 then
@@ -88,6 +86,14 @@ begin
                                   grdEntity.Columns[I].FieldName ) );
      end;
    end;
+end;
+
+procedure TFormViewBase.LoadViewModel;
+var
+   ViewModelList: TStringList;
+begin
+   ControllerQuery.EntityToDBGrid(grdEntity);
+   ViewModelList := GetViewModel;
    if ViewModelList.Count > 0 then
    begin
      dsEntity.DataSet := ControllerQuery.Load(0, ViewModelList.DelimitedText);
