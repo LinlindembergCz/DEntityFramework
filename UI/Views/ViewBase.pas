@@ -86,6 +86,7 @@ begin
                                   grdEntity.Columns[I].FieldName ) );
      end;
    end;
+   result :=  ViewModelList;
 end;
 
 procedure TFormViewBase.LoadViewModel;
