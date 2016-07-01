@@ -110,7 +110,7 @@ begin
       FreeObjects;
       if FProviderName = '' then
       begin
-        Keys := TAutoMapper.GetAttributiesPrimaryKeyList( FEntity  );
+        Keys := TAutoMapper.GetAttributiesPrimaryKeyList( QueryAble.FEntity  );
         FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
         CreateProvider(qryQuery,
