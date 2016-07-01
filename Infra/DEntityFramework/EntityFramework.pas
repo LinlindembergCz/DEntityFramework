@@ -35,7 +35,7 @@ Type
       prsNomeProvider: string);
   public
     destructor Destroy; override;
-    constructor Create(proConnection: TEntityConn = nil );virtual;
+    constructor Create(proEntity: TEntityBase = nil );overload;virtual;
 
     procedure InputEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
@@ -490,10 +490,6 @@ begin
   result := FClientDataSet.changeCount;
 end;
 
-constructor TDataContext.Create(proConnection: TEntityConn = nil);
-begin
-  FConnection := proConnection;
-end;
 
 procedure TDataContext.CreateProvider(var proSQLQuery: TDataSet;
   prsNomeProvider: string);
@@ -506,6 +502,11 @@ begin
   drpProvider.Options        :=[poAutoRefresh,poUseQuoteChar];
   drpProvider.OnGetTableName := DataSetProviderGetTableName;
 //drpProvider.ResolveToDataSet:= true;
+end;
+
+constructor TDataContext.Create(proEntity: TEntityBase = nil);
+begin
+  FEntity:= proEntity;
 end;
 
 procedure TDataContext.CreateClientDataSet( proDataSetProvider
