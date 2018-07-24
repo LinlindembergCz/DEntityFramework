@@ -3,7 +3,7 @@ unit ControllerAluno;
 interface
 
 uses
-System.Classes, DB, DBClient, ControllerBase,  EnumEntity;
+System.Classes, DB, DBClient, ControllerBase,  FactoryEntity;
 
 type
   TControllerAluno = class(TControllerBase)

@@ -10,7 +10,6 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   EntityConnection,
-  EnumEntity in 'EnumEntity.pas',
   FactoryEntity in 'Domain\Factories\FactoryEntity.pas',
   Entities in 'Domain\Entities\Entities.pas',
   Repository in 'Infra\Repositories\Repository.pas',
@@ -53,16 +52,18 @@ uses
   RepositoryFabricante in 'Infra\Repositories\RepositoryFabricante.pas',
   InterfaceServiceFabricante in 'Domain\IService\InterfaceServiceFabricante.pas',
   ServiceFabricante in 'Service\ServiceFabricante.pas',
-  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' {/unit in Caminho.pas},
+  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas',
   ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
-  InterfaceService in 'Domain\IService\InterfaceService.pas' {/unit in Caminho.pas},
+  InterfaceService in 'Domain\IService\InterfaceService.pas' ,
   ClassAluno in 'Domain\Entities\ClassAluno.pas',
   InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
   RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
   InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
   ServiceAluno in 'Service\ServiceAluno.pas',
-  ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
-  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno};
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno}
+  ;
+  {/unit in Caminho.pas}
 
 {R *.RES}
 
@@ -72,9 +73,8 @@ var
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
+  //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
   DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
   DataContext.Free;
   Application.run;
-//DUnitTestRunner.RunRegisteredTests;
-  ReportMemoryLeaksOnShutdown := true;
 end.

@@ -3,7 +3,7 @@ unit FactoryController;
 interface
 
 uses
-  Forms,  Sysutils, EnumEntity, InterfaceController, System.Classes, RTTI, Dialogs;
+  Forms,  Sysutils, FactoryEntity, InterfaceController, System.Classes, RTTI, Dialogs;
 
 type
   TFactoryController = class

@@ -3,7 +3,7 @@ unit ControllerFornecedor;
 interface
 
 uses
- DB, DBClient, System.Classes, ControllerBase,  EnumEntity;
+ DB, DBClient, System.Classes, ControllerBase,  FactoryEntity;
 
 type
   TControllerFornecedor = class(TControllerBase)

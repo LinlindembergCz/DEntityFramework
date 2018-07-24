@@ -29,7 +29,7 @@ implementation
 
 {$R *.dfm}
 
-uses EnumEntity;
+uses FactoryEntity;
 
 procedure TFormViewOrcamento.FormShow(Sender: TObject);
 begin

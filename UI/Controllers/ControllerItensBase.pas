@@ -18,7 +18,7 @@ type
 
 implementation { TControllerItensBase }
 
-uses Entities, EnumEntity;
+uses Entities, FactoryEntity;
 
 procedure TControllerItensBase.Apply(MasterController:IController);
 var lsField:string;

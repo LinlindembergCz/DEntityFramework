@@ -98,7 +98,6 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="EnumEntity.pas"/>
         <DCCReference Include="Domain\Factories\FactoryEntity.pas"/>
         <DCCReference Include="Domain\Entities\Entities.pas"/>
         <DCCReference Include="Infra\Repositories\Repository.pas"/>
@@ -121,7 +120,7 @@
         <DCCReference Include="UI\Views\viewFornecedor.pas">
             <Form>FormViewFornecedor</Form>
         </DCCReference>
-        <DCCReference Include="Domain\Factories\FactoryRepository.pas"/>
+        <DCCReference Include="Infra\Factories\FactoryRepository.pas"/>
         <DCCReference Include="Domain\IRepositories\InterfaceRepository.pas"/>
         <DCCReference Include="Domain\ValuesObjects\Email.pas"/>
         <DCCReference Include="Domain\Entities\EntityBase.pas"/>
@@ -134,7 +133,7 @@
         <DCCReference Include="Infra\Repositories\RepositoryBase.pas"/>
         <DCCReference Include="Domain\ValuesObjects\CPF.pas"/>
         <DCCReference Include="Infra\DEntityFramework\AutoMapper.pas"/>
-        <DCCReference Include="Domain\Factories\FactoryService.pas"/>
+        <DCCReference Include="Service\Factories\FactoryService.pas"/>
         <DCCReference Include="Domain\IService\InterfaceServiceCliente.pas"/>
         <DCCReference Include="Service\ServiceCliente.pas"/>
         <DCCReference Include="Domain\Entities\classCliente.pas">
@@ -152,26 +151,30 @@
         <DCCReference Include="Domain\IService\InterfaceServiceFabricante.pas"/>
         <DCCReference Include="Service\ServiceFabricante.pas"/>
         <DCCReference Include="UI\Controllers\ControllerFabricante.pas">
-            <Form>/unit in Caminho.pas</Form>
+            <Form>,
+  ViewFabricante in &apos;UI\Views\ViewFabricante.pas&apos; {FormViewFabricante</Form>
         </DCCReference>
         <DCCReference Include="UI\Views\ViewFabricante.pas">
             <Form>FormViewFabricante</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Domain\IService\InterfaceService.pas">
-            <Form>/unit in Caminho.pas</Form>
+            <Form>,
+  ClassAluno in &apos;Domain\Entities\ClassAluno.pas&apos;,
+  InterfaceRepositoryAluno in &apos;Domain\IRepositories\InterfaceRepositoryAluno.pas&apos;,
+  RepositoryAluno in &apos;Infra\Repositories\RepositoryAluno.pas&apos;,
+  InterfaceServiceAluno in &apos;Domain\IService\InterfaceServiceAluno.pas&apos;,
+  ServiceAluno in &apos;Service\ServiceAluno.pas&apos;,
+  ControllerAluno in &apos;UI\Controllers\ControllerAluno.pas&apos;,
+  viewAluno in &apos;UI\Views\viewAluno.pas&apos; {FormViewAluno</Form>
         </DCCReference>
         <DCCReference Include="Domain\Entities\ClassAluno.pas"/>
         <DCCReference Include="Domain\IRepositories\InterfaceRepositoryAluno.pas"/>
         <DCCReference Include="Infra\Repositories\RepositoryAluno.pas"/>
         <DCCReference Include="Domain\IService\InterfaceServiceAluno.pas"/>
         <DCCReference Include="Service\ServiceAluno.pas"/>
-        <DCCReference Include="UI\Controllers\ControllerAluno.pas">
-            <Form>/unit in Caminho.pas</Form>
-        </DCCReference>
+        <DCCReference Include="UI\Controllers\ControllerAluno.pas"/>
         <DCCReference Include="UI\Views\viewAluno.pas">
             <Form>FormViewAluno</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <None Include="ModelSupport_Project2Tests\Entity\default.txvpck"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txaPackage"/>

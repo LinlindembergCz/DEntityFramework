@@ -3,7 +3,7 @@ unit FactoryService;
 interface
 
 uses
-    EnumEntity, InterfaceService, Dialogs, Sysutils;
+    FactoryEntity, InterfaceService, Dialogs, Sysutils;
 
 type
    TFactoryService = class

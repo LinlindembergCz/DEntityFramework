@@ -4,7 +4,8 @@ interface
 
 uses
    Forms, Atributies, EntityBase, EntityTypes,  RTTI, Classes,  SysUtils,
-   Vcl.Controls, DB, System.Contnrs,  StdCtrls, strUtils, math;
+   Vcl.Controls, DB, System.Contnrs,  StdCtrls, strUtils, math,
+   System.Generics.Collections;
 
 type
   TAutoMapper = class
@@ -48,7 +49,7 @@ type
       : variant; static;
     class function GetValueProperty(E: TEntityBase; Propert: string)
       : string; static;
-    class procedure Puts(Component: TComponent; Entity: TEntityBase);
+    class procedure Puts(Component: TComponent; Entity: TEntityBase;Valued: boolean = false);overload;
     class procedure PutsFromControl(ComponentControl: TCustomControl; Entity: TEntityBase); static;
     class procedure Read(Component: TComponent; Entity: TEntityBase;
       SetDefaultValue: boolean; DataSet :TDataSet = nil);
@@ -58,10 +59,12 @@ type
       : string;overload; static;
     class function GetReferenceAtribute(Obj: TEntityBase; E: TClass)
       : string;overload; static;
+
     class procedure SetFieldValue(Entity: TEntityBase; Campo: string;
       Valor: variant); overload;static;
     class procedure SetFieldValue(Entity: TEntityBase; Campo: TRttiProperty;
      Valor: variant);overload;static;
+
     class function GetInstance(const Str_Class: TValue): TObject; static;
     class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm);
   end;
@@ -248,7 +251,11 @@ begin
        TypObj := ctx.GetType(E.ClassInfo);
        for Prop in TypObj.GetProperties do
        begin
-         if (not PropIsInstance(Prop)) then
+         if (PropIsInstance(Prop)) then
+         begin
+            Attributies := Attributies + ', ' + GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );         
+         end
+         else
          begin
            ctx2 := TRttiContext.Create;
            for Atributo in Prop.GetAttributes do
@@ -261,6 +268,7 @@ begin
                  if Attributies = '' then
                     Attributies := EntityField(Atributo).Name
                  else
+                 if Pos( EntityField(Atributo).Name , Attributies ) = 0 then
                     Attributies := Attributies + ', ' + EntityField(Atributo).Name;
                  FoundAttribute:= true;
                  break;
@@ -292,57 +300,8 @@ begin
   end;
 end;
 
-class function TAutoMapper.GetAttributiesList(E: Pointer;
-  OnlyPublished: boolean = false): TStringList;
-var
-  Prop: TRttiProperty;
-  ctx, ctx2: TRttiContext;
-  Atributo: TCustomAttribute;
-  L: TStringList;
-  tempStrings: TStrings;
-  FoundAttribute:boolean;
-begin
-  try
-    L := TStringList.Create(true);
-    ctx := TRttiContext.Create;
-    TypObj := ctx.GetType(E);
-    for Prop in TypObj.GetProperties do
-    begin
-      if PropIsInstance(Prop) then
-      begin
-         tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
-         if tempStrings.Count > 0 then
-            L.AddStrings( tempStrings );
-         tempStrings.Clear;
-      end
-      else
-      if (PropIsVisible(Prop) and (OnlyPublished)) or
-        (not OnlyPublished) then
-      begin
-        FoundAttribute:= false;
-        ctx2 := TRttiContext.Create;
-        for Atributo in Prop.GetAttributes do
-        begin
-          if Atributo is EntityField then
-          begin
-            if not EntityField(Atributo).AutoInc then
-            begin
-               L.Add(EntityField(Atributo).Name);
-               FoundAttribute:= true;
-            end;
-          end;
-        end;
-        if (not FoundAttribute) and (not EntityField(Atributo).AutoInc ) then
-           L.Add( Prop.Name );
-      end;
-    end;
-  finally
-    result := L;
-    ctx.Free;
-  end;
-end;
 
-class function TAutoMapper. PropIsInstance( Prop: TRttiProperty):boolean;
+class function TAutoMapper.PropIsInstance( Prop: TRttiProperty):boolean;
 begin
   result:= ( Prop.PropertyType.IsInstance) and
            ( Prop.Name <> 'PropertyType' ) and
@@ -368,7 +327,8 @@ begin
     begin
       if  PropIsInstance(prop)  then
       begin
-         tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
+         //tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
+         tempStrings:= ( GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );         
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
@@ -399,6 +359,57 @@ begin
     ctx.Free;
   end;
 end;
+
+class function TAutoMapper.GetAttributiesList(E: Pointer;
+  OnlyPublished: boolean = false): TStringList;
+var
+  Prop: TRttiProperty;
+  ctx, ctx2: TRttiContext;
+  Atributo: TCustomAttribute;
+  L: TStringList;
+  tempStrings: TStrings;
+  FoundAttribute:boolean;
+begin
+  try
+    L := TStringList.Create(true);
+    ctx := TRttiContext.Create;
+    TypObj := ctx.GetType(E);
+    for Prop in TypObj.GetProperties do
+    begin
+      if PropIsInstance(Prop) then
+      begin
+         tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
+         if tempStrings.Count > 0 then
+            L.AddStrings( tempStrings );
+         tempStrings.Clear;
+      end
+      else 
+      if (PropIsVisible(Prop) and (OnlyPublished)) or
+        (not OnlyPublished) then
+      begin
+        FoundAttribute:= false;
+        ctx2 := TRttiContext.Create;
+        for Atributo in Prop.GetAttributes do
+        begin
+          if Atributo is EntityField then
+          begin
+            if not EntityField(Atributo).AutoInc then
+            begin
+               L.Add(EntityField(Atributo).Name);
+               FoundAttribute:= true;
+            end;
+          end;
+        end;
+        if (not FoundAttribute) and (not EntityField(Atributo).AutoInc ) then
+           L.Add( Prop.Name );
+      end;
+    end;
+  finally
+    result := L;
+    ctx.Free;
+  end;
+end;
+
 
 class function TAutoMapper.GetAttributiesPrimaryKeyList(E: TEntityBase)
   : TStringList;
@@ -591,30 +602,44 @@ var
   Value: string;
   L: TStringList;
   FoundAtribute:boolean;
+  typ: TRttiType;
+  tempStrings:TStrings;
 begin
   try
     L := TStringList.Create(true);
-    for Prop in ctx.GetType(E.ClassType).GetProperties do
+    typ := ctx.GetType(E.ClassType);
+    
+    for Prop in typ.GetProperties do
     begin
       FoundAtribute := false;
-      for Field in ctx.GetType(E.ClassType).GetFields do
+      if PropIsInstance(Prop) then
       begin
-        if uppercase(Field.Name) = uppercase('F' + Prop.Name) then
+         tempStrings:= GetValuesFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase );
+         if tempStrings.Count > 0 then
+            L.AddStrings( tempStrings );
+         tempStrings.Clear;
+      end
+      else
+      begin
+        for Field in typ.GetFields do
         begin
-          for Atrib in Prop.GetAttributes do
+          if (uppercase(Field.Name) = uppercase('F' + Prop.Name)) or (Field.Name = 'Fvalue') then
           begin
-            if Atrib is EntityField then
+            for Atrib in Prop.GetAttributes do
             begin
-              if not EntityField(Atrib).AutoInc then
+              if Atrib is EntityField then
               begin
-                Value := GetValueField(E, Field);
-                L.Add(Value);
-                break;
+                if not EntityField(Atrib).AutoInc then
+                begin
+                  Value := GetValueField(E, Field);
+                  L.Add(Value);
+                  break;
+                end;
               end;
             end;
           end;
+          //break;
         end;
-        //break;
       end;
     //if not FoundAtribute then
     end;
@@ -809,6 +834,7 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
+  vInstance:Variant;
   dDatetime: TEntityDatetime;
   TypeClassName: string;
 begin
@@ -907,17 +933,24 @@ begin
       TypObj := ctx.GetType(Entity.ClassInfo);
       for Prop in TypObj.GetProperties do
       begin
-        for Atrib in Prop.GetAttributes do
+        if PropIsInstance(Prop) then
         begin
-          if Atrib is EntityField then
+           DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
+        end
+        else
+        begin 
+          for Atrib in Prop.GetAttributes do
           begin
-            if uppercase(EntityField(Atrib).Name)
-              = uppercase(DataSet.Fields[J].FieldName) then
+            if Atrib is EntityField then
             begin
-              SetFieldValue(Entity, Prop,
-                            DataSet.Fieldbyname(EntityField(Atrib).Name).AsVariant);
-              breaked:= true;
-              break;
+              if uppercase(EntityField(Atrib).Name)
+                = uppercase(DataSet.Fields[J].FieldName) then
+              begin
+                SetFieldValue(Entity, Prop,
+                              DataSet.Fieldbyname(EntityField(Atrib).Name).AsVariant);
+                breaked:= true;
+                break;
+              end;
             end;
           end;
         end;
@@ -966,7 +999,7 @@ var
 
   procedure SetValueCheckBox;
   begin
-    TCheckBox(Componente ).Checked := abs(strtointdef(Value, 0)) = 1;
+    TCheckBox(Componente ).Checked := strtoIntdef(Value, 0) = 1;//abs(strtofloatdef(Value, 0)) = 1;
   end;
 
   procedure SetValueLabel;
@@ -1078,37 +1111,36 @@ begin
         TypObj := ctx.GetType(Entity.ClassInfo);
         for Prop in TypObj.GetProperties do
         begin
-          if not PropIsInstance(prop)  then
-          begin
-             //Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name), length(Componente.Name)))
-             if PropNameEqualComponentName(Prop,Componente ) then
-             begin
-                 if SetDefaultValue then
-                   Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
-                 else
-                   Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
+           if PropNameEqualComponentName(Prop,Componente ) then
+           begin
+               if PropIsInstance(prop)  then
+                  Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
+               else
+               if SetDefaultValue then
+                 Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
+               else
+                 Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
 
-                 if Componente.InheritsFrom(TCustomMemo) then
-                   SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
-                 if Componente.InheritsFrom(TCustomCombobox) then
-                   SetValueCombobox else
-                 if Componente.InheritsFrom(TCustomDBLookupComboBox) then
-                   setValueDBLookUpCombobox else
-                 if Componente.InheritsFrom(TCommonCalendar) then
-                   SetValueDateTimePicker else
-                 if Componente.InheritsFrom(TCustomCheckBox) then
-                   SetValueCheckBox else
-                 if Componente.InheritsFrom(TCustomLabel) then
-                   SetValueLabel else
-                 if Componente.InheritsFrom(TCustomRadioGroup) then
-                   SetValueRadioGroup else
-                 if Componente.InheritsFrom(TCustomMaskEdit) then
-                   SetValueMaskEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
-                 if Componente.InheritsFrom(TCustomEdit) then
-                   SetValueEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) );
-                 break;
-             end;
-          end;
+               if Componente.InheritsFrom(TCustomMemo) then
+                 SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
+               if Componente.InheritsFrom(TCustomCombobox) then
+                 SetValueCombobox else
+               if Componente.InheritsFrom(TCustomDBLookupComboBox) then
+                 setValueDBLookUpCombobox else
+               if Componente.InheritsFrom(TCommonCalendar) then
+                 SetValueDateTimePicker else
+               if Componente.InheritsFrom(TCustomCheckBox) then
+                 SetValueCheckBox else
+               if Componente.InheritsFrom(TCustomLabel) then
+                 SetValueLabel else
+               if Componente.InheritsFrom(TCustomRadioGroup) then
+                 SetValueRadioGroup else
+               if Componente.InheritsFrom(TCustomMaskEdit) then
+                 SetValueMaskEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
+               if Componente.InheritsFrom(TCustomEdit) then
+                 SetValueEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) );
+               break;
+           end;
         end;
       end;
     end;
@@ -1183,7 +1215,7 @@ begin
         Value := '0';
     end;
 
-    SetFieldValue(Entity, Prop, Value);
+   SetFieldValue(Entity, Prop, Value); 
 
     if ListField <> '' then
     begin
@@ -1199,30 +1231,44 @@ begin
   result:= Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name), length(Componente.Name));
 end;
 
-class procedure TAutoMapper.Puts(Component: TComponent; Entity: TEntityBase);
+class procedure TAutoMapper.Puts(Component: TComponent; Entity: TEntityBase;Valued: boolean = false);
 var
   J: integer;
   Prop: TRttiProperty;
   Componente: TComponent;
   ctx: TRttiContext;
+  obj:TEntityBase;
 begin
   try
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Entity.ClassInfo);
     for Prop in TypObj.GetProperties do
     begin
-      if not PropIsInstance(prop)  then
-      begin
+        if Valued then
+        begin
+          if upperCase(Prop.Name) = 'VALUE' then
+          begin
+             if SetComponentValueProp(Component,Prop, Entity ) then
+                break;
+          end;
+        end
+        else
         for J := 0 to Component.componentcount - 1 do
         begin
            Componente := Component.components[J];
            if PropNameEqualComponentName( Prop, Componente) then
            begin
-              if SetComponentValueProp(Componente,Prop, Entity ) then
-                 break;
+              if not PropIsInstance(prop)  then
+              begin
+                 if SetComponentValueProp(Componente,Prop, Entity ) then
+                    break;
+              end
+              else
+              begin
+                puts( Componente , GetObjectProp(Entity,Prop.Name) as TEntityBase, true );
+              end;
            end;
         end;
-      end;
     end;
   finally
     ctx.Free;

@@ -31,7 +31,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FactoryView, EnumEntity;
+  FactoryView, FactoryEntity;
 
 procedure TFormPrincipal.Button1Click(Sender: TObject);
 begin

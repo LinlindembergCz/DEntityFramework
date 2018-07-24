@@ -14,6 +14,7 @@ type
     RazaoSocial: TEdit;
     Label1: TLabel;
     Label2: TLabel;
+    Label7: TLabel;
   private
     { Private declarations }
   public

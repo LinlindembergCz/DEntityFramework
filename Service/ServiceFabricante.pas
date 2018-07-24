@@ -3,7 +3,7 @@ unit ServiceFabricante;
 interface
 
 uses
-System.Classes, ServiceBase, InterfaceServiceFabricante, EnumEntity;
+System.Classes, ServiceBase, InterfaceServiceFabricante, FactoryEntity;
 
 type
   TServiceFabricante=class( TServiceBase , IServiceFabricante)

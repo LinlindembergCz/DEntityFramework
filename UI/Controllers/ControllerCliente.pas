@@ -3,7 +3,7 @@ unit ControllerCliente;
 interface
 
 uses
- DB, DBClient, System.Classes, ControllerBase,  EnumEntity;
+ DB, DBClient, System.Classes, ControllerBase,  FactoryEntity;
 
 type
   TControllerCliente = class(TControllerBase)

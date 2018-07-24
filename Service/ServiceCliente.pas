@@ -3,7 +3,7 @@ unit ServiceCliente;
 interface
 
 uses
-System.Classes, ServiceBase, InterfaceServiceCliente, EnumEntity;
+System.Classes, ServiceBase, InterfaceServiceCliente, FactoryEntity;
 
 type
   TServiceCliente=class( TServiceBase , IServiceCliente)

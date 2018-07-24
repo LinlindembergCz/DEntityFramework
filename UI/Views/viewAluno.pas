@@ -13,6 +13,7 @@ type
     Label2: TLabel;
     edtNome: TEdit;
     edtMatricula: TEdit;
+    Label7: TLabel;
   private
     { Private declarations }
   public

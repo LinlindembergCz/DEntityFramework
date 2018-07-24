@@ -3,7 +3,7 @@ unit FactoryItensController;
 interface
 
 uses
-  EntityFramework, Forms,  Sysutils, EnumEntity, ControllerItensBase, InterfaceControllerItens,
+  EntityFramework, Forms,  Sysutils, FactoryEntity, ControllerItensBase, InterfaceControllerItens,
   System.Classes;
 
 type

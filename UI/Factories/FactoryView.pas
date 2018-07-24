@@ -3,7 +3,7 @@ unit FactoryView;
 interface
 
 uses
-  Forms, Sysutils, EnumEntity, Dialogs, ViewBase;
+  Forms, Sysutils, FactoryEntity, Dialogs, ViewBase;
 
 type
   TFactoryForm = class

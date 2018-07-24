@@ -4,7 +4,7 @@ interface
 
 uses
   Forms, Data.DB,Data.SqlExpr,FireDAC.Comp.Client,EntityFirebird, EntityMSSQL,
-  Sysutils, EnumEntity,  System.Classes, EntityConnection, EntityFDConnection;
+  Sysutils, FactoryEntity,  System.Classes, EntityConnection, EntityFDConnection;
 
 type
   TFactoryConnection = class
@@ -32,7 +32,7 @@ begin
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',
-                                                 'D:\Lindemberg\EntityFramework\DBLINQ.FDB');
+                                                 extractfilepath(application.ExeName)+'DBLINQ.FDB');
   end;
   result:= FConnection;
 end;

@@ -43,7 +43,7 @@ object FormPrincipal: TFormPrincipal
   end
   object Button3: TButton
     Left = 8
-    Top = 234
+    Top = 242
     Width = 137
     Height = 49
     Caption = 'Aluno'

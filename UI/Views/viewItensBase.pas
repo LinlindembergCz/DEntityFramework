@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes,Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ViewBase,
-  Vcl.StdCtrls, EnumEntity, InterfaceController, Vcl.ComCtrls, Data.DB, Vcl.ExtCtrls,
+  Vcl.StdCtrls, FactoryEntity, InterfaceController, Vcl.ComCtrls, Data.DB, Vcl.ExtCtrls,
   Vcl.Grids, Vcl.DBGrids, InterfaceControllerItens, ControllerBase, Vcl.DBCtrls;
 
 type

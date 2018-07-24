@@ -28,6 +28,7 @@ type
     edtCPFCNPJ: TMaskEdit;
     edtEmail: TEdit;
     Label1: TLabel;
+    Label7: TLabel;
   private
     { Private declarations }
   public
@@ -38,6 +39,7 @@ implementation
 
 {$R *.dfm}
 
+//Nosso crud so precisa disso e mais nada!
 initialization RegisterClass(TFormViewCliente);
 finalization UnRegisterClass(TFormViewCliente);
 

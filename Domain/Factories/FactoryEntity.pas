@@ -3,9 +3,10 @@ unit FactoryEntity;
 interface
 
 uses
-  Sysutils, EnumEntity,  EntityBase;
+  Sysutils,  EntityBase;
 
 type
+  TEnumEntities = ( tpCliente ,  tpFornecedor ,  tpFabricante , tpAluno, tpEntidade );
 
   TFactoryEntity = class
   private

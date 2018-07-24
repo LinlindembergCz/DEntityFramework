@@ -3,7 +3,7 @@ unit ControllerFabricante;
 interface
 
 uses
- DB, DBClient, System.Classes, ControllerBase,  EnumEntity;
+ DB, DBClient, System.Classes, ControllerBase,  FactoryEntity;
 
 type
   TControllerFabricante = class(TControllerBase)

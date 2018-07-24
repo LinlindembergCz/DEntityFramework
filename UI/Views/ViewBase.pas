@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DBXFirebird, Data.DB, Data.SqlExpr,
   Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient, Data.DBXMSSQL,
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper,
-  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController, FactoryController, EnumEntity;
+  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController, FactoryController, FactoryEntity;
 
 type
   TFormViewBase = class(TForm)

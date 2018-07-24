@@ -3,7 +3,7 @@ unit ServiceFornecedor;
 interface
 
 uses
-System.Classes, ServiceBase, InterfaceServiceFornecedor, EnumEntity;
+System.Classes, ServiceBase, InterfaceServiceFornecedor, FactoryEntity;
 
 type
   TServiceFornecedor=class( TServiceBase , IServiceFornecedor)

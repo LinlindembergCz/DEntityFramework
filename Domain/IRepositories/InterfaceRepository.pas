@@ -3,7 +3,7 @@ unit InterfaceRepository;
 interface
 
 uses
-  EntityBase, Context, EnumEntity,DB;
+  EntityBase, Context, FactoryEntity,DB;
 
 
 type

@@ -1,11 +1,10 @@
 inherited FormViewFornecedor: TFormViewFornecedor
   Caption = 'FormViewFornecedor'
   ExplicitWidth = 687
-  ExplicitHeight = 424
+  ExplicitHeight = 423
   PixelsPerInch = 96
   TextHeight = 13
   inherited pgPrincipal: TPageControl
-    ActivePage = TabSheet1
     inherited TabSheet1: TTabSheet
       ExplicitLeft = 4
       ExplicitTop = 24
@@ -13,8 +12,8 @@ inherited FormViewFornecedor: TFormViewFornecedor
       ExplicitHeight = 316
     end
     inherited TabSheet2: TTabSheet
-      ExplicitLeft = 4
-      ExplicitTop = 24
+      ExplicitLeft = 8
+      ExplicitTop = 28
       ExplicitWidth = 663
       ExplicitHeight = 316
       object Label1: TLabel
@@ -37,6 +36,19 @@ inherited FormViewFornecedor: TFormViewFornecedor
         Width = 45
         Height = 13
         Caption = 'Endereco'
+      end
+      object Label3: TLabel
+        Left = 352
+        Top = 40
+        Width = 269
+        Height = 25
+        Caption = 'S'#243' os FORTES entender'#227'o'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -21
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object edtRazaoSocial: TEdit
         Left = 67

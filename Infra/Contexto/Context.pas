@@ -3,7 +3,7 @@ unit Context;
 interface
 
 uses
-  EntityFramework, EnumEntity;
+  EntityFramework, FactoryEntity;
 
 
 type
@@ -19,7 +19,7 @@ implementation
 
 { TContext }
 
-uses FactoryEntity, FactoryConnection;
+uses  FactoryConnection;
 
 constructor TContext.Create(E: TEnumEntities);
 begin

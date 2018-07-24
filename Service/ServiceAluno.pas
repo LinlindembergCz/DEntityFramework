@@ -3,7 +3,7 @@ unit ServiceAluno;
 interface
 
 uses
-System.Classes, ServiceBase, InterfaceServiceAluno, EnumEntity;
+System.Classes, ServiceBase, InterfaceServiceAluno, FactoryEntity;
 
 type
   TServiceAluno=class( TServiceBase , IServiceAluno)

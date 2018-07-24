@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
-  Vcl.DBGrids, Variants, Vcl.StdCtrls,  EnumEntity,Vcl.DBCtrls;
+  Vcl.DBGrids, Variants, Vcl.StdCtrls,  FactoryEntity,Vcl.DBCtrls;
 
 
 type

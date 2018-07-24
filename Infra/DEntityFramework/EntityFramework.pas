@@ -6,8 +6,8 @@ uses
   MidasLib, System.Classes, strUtils, RTTI, SysUtils, Variants,  Dialogs,  DateUtils,
   Datasnap.Provider, Forms, Datasnap.DBClient, System.Contnrs, Data.DB,
   System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls,
-  EntityConsts, EntityConnection, EntityTypes,  Atributies , EntityBase,
-  EntityFunctions;
+  //Essas units darão suporte ao nosso framework
+  EntityConsts, EntityConnection, EntityTypes, Atributies , EntityBase, EntityFunctions;
 
 Type
   TSelect = class;
@@ -189,6 +189,7 @@ Type
     class function Caseof(Expression: TInteger; _When, _then: array of variant)
       : TString; overload;
   end;
+
 
   function From(E: String): TFrom; overload;
   function From(E: TEntityBase): TFrom; overload;
@@ -975,3 +976,5 @@ begin
 end;
 
 end.
+
+
