@@ -11,10 +11,12 @@ type
   private
     FNome: TString;
     FMatricula: TString;
-  public
-     [EntityField('Nome','varchar(50) not null',true)]
+  published
+     [EntityField('Nome','varchar(50) ',true)]
+     [Edit]
      property Nome: TString read FNome write FNome;
-     [EntityField('Matricula','varchar(10) not null',true)]
+     [EntityField('Matricula','varchar(10) ',true)]
+     [Edit]
      property Matricula: TString read FMatricula write FMatricula;
   end;
 

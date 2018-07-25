@@ -41,7 +41,7 @@ type
     FCPFCNPJ: TCPF;
     FIdade: TInteger;
     FComissao: TFloat;
-    FDataNascimento: TEntityDatetime;
+    FDataNascimento: TTDatetime;
   published
     [EntityField('CPF','varchar(11)',true)]
     property CPFCNPJ: TCPF read FCPFCNPJ write FCPFCNPJ;
@@ -50,7 +50,7 @@ type
     [EntityField('Comissao','float', true)]
     property Comissao: TFloat read FComissao write FComissao;
     [EntityField('DataNascimento','Datetime',true)]
-    property DataNascimento:TEntityDatetime read FDataNascimento write FDataNascimento;
+    property DataNascimento:TTDatetime read FDataNascimento write FDataNascimento;
   end;
 
   [EntityTable('PessoaJuridica')]
@@ -118,7 +118,7 @@ type
   TOrcamento = class ( TEntityBase )
   private
     FIdCliente: TInteger;
-    FData: TEntityDatetime;
+    FData: TTDatetime;
     FCliente:TCliente;
   public
     [EntityRef('IdCliente=Clientes.Id')]
@@ -126,7 +126,7 @@ type
     constructor Create;
   published
     //[EntityField('Data','date',true)]
-    property Data:TEntityDatetime read FData write FData;
+    property Data:TTDatetime read FData write FData;
     //[EntityField('IdCliente','integer',true)]
     property IdCliente: TInteger read FIdCliente write FIdCliente;
   end;

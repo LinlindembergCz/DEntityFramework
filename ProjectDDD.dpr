@@ -6,6 +6,7 @@ program ProjectDDD;
 
 uses
   DUnitTestRunner,
+  System.Classes,
   Forms,
   Vcl.Themes,
   Vcl.Styles,
@@ -60,21 +61,26 @@ uses
   RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
   InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
   ServiceAluno in 'Service\ServiceAluno.pas',
-  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
-  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno}
-  ;
-  {/unit in Caminho.pas}
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
+  CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
+  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas';
+     {/unit in Caminho.pas}
 
 {R *.RES}
 
 var
-  DataContext: TDataContext;
+ DataContext: TDataContext;
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
-  DataContext:= TDataContext.Create(TFactoryConnection.GetConnection);
+
+  DataContext:= TDataContext.Create(nil);
+  DataContext.Connection:= TFactoryConnection.GetConnection;
   //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
   DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
-  DataContext.Free;
   Application.run;
+  DataContext.Free;
+//DUnitTestRunner.RunRegisteredTests;
+  //ReportMemoryLeaksOnShutdown := true;
 end.

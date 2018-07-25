@@ -66,8 +66,14 @@ type
      Valor: variant);overload;static;
 
     class function GetInstance(const Str_Class: TValue): TObject; static;
-    class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm);
+    class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
   end;
+
+  Const
+  cFLOAT    = 'TFLOAT';
+  cInteger  = 'TINTEGER';
+  cString   = 'TSTRING';
+  cDatetime = 'TTDATETIME';
 
 implementation
 
@@ -79,22 +85,24 @@ uses
 
 class function TAutoMapper.PropIsFloat(Prop: TRttiProperty): boolean;
 begin
-   result:= UpperCase(prop.PropertyType.ToString) = 'TFLOAT';
+   result:= UpperCase(prop.PropertyType.ToString) = cFLOAT;
 end;
 
 class function TAutoMapper.PropIsInteger(Prop: TRttiProperty): boolean;
 begin
-   result:= UpperCase(prop.PropertyType.ToString) = 'TINTEGER';
+   result:= UpperCase(prop.PropertyType.ToString) = cInteger;
 end;
 
 class function TAutoMapper.PropIsString(Prop: TRttiProperty): boolean;
 begin
-   result:= UpperCase(prop.PropertyType.ToString) = 'TSTRING';
+   result:= UpperCase(prop.PropertyType.ToString) = cString;
 end;
 
 class function TAutoMapper.PropIsDate(Prop: TRttiProperty): boolean;
+var
+  date:TDatetime;
 begin
-   result:= UpperCase(prop.PropertyType.ToString) = 'TENTITYDATETIME';
+   result:= UpperCase(prop.PropertyType.ToString) = cDatetime;
 end;
 
 class function TAutoMapper.PropIsVisible(prop: TRttiProperty):boolean;
@@ -111,6 +119,7 @@ var
   Atributies: PParamAtributies;
   List: TList;
   Found:Boolean;
+  tempList:TList;
 
   procedure AddFieldByDefault;
   begin
@@ -132,12 +141,19 @@ var
 
 begin
   try
-    List := TObjectList.Create;
+    List := TObjectList.Create(true);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Obj.ClassInfo);
     for Prop in TypObj.GetProperties do
     begin
-      if not PropIsInstance(Prop) then
+      if PropIsInstance(Prop) then
+      begin
+         tempList := GetListAtributes( Prop.Propertytype.AsInstance.MetaclassType);
+         if tempList.Count > 0 then
+            List.Add( tempList[0] );
+         //tempList.Clear;
+      end
+      else
       begin
         Found:= false;
         for Atributo in Prop.GetAttributes do
@@ -328,7 +344,7 @@ begin
       if  PropIsInstance(prop)  then
       begin
          //tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
-         tempStrings:= ( GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );         
+         tempStrings:= ( GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
@@ -418,7 +434,6 @@ var
   ctx, ctx2: TRttiContext;
   Atrib: TCustomAttribute;
   L: TStringList;
-  FoundAttribute: boolean;
 begin
   try
     L := TStringList.Create(true);
@@ -513,29 +528,29 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
-  dDatetime: TEntityDatetime;
+  dDatetime: TTDatetime;
   Value, TypeClassName: string;
 begin
   Val := Field.GetValue(E);
   TypeClassName := uppercase(Field.FieldType.ToString);
-  if TypeClassName = uppercase('TInteger') then
+  if TypeClassName = uppercase(cInteger) then
   begin
     iInteger := Val.AsType<TInteger>;
     Value := iInteger.Value.ToString;
   end
-  else if TypeClassName = uppercase('TFloat') then
+  else if TypeClassName = uppercase(cFloat) then
   begin
     fFloat := Val.AsType<TFloat>;
     Value := fFloat.Value.ToString;
   end
-  else if TypeClassName = uppercase('TString') then
+  else if TypeClassName = uppercase(cString) then
   begin
     sString := Val.AsType<TString>;
     Value := quotedstr(sString.Value);
   end
-  else if TypeClassName = uppercase('TEntityDateTime') then
+  else if TypeClassName = uppercase(cDateTime) then
   begin
-    dDatetime := Val.AsType<TEntityDatetime>;
+    dDatetime := Val.AsType<TTDatetime>;
     if not fEmpty(dDatetime.Value) then
       Value := datetostr(dDatetime.Value);
   end;
@@ -608,7 +623,6 @@ begin
   try
     L := TStringList.Create(true);
     typ := ctx.GetType(E.ClassType);
-    
     for Prop in typ.GetProperties do
     begin
       FoundAtribute := false;
@@ -740,7 +754,7 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
-  dDatetime: TEntityDatetime;
+  dDatetime: TTDatetime;
   TypeClassName: string;
 begin
   for Field in ctx.GetType(Entity.ClassType).GetFields do
@@ -748,30 +762,30 @@ begin
     begin
       Val := Field.GetValue(Entity);
       TypeClassName := uppercase(Field.FieldType.ToString);
-      if TypeClassName = uppercase('TInteger') then
+      if TypeClassName = uppercase(cInteger) then
       begin
         iInteger := Val.AsType<TInteger>;
         iInteger.SetAs(Valor);
         TValue.Make(@iInteger, TypeInfo(TInteger), Val);
       end
-      else if TypeClassName = uppercase('TFloat') then
+      else if TypeClassName = uppercase(cFloat) then
       begin
         fFloat := Val.AsType<TFloat>;
         fFloat.SetAs(Valor);
         TValue.Make(@fFloat, TypeInfo(TFloat), Val);
       end
-      else if TypeClassName = uppercase('TString') then
+      else if TypeClassName = uppercase(cString) then
       begin
         sString := Val.AsType<TString>;
         sString.SetAs(Valor);
         sString.InContext := InContext;
         TValue.Make(@sString, TypeInfo(TString), Val);
       end
-      else if TypeClassName = uppercase('TEntityDateTime') then
+      else if TypeClassName = uppercase(cDateTime) then
       begin
-        dDatetime := Val.AsType<TEntityDatetime>;
+        dDatetime := Val.AsType<TTDatetime>;
         dDatetime.SetAs(Valor);
-        TValue.Make(@dDatetime, TypeInfo(TEntityDatetime), Val);
+        TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
       end;
 
       Field.SetValue(Entity, Val);
@@ -788,7 +802,7 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
-  dDatetime: TEntityDatetime;
+  dDatetime: TTDatetime;
   TypeClassName: string;
 begin
   for Field in ctx.GetType(Entity.ClassType).GetFields do
@@ -796,30 +810,30 @@ begin
     begin
       TypeClassName := uppercase(Field.FieldType.ToString);
       Val := Field.GetValue(Entity);
-      if TypeClassName = uppercase('TInteger') then
+      if TypeClassName = uppercase(cInteger) then
       begin
         iInteger := Val.AsType<TInteger>;
         iInteger.Value := ifthen( not fEmpty(Valor), Valor, 0);
         TValue.Make(@iInteger, TypeInfo(TInteger), Val);
       end
-      else if TypeClassName = uppercase('TFloat') then
+      else if TypeClassName = uppercase(cFloat) then
       begin
         fFloat := Val.AsType<TFloat>;
         fFloat.Value := ifthen( not fEmpty(Valor), Double(Valor), 0);
         TValue.Make(@fFloat, TypeInfo(TFloat), Val);
       end
-      else if TypeClassName = uppercase('TString') then
+      else if TypeClassName = uppercase(cString) then
       begin
         sString := Val.AsType<TString>;
         sString.Value := ifthen( fEmpty(Valor) ,'',valor);
         TValue.Make(@sString, TypeInfo(TString), Val);
       end
-      else if TypeClassName = uppercase('TEntityDateTime') then
+      else if TypeClassName = uppercase(cDateTime) then
       begin
-        dDatetime := Val.AsType<TEntityDatetime>;
+        dDatetime := Val.AsType<TTDatetime>;
         if not fEmpty(Valor) then
           dDatetime.Value := Valor;
-        TValue.Make(@dDatetime, TypeInfo(TEntityDatetime), Val);
+        TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
       end;
       Field.SetValue(Entity, Val);
       break;
@@ -835,35 +849,35 @@ var
   fFloat: TFloat;
   sString: TString;
   vInstance:Variant;
-  dDatetime: TEntityDatetime;
+  dDatetime: TTDatetime;
   TypeClassName: string;
 begin
     TypeClassName := uppercase(Campo.PropertyType.ToString);
     Val := Campo.GetValue(Entity);
-    if TypeClassName = uppercase('TInteger') then
+    if TypeClassName = uppercase(cInteger) then
     begin
       iInteger := Val.AsType<TInteger>;
       iInteger.Value := ifthen( not fEmpty(Valor), Valor, 0);
       TValue.Make(@iInteger, TypeInfo(TInteger), Val);
     end
-    else if TypeClassName = uppercase('TFloat') then
+    else if TypeClassName = uppercase(cFloat) then
     begin
       fFloat := Val.AsType<TFloat>;
       fFloat.Value := ifthen( not fEmpty(Valor), Double(Valor), 0);
       TValue.Make(@fFloat, TypeInfo(TFloat), Val);
     end
-    else if TypeClassName = uppercase('TString') then
+    else if TypeClassName = uppercase(cString) then
     begin
       sString := Val.AsType<TString>;
       sString.Value := ifthen( fEmpty(Valor) ,'',valor);
       TValue.Make(@sString, TypeInfo(TString), Val);
     end
-    else if TypeClassName = uppercase('TEntityDateTime') then
+    else if TypeClassName = uppercase(cDateTime) then
     begin
-      dDatetime := Val.AsType<TEntityDatetime>;
+      dDatetime := Val.AsType<TTDatetime>;
       if not fEmpty(Valor) then
         dDatetime.Value := Valor;
-      TValue.Make(@dDatetime, TypeInfo(TEntityDatetime), Val);
+      TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
     end;
     Campo.SetValue(Entity, Val);
 end;
@@ -891,6 +905,7 @@ begin
           try
             if Atrib is EntityField then
             begin
+              Found := true;
               TAutoMapper.SetAtribute(Entity, Prop.Name,
                 TAutoMapper.GetTableAttribute(Entity.ClassType) + '.' +
                 EntityField(Atrib).Name, InContext);
@@ -910,7 +925,6 @@ begin
               result := true;
         end;
       end;
-
     end;
   finally
     ctx.Free;
@@ -938,7 +952,7 @@ begin
            DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
         end
         else
-        begin 
+        begin
           for Atrib in Prop.GetAttributes do
           begin
             if Atrib is EntityField then
@@ -1374,7 +1388,7 @@ begin
   // .Invoke(ARttiType.AsInstance.MetaclassType, []).AsObject);
 end;
 
-class procedure TAutoMapper.CreateDinamicView(Entity: TEntityBase; Form: TForm);
+class procedure TAutoMapper.CreateDinamicView(Entity: TEntityBase; Form: TForm;Parent:TWinControl = nil);
 //TAutoMapper.CreateDinamicView( TCliente.create , Self );
 var
   J: integer;
@@ -1392,89 +1406,113 @@ var
   Combos: Array[1..100] of TComboBox;
   LookUpCombos: Array[1..100] of TDBLookUpComboBox;
 
-  i,c, altura: integer;
+  i,c, altura, MaxLength: integer;
 
-  procedure CreateLabel;
+  procedure CreateLabel(Name: string;cont:integer; top:integer);
   begin
-    Labels[c] := TLabel.Create(Form);
-    Labels[c].Parent := Form;
-    Labels[c].Left := 40;
-    Labels[c].Top := altura;
-    Labels[c].Width := 50;
-    Labels[c].Height := 13;
-    Labels[c].Caption := prop.name;
+    Labels[cont] := TLabel.Create(Form);
+    if Parent = nil then
+       Labels[cont].Parent := Form
+    else
+       Labels[cont].Parent := Parent;
+    Labels[cont].Left := 40;
+    Labels[cont].Top := top;
+    Labels[cont].Width := 50;
+    Labels[cont].Height := 13;
+    Labels[cont].Caption := Name;
   end;
 
-  procedure CreateEdit(Name: string);
+  procedure CreateEdit(Name: string; cont:integer; top:integer; IsNumeric:boolean; MaxLength:integer);
   begin
-    Edits[c] := TEdit.Create(Form);
-    Edits[c].Parent := Form;
-    Edits[c].Left := 40;
-    Edits[c].Top := altura;
-    Edits[c].Width := 100;
-    Edits[c].Height := 21;
-    Edits[c].TabOrder := c;
-    Edits[c].NumbersOnly := (PropIsInteger(prop)) and(PropIsFloat(prop));
-    Edits[c].Name:= name;
+    Edits[cont] := TEdit.Create(Form);
+    if Parent = nil then
+       Edits[cont].Parent := Form
+    else
+       Edits[cont].Parent := Parent;
+
+    Edits[cont].Left := 40;
+    Edits[cont].Top := top;
+    Edits[cont].Width := 100;
+    Edits[cont].Height := 21;
+    Edits[cont].TabOrder := cont;
+    Edits[cont].NumbersOnly :=  IsNumeric;
+    Edits[cont].Name:= name;
+    if MaxLength > 0 then
+       Edits[cont].MaxLength := MaxLength;
   end;
 
-  procedure CreateCheckBox(Name: string);
+  procedure CreateCheckBox(Name: string; cont:integer; top:integer);
   begin
-    Checks[c] := TCheckBox.Create(Form);
-    Checks[c].Parent := Form;
-    Checks[c].Left := 40;
-    Checks[c].Top := altura;
-    Checks[c].Width := 100;
-    Checks[c].Height := 21;
-    Checks[c].TabOrder := c;
-    Checks[c].Caption := prop.name;
-    Checks[c].Name:= 'chk'+name;
+    Checks[cont] := TCheckBox.Create(Form);
+    if Parent = nil then
+       Checks[cont].Parent := Form
+    else
+       Checks[cont].Parent := Parent;
+    Checks[cont].Left := 40;
+    Checks[cont].Top := top;
+    Checks[cont].Width := 100;
+    Checks[cont].Height := 21;
+    Checks[cont].TabOrder := cont;
+    Checks[cont].Caption := Name;
+    Checks[cont].Name:= 'chk'+name;
   end;
 
-  procedure CreateMemo(Name: string);
+  procedure CreateMemo(Name: string; cont:integer; top:integer);
   begin
-    Memos[c] := TMemo.Create(Form);
-    Memos[c].Parent := Form;
-    Memos[c].Left := 40;
-    Memos[c].Top := altura;
-    Memos[c].TabOrder := c;
-    Memos[c].Name:= 'memo'+name;
+    Memos[cont] := TMemo.Create(Form);
+    if Parent = nil then
+       Memos[cont].Parent := Form
+    else
+       Memos[cont].Parent := Parent;
+    Memos[cont].Left := 40;
+    Memos[cont].Top := top;
+    Memos[cont].TabOrder := cont;
+    Memos[cont].Name:= 'memo'+name;
   end;
 
-  procedure CreateDatetimePick(Name: string);
+  procedure CreateDatetimePick(Name: string; cont:integer; top:integer);
   begin
-    Dates[c] := TDateTimePicker.Create(Form);
-    Dates[c].Parent := Form;
-    Dates[c].Left := 40;
-    Dates[c].Top := altura;
-    Dates[c].Width := 100;
-    Dates[c].Height := 21;
-    Dates[c].TabOrder := c;
-    Dates[c].Name:= 'date'+name;
+    Dates[cont] := TDateTimePicker.Create(Form);
+    if Parent = nil then
+       Dates[cont].Parent := Form
+    else
+       Dates[cont].Parent := Parent;
+    Dates[cont].Left := 40;
+    Dates[cont].Top := top;
+    Dates[cont].Width := 100;
+    Dates[cont].Height := 21;
+    Dates[cont].TabOrder := cont;
+    Dates[cont].Name:= 'date'+name;
   end;
 
-  procedure CreateCombobox(Name: string);
+  procedure CreateCombobox(Name: string; cont:integer; top:integer);
   begin
-    Combos[c] := TCombobox.Create(Form);
-    Combos[c].Parent := Form;
-    Combos[c].Left := 40;
-    Combos[c].Top := altura;
-    Combos[c].Width := 100;
-    Combos[c].Height := 21;
-    Combos[c].TabOrder := c;
-    Combos[c].Name:= 'cbo'+name;
+    Combos[cont] := TCombobox.Create(Form);
+    if Parent = nil then
+       Combos[cont].Parent := Form
+    else
+       Combos[cont].Parent := Parent;
+    Combos[cont].Left := 40;
+    Combos[cont].Top := top;
+    Combos[cont].Width := 100;
+    Combos[cont].Height := 21;
+    Combos[cont].TabOrder := cont;
+    Combos[cont].Name:= 'cbo'+name;
   end;
 
-  procedure CreateLookUpCombobox(Name: string);
+  procedure CreateLookUpCombobox(Name: string; cont:integer; top:integer);
   begin
-    LookUpCombos[c] := TDBLookUpCombobox.Create(Form);
-    LookUpCombos[c].Parent := Form;
-    LookUpCombos[c].Left := 40;
-    LookUpCombos[c].Top := altura;
-    LookUpCombos[c].Width := 100;
-    LookUpCombos[c].Height := 21;
-    LookUpCombos[c].TabOrder := c;
-    LookUpCombos[c].Name:= 'cbo'+name;
+    LookUpCombos[cont] := TDBLookUpCombobox.Create(Form);
+    if Parent = nil then
+       LookUpCombos[cont].Parent := Form
+    else
+       LookUpCombos[cont].Parent := Parent;
+    LookUpCombos[cont].Left := 40;
+    LookUpCombos[cont].Top := top;
+    LookUpCombos[cont].Width := 100;
+    LookUpCombos[cont].Height := 21;
+    LookUpCombos[cont].TabOrder := cont;
+    LookUpCombos[cont].Name:= 'cbo'+name;
   end;
 
 begin
@@ -1482,64 +1520,72 @@ begin
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Entity.ClassInfo);
 
-    c := 0;
     altura := 10;
     for Prop in TypObj.GetProperties do
     begin
        if (not PropIsInstance(prop)) and (PropIsVisible(prop)) then
        begin
+          c := 0;
           for Atrib in Prop.GetAttributes do
           begin
-            CreateLabel;
-
-          //Labels[c].Font.Color := clred;
             if Atrib is Edit then
             begin
-                Altura := altura + 15;
-                CreateEdit(prop.name);
-               //Edits[c].MaxLength :=  ClientDataSet1.Fields[c].Size;
+              CreateLabel(prop.name, c, altura);
+              Altura := altura + 15;
+              MaxLength:=  GetMaxLengthValue(Entity, prop.name) ;
+              MaxLength:= 0;
+              CreateEdit( prop.name, c, altura, (PropIsInteger(prop)) and(PropIsFloat(prop)) , MaxLength );
+              inc(c);
               break;
             end
             else
             if Atrib is CheckBox then
             begin
               Altura := altura + 15;
-              CreateCheckBox(prop.name);
+              CreateCheckBox( prop.name, c, altura);
+              inc(c);
               break;
             end
             else
             if Atrib is Memo then
             begin
+              CreateLabel(prop.name, c, altura);
               Altura := altura + 15;
-              CreateMemo(prop.name);
-              //Memos[c].MaxLength :=  ClientDataSet1.Fields[c].Size;
+              CreateMemo( prop.name, c, altura);
+              inc(c);
               break;
             end
             else
             if Atrib is  DateTimePicker then
             begin
+              CreateLabel(prop.name, c, altura);
               Altura := altura + 15;
-              CreateDateTimePick(prop.name);
+              CreateDateTimePick( prop.name, c, altura);
+              inc(c);
               break;
             end
             else
             if Atrib is  Combobox then
             begin
+              CreateLabel(prop.name, c, altura);
               Altura := altura + 15;
-              CreateCombobox(prop.name);
+              CreateCombobox( prop.name, c, altura);
+              inc(c);
               break;
             end
             else
             if Atrib is  LookupCombobox then
             begin
+              CreateLabel(prop.name, c, altura);
               Altura := altura + 15;
-              CreateLookupCombobox(prop.name);
+              CreateLookupCombobox( prop.name, c, altura);
+              inc(c);
               break;
             end;
 
           end;
           Altura := altura + 23;
-          c := c+1;
+
        end;
      end;
   finally

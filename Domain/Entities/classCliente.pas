@@ -14,7 +14,7 @@ type
     FIdade: TInteger;
     FNome: TString;
     FRG: TString;
-    FDataNascimento: TEntityDatetime;
+    FDataNascimento: TTDatetime;
     FAtivo: TString;
     FNomeFantasia: TString;
     FApelido: TString;
@@ -26,7 +26,6 @@ type
     FCalcRenda: TFloat;
   public
     constructor Create;override;
-    destructor Destroy;override;
     procedure Validation; override;
   published
     [EntityField('Nome','varchar(50)',false)]
@@ -51,7 +50,7 @@ type
     property RG: TString read FRG write FRG;
     [EntityField('DataNascimento','Date',true)]
     [DateTimePicker]
-    property DataNascimento:TEntityDatetime read FDataNascimento write FDataNascimento;
+    property DataNascimento:TTDatetime read FDataNascimento write FDataNascimento;
     [EntityField('Ativo','varchar(1)',true)]
     [CheckBox]
     property Ativo: TString read FAtivo write FAtivo;
@@ -72,8 +71,8 @@ type
     property Observacao:TString read FObservacao write FObservacao;
     [Edit]
     property Email:TEmail read FEmail write FEmail;
-    [EntityExpression('CalcRenda','Renda * 2')]
-    property CalcRenda:TFloat read FCalcRenda;
+    //[EntityExpression('CalcRenda','Renda * 2')]
+    //property CalcRenda:TFloat read FCalcRenda;
   end;
 
 implementation
@@ -84,15 +83,10 @@ begin
   Email:= TEmail.Create;
 end;
 
-destructor TCliente.Destroy;
-begin
-  Email.free;
-end;
-
 procedure TCliente.Validation;
 begin
   inherited;
-  //Email.validar;
+  Email.validar;
 end;
 
 initialization RegisterClass(TCliente);

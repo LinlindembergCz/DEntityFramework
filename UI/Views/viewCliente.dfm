@@ -1,17 +1,17 @@
 inherited FormViewCliente: TFormViewCliente
   Caption = 'FormViewCliente'
   ClientHeight = 467
-  ExplicitWidth = 687
-  ExplicitHeight = 505
+  ExplicitWidth = 320
+  ExplicitHeight = 506
   PixelsPerInch = 96
   TextHeight = 13
   inherited pgPrincipal: TPageControl
     Height = 426
     ExplicitHeight = 426
     inherited TabSheet1: TTabSheet
-      ExplicitLeft = 4
-      ExplicitTop = 24
-      ExplicitWidth = 663
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 398
       inherited grdEntity: TDBGrid
         Top = 57
@@ -19,19 +19,22 @@ inherited FormViewCliente: TFormViewCliente
         Columns = <
           item
             Expanded = False
+            FieldName = 'ID'
+            ImeName = 'Clientes.ID'
+            Visible = True
+          end
+          item
+            Expanded = False
             FieldName = 'Nome'
+            ImeName = 'Clientes.Nome'
             Width = 364
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'RG'
+            ImeName = 'Clientes.RG'
             Width = 105
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'CalcRenda'
             Visible = True
           end>
       end
@@ -45,9 +48,9 @@ inherited FormViewCliente: TFormViewCliente
       end
     end
     inherited TabSheet2: TTabSheet
-      ExplicitLeft = 4
-      ExplicitTop = 24
-      ExplicitWidth = 663
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 398
       object Label2: TLabel
         Left = 10
@@ -265,7 +268,7 @@ inherited FormViewCliente: TFormViewCliente
     end
   end
   inherited dsEntity: TDataSource
-    Left = 536
-    Top = 176
+    Left = 184
+    Top = 144
   end
 end

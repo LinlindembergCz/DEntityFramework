@@ -14,7 +14,7 @@ type
     function GetContener:TComponent;
 
     procedure Read;
-    function Load(iId:Integer = 0) : TDataSet;
+    function Load(iId:Integer; Fields: string = '') : TDataSet;
     procedure Refresh;
     procedure Insert(E: TEnumEntities);
     procedure Edit;

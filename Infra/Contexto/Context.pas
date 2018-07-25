@@ -23,8 +23,8 @@ uses  FactoryConnection;
 
 constructor TContext.Create(E: TEnumEntities);
 begin
-  inherited Create(TFactoryConnection.GetConnection);
-  Entity:= TFactoryEntity.GetEntity(E);
+  Connection:= TFactoryConnection.GetConnection;
+  inherited Create( TFactoryEntity.GetEntity(E) );
 end;
 
 end.
