@@ -11,7 +11,7 @@ type
 
   TContext = class(TDataContext)
   public
-    constructor Create(E: TEnumEntities);reintroduce;
+    constructor Create(E: string);reintroduce;
   end;
 
 
@@ -21,7 +21,7 @@ implementation
 
 uses  FactoryConnection;
 
-constructor TContext.Create(E: TEnumEntities);
+constructor TContext.Create(E: string);
 begin
   Connection:= TFactoryConnection.GetConnection;
   inherited Create( TFactoryEntity.GetEntity(E) );

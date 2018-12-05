@@ -53,9 +53,17 @@ uses
   RepositoryFabricante in 'Infra\Repositories\RepositoryFabricante.pas',
   InterfaceServiceFabricante in 'Domain\IService\InterfaceServiceFabricante.pas',
   ServiceFabricante in 'Service\ServiceFabricante.pas',
-  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas',
+  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' {,
   ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
-  InterfaceService in 'Domain\IService\InterfaceService.pas' ,
+  ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
+  InterfaceService in 'Domain\IService\InterfaceService.pas' {,
+  ClassAluno in 'Domain\Entities\ClassAluno.pas',
+  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
+  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
+  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
+  ServiceAluno in 'Service\ServiceAluno.pas',
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   ClassAluno in 'Domain\Entities\ClassAluno.pas',
   InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
   RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
@@ -65,7 +73,8 @@ uses
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
   LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas';
-     {/unit in Caminho.pas}
+
+{/unit in Caminho.pas}
 
 {R *.RES}
 
@@ -74,13 +83,13 @@ var
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
-
-  DataContext:= TDataContext.Create(nil);
-  DataContext.Connection:= TFactoryConnection.GetConnection;
-  //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
-  DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
+  //DataContext:= TDataContext.Create(nil);
+  //DataContext.Connection:= TFactoryConnection.GetConnection;
+  ////Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
+  //DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
+  //DataContext.Free;
   Application.run;
-  DataContext.Free;
-//DUnitTestRunner.RunRegisteredTests;
-  //ReportMemoryLeaksOnShutdown := true;
+  //
+  //DUnitTestRunner.RunRegisteredTests;
+  ReportMemoryLeaksOnShutdown := true;
 end.

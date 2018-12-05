@@ -6,8 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   ViewBase, Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
-  Vcl.ExtCtrls, Datasnap.DBClient,
-  System.Rtti, Vcl.Mask, Data.Bind.ObjectScope, Data.Bind.Components;
+  Vcl.ExtCtrls, Datasnap.DBClient, System.Rtti, Vcl.Mask,
+  Data.Bind.ObjectScope,  Data.Bind.Components;
 
 type
   TFormViewCliente = class(TFormViewBase)
@@ -28,7 +28,6 @@ type
     edtCPFCNPJ: TMaskEdit;
     edtEmail: TEdit;
     Label1: TLabel;
-    Label7: TLabel;
   private
     { Private declarations }
   public

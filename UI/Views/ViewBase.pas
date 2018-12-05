@@ -7,9 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DBXFirebird, Data.DB, Data.SqlExpr,
   Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient, Data.DBXMSSQL,
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper, strUtils,
-  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController, FactoryController,
-  FactoryEntity, Data.Bind.ObjectScope;
-
+  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController,
+  FactoryController, FactoryEntity, Data.Bind.ObjectScope;
 
 type
   TFormViewBase = class(TForm)
@@ -40,7 +39,6 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
-    FEnumEntities: TEnumEntities;
     procedure SetAutoApplyUpdate(const Value: boolean);
     procedure LoadViewModel;
     function GetViewModel: TStringList;
@@ -51,19 +49,20 @@ type
     FAutoApplyUpdate: boolean;
   public
     { Public declarations }
-    property EnumEntities : TEnumEntities read FEnumEntities;
     property AutoApplyUpdate : boolean read FAutoApplyUpdate write SetAutoApplyUpdate;
-    constructor Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase );
+    constructor Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase = nil );
   end;
 
 implementation
 
 {$R *.dfm}
 
-constructor TFormViewBase.Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase );
+constructor TFormViewBase.Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase = nil );
 begin
-  ControllerQuery := pControllerQuery;
-  ControllerCommand := pControllerCommand;
+  ControllerQuery   := pControllerQuery;
+  ControllerCommand :=  pControllerQuery;
+  if pControllerCommand <> nil then
+     ControllerCommand := pControllerCommand;
   ControllerCommand.Contener := self;
   inherited Create(Application);
   LoadViewModel;
@@ -104,6 +103,7 @@ begin
    begin
      dsEntity.DataSet := ControllerQuery.Load(0);
    end;
+   ViewModelList.Free;
 end;
 
 procedure TFormViewBase.grdEntityDblClick(Sender: TObject);
@@ -120,7 +120,7 @@ end;
 procedure TFormViewBase.btnNewClick(Sender: TObject);
 begin
   ControllerCommand.Load(-1);
-  ControllerCommand.Insert(FEnumEntities);
+  ControllerCommand.Insert;
 end;
 
 procedure TFormViewBase.btnEditClick(Sender: TObject);
@@ -154,17 +154,15 @@ end;
 procedure TFormViewBase.Button1Click(Sender: TObject);
 begin
   dsEntity.DataSet.prior;
-  ControllerQuery.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
-  ControllerQuery.Read;
+  ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerCommand.Read;
 end;
 
 procedure TFormViewBase.Button3Click(Sender: TObject);
 begin
   dsEntity.DataSet.Next;
-  ControllerQuery.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
-  ControllerQuery.Read;
+  ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerCommand.Read;
 end;
 
 end.
-
-

@@ -8,9 +8,8 @@ uses
 type
   TFactoryRepository = class
   private
-    class function GetRepositoryClassName(E: TEnumEntities): string; static;
   public
-    class function GetRepository(E: TEnumEntities): IRepositoryBase;
+    class function GetRepository(E: string): IRepositoryBase;
   end;
 
 implementation
@@ -19,31 +18,15 @@ implementation
 uses Context , AutoMapper, RepositoryBase;
 
 
-class function TFactoryRepository.GetRepositoryClassName( E: TEnumEntities):string;
-begin
-  case E of
-     tpCliente   : result:= 'RepositoryCliente.TRepositoryCliente';
-     tpFornecedor: result:= 'RepositoryFornecedor.TRepositoryFornecedor';
-     tpFabricante: result:= 'RepositoryFabricante.TRepositoryFabricante';
-       tpAluno : result:= 'RepositoryAluno.TRepositoryAluno';
-//tpEntity: result:= RepositoryEntity.TRepositoryEntity;
-  else
-    begin
-      showmessage('Verificar declaração "initialization RegisterClass" requerido do Repository !');
-      abort;
-    end;
-  end;
-end;
-
-class function TFactoryRepository.GetRepository(E: TEnumEntities): IRepositoryBase;
+class function TFactoryRepository.GetRepository(E: string): IRepositoryBase;
 var
   Repository     : IRepositoryBase;
   Instance      : TObject;
 begin
-  Instance := TAutoMapper.GetInstance( GetRepositoryClassName( E ) );
+  Instance := TAutoMapper.GetInstance( 'Repository'+E+'.TRepositoryCliente' );
   if Instance <> nil then
   begin
-    Repository :=  TRepositoryBase( Instance ).create( TContext.Create(E) )as IRepositoryBase;
+    Repository :=  TRepositoryBase( Instance ).create( TContext.Create(E) );  //as IRepositoryBase
     result:= Repository;
   end;
 end;

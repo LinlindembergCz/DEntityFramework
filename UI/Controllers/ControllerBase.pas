@@ -28,14 +28,14 @@ type
     function Load(iId:Integer; Fields: string = '' ): TDataSet; virtual;
     procedure Refresh; virtual;
     procedure Read; virtual;
-    procedure Insert(E: TEnumEntities); virtual;
+    procedure Insert; virtual;
     procedure Edit; virtual;
     procedure Delete; virtual;
     procedure Post; virtual;
     procedure Cancel; virtual;
     procedure Apply; virtual;
     procedure EntityToDBGrid(Grid: TDBGrid);
-    procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ; DataSource: TDataSource; E:TEnumEntities);
+    procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ; DataSource: TDataSource; E:string);
     property State: TEntityState read FState write FState;
     property Contener: TComponent read GetContener write SetContener;
 
@@ -105,7 +105,7 @@ begin
   result := Service.Load( iId , Fields);
 end;
 
-procedure TControllerBase.Insert(E: TEnumEntities);
+procedure TControllerBase.Insert;
 begin
   CleanComponents;
   Service.InitEntity(FContener);
@@ -196,7 +196,7 @@ end;
 
 procedure TControllerBase.LoadLookUp(DBLookupComboBox: TDBLookupComboBox;
                                      DataSource:TDataSource;
-                                     E :TEnumEntities);
+                                     E : string);
 var
   LookUpContext: TContext;
   LookUpDataSet: TClientDataSet;

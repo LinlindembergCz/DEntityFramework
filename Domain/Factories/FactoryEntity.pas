@@ -6,13 +6,11 @@ uses
   Sysutils,  EntityBase;
 
 type
-  TEnumEntities = ( tpCliente ,  tpFornecedor ,  tpFabricante , tpAluno, tpEntidade );
-
   TFactoryEntity = class
   private
 
   public
-    class function GetEntity(aEntities: TEnumEntities): TEntityBase;
+    class function GetEntity(E: string): TEntityBase;
   end;
 
 implementation
@@ -21,17 +19,11 @@ implementation
 
 uses  AutoMapper;
 
-class function TFactoryEntity.GetEntity(aEntities: TEnumEntities ):TEntityBase;
+class function TFactoryEntity.GetEntity(E: string ):TEntityBase;
 var
   Instance:TObject;
 begin
-  case aEntities of
-    tpCliente    : result := TEntityBase( TAutoMapper.GetInstance( 'classCliente.TCliente' )).Create;
-    tpFornecedor : result := TEntityBase( TAutoMapper.GetInstance( 'ClassFornecedor.Fornecedor' )).Create;
-    tpFabricante : result := TEntityBase( TAutoMapper.GetInstance( 'ClassFabricante.Fabricante' )).Create;
-    tpAluno : result := TEntityBase( TAutoMapper.GetInstance( 'ClassAluno.Aluno' )).Create;
-//tpEntity: result := TEntityBase( TAutoMapper.GetInstance( 'classEntity.TEntity' )).Create;
-  end;
+    result := TEntityBase( TAutoMapper.GetInstance( 'class'+E+'.T'+E )).Create;
 end;
 
 end.

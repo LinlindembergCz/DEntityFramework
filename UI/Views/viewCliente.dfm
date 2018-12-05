@@ -1,17 +1,17 @@
 inherited FormViewCliente: TFormViewCliente
   Caption = 'FormViewCliente'
   ClientHeight = 467
-  ExplicitWidth = 320
   ExplicitHeight = 506
   PixelsPerInch = 96
   TextHeight = 13
   inherited pgPrincipal: TPageControl
     Height = 426
+    ActivePage = TabSheet2
     ExplicitHeight = 426
     inherited TabSheet1: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 663
       ExplicitHeight = 398
       inherited grdEntity: TDBGrid
         Top = 57
@@ -48,9 +48,9 @@ inherited FormViewCliente: TFormViewCliente
       end
     end
     inherited TabSheet2: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 663
       ExplicitHeight = 398
       object Label2: TLabel
         Left = 10
@@ -126,19 +126,6 @@ inherited FormViewCliente: TFormViewCliente
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label7: TLabel
-        Left = 352
-        Top = 40
-        Width = 269
-        Height = 25
-        Caption = 'S'#243' os FORTES entender'#227'o'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -21
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False

@@ -8,33 +8,16 @@ uses
 type
   TFactoryForm = class
   private
-    class function GetFormClassName(E: TEnumEntities): string; static;
     class procedure ShowForm(Form: TForm; modal: boolean);
-
   public
-    class function GetForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
-    class function GetDinamicForm(E: TEnumEntities; modal: boolean = true): TFormViewBase; static;
+    class function GetForm(E: string; modal:boolean = true ):TFormViewBase;
+    class function GetDinamicForm(E: string; modal: boolean = true): TFormViewBase; static;
   end;
 
 implementation
 
 uses
 InterfaceController, FactoryController, AutoMapper;
-
-class function TFactoryForm.GetFormClassName( E: TEnumEntities):string;
-begin
-  case E of
-     tpCliente   : result:= 'viewCliente.TFormViewCliente';
-     tpFornecedor: result:= 'viewFornecedor.TFormViewFornecedor';
-     tpFabricante: result:= 'ViewFabricante.TFormViewFabricante';
-     tpAluno     : result:= 'viewAluno.TFormViewAluno';
-  else
-    begin
-      showmessage('Verificar declaração "initialization RegisterClass" requerido no form !');
-      abort;
-    end;
-  end;
-end;
 
 class procedure TFactoryForm.ShowForm(Form:TForm;modal:boolean);
 begin
@@ -50,14 +33,16 @@ begin
   end;
 end;
 
-class function TFactoryForm.GetDinamicForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
+class function TFactoryForm.GetDinamicForm(E: string; modal:boolean = true ):TFormViewBase;
 var
   Form          : TFormViewBase;
+    ControllerQuery : IControllerBase;
+  ControllerCommand : IControllerBase;
 begin
   result:= nil;
-
-  Form := TFormViewBase.create( TFactoryController.GetController( E ) ,
-                                TFactoryController.GetController( E ) );
+  ControllerQuery   := TFactoryController.GetController( E );
+  ControllerCommand := TFactoryController.GetController( E );
+  Form := TFormViewBase.create( ControllerQuery, ControllerCommand );
   if Form <> nil then
   begin
     TAutoMapper.CreateDinamicView( TFactoryEntity.GetEntity(E) , Form, Form.TabSheet2);
@@ -69,21 +54,23 @@ begin
   end
   else
     showmessage('Formulário não implementado!');
-
 end;
 
-class function TFactoryForm.GetForm(E: TEnumEntities; modal:boolean = true ):TFormViewBase;
+class function TFactoryForm.GetForm(E: string; modal:boolean = true ):TFormViewBase;
 var
   Form          : TFormViewBase;
   Instance      : TFormViewBase;
+  ControllerQuery : IControllerBase;
+  ControllerCommand : IControllerBase;
 begin
   result:= nil;
-  Instance := TFormViewBase( TAutoMapper.GetInstance( GetFormClassName( E ) ) );
+  Instance := TFormViewBase( TAutoMapper.GetInstance( 'view'+E+'.TFormView'+ E ) );
 
   if Instance <> nil then
   begin
-    Form := Instance.Create( TFactoryController.GetController( E ) ,
-                             TFactoryController.GetController( E )  );
+    ControllerQuery   := TFactoryController.GetController( E );
+    ControllerCommand := TFactoryController.GetController( E );
+    Form := Instance.Create( ControllerQuery, ControllerCommand );
     if Form <> nil then
     begin
       ShowForm( Form , modal);

@@ -16,7 +16,7 @@ type
     procedure Read;
     function Load(iId:Integer; Fields: string = '') : TDataSet;
     procedure Refresh;
-    procedure Insert(E: TEnumEntities);
+    procedure Insert;
     procedure Edit;
     procedure Delete;
     procedure Post;
@@ -25,7 +25,7 @@ type
     procedure EntityToDBGrid(Grid: TDBGrid);
     procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ;
                          DataSource: TDataSource;
-                         parEntity:TEnumEntities);
+                         parEntity: string);
     property Contener: TComponent read GetContener write SetContener;
   end;
 

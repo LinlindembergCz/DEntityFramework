@@ -2,8 +2,8 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'FormPrincipal'
-  ClientHeight = 571
-  ClientWidth = 706
+  ClientHeight = 263
+  ClientWidth = 357
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,58 +14,10 @@ object FormPrincipal: TFormPrincipal
   Position = poDesktopCenter
   PixelsPerInch = 96
   TextHeight = 13
-  object Ribbon1: TRibbon
-    Left = 0
-    Top = 0
-    Width = 706
-    Height = 143
-    ActionManager = ActionManager2
-    ApplicationMenu.Menu = RibbonApplicationMenuBar1
-    Caption = 'Ribbon1'
-    QuickAccessToolbar.ActionBar = RibbonQuickAccessToolbar1
-    Tabs = <
-      item
-        Caption = 'RibbonPage1'
-        Page = RibbonPage1
-      end>
-    DesignSize = (
-      706
-      143)
-    StyleName = 'Ribbon - Luna'
-    object RibbonPage1: TRibbonPage
-      Left = 0
-      Top = 50
-      Width = 705
-      Height = 93
-      Caption = 'RibbonPage1'
-      Index = 0
-      object RibbonGroup1: TRibbonGroup
-        Left = 4
-        Top = 3
-        Width = 103
-        Height = 86
-        ActionManager = ActionManager2
-        DialogAction = Action2
-        GroupIndex = 0
-      end
-    end
-    object RibbonApplicationMenuBar1: TRibbonApplicationMenuBar
-      ActionManager = ActionManager2
-      OptionItems = <>
-      RecentItems = <>
-    end
-    object RibbonQuickAccessToolbar1: TRibbonQuickAccessToolbar
-      Left = 49
-      Top = 1
-      Width = 48
-      Height = 24
-      ActionManager = ActionManager2
-    end
-  end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 552
-    Width = 706
+    Top = 244
+    Width = 357
     Height = 19
     Panels = <
       item
@@ -73,11 +25,28 @@ object FormPrincipal: TFormPrincipal
         Width = 300
       end>
   end
+  object Button1: TButton
+    Left = 144
+    Top = 72
+    Width = 75
+    Height = 25
+    Action = Action2
+    TabOrder = 1
+  end
+  object Button2: TButton
+    Left = 144
+    Top = 144
+    Width = 75
+    Height = 25
+    Action = Action2
+    TabOrder = 2
+    OnClick = Button2Click
+  end
   object ImageList2: TImageList
-    Left = 48
-    Top = 192
+    Left = 88
+    Top = 56
     Bitmap = {
-      494C0101030008002C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -235,7 +204,6 @@ object FormPrincipal: TFormPrincipal
             Caption = 'F&abricantes'
             ImageIndex = 2
           end>
-        ActionBar = RibbonGroup1
       end
       item
         Items = <
@@ -248,17 +216,15 @@ object FormPrincipal: TFormPrincipal
             Caption = '&ActionClientItem0'
             KeyTip = 'F'
           end>
-        ActionBar = RibbonApplicationMenuBar1
         AutoSize = False
       end
       item
-        ActionBar = RibbonQuickAccessToolbar1
         AutoSize = False
       end>
     Images = ImageList2
-    Left = 144
-    Top = 192
-    StyleName = 'Ribbon - Luna'
+    Left = 88
+    Top = 112
+    StyleName = 'Platform Default'
     object Action2: TAction
       Caption = 'Clientes'
       ImageIndex = 0
@@ -267,12 +233,10 @@ object FormPrincipal: TFormPrincipal
     object Action3: TAction
       Caption = 'Fornecedores'
       ImageIndex = 1
-      OnExecute = Action3Execute
     end
     object Action4: TAction
       Caption = 'Fabricantes'
       ImageIndex = 2
-      OnExecute = Action4Execute
     end
   end
 end

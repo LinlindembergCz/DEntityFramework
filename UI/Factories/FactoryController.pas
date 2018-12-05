@@ -8,9 +8,9 @@ uses
 type
   TFactoryController = class
   private
-    class function GetControllerClassName(E: TEnumEntities): string; static;
+
   public
-    class function GetController(E: TEnumEntities ): IControllerBase;Virtual;
+    class function GetController(E: string ): IControllerBase;Virtual;
   end;
 
 implementation
@@ -20,28 +20,12 @@ implementation
 uses
 InterfaceService, FactoryService, ControllerBase, AutoMapper;
 
-class function TFactoryController.GetControllerClassName( E: TEnumEntities):string;
-begin
-  case E of
-     tpCliente   : result:= 'ControllerCliente.TControllerCliente';
-     tpFornecedor: result:= 'ControllerFornecedor.TControllerFornecedor';
-     tpFabricante: result:= 'ControllerFabricante.TControllerFabricante';
-         tpAluno : result:= 'ControllerAluno.TControllerAluno';
-//tpEntity: result:= ControllerEntity.TControllerEntity;
-  else
-    begin
-      showmessage('Verificar declaração "initialization RegisterClass" requerido do Controller !');
-      abort;
-    end;
-  end;
-end;
-
-class function TFactoryController.GetController( E: TEnumEntities ): IControllerBase;
+class function TFactoryController.GetController( E: string ): IControllerBase;
 var
   Controller     : IControllerBase;
   Instance      : TObject;
 begin
-  Instance := TAutoMapper.GetInstance( GetControllerClassName( E ) );
+  Instance := TAutoMapper.GetInstance( 'Controller'+E+'.TController'+ E );
   if Instance <> nil then
   begin
     Controller :=  TControllerBase( Instance ).create( TFactoryService.GetService(E) );
@@ -50,3 +34,4 @@ begin
 end;
 
 end.
+
