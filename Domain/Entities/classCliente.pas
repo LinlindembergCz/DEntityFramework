@@ -29,6 +29,7 @@ type
     procedure Validation; override;
   published
     [EntityField('Nome','varchar(50)',false)]
+    [EntityValueLengthMin(10)]
     [Edit]
     property Nome: TString read FNome write FNome;
     [EntityField('NomeFantasia','varchar(50)',false)]
