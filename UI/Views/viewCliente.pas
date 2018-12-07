@@ -6,8 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   ViewBase, Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
-  Vcl.ExtCtrls, Datasnap.DBClient, System.Rtti, Vcl.Mask,
-  Data.Bind.ObjectScope,  Data.Bind.Components;
+  Vcl.ExtCtrls, Datasnap.DBClient, System.Rtti, Vcl.Mask;
 
 type
   TFormViewCliente = class(TFormViewBase)
@@ -37,7 +36,6 @@ type
 implementation
 
 {$R *.dfm}
-
 //Nosso crud so precisa disso e mais nada!
 initialization RegisterClass(TFormViewCliente);
 finalization UnRegisterClass(TFormViewCliente);

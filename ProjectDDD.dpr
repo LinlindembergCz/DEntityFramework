@@ -41,7 +41,7 @@ uses
   FactoryService in 'Service\Factories\FactoryService.pas',
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   ServiceCliente in 'Service\ServiceCliente.pas',
-  classCliente in 'Domain\Entities\classCliente.pas' {/unit in Caminho.pas},
+  ClassCliente in 'Domain\Entities\ClassCliente.pas' {/unit in Caminho.pas},
   ClassFornecedor in 'Domain\Entities\ClassFornecedor.pas',
   InterfaceRepositoryFornecedor in 'Domain\IRepositories\InterfaceRepositoryFornecedor.pas',
   RepositoryFornecedor in 'Infra\Repositories\RepositoryFornecedor.pas',
@@ -85,11 +85,10 @@ begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   //DataContext:= TDataContext.Create(nil);
   //DataContext.Connection:= TFactoryConnection.GetConnection;
-  ////Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
+  //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
   //DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
   //DataContext.Free;
   Application.run;
-  //
   //DUnitTestRunner.RunRegisteredTests;
-  ReportMemoryLeaksOnShutdown := true;
+  //ReportMemoryLeaksOnShutdown := true;
 end.
