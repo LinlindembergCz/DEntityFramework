@@ -37,6 +37,7 @@ var
   typeRtti: TRttiType;
   propRtti: TRttiProperty;
   atrbRtti: TCustomAttribute;
+  mensagem: string;
 begin
   ctx := TRttiContext.Create;
   typeRtti := ctx.GetType(self.ClassType);
@@ -46,9 +47,9 @@ begin
       begin
           if atrbRtti is EntityNotNull then
           begin
+              mensagem := 'Campo "'+propRtti.Name+'" Requerido!';
               if not(atrbRtti as EntityValidation).
-              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name),
-              'Campo "'+propRtti.Name+'" Requerido!' ) then
+              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name), mensagem ) then
               begin
                abort;
               end;
@@ -56,9 +57,9 @@ begin
           else
           if atrbRtti is EntityRangeValues then
           begin
+              mensagem := 'Valor "'+propRtti.Name+'" inválido para o intervalor!';
               if not(atrbRtti as EntityValidation).
-              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name).ToInteger ,
-              'Valor "'+propRtti.Name+'" inválido para o intervalor!' ) then
+              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name).ToInteger , mensagem ) then
               begin
                 abort;
               end;
@@ -66,9 +67,9 @@ begin
           else
           if atrbRtti is EntityValueLengthMin then
           begin
+              mensagem :=  'Valor "'+propRtti.Name+'" é inválido para o mínimo requerido !';
               if not(atrbRtti as EntityValidation).
-              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name) ,
-              'Valor "'+propRtti.Name+'" é inválido para o mínimo requerido !' ) then
+              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name) , mensagem ) then
               begin
                 abort;
               end;

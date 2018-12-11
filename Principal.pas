@@ -12,13 +12,13 @@ type
   TFormPrincipal = class(TForm)
     ImageList2: TImageList;
     ActionManager2: TActionManager;
-    Action2: TAction;
+    Cliente: TAction;
     Action3: TAction;
     Action4: TAction;
     StatusBar1: TStatusBar;
     Button1: TButton;
     Button2: TButton;
-    procedure Action2Execute(Sender: TObject);
+    procedure ClienteExecute(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
@@ -37,15 +37,15 @@ uses
   FactoryView, FactoryEntity;
 
 
-procedure TFormPrincipal.Action2Execute(Sender: TObject);
+procedure TFormPrincipal.ClienteExecute(Sender: TObject);
 begin
  // TFactoryForm.GetDinamicForm( tpCliente );
-  TFactoryForm.GetForm( 'Cliente' );
+  TFactoryForm.GetForm( Cliente.Name );
 end;
 
 procedure TFormPrincipal.Button2Click(Sender: TObject);
 begin
-   TFactoryForm.GetDinamicForm( 'Cliente' );
+   TFactoryForm.GetDinamicForm( Cliente.Name );
 end;
 
 end.

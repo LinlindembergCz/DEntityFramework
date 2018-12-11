@@ -605,7 +605,7 @@ begin
         break;
       end;
     end;
-  result := fStringReplace(values, '''', '');
+    result := fStringReplace(values, '''', '');
 end;
 
 class function TAutoMapper.GetValuesFieldsList(E: TEntityBase): TStringList;
