@@ -5,6 +5,7 @@ program ProjectDDD;
 {$ENDIF}
 
 uses
+  FastMM4 in 'Infra\FastMM4-master\FastMM4.pas',
   DUnitTestRunner,
   System.Classes,
   Forms,
@@ -53,9 +54,17 @@ uses
   RepositoryFabricante in 'Infra\Repositories\RepositoryFabricante.pas',
   InterfaceServiceFabricante in 'Domain\IService\InterfaceServiceFabricante.pas',
   ServiceFabricante in 'Service\ServiceFabricante.pas',
-  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' ,
+  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' {,
   ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
-  InterfaceService in 'Domain\IService\InterfaceService.pas',
+  ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
+  InterfaceService in 'Domain\IService\InterfaceService.pas' {,
+  ClassAluno in 'Domain\Entities\ClassAluno.pas',
+  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
+  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
+  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
+  ServiceAluno in 'Service\ServiceAluno.pas',
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   ClassAluno in 'Domain\Entities\ClassAluno.pas',
   InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
   RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
@@ -82,5 +91,5 @@ begin
   //DataContext.Free;
   Application.run;
   //DUnitTestRunner.RunRegisteredTests;
-  //ReportMemoryLeaksOnShutdown := true;
+  ReportMemoryLeaksOnShutdown := true;
 end.

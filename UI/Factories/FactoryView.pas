@@ -68,19 +68,19 @@ begin
 
   if Instance <> nil then
   begin
-    ControllerQuery   := TFactoryController.GetController( E );
-    ControllerCommand := TFactoryController.GetController( E );
-    Form := Instance.Create( ControllerQuery, ControllerCommand );
-    if Form <> nil then
-    begin
-      ShowForm( Form , modal);
-      if Form is TFormViewBase then
-        result:= Form
-      else
+     ControllerQuery   := TFactoryController.GetController( E );
+     ControllerCommand := TFactoryController.GetController( E );
+     Form := Instance.Create( ControllerQuery, ControllerCommand );
+     if Form <> nil then
+     begin
+        ShowForm( Form , modal);
+        if Form is TFormViewBase then
+           result:= Form
+        else
+           showmessage('Formulário não implementado!');
+     end
+     else
         showmessage('Formulário não implementado!');
-    end
-    else
-      showmessage('Formulário não implementado!');
   end;
 end;
 

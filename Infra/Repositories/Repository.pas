@@ -51,9 +51,9 @@ end;
 function TRepository<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
 begin
   if iId = 0 then
-     result := FDbContext.GetDataset(From(FEntity).Select( Fields) ) as TDataSet
+     result := FDbContext.GetDataset( From(FEntity).Select( Fields) ) as TDataSet
   else
-     result := FDbContext.GetDataset(From(FEntity).where( FEntity.id = iId ).Select( Fields)) as TDataSet;
+     result := FDbContext.GetDataset( From(FEntity).where( FEntity.id = iId ).Select( Fields) ) as TDataSet;
 end;
 
 function TRepository<T>.LoadEntity(iId: Integer): T;
@@ -76,6 +76,7 @@ begin
   begin
     FDbContext.Free;
     FDbContext:= nil;
+
   end;
 end;
 
@@ -96,6 +97,8 @@ begin
   case State of
     esInsert: FDbContext.Insert;
     esEdit  : FDbContext.Update;
+  else
+    FDbContext.RefreshDataSet;
   end;
 end;
 
@@ -108,7 +111,6 @@ procedure TRepository<T>.RefreshDataSet;
 begin
    FDbContext.RefreshDataSet;
 end;
-
 
 function TRepository<T>._AddRef: Integer;
 begin

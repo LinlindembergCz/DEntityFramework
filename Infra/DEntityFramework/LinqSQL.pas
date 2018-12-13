@@ -3,8 +3,8 @@ unit LinqSQL;
 interface
 
 uses
-  strUtils,SysUtils,Variants,EntityConsts, EntityTypes, Atributies ,
-  EntityBase,  EntityFunctions;
+  strUtils,SysUtils,Variants,EntityConsts, EntityTypes, Atributies, EntityBase,
+  EntityFunctions;
 
 type
   TSelect = class;
@@ -159,7 +159,10 @@ begin
 
               SGroupBy, SOrder, ifthen(SUnion <> '', StrUnion + SUnion, ''),
               ifthen(SConcat <> '', StrUnionAll + SConcat, ''));
+    //oFrom.Free;
   end;
+
+
 end;
 
 class function Linq.From(E: String): TFrom;

@@ -28,47 +28,29 @@ type
     constructor Create;override;
     procedure Validation; override;
   published
-    [EntityField('Nome','varchar(50)',false)]
-    [EntityValueLengthMin(10)]
-    [Edit]
+    [EntityField('Nome','varchar(50)',false)][EntityValueLengthMin(10)][Edit]
     property Nome: TString read FNome write FNome;
-    [EntityField('NomeFantasia','varchar(50)',false)]
-    [Edit]
+    [EntityField('NomeFantasia','varchar(50)',false)][Edit]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;
-    [EntityField('CPFCNPJ','varchar(15)',true)]
-    [EntityNotNull]
-    [EntityNotSpecialChar]
-    [Edit]
+    [EntityField('CPFCNPJ','varchar(15)',true)][EntityValueLengthMin(11)][EntityNotNull][EntityNotSpecialChar][Edit]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
-    [EntityField('Renda','float',true)]
-    [Edit]
+    [EntityField('Renda','float',true)][Edit]
     property Renda:TFloat read FRenda write FRenda;
-    [EntityField('Idade','integer',true)]
-    [Edit]
+    [EntityField('Idade','integer',true)][Edit]
     property Idade: TInteger read FIdade write FIdade;
-    [EntityField('RG','varchar(10)',true)]
-    [Edit]
+    [EntityField('RG','varchar(10)',true)][EntityValueLengthMin(6)][Edit]
     property RG: TString read FRG write FRG;
-    [EntityField('DataNascimento','Date',true)]
-    [DateTimePicker]
+    [EntityField('DataNascimento','Date',true)][DateTimePicker]
     property DataNascimento:TTDatetime read FDataNascimento write FDataNascimento;
-    [EntityField('Ativo','varchar(1)',true)]
-    [CheckBox]
+    [EntityField('Ativo','varchar(1)',true)][CheckBox]
     property Ativo: TString read FAtivo write FAtivo;
-    [EntityField('Situacao','varchar(20)',true)]
-    [EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')]
-    [EntityDefault('L')]
-    [Combobox]
+    [EntityField('Situacao','varchar(20)',true)][EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')][EntityDefault('L')] [Combobox]
     property Situacao:TString read FSituacao write FSituacao;
-    [EntityField('Tipo','varchar(20)',true)]
-    [EntityItems('Fisica;Juridica')]
-    [Combobox]
+    [EntityField('Tipo','varchar(20)',true)][EntityItems('Fisica;Juridica')][Combobox]
     property Tipo: TString read FTipo write FTipo;
-    [EntityField('EstadoCivil','varchar(20)',true)]
-    [Combobox]
+    [EntityField('EstadoCivil','varchar(20)',true)][Combobox]
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;
-    [EntityField('Observacao','varchar(500)',true)]
-    [Memo]
+    [EntityField('Observacao','varchar(500)',true)][Memo]
     property Observacao:TString read FObservacao write FObservacao;
     [Edit]
     property Email:TEmail read FEmail write FEmail;

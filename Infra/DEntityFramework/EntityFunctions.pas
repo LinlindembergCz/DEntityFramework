@@ -262,7 +262,7 @@ fStringReplace:= function (aString: string;Ch1, ch2: string): string
                     sb.Append(aString);
                     sb.Replace(Ch1, ch2);
                     Result := sb.ToString();
-                    FreeAndNil(sb);
+                    sb.Free;
                   end;
 
 end.

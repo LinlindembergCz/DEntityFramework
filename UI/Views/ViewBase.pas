@@ -3,11 +3,11 @@ unit ViewBase;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DBXFirebird, Data.DB, Data.SqlExpr,
-  Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient, Data.DBXMSSQL,
-  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper, strUtils,
-  Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DBXFirebird,
+  Data.DB, Data.SqlExpr, Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient,
+  Data.DBXMSSQL, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper,
+  strUtils, Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls, InterfaceController,
   FactoryController, FactoryEntity, Data.Bind.ObjectScope;
 
 type
@@ -97,11 +97,11 @@ begin
    ViewModelList := GetViewModel;
    if ViewModelList.Count > 0 then
    begin
-     dsEntity.DataSet := ControllerQuery.Load(0, ViewModelList.DelimitedText);
+      dsEntity.DataSet := ControllerQuery.Load(0, ViewModelList.DelimitedText);
    end
    else
    begin
-     dsEntity.DataSet := ControllerQuery.Load(0);
+      dsEntity.DataSet := ControllerQuery.Load(0);
    end;
    ViewModelList.Free;
 end;

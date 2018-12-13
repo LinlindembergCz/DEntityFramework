@@ -2,11 +2,9 @@ unit Principal;
 
 interface
 
-uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
-  System.ImageList, Vcl.ImgList, Vcl.Controls, Vcl.StdCtrls, Vcl.ComCtrls,
-  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs;
+uses System.Classes, System.Actions, Vcl.ActnList, Vcl.Forms,
+  Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, System.ImageList, Vcl.ImgList,
+  Vcl.Controls, Vcl.StdCtrls, Vcl.ComCtrls;
 
 type
   TFormPrincipal = class(TForm)
@@ -34,13 +32,11 @@ implementation
 {$R *.dfm}
 
 uses
-  FactoryView, FactoryEntity;
-
+  FactoryView;
 
 procedure TFormPrincipal.ClienteExecute(Sender: TObject);
 begin
- // TFactoryForm.GetDinamicForm( tpCliente );
-  TFactoryForm.GetForm( Cliente.Name );
+   TFactoryForm.GetForm( Cliente.Name );
 end;
 
 procedure TFormPrincipal.Button2Click(Sender: TObject);

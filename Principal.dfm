@@ -30,7 +30,7 @@ object FormPrincipal: TFormPrincipal
     Top = 72
     Width = 75
     Height = 25
-    Action = Action2
+    Action = Cliente
     TabOrder = 1
   end
   object Button2: TButton
@@ -38,7 +38,7 @@ object FormPrincipal: TFormPrincipal
     Top = 144
     Width = 75
     Height = 25
-    Action = Action2
+    Action = Cliente
     TabOrder = 2
     OnClick = Button2Click
   end
@@ -46,7 +46,7 @@ object FormPrincipal: TFormPrincipal
     Left = 88
     Top = 56
     Bitmap = {
-      494C010103000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101030008004C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -190,7 +190,7 @@ object FormPrincipal: TFormPrincipal
       item
         Items = <
           item
-            Action = Action2
+            Action = Cliente
             Caption = '&Clientes'
             ImageIndex = 0
           end
@@ -225,10 +225,10 @@ object FormPrincipal: TFormPrincipal
     Left = 88
     Top = 112
     StyleName = 'Platform Default'
-    object Action2: TAction
+    object Cliente: TAction
       Caption = 'Clientes'
       ImageIndex = 0
-      OnExecute = Action2Execute
+      OnExecute = ClienteExecute
     end
     object Action3: TAction
       Caption = 'Fornecedores'

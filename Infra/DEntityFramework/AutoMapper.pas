@@ -59,12 +59,10 @@ type
       : string;overload; static;
     class function GetReferenceAtribute(Obj: TEntityBase; E: TClass)
       : string;overload; static;
-
     class procedure SetFieldValue(Entity: TEntityBase; Campo: string;
       Valor: variant); overload;static;
     class procedure SetFieldValue(Entity: TEntityBase; Campo: TRttiProperty;
      Valor: variant);overload;static;
-
     class function GetInstance(const Str_Class: TValue): TObject; static;
     class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
   end;
@@ -299,9 +297,9 @@ begin
                  FoundAttribute:= true;
                  break;
                end;
-
              end;
            end;
+           ctx2.Free;
            if not FoundAttribute then
              if Attributies = '' then
                 Attributies := Prop.Name
@@ -366,6 +364,7 @@ begin
             end;
           end;
         end;
+        ctx2.Free;
         if (not FoundAttribute) and (not EntityField(Atributo).AutoInc) then
            L.Add( Prop.Name );
       end;
@@ -416,6 +415,7 @@ begin
             end;
           end;
         end;
+        ctx2.Free;
         if (not FoundAttribute) and (not EntityField(Atributo).AutoInc ) then
            L.Add( Prop.Name );
       end;

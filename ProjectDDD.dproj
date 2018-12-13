@@ -202,6 +202,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="Infra\FastMM4-master\FastMM4.pas"/>
         <DCCReference Include="Domain\Factories\FactoryEntity.pas"/>
         <DCCReference Include="Domain\Entities\Entities.pas"/>
         <DCCReference Include="Infra\Repositories\Repository.pas"/>
@@ -240,7 +241,7 @@
         <DCCReference Include="Service\Factories\FactoryService.pas"/>
         <DCCReference Include="Domain\IService\InterfaceServiceCliente.pas"/>
         <DCCReference Include="Service\ServiceCliente.pas"/>
-        <DCCReference Include="Domain\Entities\classCliente.pas">
+        <DCCReference Include="Domain\Entities\ClassCliente.pas">
             <Form>/unit in Caminho.pas</Form>
         </DCCReference>
         <DCCReference Include="Domain\Entities\ClassFornecedor.pas"/>
@@ -513,13 +514,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityFramework\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\InterfaceRepositoryBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\InterfaceRepositoryBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityFramework\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -633,7 +634,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="\ProjectDDD.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Win32\Debug\ProjectDDD.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjectDDD.exe</RemoteName>
                         <Overwrite>true</Overwrite>
