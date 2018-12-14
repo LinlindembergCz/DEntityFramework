@@ -73,6 +73,8 @@ Type
   function From(E: TClass): TFrom; overload;
   function From(E: TQueryAble): TFrom; overload;
 
+
+
 implementation
 
 uses
@@ -115,7 +117,9 @@ begin
       begin
         Keys := TAutoMapper.GetAttributiesPrimaryKeyList( QueryAble.Entity  );
         FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
+
         CreateProvider(qryQuery,
                         trim(fStringReplace(TCustomQueryAble(QueryAble).SEntity,
                         trim(StrFrom), '')));
@@ -349,6 +353,7 @@ end;
 procedure TDataContext.Insert;
 var
   ListField, ListValues: TStringList;
+  I: Integer;
 begin
   FEntity.Validation;
   if ClientDataSet <> nil then
@@ -367,6 +372,10 @@ begin
         end;
       end;
     finally
+      for I := 0 to ListField.Count -1 do
+         ListField.Objects[i].Free;
+      for I := 0 to ListValues.Count -1 do
+         ListValues.Objects[i].Free;
       ListField.Free;
       ListValues.Free;
     end;
@@ -439,6 +448,7 @@ end;
 procedure TDataContext.Update;
 var
   ListField, ListValues: TStringList;
+  I: integer;
 begin
   if ClientDataSet <> nil then
   begin
@@ -456,6 +466,10 @@ begin
         end;
       end;
     finally
+      for I := 0 to ListField.Count -1 do
+         ListField.Objects[i].Free;
+      for I := 0 to ListValues.Count -1 do
+         ListValues.Objects[i].Free;
       ListField.Free;
       ListValues.Free;
     end;
@@ -584,24 +598,21 @@ end;
 function From(E: TEntityBase): TFrom;
 begin
   result := TFrom(Linq.From(E));
- end;
+end;
 
 function From(E: array of TEntityBase): TFrom;
 begin
   result := TFrom(Linq.From(E));
-
 end;
 
 function From(E: String): TFrom;
 begin
   result := TFrom(Linq.From(E));
-
 end;
 
 function From(E: TClass): TFrom;
 begin
   result := TFrom(Linq.From(E));
-
 end;
 
 function From(E: TQueryAble): TFrom;
