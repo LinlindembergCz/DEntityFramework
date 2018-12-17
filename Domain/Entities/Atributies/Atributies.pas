@@ -159,6 +159,9 @@ type
   LookupCombobox = class(TCustomAttribute)
   end;
 
+  RadioGroup = class(TCustomAttribute)
+  end;
+
 implementation
 
 
