@@ -93,6 +93,7 @@ type
   protected
     constructor Create;
     destructor Destroy;
+    procedure InitializeString;
   end;
 
   TJoin = class(TCustomQueryAble);
@@ -115,8 +116,10 @@ type
   end;
 
   Linq = class sealed
-  public
+  private
     class var oFrom: TFrom;
+    class function GetFromSigleton: TFrom;
+  public
     class function From(E: String): TFrom; overload;
     class function From(E: TEntityBase): TFrom; overload;
     class function From(Entities: array of TEntityBase): TFrom; overload;
@@ -161,20 +164,18 @@ begin
               ifthen(SConcat <> '', StrUnionAll + SConcat, ''));
     //oFrom.Free;
   end;
-
-
 end;
 
 class function Linq.From(E: String): TFrom;
 begin
-  oFrom := TFrom.Create;
+  oFrom := GetFromSigleton;
   oFrom.SEntity := StrFrom + E;
   result := oFrom;
 end;
 
 class function Linq.From(E: TEntityBase): TFrom;
 begin
-  oFrom := TFrom.Create;
+  oFrom := GetFromSigleton;
   oFrom.SEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
   oFrom.Entity := E;
   result := oFrom;
@@ -184,8 +185,9 @@ class function Linq.From(Entities: array of TEntityBase): TFrom;
 var
   E: TEntityBase;
   sFrom: string;
+  oFrom : TFrom;
 begin
-  oFrom := TFrom.Create;
+  oFrom := GetFromSigleton;
   for E in Entities do
     sFrom := sFrom + ifthen(sFrom <> '', ',', '') + TAutoMapper.GetTableAttribute
       (E.ClassType);
@@ -196,7 +198,7 @@ end;
 
 class function Linq.From(E: TClass): TFrom;
 begin
-  oFrom := TFrom.Create;
+  oFrom := GetFromSigleton;
   oFrom.SEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
   oFrom.Entity := (E.Create as TEntityBase);
   result := oFrom;
@@ -204,6 +206,14 @@ end;
 
 class function Linq.From(E: TQueryAble): TFrom;
 begin
+  result := oFrom;
+end;
+
+class function Linq.GetFromSigleton: TFrom;
+begin
+  if oFrom = nil  then
+     oFrom:= TFrom.Create;
+  oFrom.InitializeString;
   result := oFrom;
 end;
 
@@ -247,6 +257,21 @@ end;
 destructor TFrom.Destroy;
 begin
 
+end;
+
+procedure TFrom.InitializeString;
+begin
+    FSWhere:= '';
+    FSOrder:= '';
+    FSSelect:= '';
+    FSEntity:= '';
+    FSJoin:= '';
+    FSGroupBy:= '';
+    FSUnion:= '';
+    FSExcept:= '';
+    FSIntersect:= '';
+    FSConcat:= '';
+    FSCount:= '';
 end;
 
 { TCustomLinqQueryAble }
