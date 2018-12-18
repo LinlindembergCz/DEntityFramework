@@ -44,9 +44,13 @@ type
     property DataNascimento:TTDatetime read FDataNascimento write FDataNascimento;
     [EntityField('Ativo','varchar(1)',true)][CheckBox]
     property Ativo: TString read FAtivo write FAtivo;
-    [EntityField('Situacao','varchar(20)',true)][EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')][EntityDefault('L')] [Combobox]
+    [EntityField('Situacao','varchar(20)',true)]
+    [EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')]
+    [EntityDefault('L')] [Combobox]
     property Situacao:TString read FSituacao write FSituacao;
-    [EntityField('Tipo','varchar(20)',true)][EntityItems('Fisica;Juridica')][Combobox]
+    [EntityField('Tipo','varchar(20)',true)]
+    [EntityItems('F=Fisica;J=Juridica')]
+    [Combobox]
     property Tipo: TString read FTipo write FTipo;
     [EntityField('EstadoCivil','varchar(20)',true)][Combobox]
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;

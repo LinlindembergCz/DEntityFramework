@@ -70,7 +70,7 @@ type
     FItems: TStringList;
   public
     constructor Create(aItems: String);
-    property Items: TStringList read FItems;
+    property Items: TStringList read FItems write FItems;
   end;
 
   EntityDefault = class(TCustomAttribute)
@@ -200,6 +200,11 @@ begin
   FItems := TStringList.Create;
   FItems.delimiter := ';';
   FItems.DelimitedText := aItems;
+end;
+
+destructor EntityItems.Destroy;
+begin
+  FItems.Free;
 end;
 
 constructor EntityDefault.Create(aName: string);

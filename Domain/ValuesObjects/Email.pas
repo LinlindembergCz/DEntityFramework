@@ -26,10 +26,13 @@ end;
 
 procedure TEmail.validar;
 begin
-   if ( Pos( '@',FValue.Value) = -1 ) then
-   begin
-      raise Exception.Create('Email "'+FValue.Value+'" inválido!');
-   end;
+  if trim(FValue.Value) <> '' then
+  begin
+    if ( Pos( '@',FValue.Value) = -1 ) then
+    begin
+       raise Exception.Create('Email "'+FValue.Value+'" inválido!');
+    end;
+  end;
 end;
 
 end.

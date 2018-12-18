@@ -1046,69 +1046,91 @@ var
   var
     Atrib: TCustomAttribute;
     i: integer;
-    Item: PItem;
     ValueItem: string;
     IndexOf: integer;
+    lsText, lsValue: string;
   begin
     IndexOf := -1;
-    if (TCombobox(Componente ).Items.Count = 0) or (SetDefaultValue) then
+    for Atrib in Prop.GetAttributes do
     begin
-      TCombobox(Componente).Items.Clear;
-      for Atrib in Prop.GetAttributes do
+      if Atrib is EntityItems then
       begin
-        if Atrib is EntityItems then
+        if TCombobox(Componente).Items.Count = 0 then
         begin
           for i := 0 to EntityItems(Atrib).Items.Count - 1 do
           begin
             ValueItem := EntityItems(Atrib).Items.Strings[i];
-            System.New(Item);
-            Item.Text := copy(ValueItem, Pos('=', ValueItem) + 1,
-              length(ValueItem));
-            Item.Value := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
-            TCombobox(Componente).Items.AddObject(Item.Text, TObject(Item));
-            if (Value = Item.Value) or (Value = Item.Text) then
-              IndexOf := i;
+            lsText := copy(ValueItem, Pos('=', ValueItem) + 1,length(ValueItem));
+            lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
+            if (Componente as TCombobox).Items.Values[lsText] = '' then
+               TCombobox(Componente).Items.AddPair( lsText, lsValue );
+            if Value = lsValue then
+               IndexOf:= i;
           end;
+          //EntityItems(Atrib).Items.Free;
+          //EntityItems(Atrib).Items := nil;
         end;
       end;
     end;
-    if IndexOf > -1 then
-      (Componente as TCombobox).ItemIndex := IndexOf;
+    if IndexOf > - 1 then
+    begin
+       TCombobox(Componente).ItemIndex := IndexOf;
+    end
+    else
+    for I := 0 to TCombobox(Componente).Items.Count - 1 do
+    begin
+      if (Value =  TCombobox(Componente).Items.ValueFromIndex[i]) then
+      begin
+       TCombobox(Componente).ItemIndex := i;
+       break;
+      end;
+    end;
   end;
 
   procedure SetValueRadioGroup;
   var
     Atrib: TCustomAttribute;
     i: integer;
-    Item: PItem;
     ValueItem: string;
     IndexOf: integer;
+    lsText, lsValue: string;
   begin
     IndexOf := -1;
-    if ((Componente as TRadioGroup).Items.Count = 0) or (SetDefaultValue) then
+    for Atrib in Prop.GetAttributes do
     begin
-      (Componente as TRadioGroup).Items.Clear;
-      for Atrib in Prop.GetAttributes do
+      if Atrib is EntityItems then
       begin
-        if Atrib is EntityItems then
+        if TRadioGroup(Componente).Items.Count = 0 then
         begin
           for i := 0 to EntityItems(Atrib).Items.Count - 1 do
           begin
             ValueItem := EntityItems(Atrib).Items.Strings[i];
-            System.New(Item);
-            Item.Text := copy(ValueItem, Pos('=', ValueItem) + 1,
+            lsText := copy(ValueItem, Pos('=', ValueItem) + 1,
               length(ValueItem));
-            Item.Value := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
-            (Componente as TRadioGroup).Items.AddObject(Item.Text,
-              TObject(Item));
-            if (Value = Item.Value) or (Value = Item.Text) then
+            lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
+            if (Componente as TRadioGroup).Items.Values[lsText] = '' then
+               TRadioGroup(Componente).Items.AddPair( lsText, lsValue );
+            if (Value = lsValue) then
               IndexOf := i;
           end;
+         // EntityItems(Atrib).Items.Free;
+         // EntityItems(Atrib).Items := nil;
         end;
       end;
     end;
-    if IndexOf > -1 then
-      (Componente as TRadioGroup).ItemIndex := IndexOf;
+    if IndexOf > - 1 then
+    begin
+       TRadioGroup(Componente).ItemIndex := IndexOf;
+    end
+    else
+    for I := 0 to TRadioGroup(Componente).Items.Count - 1 do
+    begin
+      if (Value =  TRadioGroup(Componente).Items.ValueFromIndex[i]) then
+      begin
+        TRadioGroup(Componente).ItemIndex := i;
+        break;
+      end;
+    end;
   end;
 
 begin
@@ -1190,13 +1212,7 @@ begin
     else
     if Componente.InheritsFrom(TCustomCombobox) then
     begin
-      Item := PItem(TCombobox(Componente).Items.Objects
-        [TCombobox(Componente)
-        .Items.IndexOf(TCombobox(Componente).Text)]);
-      if Item <> nil then
-          Value := ifthen(Item.Value <> '', Item.Value, Item.Text)
-      else
-          Value := TCombobox(Componente).Text;
+      Value := TCombobox(Componente).Items.ValueFromIndex[ TCombobox(Componente).Items.IndexOf(TCombobox(Componente).Text) ];
     end
     else if Componente.InheritsFrom(TCommonCalendar) then
         Value := TDateTimePicker(Componente).Datetime
@@ -1204,21 +1220,7 @@ begin
     if Componente.InheritsFrom(TCustomRadioGroup) then
     begin
       ItemIndex := (Componente as TRadioGroup).ItemIndex;
-      if ItemIndex > -1 then
-      begin
-          Item := PItem(TRadioGroup(Componente).Items.Objects
-            [TRadioGroup(Componente)
-            .Items.IndexOf((Componente as TRadioGroup).Items.Strings
-            [ItemIndex])]);
-
-          if Item <> nil then
-          begin
-            Value := ifthen(Item.Value <> '', Item.Value, Item.Text)
-          end
-          else
-            Value := (Componente as TRadioGroup).Items.Strings
-              [(Componente as TRadioGroup).ItemIndex];
-      end;
+      Value := TRadioGroup(Componente).Items.ValueFromIndex[ ItemIndex ];
     end
     else
     if Componente.InheritsFrom(TCustomCheckBox) then

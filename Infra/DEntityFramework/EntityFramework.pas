@@ -48,7 +48,7 @@ Type
     function GetData(QueryAble: TQueryAble): OleVariant;
     function GetDataSet(QueryAble: TQueryAble): TClientDataSet;
     function GetList(QueryAble: TQueryAble): TList<TEntityBase>; overload;
-    function GetList<T: class>(QueryAble: TQueryAble): TList<T>; overload;
+  //function GetList<T: class>(QueryAble: TQueryAble): TList<T>; overload;
     procedure InsertDirect;
     procedure UpdateDirect;
     procedure DeleteDirect;
@@ -168,6 +168,7 @@ begin
   end;
 end;
 
+{
 function TDataContext.GetList<T>(QueryAble: TQueryAble): TList<T>;
 var
   List: TList<T>;
@@ -191,6 +192,7 @@ begin
     FreeAndNil(DataSet);
   end;
 end;
+}
 
 function TDataContext.GetEntity(QueryAble: TQueryAble): TEntityBase;
 var
@@ -372,10 +374,6 @@ begin
         end;
       end;
     finally
-      for I := 0 to ListField.Count -1 do
-         ListField.Objects[i].Free;
-      for I := 0 to ListValues.Count -1 do
-         ListValues.Objects[i].Free;
       ListField.Free;
       ListValues.Free;
     end;
@@ -466,12 +464,10 @@ begin
         end;
       end;
     finally
-      for I := 0 to ListField.Count -1 do
-         ListField.Objects[i].Free;
-      for I := 0 to ListValues.Count -1 do
-         ListValues.Objects[i].Free;
       ListField.Free;
+      ListField:= nil;
       ListValues.Free;
+      ListValues:= nil;
     end;
   end
   else
