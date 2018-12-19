@@ -70,6 +70,7 @@ type
     FItems: TStringList;
   public
     constructor Create(aItems: String);
+    destructor Destroy; override;
     property Items: TStringList read FItems write FItems;
   end;
 
