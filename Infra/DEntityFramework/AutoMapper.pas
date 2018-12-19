@@ -342,10 +342,10 @@ begin
       if  PropIsInstance(prop)  then
       begin
          //tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
-         tempStrings:= ( GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
+         tempStrings:= ( TAutoMapper.GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
-         tempStrings.Clear;
+         tempStrings.free;
       end
       else
       if (PropIsVisible(Prop) and (OnlyPublished)) or
@@ -397,6 +397,7 @@ begin
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
+         tempStrings.Free;
       end
       else 
       if (PropIsVisible(Prop) and (OnlyPublished)) or
@@ -632,6 +633,7 @@ begin
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
+         tempStrings.Free;
       end
       else
       begin
@@ -1260,31 +1262,31 @@ begin
     TypObj := ctx.GetType(Entity.ClassInfo);
     for Prop in TypObj.GetProperties do
     begin
-        if Valued then
+      if Valued then
+      begin
+        if upperCase(Prop.Name) = 'VALUE' then
         begin
-          if upperCase(Prop.Name) = 'VALUE' then
-          begin
-             if SetComponentValueProp(Component,Prop, Entity ) then
-                break;
-          end;
-        end
-        else
-        for J := 0 to Component.componentcount - 1 do
-        begin
-           Componente := Component.components[J];
-           if PropNameEqualComponentName( Prop, Componente) then
-           begin
-              if not PropIsInstance(prop)  then
-              begin
-                 if SetComponentValueProp(Componente,Prop, Entity ) then
-                    break;
-              end
-              else
-              begin
-                puts( Componente , GetObjectProp(Entity,Prop.Name) as TEntityBase, true );
-              end;
-           end;
+          if SetComponentValueProp(Component,Prop, Entity ) then
+             break;
         end;
+      end
+      else
+      for J := 0 to Component.componentcount - 1 do
+      begin
+        Componente := Component.components[J];
+        if PropNameEqualComponentName( Prop, Componente) then
+        begin
+          if not PropIsInstance(prop)  then
+          begin
+            if SetComponentValueProp(Componente,Prop, Entity ) then
+               break;
+          end
+          else
+          begin
+            puts( Componente , GetObjectProp(Entity,Prop.Name) as TEntityBase, true );
+          end;
+        end;
+      end;
     end;
   finally
     ctx.Free;
