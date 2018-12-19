@@ -5,7 +5,6 @@ program ProjectDDD;
 {$ENDIF}
 
 uses
-  FastMM4 in 'Infra\FastMM4-master\FastMM4.pas',
   DUnitTestRunner,
   System.Classes,
   Forms,
