@@ -41,7 +41,7 @@ type
 
   TCustomQueryAble = class(TQueryAble)
   private
-   procedure SetEntity(const Value: TEntityBase);
+
   protected
     FSWhere: String;
     FSOrder: string;
@@ -119,6 +119,7 @@ type
   private
     class var oFrom: TFrom;
     class function GetFromSigleton: TFrom;
+    class function MontarCaseOf(Expression: string; _When, _then: array of variant): string; static;
   public
     class function From(E: String): TFrom; overload;
     class function From(E: TEntityBase): TFrom; overload;
@@ -136,10 +137,7 @@ implementation
 
 uses AutoMapper;
 
-procedure TCustomQueryAble.SetEntity(const Value: TEntityBase);
-begin
-  FEntity := Value;
-end;
+
 
 function TCustomQueryAble.GetQuery(QueryAble: TQueryAble): string;
 begin
@@ -217,34 +215,30 @@ begin
   result := oFrom;
 end;
 
-class function Linq.Caseof(Expression: TString;
-  _When, _then: array of variant): TString;
+class function Linq.MontarCaseOf(Expression: string; _When, _then: array of variant): string;
 var
   s: string;
   i: integer;
 begin
-  s := '(case ' + Expression.&As;
+  s := '(case ' + Expression;
   for i := 0 to length(_When) - 1 do
   begin
     s := s + fCaseof(_When[i], _then[i]);
   end;
   s := s + ' end)';
-  result.SetAs( s);
+  result:= s;
+end;
+
+class function Linq.Caseof(Expression: TString;
+  _When, _then: array of variant): TString;
+begin
+  result.SetAs( MontarCaseOf( Expression.&As,_When , _then) );
 end;
 
 class function Linq.Caseof(Expression: TInteger;
   _When, _then: array of variant): TString;
-var
-  s: string;
-  i: integer;
 begin
-  s := '(case ' + Expression.&As;
-  for i := 0 to length(_When) - 1 do
-  begin
-    s := s + fCaseof(_When[i], _then[i]);
-  end;
-  s := s + ' end)';
-  result.SetAs( s);
+  result.SetAs( MontarCaseOf( Expression.&As,_When , _then) );
 end;
 
 { TFrom }
@@ -405,14 +399,13 @@ begin
   _Atribs:= TAutoMapper.GetAttributies(FEntity, true);
   if Pos('Select', Fields) > 0 then
     Fields := '(' + Fields + ')';
-  if self.SSelect <> '' then
-    self.SSelect := StrSelect + ifthen(Fields <> '', Fields, ifthen(_Atribs <> '',_Atribs,'*' ) ) + ' From (' +
-      self.SSelect
-  else
-    self.SSelect := StrSelect + ifthen(Fields <> '', Fields, ifthen(_Atribs <> '',_Atribs,'*' ) );
 
-  TSelect(self).FFields:= Fields;
-
+  self.SSelect := StrSelect + ifthen( self.SSelect <> '' ,
+                                    ifthen( Fields  <> '', Fields,
+                                          ifthen( _Atribs <> '', _Atribs,'*')) + ' From (' + self.SSelect ,
+                                                ifthen( Fields  <> '', Fields,
+                                                      ifthen(_Atribs  <> '', _Atribs,'*')));
+  TSelect(self).FFields := Fields;
   result := TSelect(self);
 end;
 
