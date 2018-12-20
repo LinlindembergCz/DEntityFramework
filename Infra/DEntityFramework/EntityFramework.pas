@@ -48,7 +48,6 @@ Type
     function GetData(QueryAble: TQueryAble): OleVariant;
     function GetDataSet(QueryAble: TQueryAble): TClientDataSet;
     function GetList(QueryAble: TQueryAble): TList<TEntityBase>; overload;
-  //function GetList<T: class>(QueryAble: TQueryAble): TList<T>; overload;
     procedure InsertDirect;
     procedure UpdateDirect;
     procedure DeleteDirect;
@@ -85,7 +84,7 @@ function TDataContext.GetData(QueryAble: TQueryAble): OleVariant;
 begin
   qryQuery := Connection.CreateDataSet( GetQuery(QueryAble) );
 
-  CreateProvider(qryQuery, trim(fStringReplace(TCustomQueryAble(QueryAble).SEntity,
+  CreateProvider(qryQuery, trim(fStringReplace(QueryAble.SEntity,
     trim(StrFrom), '')));
   CreateClientDataSet(drpProvider);
 
@@ -121,7 +120,7 @@ begin
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys );
 
         CreateProvider(qryQuery,
-                        trim(fStringReplace(TCustomQueryAble(QueryAble).SEntity,
+                        trim(fStringReplace(QueryAble.SEntity,
                         trim(StrFrom), '')));
 
         CreateClientDataSet(drpProvider);
@@ -150,7 +149,7 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    FEntity := TCustomQueryAble(QueryAble).Entity;
+    FEntity := QueryAble.Entity;
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     List := TList<TEntityBase>.Create;
@@ -168,38 +167,12 @@ begin
   end;
 end;
 
-{
-function TDataContext.GetList<T>(QueryAble: TQueryAble): TList<T>;
-var
-  List: TList<T>;
-  DataSet: TClientDataSet;
-begin
-  try
-    FEntity := TCustomQueryAble(QueryAble).Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
-
-    List := TList<T>.Create;
-    DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := GetData(QueryAble);
-    while not DataSet.Eof do
-    begin
-      TAutoMapper.DataToEntity(DataSet, TQueryAble(QueryAble).Entity);
-      List.Add(TQueryAble(QueryAble).Entity as T);
-      DataSet.Next;
-    end;
-    result := List;
-  finally
-    FreeAndNil(DataSet);
-  end;
-end;
-}
-
 function TDataContext.GetEntity(QueryAble: TQueryAble): TEntityBase;
 var
   DataSet: TClientDataSet;
 begin
   try
-    FEntity := TCustomQueryAble(QueryAble).Entity;
+    FEntity := QueryAble.Entity;
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     DataSet := TClientDataSet.Create(Application);

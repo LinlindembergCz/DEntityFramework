@@ -16,6 +16,17 @@ type
   protected
     oFrom: TFrom;
     FEntity: TEntityBase;
+    FSWhere: String;
+    FSOrder: string;
+    FSSelect: string;
+    FSEntity: string;
+    FSJoin: string;
+    FSGroupBy: string;
+    FSUnion: string;
+    FSExcept: string;
+    FSIntersect: string;
+    FSConcat: string;
+    FSCount: string;
   public
     function Join(E: string; _On: string): TQueryAble; overload; virtual; abstract;
     function Join(E: TEntityBase; _On: TString): TQueryAble; overload; virtual; abstract;
@@ -37,23 +48,24 @@ type
     function Select(Fields: array of string): TSelect; overload; virtual; abstract;
     //não estou achando seguro manter essa referencia aqui nessa classe!
     property Entity : TEntityBase read FEntity write FEntity;
+
+    property SEntity: string read FSEntity write FSEntity;
+    property SJoin: string read FSJoin write FSJoin;
+    property SWhere: string read FSWhere write FSWhere;
+    property SGroupBy: string read FSGroupBy write FSGroupBy;
+    property SOrder: string read FSOrder write FSOrder;
+    property SSelect: string read FSSelect write FSSelect;
+    property SConcat: string read FSConcat write FSConcat;
+    property SUnion: string read FSUnion write FSUnion;
+    property SExcept: string read FSExcept write FSExcept;
+    property SIntersect: string read FSIntersect write FSIntersect;
+    property SCount: string read FSCount write FSCount;
   end;
 
   TCustomQueryAble = class(TQueryAble)
   private
 
   protected
-    FSWhere: String;
-    FSOrder: string;
-    FSSelect: string;
-    FSEntity: string;
-    FSJoin: string;
-    FSGroupBy: string;
-    FSUnion: string;
-    FSExcept: string;
-    FSIntersect: string;
-    FSConcat: string;
-    FSCount: string;
     function Join(E, _On: string): TQueryAble; overload; override;
     function Join(E: TEntityBase; _On: TString): TQueryAble; overload; override;
     function Join(E: TEntityBase): TQueryAble; overload; override;
@@ -76,17 +88,6 @@ type
     function Select(Fields: array of string): TSelect; overload; override;
   public
     function GetQuery(QueryAble: TQueryAble): string;
-    property SEntity: string read FSEntity write FSEntity;
-    property SJoin: string read FSJoin write FSJoin;
-    property SWhere: string read FSWhere write FSWhere;
-    property SGroupBy: string read FSGroupBy write FSGroupBy;
-    property SOrder: string read FSOrder write FSOrder;
-    property SSelect: string read FSSelect write FSSelect;
-    property SConcat: string read FSConcat write FSConcat;
-    property SUnion: string read FSUnion write FSUnion;
-    property SExcept: string read FSExcept write FSExcept;
-    property SIntersect: string read FSIntersect write FSIntersect;
-    property SCount: string read FSCount write FSCount;
   end;
 
   TFrom = class(TCustomQueryAble)
