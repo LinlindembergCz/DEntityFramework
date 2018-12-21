@@ -5,8 +5,14 @@ program ProjectDDD;
 {$ENDIF}
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   DUnitTestRunner,
   System.Classes,
+  Dialogs,
   Forms,
   Vcl.Themes,
   Vcl.Styles,
@@ -15,7 +21,6 @@ uses
   Entities in 'Domain\Entities\Entities.pas',
   Repository in 'Infra\Repositories\Repository.pas',
   Principal in 'Principal.pas' {FormPrincipal},
-  FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
   EntityFramework in 'Infra\DEntityFramework\EntityFramework.pas',
   FactoryController in 'UI\Factories\FactoryController.pas',
   FactoryView in 'UI\Factories\FactoryView.pas',
@@ -72,7 +77,8 @@ uses
   ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
-  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas';
+  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas',
+  FactoryConnection in 'Infra\Factories\FactoryConnection.pas';
 
 {/unit in Caminho.pas}
 
@@ -83,12 +89,19 @@ var
 
 begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
-  //DataContext:= TDataContext.Create(nil);
-  //DataContext.Connection:= TFactoryConnection.GetConnection;
-  //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
-  //DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]);
-  //DataContext.Free;
+  try
+    DataContext:= TDataContext.Create(nil);
+    DataContext.Connection:= TFactoryConnection.GetConnection;
+    //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
+    if DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]) then
+    begin
+       showmessage('O sistema será reiniciado!');
+       application.Terminate;
+    end;
+  finally
+    DataContext.Free;
+  end;
   Application.run;
   //DUnitTestRunner.RunRegisteredTests;
-  ReportMemoryLeaksOnShutdown := true;
+  //ReportMemoryLeaksOnShutdown := true;
 end.

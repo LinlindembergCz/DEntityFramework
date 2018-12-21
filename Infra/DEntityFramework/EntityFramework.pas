@@ -22,10 +22,10 @@ Type
     FProviderName: string;
     FTypeConnetion: TTypeConnection;
     FClientDataSet: TClientDataSet;
-    procedure CreateTables;//(aClass: array of TClass);
-    procedure AlterTables;
+    function CreateTables:boolean;//(aClass: array of TClass);
+    function AlterTables:boolean;
     procedure FreeObjects;
-    procedure CriarTabela(i: integer);
+    function CriarTabela(i:integer):boolean;
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet;
       var TableName: string); virtual;
@@ -42,7 +42,7 @@ Type
     procedure InputEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
     procedure InitEntity(Contener: TComponent);
-    procedure UpdateDataBase(aClasses: array of TClass);
+    function UpdateDataBase(aClasses: array of TClass):boolean;
     function GetEntity(QueryAble: TQueryAble): TEntityBase; overload;
     function GetEntity<T: Class>(QueryAble: TQueryAble): T; overload;
     function GetData(QueryAble: TQueryAble): OleVariant;
@@ -199,7 +199,7 @@ begin
   end;
 end;
 
-procedure TDataContext.CriarTabela(i:integer);
+function TDataContext.CriarTabela(i:integer): boolean;
   var
     Table: string;
     ListAtributes: TList;
@@ -227,16 +227,20 @@ begin
         else
            FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateTable( ListAtributes, Table, KeyList) );
         //ListAtributes.Free;
+        result:= true;
      finally
         KeyList.Free;
      end;
    end;
 end;
 
-procedure TDataContext.UpdateDataBase(aClasses: array of TClass);
+function TDataContext.UpdateDataBase(aClasses: array of TClass):boolean;
 var
    I:integer;
+   Created, Altered: boolean;
 begin
+   Created := false;
+   Altered := false;
    if FConnection <> nil then
    begin
       TableList := TStringList.Create( true );
@@ -248,19 +252,25 @@ begin
       end;
       if length(aClasses) > 0 then
       begin
-        CreateTables;
-        AlterTables;
+        Created := CreateTables;
+        //Altered := AlterTables;
       end;
    end;
+   result:= Created;
 end;
 
-procedure TDataContext.CreateTables;
+function TDataContext.CreateTables:boolean;
 var
   i: integer;
+  created:boolean;
 begin
+  created := false;
+  result  := false;
   for I := 0 to length(Classes) - 1  do
   begin
-    CriarTabela(I);
+    created:= CriarTabela(I);
+    if created then
+       result:= created;
   end;
 
   {TParallel.for( 0, length(Classes) - 1 ,
@@ -278,15 +288,17 @@ begin
 
 end;
 
-procedure TDataContext.AlterTables;
+function TDataContext.AlterTables:boolean;
 var
-  i, K: integer;
+  i, K , j: integer;
   Table: string;
   List: TList;
   FieldList: TStringList;
   ColumnExist:boolean;
+  created:boolean;
 begin
   try
+    created:= false;
     FieldList := TStringList.Create(true);
     for i := 0 to length(Classes) - 1 do
     begin
@@ -300,17 +312,22 @@ begin
           if PParamAtributies(List.Items[K]).Tipo <>'' then
           begin
              ColumnExist:= FieldList.IndexOf( PParamAtributies(List.Items[K]).Name ) <> -1;
-             FConnection.ExecutarSQL(  FConnection.CustomTypeDataBase.AlterTable(
+             if not ColumnExist then
+             begin
+                FConnection.ExecutarSQL(  FConnection.CustomTypeDataBase.AlterTable(
                                        Table,
                                        PParamAtributies(List.Items[K]).Name,
                                        PParamAtributies(List.Items[K]).Tipo,
                                        PParamAtributies(List.Items[K]).IsNull,
                                        ColumnExist) );
+                created:= true;
+             end;
           end;
         end;
       end;
     end;
   finally
+    result:= created;
     FieldList.Free;
   end;
 end;

@@ -95,7 +95,10 @@ begin
          (Components[I] as TRadioGroup).ItemIndex:= -1
        else
        if Components[I] is TCheckBox then
-         (Components[I] as TCheckBox).Checked:= false;
+         (Components[I] as TCheckBox).Checked:= false
+       else
+       if Components[I] is TCombobox then
+         (Components[I] as TDBLookUpCombobox).KeyValue:= Null;
     end;
   end;
 end;

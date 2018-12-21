@@ -617,7 +617,6 @@ var
   Field: TRttiField;
   Value: string;
   L: TStringList;
-  FoundAtribute:boolean;
   typ: TRttiType;
   tempStrings:TStrings;
 begin
@@ -626,7 +625,6 @@ begin
     typ := ctx.GetType(E.ClassType);
     for Prop in typ.GetProperties do
     begin
-      FoundAtribute := false;
       if PropIsInstance(Prop) then
       begin
          tempStrings:= GetValuesFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase );
@@ -653,11 +651,9 @@ begin
                 end;
               end;
             end;
-          end;
-          //break;
+          end;//break;
         end;
       end;
-    //if not FoundAtribute then
     end;
   finally
     result := L;
@@ -673,10 +669,12 @@ var
   Value: string;
   L: TStringList;
   Atributo: TCustomAttribute;
+  lcClassType : TClass;
 begin
   try
     L := TStringList.Create(true);
     for Prop in ctx.GetType(E.ClassType).GetProperties do
+    begin
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
         if uppercase(Field.Name) = uppercase('F' + Prop.Name) then
@@ -694,7 +692,9 @@ begin
         end;
         break;/////////////////////////////
       end;
+    end;
   finally
+
     result := L;
   end;
 end;
@@ -924,7 +924,7 @@ begin
           TAutoMapper.SetAtribute(Entity, Prop.Name,
                 TAutoMapper.GetTableAttribute(Entity.ClassType) + '.' +
                 Prop.Name, InContext);
-              result := true;
+          result := true;
         end;
       end;
     end;

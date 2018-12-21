@@ -123,8 +123,6 @@ begin
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);
-var
-i:integer;
 begin
   with TFDConnection(CustomConnection) do
   begin
