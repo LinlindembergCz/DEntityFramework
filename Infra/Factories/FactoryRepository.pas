@@ -23,7 +23,7 @@ var
   Repository     : IRepositoryBase;
   Instance      : TObject;
 begin
-  Instance := TAutoMapper.GetInstance( 'Repository'+E+'.TRepositoryCliente' );
+  Instance := TAutoMapper.GetInstance( 'Repository'+E+'.TRepository'+E );
   if Instance <> nil then
   begin
     Repository :=  TRepositoryBase( Instance ).create( TContext.Create(E) );  //as IRepositoryBase
