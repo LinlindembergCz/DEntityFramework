@@ -78,7 +78,8 @@ uses
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
   LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas',
-  FactoryConnection in 'Infra\Factories\FactoryConnection.pas';
+  FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
+  ClassCFOP in 'Domain\Entities\ClassCFOP.pas';
 
 {/unit in Caminho.pas}
 
@@ -93,7 +94,7 @@ begin
     DataContext:= TDataContext.Create(nil);
     DataContext.Connection:= TFactoryConnection.GetConnection;
     //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
-    if DataContext.UpdateDataBase([ TCliente , Fornecedor , Fabricante  , Aluno (*Entity*) ]) then
+    if DataContext.UpdateDataBase([ TCliente , TCFOP (*Entity*) ]) then
     begin
        showmessage('O sistema será reiniciado!');
        application.Terminate;
@@ -103,5 +104,5 @@ begin
   end;
   Application.run;
   //DUnitTestRunner.RunRegisteredTests;
-  //ReportMemoryLeaksOnShutdown := true;
+  ReportMemoryLeaksOnShutdown := true;
 end.
