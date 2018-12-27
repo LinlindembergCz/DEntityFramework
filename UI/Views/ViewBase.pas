@@ -70,6 +70,23 @@ begin
   AutoApplyUpdate := true;
 end;
 
+procedure TFormViewBase.LoadViewModel;
+var
+   ViewModelList: TStringList;
+begin
+   ControllerQuery.EntityToDBGrid(grdEntity);
+   ViewModelList := GetViewModel;
+   if ViewModelList.Count > 0 then
+   begin
+      dsEntity.DataSet := ControllerQuery.Load(0, ViewModelList.DelimitedText);
+   end
+   else
+   begin
+      dsEntity.DataSet := ControllerQuery.Load(0);
+   end;
+   ViewModelList.Free;
+end;
+
 function TFormViewBase.GetViewModel:TStringList;
 var
    ViewModelList: TStringList;
@@ -87,23 +104,6 @@ begin
      end;
    end;
    result :=  ViewModelList;
-end;
-
-procedure TFormViewBase.LoadViewModel;
-var
-   ViewModelList: TStringList;
-begin
-   ControllerQuery.EntityToDBGrid(grdEntity);
-   ViewModelList := GetViewModel;
-   if ViewModelList.Count > 0 then
-   begin
-      dsEntity.DataSet := ControllerQuery.Load(0, ViewModelList.DelimitedText);
-   end
-   else
-   begin
-      dsEntity.DataSet := ControllerQuery.Load(0);
-   end;
-   ViewModelList.Free;
 end;
 
 procedure TFormViewBase.grdEntityDblClick(Sender: TObject);
