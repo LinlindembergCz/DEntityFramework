@@ -16,9 +16,12 @@ type
     FRefCount: Integer;
     procedure SetContener(const Value: TComponent);
     function GetContener: TComponent;
+    procedure SetAutoApply(const Value: boolean);
+    function GetAutoApply:boolean;
   protected
     FState: TEntityState;
     FContener: TComponent;
+    FAutoApply: Boolean;
   //EntityDataSet: TClientDataSet;
     Service:IServiceBase;
     procedure CleanComponents;
@@ -38,6 +41,7 @@ type
     procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ; DataSource: TDataSource; E:string);
     property State: TEntityState read FState write FState;
     property Contener: TComponent read GetContener write SetContener;
+    property AutoApply :boolean read GetAutoApply write SetAutoApply;
 
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;
@@ -67,6 +71,11 @@ begin
     for Field in Service.FieldList do
       Grid.Columns.Add.FieldName := Field;
   end;
+end;
+
+function TControllerBase.GetAutoApply: boolean;
+begin
+   result := FAutoApply;
 end;
 
 function TControllerBase.GetContener: TComponent;
@@ -120,13 +129,13 @@ begin
   Service.InputEntity(FContener);
   Service.Post( State );
   UpdateState(esBrowser);
-  with FContener as TFormViewBase do
+  if AutoApply then
   begin
-    if AutoApplyUpdate then
-    begin
-       Apply;
+     Apply;
+     with FContener as TFormViewBase do
+     begin
        pgPrincipal.ActivePageIndex:= 0;
-    end;
+     end;
   end;
 end;
 
@@ -169,6 +178,11 @@ begin
    Service.RefresData;
 end;
 
+procedure TControllerBase.SetAutoApply(const Value: boolean);
+begin
+  FAutoApply := Value;
+end;
+
 procedure TControllerBase.SetContener(const Value: TComponent);
 begin
   FContener := Value;
@@ -198,8 +212,7 @@ begin
 end;
 
 procedure TControllerBase.LoadLookUp(DBLookupComboBox: TDBLookupComboBox;
-                                     DataSource:TDataSource;
-                                     E : string);
+                                     DataSource:TDataSource; E : string);
 var
   LookUpContext: TContext;
   LookUpDataSet: TClientDataSet;

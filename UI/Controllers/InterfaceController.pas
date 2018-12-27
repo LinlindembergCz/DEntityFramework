@@ -12,6 +12,8 @@ type
     ['{0CA799B5-84C6-49D5-8615-ED1278D3043A}']
     procedure SetContener(const Value: TComponent);
     function GetContener:TComponent;
+    procedure SetAutoApply(const Value: boolean);
+    function GetAutoApply:boolean;
 
     procedure Read;
     function Load(iId:Integer; Fields: string = '') : TDataSet;
@@ -27,6 +29,7 @@ type
                          DataSource: TDataSource;
                          parEntity: string);
     property Contener: TComponent read GetContener write SetContener;
+    property AutoApply :boolean read GetAutoApply write SetAutoApply;
   end;
 
 implementation

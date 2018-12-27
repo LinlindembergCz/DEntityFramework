@@ -39,7 +39,6 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
-    procedure SetAutoApplyUpdate(const Value: boolean);
     procedure LoadViewModel;
     function GetViewModel: TStringList;
     { Private declarations }
@@ -49,7 +48,6 @@ type
     FAutoApplyUpdate: boolean;
   public
     { Public declarations }
-    property AutoApplyUpdate : boolean read FAutoApplyUpdate write SetAutoApplyUpdate;
     constructor Create( pControllerQuery : IControllerBase; pControllerCommand : IControllerBase = nil );
   end;
 
@@ -64,10 +62,10 @@ begin
   if pControllerCommand <> nil then
      ControllerCommand := pControllerCommand;
   ControllerCommand.Contener := self;
+  ControllerCommand.AutoApply := true;
   inherited Create(Application);
   LoadViewModel;
   pgPrincipal.ActivePageIndex:= 0;
-  AutoApplyUpdate := true;
 end;
 
 procedure TFormViewBase.LoadViewModel;
@@ -110,11 +108,6 @@ procedure TFormViewBase.grdEntityDblClick(Sender: TObject);
 begin
   ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
   ControllerCommand.Read;
-end;
-
-procedure TFormViewBase.SetAutoApplyUpdate(const Value: boolean);
-begin
-  FAutoApplyUpdate := Value;
 end;
 
 procedure TFormViewBase.btnNewClick(Sender: TObject);
