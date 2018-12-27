@@ -8,11 +8,11 @@ uses
   System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls,
   //Essas units darão suporte ao nosso framework
   EntityConsts, EntityConnection, EntityTypes,  Atributies , EntityBase,
-  EntityFunctions, LinqSQL, System.TypInfo, System.threading;
+  EntityFunctions, LinqSQL, System.TypInfo, System.threading, InterfaceQueryAble;
 
 
 Type
-  TDataContext = class(TCustomQueryAble)
+  TDataContext = class(TQueryAble)
   private
     Classes: array of TClass;
     TableList:TStringList;
@@ -43,11 +43,11 @@ Type
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
     procedure InitEntity(Contener: TComponent);
     function UpdateDataBase(aClasses: array of TClass):boolean;
-    function GetEntity(QueryAble: TQueryAble): TEntityBase; overload;
-    function GetEntity<T: Class>(QueryAble: TQueryAble): T; overload;
-    function GetData(QueryAble: TQueryAble): OleVariant;
-    function GetDataSet(QueryAble: TQueryAble): TClientDataSet;
-    function GetList(QueryAble: TQueryAble): TList<TEntityBase>; overload;
+    function GetEntity(QueryAble: IQueryAble): TEntityBase; overload;
+    function GetEntity<T: Class>(QueryAble: IQueryAble): T; overload;
+    function GetData(QueryAble: IQueryAble): OleVariant;
+    function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
+    function GetList(QueryAble: IQueryAble): TList<TEntityBase>; overload;
     procedure InsertDirect;
     procedure UpdateDirect;
     procedure DeleteDirect;
@@ -70,7 +70,7 @@ Type
   function From(E: TEntityBase): TFrom; overload;
   function From(E: array of TEntityBase): TFrom; overload;
   function From(E: TClass): TFrom; overload;
-  function From(E: TQueryAble): TFrom; overload;
+  function From(E: IQueryAble): TFrom; overload;
 
 
 
@@ -80,7 +80,7 @@ uses
   Vcl.ExtCtrls, Data.SqlExpr, FireDAC.Comp.Client,
   EntityFirebird, EntityMSSQL,  AutoMapper;
 
-function TDataContext.GetData(QueryAble: TQueryAble): OleVariant;
+function TDataContext.GetData(QueryAble: IQueryAble): OleVariant;
 begin
   qryQuery := Connection.CreateDataSet( GetQuery(QueryAble) );
 
@@ -105,7 +105,7 @@ begin
     qryQuery.free;
 end;
 
-function TDataContext.GetDataSet(QueryAble: TQueryAble): TClientDataSet;
+function TDataContext.GetDataSet(QueryAble: IQueryAble): TClientDataSet;
 var
    Keys:TStringList;
 begin
@@ -143,7 +143,7 @@ begin
   end;
 end;
 
-function TDataContext.GetList(QueryAble: TQueryAble): TList<TEntityBase>;
+function TDataContext.GetList(QueryAble: IQueryAble): TList<TEntityBase>;
 var
   List: TList<TEntityBase>;
   DataSet: TClientDataSet;
@@ -157,8 +157,8 @@ begin
     DataSet.Data := GetData(QueryAble);
     while not DataSet.Eof do
     begin
-      TAutoMapper.DataToEntity(DataSet, TQueryAble(QueryAble).Entity);
-      List.Add(TQueryAble(QueryAble).Entity);
+      TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
+      List.Add( QueryAble.Entity);
       DataSet.Next;
     end;
     result := List;
@@ -167,7 +167,7 @@ begin
   end;
 end;
 
-function TDataContext.GetEntity(QueryAble: TQueryAble): TEntityBase;
+function TDataContext.GetEntity(QueryAble: IQueryAble): TEntityBase;
 var
   DataSet: TClientDataSet;
 begin
@@ -177,14 +177,14 @@ begin
 
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := GetData(QueryAble);
-    TAutoMapper.DataToEntity(DataSet, (QueryAble as TQueryAble).Entity);
-    result := (QueryAble as TQueryAble).Entity;
+    TAutoMapper.DataToEntity(DataSet, QueryAble .Entity);
+    result := QueryAble.Entity;
   finally
     FreeAndNil(DataSet);
   end;
 end;
 
-function TDataContext.GetEntity<T>(QueryAble: TQueryAble): T;
+function TDataContext.GetEntity<T>(QueryAble: IQueryAble): T;
 var
   DataSet: TClientDataSet;
 begin
@@ -192,8 +192,8 @@ begin
     result := nil;
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := GetData(QueryAble);
-    TAutoMapper.DataToEntity(DataSet, (QueryAble as TQueryAble).Entity);
-    result := (QueryAble as TQueryAble).Entity as T;
+    TAutoMapper.DataToEntity(DataSet,QueryAble.Entity);
+    result := QueryAble.Entity as T;
   finally
     FreeAndNil(DataSet);
   end;
@@ -601,7 +601,7 @@ begin
   result := TFrom(Linq.From(E));
 end;
 
-function From(E: TQueryAble): TFrom;
+function From(E: IQueryAble): TFrom;
 begin
   result := TFrom(Linq.From(E));
 end;

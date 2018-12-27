@@ -4,15 +4,38 @@ interface
 
 uses
   strUtils,SysUtils,Variants,EntityConsts, EntityTypes, Atributies, EntityBase,
-  EntityFunctions;
+  EntityFunctions, System.Classes, InterfaceQueryAble, Winapi.Windows;
 
 type
-  TSelect = class;
   TFrom = class;
 
-  TQueryAble = class abstract
+  TQueryAble = class(TInterfacedPersistent, IQueryAble)
   private
-
+    procedure SetEntity(value: TEntityBase);
+    function GetEntity: TEntityBase;
+    procedure SetSEntity(value: string);
+    function GetSEntity: string;
+    procedure SetSJoin(value: string);
+    function GetSJoin: string;
+    procedure SetSWhere(value: string);
+    function GetSWhere: string;
+    procedure SetSGroupBy(value: string);
+    function GetSGroupBy: string;
+    procedure SetSOrder(value: string);
+    function GetSOrder: string;
+    procedure SetSSelect(value: string);
+    function GetSSelect: string;
+    procedure SetSConcat(value: string);
+    function GetSConcat: string;
+    procedure SetSUnion(value: string);
+    function GetSUnion: string;
+    procedure SetSIntersect(value: string);
+    function GetSIntersect: string;
+    procedure SetSExcept(value: string);
+    function gSetSExcept: string;
+    procedure SetSCount(value: string);
+    function GetSCount: string;
+    function GetSExcept: string;
   protected
     oFrom: TFrom;
     FEntity: TEntityBase;
@@ -28,92 +51,66 @@ type
     FSConcat: string;
     FSCount: string;
   public
-    function Join(E: string; _On: string): TQueryAble; overload; virtual; abstract;
-    function Join(E: TEntityBase; _On: TString): TQueryAble; overload; virtual; abstract;
-    function Join(E: TEntityBase): TQueryAble; overload; virtual; abstract;
-    function Join(E: TClass): TQueryAble; overload; virtual; abstract;
-    function JoinLeft(E, _On: string): TQueryAble; overload; virtual; abstract;
-    function JoinLeft(E: TEntityBase; _On: TString): TQueryAble; overload; virtual; abstract;
-    function JoinRight(E, _On: string): TQueryAble; overload; virtual; abstract;
-    function JoinRight(E: TEntityBase; _On: TString): TQueryAble; overload; virtual; abstract;
-    function Where(condition: string): TQueryAble; overload; virtual; abstract;
-    function Where(condition: TString): TQueryAble; overload; virtual; abstract;
-    function GroupBy(Fields: string): TQueryAble; overload; virtual; abstract;
-    function GroupBy(Fields: array of string): TQueryAble; overload;virtual; abstract;
-    function Order(Fields: string): TQueryAble; overload; virtual; abstract;
-    function Order(Fields: array of string): TQueryAble; overload; virtual; abstract;
-    function OrderDesc(Fields: string): TQueryAble; overload; virtual; abstract;
-    function OrderDesc(Fields: array of string): TQueryAble; overload; virtual; abstract;
-    function Select(Fields: string = ''): TSelect; overload; virtual; abstract;
-    function Select(Fields: array of string): TSelect; overload; virtual; abstract;
-    //não estou achando seguro manter essa referencia aqui nessa classe!
-    property Entity : TEntityBase read FEntity write FEntity;
+    function Join(E, _On: string): IQueryAble; overload;
+    function Join(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Join(E: TEntityBase): IQueryAble; overload;
+    function Join(E: TClass): IQueryAble; overload;
+    function JoinLeft(E, _On: string): IQueryAble; overload;
+    function JoinLeft(E: TEntityBase; _On: TString): IQueryAble;
+      overload;
+    function JoinRight(E, _On: string): IQueryAble; overload;
+    function JoinRight(E: TEntityBase; _On: TString): IQueryAble;
+      overload;
+    function Where(condition: string): IQueryAble; overload;
+    function Where(condition: TString): IQueryAble; overload;
+    function GroupBy(Fields: string): IQueryAble; overload;
+    function GroupBy(Fields: array of string): IQueryAble; overload;
+    function Order(Fields: string): IQueryAble; overload;
+    function Order(Fields: array of string): IQueryAble; overload;
+    function OrderDesc(Fields: string): IQueryAble; overload;
+    function OrderDesc(Fields: array of string): IQueryAble;overload;
+    function Select(Fields: string = ''): IQueryAble; overload;
+    function Select(Fields: array of string): IQueryAble; overload;
 
-    property SEntity: string read FSEntity write FSEntity;
-    property SJoin: string read FSJoin write FSJoin;
-    property SWhere: string read FSWhere write FSWhere;
-    property SGroupBy: string read FSGroupBy write FSGroupBy;
-    property SOrder: string read FSOrder write FSOrder;
-    property SSelect: string read FSSelect write FSSelect;
-    property SConcat: string read FSConcat write FSConcat;
-    property SUnion: string read FSUnion write FSUnion;
-    property SExcept: string read FSExcept write FSExcept;
-    property SIntersect: string read FSIntersect write FSIntersect;
-    property SCount: string read FSCount write FSCount;
+    function GetQuery(QueryAble: IQueryAble): string;
+    property Entity : TEntityBase read GetEntity write SetEntity;
+    property SEntity: string read GetSEntity write SetSEntity;
+    property SJoin: string read GetSJoin write SetSJoin;
+    property SWhere: string read GetSWhere write SetSWhere;
+    property SGroupBy: string read GetSGroupBy write SetSGroupBy;
+    property SOrder: string read GetSOrder write SetSOrder;
+    property SSelect: string read GetSSelect write SetSSelect;
+    property SConcat: string read GetSConcat write SetSConcat;
+    property SUnion: string read GetSUnion write SetSUnion;
+    property SExcept: string read GetSExcept write SetSExcept;
+    property SIntersect: string read GetSIntersect write SetSIntersect;
+    property SCount: string read GetSCount write SetSCount;
   end;
 
-  TCustomQueryAble = class(TQueryAble)
-  private
-
-  protected
-    function Join(E, _On: string): TQueryAble; overload; override;
-    function Join(E: TEntityBase; _On: TString): TQueryAble; overload; override;
-    function Join(E: TEntityBase): TQueryAble; overload; override;
-    function Join(E: TClass): TQueryAble; overload; override;
-    function JoinLeft(E, _On: string): TQueryAble; overload; override;
-    function JoinLeft(E: TEntityBase; _On: TString): TQueryAble;
-      overload; override;
-    function JoinRight(E, _On: string): TQueryAble; overload; override;
-    function JoinRight(E: TEntityBase; _On: TString): TQueryAble;
-      overload; override;
-    function Where(condition: string): TQueryAble; overload; override;
-    function Where(condition: TString): TQueryAble; overload; override;
-    function GroupBy(Fields: string): TQueryAble; overload; override;
-    function GroupBy(Fields: array of string): TQueryAble; overload; override;
-    function Order(Fields: string): TQueryAble; overload; override;
-    function Order(Fields: array of string): TQueryAble; overload; override;
-    function OrderDesc(Fields: string): TQueryAble; overload; override;
-    function OrderDesc(Fields: array of string): TQueryAble; overload; override;
-    function Select(Fields: string = ''): TSelect; overload; override;
-    function Select(Fields: array of string): TSelect; overload; override;
-  public
-    function GetQuery(QueryAble: TQueryAble): string;
-  end;
-
-  TFrom = class(TCustomQueryAble)
+  TFrom = class(TQueryAble)
   protected
     constructor Create;
     destructor Destroy;
     procedure InitializeString;
   end;
 
-  TJoin = class(TCustomQueryAble);
-  TWhere = class(TCustomQueryAble);
-  TGroupBy = class(TCustomQueryAble);
-  TOrder = class(TCustomQueryAble);
+  TJoin = class(TQueryAble);
+  TWhere = class(TQueryAble);
+  TGroupBy = class(TQueryAble);
+  TOrder = class(TQueryAble);
 
-  TSelect = class(TCustomQueryAble)
+  TSelect = class(TQueryAble)
   private
     FFields:String;
   public
-    function TopFirst(i: integer): TQueryAble;
-    function Distinct(Field: String = ''): TQueryAble; overload;
-    function Distinct(Field: TString): TQueryAble; overload;
-    function Union(QueryAble: TQueryAble): TQueryAble;
-    function Concat(QueryAble: TQueryAble): TQueryAble;
-    function &Except(QueryAble: TQueryAble): TQueryAble;
-    function Intersect(QueryAble: TQueryAble): TQueryAble;
-    function Count: TQueryAble;
+    function TopFirst(i: integer): IQueryAble;
+    function Distinct(Field: String = ''): IQueryAble; overload;
+    function Distinct(Field: TString): IQueryAble; overload;
+    function Union(QueryAble: IQueryAble): IQueryAble;
+    function Concat(QueryAble: IQueryAble): IQueryAble;
+    function &Except(QueryAble: IQueryAble): IQueryAble;
+    function Intersect(QueryAble: IQueryAble): IQueryAble;
+    function Count: IQueryAble;
   end;
 
   Linq = class sealed
@@ -126,7 +123,7 @@ type
     class function From(E: TEntityBase): TFrom; overload;
     class function From(Entities: array of TEntityBase): TFrom; overload;
     class function From(E: TClass): TFrom; overload;
-    class function From(E: TQueryAble): TFrom; overload;
+    class function From(E: IQueryAble): TFrom; overload;
 
     class function Caseof(Expression: TString; _When, _then: array of variant)
       : TString; overload;
@@ -138,11 +135,9 @@ implementation
 
 uses AutoMapper;
 
-
-
-function TCustomQueryAble.GetQuery(QueryAble: TQueryAble): string;
+function TQueryAble.GetQuery(QueryAble: IQueryAble): string;
 begin
-  with QueryAble as TCustomQueryAble do
+  with QueryAble as TQueryAble do
   begin
     result := Concat(SSelect + SCount, ifthen(Pos('Select', SEntity) > 0,
               fStringReplace(SEntity, 'From ', 'From (') + ')', SEntity),
@@ -163,6 +158,66 @@ begin
               ifthen(SConcat <> '', StrUnionAll + SConcat, ''));
     //oFrom.Free;
   end;
+end;
+
+function TQueryAble.GetEntity: TEntityBase;
+begin
+  result:= FEntity;
+end;
+
+function TQueryAble.GetSConcat: string;
+begin
+ result:= FSConcat;
+end;
+
+function TQueryAble.GetSCount: string;
+begin
+  result:= FSCount;
+end;
+
+function TQueryAble.GetSEntity: string;
+begin
+  result:= FSEntity;
+end;
+
+function TQueryAble.GetSExcept: string;
+begin
+  result:= FSExcept;
+end;
+
+function TQueryAble.GetSGroupBy: string;
+begin
+  result:= FSGroupBy;
+end;
+
+function TQueryAble.GetSIntersect: string;
+begin
+  result:= FSIntersect;
+end;
+
+function TQueryAble.GetSJoin: string;
+begin
+  result:= FSJoin;
+end;
+
+function TQueryAble.GetSOrder: string;
+begin
+  result:= FSOrder;
+end;
+
+function TQueryAble.GetSSelect: string;
+begin
+  result:= FSSelect;
+end;
+
+function TQueryAble.GetSUnion: string;
+begin
+   result:= FSUnion;
+end;
+
+function TQueryAble.GetSWhere: string;
+begin
+   result:= FSWhere;
 end;
 
 class function Linq.From(E: String): TFrom;
@@ -203,7 +258,7 @@ begin
   result := oFrom;
 end;
 
-class function Linq.From(E: TQueryAble): TFrom;
+class function Linq.From(E: IQueryAble): TFrom;
 begin
   result := oFrom;
 end;
@@ -271,78 +326,78 @@ end;
 
 { TCustomLinqQueryAble }
 
-function TCustomQueryAble.Join(E, _On: string): TQueryAble;
+function TQueryAble.Join(E, _On: string): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrInnerJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TCustomQueryAble.Join(E: TEntityBase; _On: TString): TQueryAble;
+function TQueryAble.Join(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TCustomQueryAble.Join(E: TEntityBase): TQueryAble;
+function TQueryAble.Join(E: TEntityBase): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.Entity, E);
   result := self;
 end;
 
-function TCustomQueryAble.Join(E: TClass): TQueryAble;
+function TQueryAble.Join(E: TClass): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.Entity, E);
   result := self;
 end;
 
-function TCustomQueryAble.JoinLeft(E, _On: string): TQueryAble;
+function TQueryAble.JoinLeft(E, _On: string): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrLeftJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TCustomQueryAble.JoinLeft(E: TEntityBase; _On: TString): TQueryAble;
+function TQueryAble.JoinLeft(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TCustomQueryAble.JoinRight(E, _On: string): TQueryAble;
+function TQueryAble.JoinRight(E, _On: string): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrRightJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TCustomQueryAble.JoinRight(E: TEntityBase; _On: TString): TQueryAble;
+function TQueryAble.JoinRight(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.SJoin := self.SJoin + StrRightJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TCustomQueryAble.Where(condition: string): TQueryAble;
+function TQueryAble.Where(condition: string): IQueryAble;
 begin
   self.SWhere := StrWhere + condition;
   result := self;
 end;
 
-function TCustomQueryAble.Where(condition: TString): TQueryAble;
+function TQueryAble.Where(condition: TString): IQueryAble;
 begin
   self.SWhere := Concat(StrWhere, condition);
   result := self;
 end;
 
-function TCustomQueryAble.GroupBy(Fields: string): TQueryAble;
+function TQueryAble.GroupBy(Fields: string): IQueryAble;
 begin
   self.SGroupBy := Concat(StrGroupBy, Fields);
   result := self;
 end;
 
-function TCustomQueryAble.GroupBy(Fields: array of string): TQueryAble;
+function TQueryAble.GroupBy(Fields: array of string): IQueryAble;
 var
   values: string;
   Value: string;
@@ -355,13 +410,18 @@ begin
   result := self;
 end;
 
-function TCustomQueryAble.Order(Fields: string): TQueryAble;
+function TQueryAble.gSetSExcept: string;
+begin
+
+end;
+
+function TQueryAble.Order(Fields: string): IQueryAble;
 begin
   self.SOrder := Concat(StrOrderBy, Fields);
   result := self;
 end;
 
-function TCustomQueryAble.Order(Fields: array of string): TQueryAble;
+function TQueryAble.Order(Fields: array of string): IQueryAble;
 var
   values: string;
   Value: string;
@@ -374,13 +434,13 @@ begin
   result := self;
 end;
 
-function TCustomQueryAble.OrderDesc(Fields: string): TQueryAble;
+function TQueryAble.OrderDesc(Fields: string): IQueryAble;
 begin
   self.SOrder := Concat(StrOrderBy, Fields, StrDesc);
   result := self;
 end;
 
-function TCustomQueryAble.OrderDesc(Fields: array of string): TQueryAble;
+function TQueryAble.OrderDesc(Fields: array of string): IQueryAble;
 var
   values: string;
   Value: string;
@@ -393,7 +453,7 @@ begin
   result := self;
 end;
 
-function TCustomQueryAble.Select(Fields: string = ''): TSelect;
+function TQueryAble.Select(Fields: string = ''): IQueryAble;
 var
   _Atribs:string;
 begin
@@ -410,7 +470,7 @@ begin
   result := TSelect(self);
 end;
 
-function TCustomQueryAble.Select(Fields: array of string): TSelect;
+function TQueryAble.Select(Fields: array of string): IQueryAble;
 var
   _Fields: string;
   Field: string;
@@ -427,27 +487,87 @@ begin
   result := TSelect(self);
 end;
 
+procedure TQueryAble.SetEntity(value: TEntityBase);
+begin
+  FEntity := Value;
+end;
+
+procedure TQueryAble.SetSConcat(value: string);
+begin
+   FSConcat:= Value;
+end;
+
+procedure TQueryAble.SetSCount(value: string);
+begin
+   FSCount:= Value;
+end;
+
+procedure TQueryAble.SetSEntity(value: string);
+begin
+   FSEntity:= Value;
+end;
+
+procedure TQueryAble.SetSExcept(value: string);
+begin
+   FSExcept:= Value;
+end;
+
+procedure TQueryAble.SetSGroupBy(value: string);
+begin
+   FSGroupBy:= Value;
+end;
+
+procedure TQueryAble.SetSIntersect(value: string);
+begin
+  FSIntersect:= Value;
+end;
+
+procedure TQueryAble.SetSJoin(value: string);
+begin
+   FSJoin:= Value;
+end;
+
+procedure TQueryAble.SetSOrder(value: string);
+begin
+  FSOrder:= Value;
+end;
+
+procedure TQueryAble.SetSSelect(value: string);
+begin
+  FSSelect:= Value;
+end;
+
+procedure TQueryAble.SetSUnion(value: string);
+begin
+  FSUnion:= Value;
+end;
+
+procedure TQueryAble.SetSWhere(value: string);
+begin
+  FSWhere:= Value;
+end;
+
 { TSelect }
 
-function TSelect.&Except(QueryAble: TQueryAble): TQueryAble;
+function TSelect.&Except(QueryAble: IQueryAble): IQueryAble;
 begin
   SExcept := GetQuery(QueryAble);
   result := self;
 end;
 
-function TSelect.Intersect(QueryAble: TQueryAble): TQueryAble;
+function TSelect.Intersect(QueryAble: IQueryAble): IQueryAble;
 begin
   SIntersect := GetQuery(QueryAble);
   result := self;
 end;
 
-function TSelect.Concat(QueryAble: TQueryAble): TQueryAble;
+function TSelect.Concat(QueryAble: IQueryAble): IQueryAble;
 begin
   SConcat := GetQuery(QueryAble);
   result := self;
 end;
 
-function TSelect.Count: TQueryAble;
+function TSelect.Count: IQueryAble;
 begin
   SSelect := trim(fStringReplace(SSelect, '*', ''));
   if FFields <> '' then
@@ -461,27 +581,27 @@ begin
   result := self;
 end;
 
-function TSelect.Distinct(Field: TString): TQueryAble;
+function TSelect.Distinct(Field: TString): IQueryAble;
 begin
   SSelect := fStringReplace(SSelect, StrSelect, StrSelect + StrDistinct +
     ifthen(assigned(@Field), '(' + Field.&As + '),', '') + ' ');
   result := self;
 end;
 
-function TSelect.Distinct(Field: String): TQueryAble;
+function TSelect.Distinct(Field: String): IQueryAble;
 begin
   SSelect := fStringReplace(SSelect, StrSelect, StrSelect + StrDistinct +
     ifthen(Field <> '', '(' + Field + '),', '') + ' ');
   result := self;
 end;
 
-function TSelect.TopFirst(i: integer): TQueryAble;
+function TSelect.TopFirst(i: integer): IQueryAble;
 begin
   SSelect := fStringReplace(SSelect, StrSelect, StrSelect + StrTop + inttostr(i)
     + ' ');
 end;
 
-function TSelect.Union(QueryAble: TQueryAble): TQueryAble;
+function TSelect.Union(QueryAble: IQueryAble): IQueryAble;
 begin
   SUnion := GetQuery(QueryAble);
   result := self;

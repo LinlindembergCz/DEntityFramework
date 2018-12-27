@@ -79,7 +79,8 @@ uses
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
   LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas',
   FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
-  ClassCFOP in 'Domain\Entities\ClassCFOP.pas';
+  ClassCFOP in 'Domain\Entities\ClassCFOP.pas',
+  InterfaceQueryAble in 'Infra\DEntityFramework\InterfaceQueryAble.pas';
 
 {/unit in Caminho.pas}
 
