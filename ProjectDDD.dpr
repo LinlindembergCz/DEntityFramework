@@ -77,7 +77,7 @@ uses
   ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
   viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
-  LinqSQL in 'Infra\DEntityFramework\LinqSQL.pas',
+  QueryAble in 'Infra\DEntityFramework\QueryAble.pas',
   FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
   ClassCFOP in 'Domain\Entities\ClassCFOP.pas',
   InterfaceQueryAble in 'Infra\DEntityFramework\InterfaceQueryAble.pas';

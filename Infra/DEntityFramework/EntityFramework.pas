@@ -8,7 +8,7 @@ uses
   System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls,
   //Essas units darão suporte ao nosso framework
   EntityConsts, EntityConnection, EntityTypes,  Atributies , EntityBase,
-  EntityFunctions, LinqSQL, System.TypInfo, System.threading, InterfaceQueryAble;
+  EntityFunctions, QueryAble, System.TypInfo, System.threading, InterfaceQueryAble;
 
 
 Type

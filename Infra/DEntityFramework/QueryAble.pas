@@ -1,4 +1,4 @@
-unit LinqSQL;
+unit QueryAble;
 
 interface
 
@@ -72,7 +72,7 @@ type
     function Select(Fields: string = ''): IQueryAble; overload;
     function Select(Fields: array of string): IQueryAble; overload;
 
-    function GetQuery(QueryAble: IQueryAble): string;
+    function GetQuery(Q: IQueryAble): string;
     property Entity : TEntityBase read GetEntity write SetEntity;
     property SEntity: string read GetSEntity write SetSEntity;
     property SJoin: string read GetSJoin write SetSJoin;
@@ -106,10 +106,10 @@ type
     function TopFirst(i: integer): IQueryAble;
     function Distinct(Field: String = ''): IQueryAble; overload;
     function Distinct(Field: TString): IQueryAble; overload;
-    function Union(QueryAble: IQueryAble): IQueryAble;
-    function Concat(QueryAble: IQueryAble): IQueryAble;
-    function &Except(QueryAble: IQueryAble): IQueryAble;
-    function Intersect(QueryAble: IQueryAble): IQueryAble;
+    function Union(Q: IQueryAble): IQueryAble;
+    function Concat(Q: IQueryAble): IQueryAble;
+    function &Except(Q: IQueryAble): IQueryAble;
+    function Intersect(Q: IQueryAble): IQueryAble;
     function Count: IQueryAble;
   end;
 
@@ -135,9 +135,9 @@ implementation
 
 uses AutoMapper;
 
-function TQueryAble.GetQuery(QueryAble: IQueryAble): string;
+function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin
-  with QueryAble as TQueryAble do
+  with Q as TQueryAble do
   begin
     result := Concat(SSelect + SCount, ifthen(Pos('Select', SEntity) > 0,
               fStringReplace(SEntity, 'From ', 'From (') + ')', SEntity),
@@ -549,21 +549,21 @@ end;
 
 { TSelect }
 
-function TSelect.&Except(QueryAble: IQueryAble): IQueryAble;
+function TSelect.&Except(Q: IQueryAble): IQueryAble;
 begin
-  SExcept := GetQuery(QueryAble);
+  SExcept := GetQuery(Q);
   result := self;
 end;
 
-function TSelect.Intersect(QueryAble: IQueryAble): IQueryAble;
+function TSelect.Intersect(Q: IQueryAble): IQueryAble;
 begin
-  SIntersect := GetQuery(QueryAble);
+  SIntersect := GetQuery(Q);
   result := self;
 end;
 
-function TSelect.Concat(QueryAble: IQueryAble): IQueryAble;
+function TSelect.Concat(Q: IQueryAble): IQueryAble;
 begin
-  SConcat := GetQuery(QueryAble);
+  SConcat := GetQuery(Q);
   result := self;
 end;
 
@@ -601,9 +601,9 @@ begin
     + ' ');
 end;
 
-function TSelect.Union(QueryAble: IQueryAble): IQueryAble;
+function TSelect.Union(Q: IQueryAble): IQueryAble;
 begin
-  SUnion := GetQuery(QueryAble);
+  SUnion := GetQuery(Q);
   result := self;
 end;
 
