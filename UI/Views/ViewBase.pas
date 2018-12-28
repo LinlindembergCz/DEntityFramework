@@ -147,15 +147,15 @@ end;
 procedure TFormViewBase.Button1Click(Sender: TObject);
 begin
   dsEntity.DataSet.prior;
- // ControllerQuery.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
- // ControllerQuery.Read;
+  ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerCommand.Read;
 end;
 
 procedure TFormViewBase.Button3Click(Sender: TObject);
 begin
   dsEntity.DataSet.Next;
- // ControllerQuery.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
- // ControllerQuery.Read;
+  ControllerCommand.Load(dsEntity.DataSet.FieldByName('ID').AsInteger);
+  ControllerCommand.Read;
 end;
 
 end.
