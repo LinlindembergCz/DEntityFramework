@@ -33,7 +33,6 @@ uses
   FactoryRepository in 'Infra\Factories\FactoryRepository.pas',
   InterfaceRepository in 'Domain\IRepositories\InterfaceRepository.pas',
   Email in 'Domain\ValuesObjects\Email.pas',
-  EntityBase in 'Domain\Entities\EntityBase.pas',
   Atributies in 'Domain\Entities\Atributies\Atributies.pas',
   EntityTypes in 'Domain\Entities\types\EntityTypes.pas',
   InterfaceRepositoryCliente in 'Domain\IRepositories\InterfaceRepositoryCliente.pas',
@@ -47,40 +46,12 @@ uses
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   ServiceCliente in 'Service\ServiceCliente.pas',
   ClassCliente in 'Domain\Entities\ClassCliente.pas' {/unit in Caminho.pas},
-  ClassFornecedor in 'Domain\Entities\ClassFornecedor.pas',
-  InterfaceRepositoryFornecedor in 'Domain\IRepositories\InterfaceRepositoryFornecedor.pas',
-  RepositoryFornecedor in 'Infra\Repositories\RepositoryFornecedor.pas',
-  InterfaceServiceFornecedor in 'Domain\IService\InterfaceServiceFornecedor.pas',
-  ServiceFornecedor in 'Service\ServiceFornecedor.pas',
-  ControllerFornecedor in 'UI\Controllers\ControllerFornecedor.pas',
-  ClassFabricante in 'Domain\Entities\ClassFabricante.pas',
-  InterfaceRepositoryFabricante in 'Domain\IRepositories\InterfaceRepositoryFabricante.pas',
-  RepositoryFabricante in 'Infra\Repositories\RepositoryFabricante.pas',
-  InterfaceServiceFabricante in 'Domain\IService\InterfaceServiceFabricante.pas',
-  ServiceFabricante in 'Service\ServiceFabricante.pas',
-  ControllerFabricante in 'UI\Controllers\ControllerFabricante.pas' {,
-  ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
-  ViewFabricante in 'UI\Views\ViewFabricante.pas' {FormViewFabricante},
-  InterfaceService in 'Domain\IService\InterfaceService.pas' {,
-  ClassAluno in 'Domain\Entities\ClassAluno.pas',
-  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
-  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
-  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
-  ServiceAluno in 'Service\ServiceAluno.pas',
-  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
-  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
-  ClassAluno in 'Domain\Entities\ClassAluno.pas',
-  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
-  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
-  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
-  ServiceAluno in 'Service\ServiceAluno.pas',
-  ControllerAluno in 'UI\Controllers\ControllerAluno.pas' {/unit in Caminho.pas},
-  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
+  InterfaceService in 'Domain\IService\InterfaceService.pas' ,
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
   QueryAble in 'Infra\DEntityFramework\QueryAble.pas',
   FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
-  ClassCFOP in 'Domain\Entities\ClassCFOP.pas',
-  InterfaceQueryAble in 'Infra\DEntityFramework\InterfaceQueryAble.pas';
+  InterfaceQueryAble in 'Infra\DEntityFramework\InterfaceQueryAble.pas',
+  EntityBase in 'Infra\DEntityFramework\EntityBase.pas';
 
 {/unit in Caminho.pas}
 
@@ -95,7 +66,7 @@ begin
     DataContext:= TDataContext.Create(nil);
     DataContext.Connection:= TFactoryConnection.GetConnection;
     //Essa  UpdateDataBase irá criar as tabelas e campos que estão mapeados na classe de dominio.
-    if DataContext.UpdateDataBase([ TCliente , TCFOP (*Entity*) ]) then
+    if DataContext.UpdateDataBase([ TCliente {'Array de Classes descendentes de TEntityBase'} ]) then
     begin
        showmessage('O sistema será reiniciado!');
        application.Terminate;
