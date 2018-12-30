@@ -5,12 +5,6 @@ program ProjectDDD;
 {$ENDIF}
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
-  DUnitTestRunner,
   System.Classes,
   Dialogs,
   Forms,
@@ -33,8 +27,8 @@ uses
   FactoryRepository in 'Infra\Factories\FactoryRepository.pas',
   InterfaceRepository in 'Domain\IRepositories\InterfaceRepository.pas',
   Email in 'Domain\ValuesObjects\Email.pas',
-  Atributies in 'Domain\Entities\Atributies\Atributies.pas',
-  EntityTypes in 'Domain\Entities\types\EntityTypes.pas',
+  Atributies in 'Infra\DEntityFramework\Atributies\Atributies.pas',
+  EntityTypes in 'Infra\DEntityFramework\types\EntityTypes.pas',
   InterfaceRepositoryCliente in 'Domain\IRepositories\InterfaceRepositoryCliente.pas',
   ServiceBase in 'Service\ServiceBase.pas',
   RepositoryCliente in 'Infra\Repositories\RepositoryCliente.pas',
