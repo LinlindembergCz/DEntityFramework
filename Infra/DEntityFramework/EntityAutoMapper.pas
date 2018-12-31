@@ -1,4 +1,4 @@
-unit AutoMapper;
+unit EntityAutoMapper;
 
 interface
 

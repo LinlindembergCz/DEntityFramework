@@ -78,7 +78,7 @@ implementation
 
 uses
   Vcl.ExtCtrls, Data.SqlExpr, FireDAC.Comp.Client,
-  EntityFirebird, EntityMSSQL,  AutoMapper;
+  EntityFirebird, EntityMSSQL,  EntityAutoMapper;
 
 function TDataContext.GetData(QueryAble: IQueryAble): OleVariant;
 begin

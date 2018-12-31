@@ -14,7 +14,7 @@ type
 
 implementation
 
-uses  FactoryRepository, InterfaceRepository, ServiceBase, AutoMapper;//ServiceEntity;
+uses  FactoryRepository, InterfaceRepository, ServiceBase, EntityAutoMapper;//ServiceEntity;
 
 { TFactoryService }
 

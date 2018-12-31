@@ -35,7 +35,7 @@ uses
   Context in 'Infra\Contexto\Context.pas',
   RepositoryBase in 'Infra\Repositories\RepositoryBase.pas',
   CPF in 'Domain\ValuesObjects\CPF.pas',
-  AutoMapper in 'Infra\DEntityFramework\AutoMapper.pas',
+  EntityAutoMapper in 'Infra\DEntityFramework\EntityAutoMapper.pas',
   FactoryService in 'Service\Factories\FactoryService.pas',
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   ServiceCliente in 'Service\ServiceCliente.pas',

@@ -36,7 +36,7 @@ type
   {$M-}
 implementation
 
-uses AutoMapper;
+uses EntityAutoMapper;
 
 constructor TServiceBase.Create(pRepository: IRepositoryBase);
 begin

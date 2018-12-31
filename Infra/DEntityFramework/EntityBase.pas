@@ -24,7 +24,7 @@ type
 implementation
 
 { TEntityBase }
-uses AutoMapper;
+uses EntityAutoMapper;
 
 destructor TEntityBase.Destroy;
 begin

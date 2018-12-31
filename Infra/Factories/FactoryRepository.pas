@@ -15,7 +15,7 @@ type
 implementation
 
 { TFactoryEntity }
-uses Context , AutoMapper, RepositoryBase;
+uses Context , EntityAutoMapper, RepositoryBase;
 
 
 class function TFactoryRepository.GetRepository(E: string): IRepositoryBase;

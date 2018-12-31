@@ -52,7 +52,7 @@ implementation
 
 { TControllerClient }
 
-uses   ViewBase, EntityConnection, FactoryConnection, FactoryRepository, AutoMapper,
+uses   ViewBase, EntityConnection, FactoryConnection, FactoryRepository, EntityAutoMapper,
   FactoryService;
 
 constructor TControllerBase.Create(pService:IServiceBase);

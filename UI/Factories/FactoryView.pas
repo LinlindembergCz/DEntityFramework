@@ -17,7 +17,7 @@ type
 implementation
 
 uses
-InterfaceController, FactoryController, AutoMapper;
+InterfaceController, FactoryController, EntityAutoMapper;
 
 class procedure TFactoryForm.ShowForm(Form:TForm;modal:boolean);
 begin

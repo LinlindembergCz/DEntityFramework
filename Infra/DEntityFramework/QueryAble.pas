@@ -133,7 +133,7 @@ type
 
 implementation
 
-uses AutoMapper;
+uses EntityAutoMapper;
 
 function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin

@@ -17,7 +17,7 @@ implementation
 
 { TFactoryEntity }
 
-uses  AutoMapper;
+uses  EntityAutoMapper;
 
 class function TFactoryEntity.GetEntity(E: string ):TEntityBase;
 var
