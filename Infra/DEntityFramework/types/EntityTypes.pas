@@ -407,7 +407,7 @@ end;
 
 function TStringHelp.Contains(const a: string): TString;
 begin
-  result.Value := FAs + ' LIKE(' + quotedstr(a) + ')';
+  result.Value := FAs + ' LIKE(' + quotedstr('%'+a+'%') + ')';
 end;
 
 class operator TFloat.Equal(const a, b: TFloat): TString;

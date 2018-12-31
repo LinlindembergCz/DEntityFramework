@@ -27,6 +27,9 @@ type
     edtCPFCNPJ: TMaskEdit;
     edtEmail: TEdit;
     Label1: TLabel;
+    Button4: TButton;
+    Label7: TLabel;
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -36,7 +39,15 @@ type
 implementation
 
 {$R *.dfm}
+
+uses ControllerCliente;
 //Nosso crud so precisa disso e mais nada!
+procedure TFormViewCliente.Button4Click(Sender: TObject);
+begin
+  inherited;
+  dsEntity.DataSet :=  (ControllerQuery as TControllerCliente).LoadPorNome( edit1.Text );
+end;
+
 initialization RegisterClass(TFormViewCliente);
 finalization UnRegisterClass(TFormViewCliente);
 

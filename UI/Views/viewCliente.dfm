@@ -6,7 +6,6 @@ inherited FormViewCliente: TFormViewCliente
   TextHeight = 13
   inherited pgPrincipal: TPageControl
     Height = 426
-    ActivePage = TabSheet2
     ExplicitHeight = 426
     inherited TabSheet1: TTabSheet
       ExplicitLeft = 4
@@ -41,9 +40,25 @@ inherited FormViewCliente: TFormViewCliente
       inherited Panel2: TPanel
         Height = 57
         ExplicitHeight = 57
+        object Label7: TLabel [0]
+          Left = 8
+          Top = 4
+          Width = 27
+          Height = 13
+          Caption = 'Nome'
+        end
         inherited Edit1: TEdit
           Top = 19
           ExplicitTop = 19
+        end
+        object Button4: TButton
+          Left = 276
+          Top = 16
+          Width = 63
+          Height = 25
+          Caption = 'pesquisar'
+          TabOrder = 1
+          OnClick = Button4Click
         end
       end
     end

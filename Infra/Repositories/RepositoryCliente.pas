@@ -3,7 +3,8 @@ unit RepositoryCliente;
 interface
 
 uses
-Classes, Repository, classCliente, RepositoryBase, InterfaceRepositoryCliente, InterfaceRepository,  Context, EntityBase;
+DB, Classes, Repository, classCliente, RepositoryBase, InterfaceRepositoryCliente,
+InterfaceRepository,  Context, EntityBase,EntityTypes, EntityFramework;
 
 type
   TRepositoryCliente = class(TRepositoryBase ,IRepositoryCliente)
@@ -12,6 +13,7 @@ type
   public
     Constructor Create(dbContext:TContext);override;
     function GetEntity: TCliente;
+    function LoadPorNome(value: string):TDataSet;
   end;
 
 implementation
@@ -27,6 +29,14 @@ end;
 function TRepositoryCliente.GetEntity: TCliente;
 begin
   result:= _RepositoryCliente.Entity;
+end;
+
+function TRepositoryCliente.LoadPorNome(value: string): TDataSet;
+var
+  E:TCliente;
+begin
+  E := (Context.Entity as TCliente);
+  result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select('') );
 end;
 
 initialization RegisterClass(TRepositoryCliente);
