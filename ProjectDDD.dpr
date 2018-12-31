@@ -28,7 +28,7 @@ uses
   InterfaceRepository in 'Domain\IRepositories\InterfaceRepository.pas',
   Email in 'Domain\ValuesObjects\Email.pas',
   Atributies in 'Infra\DEntityFramework\Atributies\Atributies.pas',
-  EntityTypes in 'Infra\DEntityFramework\types\EntityTypes.pas',
+  EntityTypes in 'Infra\DEntityFramework\EntityTypes.pas',
   InterfaceRepositoryCliente in 'Domain\IRepositories\InterfaceRepositoryCliente.pas',
   ServiceBase in 'Service\ServiceBase.pas',
   RepositoryCliente in 'Infra\Repositories\RepositoryCliente.pas',
@@ -40,12 +40,20 @@ uses
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   ServiceCliente in 'Service\ServiceCliente.pas',
   ClassCliente in 'Domain\Entities\ClassCliente.pas' {/unit in Caminho.pas},
-  InterfaceService in 'Domain\IService\InterfaceService.pas' ,
+  InterfaceService in 'Domain\IService\InterfaceService.pas' {,
+  ClassAluno in 'Domain\Entities\ClassAluno.pas',
+  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
+  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
+  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
+  ServiceAluno in 'Service\ServiceAluno.pas',
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   CustomDataBase in 'Infra\DEntityFramework\Conection\CustomDataBase.pas',
   QueryAble in 'Infra\DEntityFramework\QueryAble.pas',
   FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
   InterfaceQueryAble in 'Infra\DEntityFramework\InterfaceQueryAble.pas',
-  EntityBase in 'Infra\DEntityFramework\EntityBase.pas';
+  EntityBase in 'Infra\DEntityFramework\EntityBase.pas',
+  EntityAtributies in 'Infra\DEntityFramework\EntityAtributies.pas';
 
 {/unit in Caminho.pas}
 

@@ -3,7 +3,7 @@ unit AutoMapper;
 interface
 
 uses
-   Forms, Atributies, EntityBase, EntityTypes,  RTTI, Classes,  SysUtils,
+   Forms, EntityAtributies, EntityBase, EntityTypes,  RTTI, Classes,  SysUtils,
    Vcl.Controls, DB, System.Contnrs,  StdCtrls, strUtils, math,
    System.Generics.Collections;
 

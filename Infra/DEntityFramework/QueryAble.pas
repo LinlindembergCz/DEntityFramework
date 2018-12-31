@@ -3,7 +3,7 @@ unit QueryAble;
 interface
 
 uses
-  strUtils,SysUtils,Variants,EntityConsts, EntityTypes, Atributies, EntityBase,
+  strUtils,SysUtils,Variants,EntityConsts, EntityTypes, EntityAtributies, EntityBase,
   EntityFunctions, System.Classes, InterfaceQueryAble, Winapi.Windows;
 
 type

@@ -4,7 +4,7 @@ interface
 
 
 uses
-  strUtils,SysUtils,Variants,EntityConsts, EntityTypes, Atributies, EntityBase,
+  strUtils,SysUtils,Variants,EntityConsts, EntityTypes, EntityAtributies, EntityBase,
   EntityFunctions, System.Classes;
 
 type

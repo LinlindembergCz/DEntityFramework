@@ -3,7 +3,7 @@ unit Email;
 interface
 
 uses
-   EntityTypes, SysUtils, Dialogs, EntityBase, Atributies;
+   EntityTypes, SysUtils, Dialogs, EntityBase, EntityAtributies;
 
 type
   TEmail = class(TEntityBase)

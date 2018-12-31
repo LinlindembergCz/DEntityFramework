@@ -3,7 +3,7 @@ unit ClassCliente;
 interface
 
 uses
-  System.Classes,  Email, Dialogs, SysUtils, EntityBase, EntityTypes, Atributies;
+  System.Classes,  Email, Dialogs, SysUtils, EntityBase, EntityTypes, EntityAtributies;
 
 type
   [EntityTable('Clientes')]

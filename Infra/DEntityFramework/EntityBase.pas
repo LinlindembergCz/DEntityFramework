@@ -3,7 +3,7 @@ unit EntityBase;
 interface
 
 uses
-  System.TypInfo, RTTI, SysUtils, Atributies, EntityTypes, System.Classes;
+  System.TypInfo, RTTI, SysUtils, EntityAtributies, EntityTypes, System.Classes;
 
 type
   TEntityBase = class(TPersistent)
