@@ -3,7 +3,7 @@ unit EntityMSSQL;
 interface
 
 uses
-  Atributies, AutoMapper, sysutils, classes, strUtils, EntityConnection, Dialogs, CustomDataBase;
+  EntityAtributies, EntityAutoMapper, sysutils, classes, strUtils, EntityConnection, Dialogs, CustomDataBase;
 
 type
   TMSSQL = class(TCustomDataBase)

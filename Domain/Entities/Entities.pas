@@ -3,7 +3,7 @@ unit Entities;
 interface
 
 uses
-  System.Classes, Dialogs, SysUtils, EntityBase, EntityTypes, Atributies,CPF, classCLiente;
+  System.Classes, Dialogs, SysUtils, EntityBase, EntityTypes, EntityAtributies,CPF, classCLiente;
 
 type
   [EntityTable('Endereco')]

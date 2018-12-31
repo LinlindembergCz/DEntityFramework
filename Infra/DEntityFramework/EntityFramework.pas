@@ -7,7 +7,7 @@ uses
   Datasnap.Provider, Forms, Datasnap.DBClient, System.Contnrs, Data.DB,
   System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls,
   //Essas units darão suporte ao nosso framework
-  EntityConsts, EntityConnection, EntityTypes,  Atributies , EntityBase,
+  EntityConsts, EntityConnection, EntityTypes,  EntityAtributies , EntityBase,
   EntityFunctions, QueryAble, System.TypInfo, System.threading, InterfaceQueryAble;
 
 

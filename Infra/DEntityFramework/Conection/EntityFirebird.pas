@@ -2,7 +2,7 @@ unit EntityFirebird;
 
 interface
 
-uses Atributies, AutoMapper, sysutils, classes, strutils, EntityConnection, Dialogs, CustomDataBase;
+uses EntityAtributies, EntityAutoMapper, sysutils, classes, strutils, EntityConnection, Dialogs, CustomDataBase;
 
 type
   TFirebird = class(TCustomDataBase)
