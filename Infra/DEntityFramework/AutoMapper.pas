@@ -1064,6 +1064,7 @@ var
             ValueItem := EntityItems(Atrib).Items.Strings[i];
             lsText := copy(ValueItem, Pos('=', ValueItem) + 1,length(ValueItem));
             lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
+            //Em versões antigas do XE o componente ainda nao possui o metodo AddPair
             if (Componente as TCombobox).Items.Values[lsText] = '' then
                TCombobox(Componente).Items.AddPair( lsText, lsValue );
             if Value = lsValue then
@@ -1110,6 +1111,7 @@ var
             lsText := copy(ValueItem, Pos('=', ValueItem) + 1,
               length(ValueItem));
             lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
+            //Em versões antigas do XE o componente ainda nao possui o metodo AddPair
             if (Componente as TRadioGroup).Items.Values[lsText] = '' then
                TRadioGroup(Componente).Items.AddPair( lsText, lsValue );
             if (Value = lsValue) then
