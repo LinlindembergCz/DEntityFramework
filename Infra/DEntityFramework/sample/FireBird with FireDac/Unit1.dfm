@@ -1,0 +1,163 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 488
+  ClientWidth = 746
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Button1: TButton
+    Left = 16
+    Top = 367
+    Width = 75
+    Height = 25
+    Caption = 'Open'
+    TabOrder = 0
+  end
+  object panelButtons: TPanel
+    Left = 0
+    Top = 0
+    Width = 185
+    Height = 399
+    Align = alLeft
+    BevelKind = bkTile
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitLeft = -4
+    object buttonInsert: TButton
+      Left = 14
+      Top = 143
+      Width = 147
+      Height = 25
+      Caption = 'Insert'
+      TabOrder = 0
+      OnClick = buttonInsertClick
+    end
+    object buttonLoadData: TButton
+      Left = 14
+      Top = 7
+      Width = 147
+      Height = 25
+      Caption = 'Load Data'
+      TabOrder = 1
+      OnClick = buttonLoadDataClick
+    end
+    object buttonGetDataSet: TButton
+      Left = 14
+      Top = 38
+      Width = 147
+      Height = 25
+      Caption = 'Get DataSet'
+      TabOrder = 2
+      OnClick = buttonGetDataSetClick
+    end
+    object buttonGetSQL: TButton
+      Left = 14
+      Top = 69
+      Width = 147
+      Height = 25
+      Caption = 'Get SQL'
+      TabOrder = 3
+      OnClick = buttonGetSQLClick
+    end
+    object buttonGetEntity: TButton
+      Left = 14
+      Top = 100
+      Width = 147
+      Height = 25
+      Caption = 'Get Entity'
+      TabOrder = 4
+      OnClick = buttonGetEntityClick
+    end
+    object buttonUpdate: TButton
+      Left = 14
+      Top = 174
+      Width = 147
+      Height = 25
+      Caption = 'Update'
+      TabOrder = 5
+      OnClick = buttonUpdateClick
+    end
+    object buttonDelete: TButton
+      Left = 14
+      Top = 205
+      Width = 147
+      Height = 25
+      Caption = 'Delete'
+      TabOrder = 6
+      OnClick = buttonDeleteClick
+    end
+  end
+  object Panel2: TPanel
+    Left = 185
+    Top = 0
+    Width = 561
+    Height = 399
+    Align = alClient
+    BevelKind = bkTile
+    BevelOuter = bvNone
+    Caption = 'Panel2'
+    TabOrder = 2
+    ExplicitLeft = 232
+    ExplicitTop = 392
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object DBGrid1: TDBGrid
+      Left = 0
+      Top = 0
+      Width = 557
+      Height = 255
+      Align = alClient
+      DataSource = DataSource1
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+    end
+    object panelEdits: TPanel
+      Left = 0
+      Top = 255
+      Width = 557
+      Height = 140
+      Align = alBottom
+      BevelKind = bkTile
+      BevelOuter = bvNone
+      Caption = 'panelEdits'
+      TabOrder = 1
+      ExplicitTop = 344
+    end
+  end
+  object mLog: TMemo
+    Left = 0
+    Top = 399
+    Width = 746
+    Height = 89
+    Align = alBottom
+    TabOrder = 3
+    ExplicitLeft = 40
+    ExplicitTop = 48
+    ExplicitWidth = 185
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 128
+    Top = 424
+  end
+  object DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 48
+    Top = 424
+  end
+end
