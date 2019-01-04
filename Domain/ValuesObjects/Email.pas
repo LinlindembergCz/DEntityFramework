@@ -3,7 +3,7 @@ unit Email;
 interface
 
 uses
-   EntityTypes, SysUtils, Dialogs, EntityBase, EntityAtributies;
+   EF.Core.Types, SysUtils, Dialogs,  EF.Mapping.Base, EF.Mapping.Atributes;
 
 type
   TEmail = class(TEntityBase)

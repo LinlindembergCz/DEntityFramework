@@ -3,7 +3,7 @@ unit CPF;
 interface
 
 uses
-   EntityTypes, SysUtils;
+   EF.Core.Types, SysUtils;
 
 type
   TCPF  = class

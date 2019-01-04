@@ -4,7 +4,7 @@ interface
 
 uses
 DB, Classes, Repository, classCliente, RepositoryBase, InterfaceRepositoryCliente,
-InterfaceRepository,  Context, EntityBase,EntityTypes, EntityFramework;
+InterfaceRepository,  Context, EF.Mapping.Base,EF.Core.Types, EF.Engine.DataContext;
 
 type
   TRepositoryCliente = class(TRepositoryBase ,IRepositoryCliente)
@@ -20,10 +20,19 @@ implementation
 
 { TRepositoryCliente }
 
+{constructor TRepositoryCliente.Create(dbContext:TContext);
+ begin
+//-  _RepositoryCliente := TRepository<TCliente>.create(dbContext) ;
+//-
+  inherited;
+  _RepositoryCliente := TRepository<TCliente>.create(dbContext);
+ end;}
+
 constructor TRepositoryCliente.Create(dbContext:TContext);
 begin
-  _RepositoryCliente := TRepository<TCliente>.create(dbContext) ;
+  _RepositoryCliente := TRepository<TCliente>.create(dbContext);
   _RepositoryBase    := _RepositoryCliente As IRepository<TEntityBase>;
+  inherited;
 end;
 
 function TRepositoryCliente.GetEntity: TCliente;

@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Vcl.DBGrids, Variants, Vcl.StdCtrls, Vcl.DBCtrls,
-  EntityFramework, FactoryEntity, InterfaceRepository, EntityBase, Context;
+  EF.Engine.DataContext, FactoryEntity, InterfaceRepository, EF.Mapping.Base, Context;
 
 type
    {$M+}

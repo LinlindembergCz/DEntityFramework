@@ -3,7 +3,7 @@ unit ServiceBase;
 interface
 
 uses
-System.Classes, DB, EntityBase, InterfaceService, InterfaceRepository, Context,
+System.Classes, DB, EF.Mapping.Base, InterfaceService, InterfaceRepository, Context,
 Winapi.Windows;
 
 type
@@ -36,7 +36,7 @@ type
   {$M-}
 implementation
 
-uses EntityAutoMapper;
+uses  EF.Mapping.AutoMapper;
 
 constructor TServiceBase.Create(pRepository: IRepositoryBase);
 begin

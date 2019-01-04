@@ -3,7 +3,7 @@ unit ClassCliente;
 interface
 
 uses
-  System.Classes,  Email, Dialogs, SysUtils, EntityBase, EntityTypes, EntityAtributies;
+  System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types, EF.Mapping.Atributes;
 
 type
   [EntityTable('Clientes')]

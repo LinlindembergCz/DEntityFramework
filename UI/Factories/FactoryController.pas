@@ -18,7 +18,7 @@ implementation
 { TFactoryEntity }
 
 uses
-InterfaceService, FactoryService, ControllerBase, EntityAutoMapper;
+InterfaceService, FactoryService, ControllerBase, EF.Mapping.AutoMapper;
 
 class function TFactoryController.GetController( E: string ): IControllerBase;
 var

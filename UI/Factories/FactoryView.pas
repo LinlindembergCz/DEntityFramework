@@ -17,7 +17,7 @@ type
 implementation
 
 uses
-InterfaceController, FactoryController, EntityAutoMapper;
+InterfaceController, FactoryController, EF.Mapping.AutoMapper;
 
 class procedure TFactoryForm.ShowForm(Form:TForm;modal:boolean);
 begin

@@ -3,7 +3,7 @@ unit Entities;
 interface
 
 uses
-  System.Classes, Dialogs, SysUtils, EntityBase, EntityTypes, EntityAtributies,CPF, classCLiente;
+  System.Classes, Dialogs, SysUtils, EF.Mapping.Base, EF.Core.Types, EF.Mapping.Atributes, CPF, classCLiente;
 
 type
   [EntityTable('Endereco')]

@@ -3,7 +3,7 @@ unit Context;
 interface
 
 uses
-  EntityFramework, FactoryEntity;
+  EF.Engine.DataContext, FactoryEntity;
 
 
 type

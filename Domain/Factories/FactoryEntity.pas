@@ -3,7 +3,7 @@ unit FactoryEntity;
 interface
 
 uses
-  Sysutils,  EntityBase;
+  Sysutils,  EF.Mapping.Base;
 
 type
   TFactoryEntity = class
@@ -17,7 +17,7 @@ implementation
 
 { TFactoryEntity }
 
-uses  EntityAutoMapper;
+uses  EF.Mapping.AutoMapper;
 
 class function TFactoryEntity.GetEntity(E: string ):TEntityBase;
 var

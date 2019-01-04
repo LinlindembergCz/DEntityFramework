@@ -3,7 +3,7 @@ unit InterfaceRepository;
 interface
 
 uses
-  EntityBase, Context, FactoryEntity,DB;
+  EF.Mapping.Base, Context, FactoryEntity,DB;
 
 
 type

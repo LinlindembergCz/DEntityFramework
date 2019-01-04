@@ -3,7 +3,7 @@ unit FactoryService;
 interface
 
 uses
-    FactoryEntity, InterfaceService, Dialogs, Sysutils;
+    FactoryEntity, InterfaceService, VCL.Dialogs, Sysutils;
 
 type
    TFactoryService = class
@@ -14,7 +14,7 @@ type
 
 implementation
 
-uses  FactoryRepository, InterfaceRepository, ServiceBase, EntityAutoMapper;//ServiceEntity;
+uses  FactoryRepository, InterfaceRepository, ServiceBase, EF.Mapping.AutoMapper;//ServiceEntity;
 
 { TFactoryService }
 

@@ -3,7 +3,7 @@ unit InterfaceService;
 interface
 
 uses
-System.Classes, DB, EntityBase, InterfaceRepository, Context;
+System.Classes, DB, EF.Mapping.Base, InterfaceRepository, Context;
 
 type
   IServiceBase = interface(IInterface)

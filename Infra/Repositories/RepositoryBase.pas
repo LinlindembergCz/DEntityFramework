@@ -3,7 +3,8 @@ unit RepositoryBase;
 interface
 
 uses
- Classes, Repository, Entities, InterfaceRepositoryCliente, InterfaceRepository,DB, Context, EntityFramework, EntityBase;
+ Classes, Repository, Entities, InterfaceRepositoryCliente, InterfaceRepository,
+ DB, Context, EF.Engine.DataContext, EF.Mapping.Base;
 
 type
    {$M+}

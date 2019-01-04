@@ -3,8 +3,8 @@ unit FactoryConnection;
 interface
 
 uses
-  Forms, Data.DB,Data.SqlExpr,FireDAC.Comp.Client,EntityFirebird, EntityMSSQL,
-  Sysutils, FactoryEntity,  System.Classes, EntityConnection, EntityFDConnection;
+  Forms, Data.DB,Data.SqlExpr,FireDAC.Comp.Client, EF.Schema.Firebird, EF.Schema.MSSQL,
+  Sysutils, FactoryEntity,  System.Classes, EF.Drivers.Connection, EF.Drivers.FireDac;
 
 type
   TFactoryConnection = class

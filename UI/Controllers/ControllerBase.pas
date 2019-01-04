@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Winapi.Windows, Context, InterfaceController, Vcl.DBGrids, Variants,
-  Vcl.StdCtrls, EntityFramework, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
+  Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
   InterfaceService; //<<-- EntityFramework
                     //Está aqui temporariamente
                     //devido o metodo LoadLookUp
@@ -52,7 +52,7 @@ implementation
 
 { TControllerClient }
 
-uses   ViewBase, EntityConnection, FactoryConnection, FactoryRepository, EntityAutoMapper,
+uses   ViewBase, EF.Drivers.Connection, FactoryConnection, FactoryRepository, EF.Mapping.AutoMapper,
   FactoryService;
 
 constructor TControllerBase.Create(pService:IServiceBase);
