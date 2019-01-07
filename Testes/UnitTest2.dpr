@@ -17,15 +17,14 @@ program UnitTest2;
 uses
   DUnitTestRunner,
   TestLinqSQL in 'TestLinqSQL.pas',
-  LinqSQL in '..\Infra\DEntityFramework\LinqSQL.pas',
   Entities in '..\Domain\Entities\Entities.pas',
-  Atributies in '..\Domain\Entities\Atributies\Atributies.pas',
-  EntityBase in '..\Domain\Entities\EntityBase.pas',
-  EntityTypes in '..\Domain\Entities\types\EntityTypes.pas',
-  AutoMapper in '..\Infra\DEntityFramework\AutoMapper.pas',
-  classCliente in '..\Domain\Entities\classCliente.pas' {$R *.RES},
+  classCliente in '..\Domain\Entities\classCliente.pas' ,
   Email in '..\Domain\ValuesObjects\Email.pas',
-  CPF in '..\Domain\ValuesObjects\CPF.pas';
+  CPF in '..\Domain\ValuesObjects\CPF.pas',
+  EF.Core.Types in '..\Infra\DEntityFramework\source\core\EF.Core.Types.pas',
+  EF.Mapping.Atributes in '..\Infra\DEntityFramework\source\core\EF.Mapping.Atributes.pas',
+  EF.Mapping.AutoMapper in '..\Infra\DEntityFramework\source\core\EF.Mapping.AutoMapper.pas',
+  EF.QueryAble.Base in '..\Infra\DEntityFramework\source\core\EF.QueryAble.Base.pas';
 
 {$R *.RES}
 

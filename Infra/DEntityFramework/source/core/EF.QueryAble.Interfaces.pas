@@ -11,7 +11,8 @@ uses
   EF.Mapping.Base,
   EF.Core.Functions;
 
-type
+(*
+  type
   IQueryAble = Interface(IInterface)
     ['{554062C0-0BD3-4378-BFA2-DFA85CCC5938}']
     function Join(E: string; _On: string): IQueryAble; overload;
@@ -33,7 +34,6 @@ type
     function Select(Fields: string = ''): IQueryAble; overload;
     function Select(Fields: array of string): IQueryAble; overload;
     //não estou achando seguro manter essa referencia aqui nessa classe!
-
     procedure SetEntity(value: TEntityBase);
     function GetEntity: TEntityBase;
     procedure SetSEntity(value: string);
@@ -72,6 +72,7 @@ type
     property SIntersect: string read GetSIntersect write SetSIntersect;
     property SCount: string read GetSCount write SetSCount;
   end;
+*)
 
 implementation
 
