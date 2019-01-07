@@ -1,9 +1,9 @@
-unit EntityADOConnection;
+unit EF.Drivers.ADO;
 
 interface
 
 uses
-EntityConnection, Data.Win.ADODB,DBClient,  classes, Data.DB,Vcl.Forms, SysUtils;
+EF.Drivers.Connection, Data.Win.ADODB,DBClient,  classes, Data.DB,Vcl.Forms, SysUtils;
 
 type
   TEntityADOConnection = class(TEntityConn)

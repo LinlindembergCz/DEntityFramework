@@ -1,9 +1,9 @@
-unit EntitySQLConnection;
+unit EF.Drivers.dbExpress;
 
 interface
 
 uses
-  EntityConnection, Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils,
+  EF.Drivers.Connection, Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils,
   Data.DBXFirebird,  Data.FMTBcd, Data.DBXMSSQL;
 
 type
@@ -21,7 +21,7 @@ type
 implementation
 
 uses
- EntityMSSQL, EntityFirebird;
+ EF.Schema.MSSQL, EF.Schema.Firebird;
 
 { TEntitySQLConnection }
 
