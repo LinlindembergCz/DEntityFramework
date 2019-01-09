@@ -20,7 +20,10 @@ implementation
 
 
 class function TFactoryConnection.GetConnection: TEntityConn;
+var
+ vDB : String;
 begin
+  vDB := extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB';
   If FConnection = nil Then
   begin
     { FConnection := TEntitySQLConnection.Create('FB',
@@ -32,7 +35,7 @@ begin
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',
-                                                 extractfilepath(application.ExeName)+'DBLINQ.FDB');
+                                                 vDB);
   end;
   result:= FConnection;
 end;

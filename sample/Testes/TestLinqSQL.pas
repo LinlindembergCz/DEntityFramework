@@ -5,7 +5,7 @@ interface
 uses
   TestFramework, System.SysUtils, Vcl.Graphics, Winapi.Windows, System.Variants,
   Vcl.Dialogs, Vcl.Controls, Vcl.Forms, Winapi.Messages, classCliente,
-  Entities, Math, strUtils, DB, Data.SqlExpr, DBClient, System.Classes,
+  Math, strUtils, DB, Data.SqlExpr, DBClient, System.Classes,
   System.Generics.Collections, Data.Win.ADODB,FireDAC.Comp.Client,
   EF.Engine.DataContext,
   EF.QueryAble.Base,
