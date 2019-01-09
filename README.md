@@ -1,13 +1,25 @@
 # EntityFramework
 EntityFramework
 
-
 This is the Entity Framework for Delphi
 
-To compile you need to map folders in "Libary path" Delphi:
+## Requirements
 
-\Source
+Embarcadero Delphi XE or higher.
 
-Locate the FactoryConnection file and set the path of the database
+## How to use:
 
-Done!
+In short, add the following path to your Delphi IDE (in the Tools/Environment/Library menu)
+
+* Library path:
+
+...\EntityFramework\source
+
+## Main examples
+
+* ...\EntityFramework\sample\DDD (Domain Driven Design)
+* ...\EntityFramework\sample\Testes (TDD)
+
+## Authors
+
+* **Lindemberg Cortez** - *Initial work*
