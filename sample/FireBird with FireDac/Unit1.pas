@@ -64,7 +64,7 @@ end;
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
  QueryAble := From   ( Cliente )
-              .Select([ Cliente.Id.&As, Cliente.Nome.&As, Cliente.Observacao.&As ])
+              .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
               .Order ( Cliente.Nome.&As );
  DataSource1.DataSet := Context.GetDataSet( QueryAble );
 end;
@@ -81,7 +81,7 @@ end;
 procedure TForm1.buttonGetSQLClick(Sender: TObject);
 begin
  QueryAble := From   ( Cliente )
-              .Select([ Cliente.Id.&As, Cliente.Nome.&As, Cliente.Observacao.&As ])
+              .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
               .Order ( Cliente.Nome.&As );
  mlog.Lines.Text := Context.GetQuery( QueryAble );
 end;
@@ -107,7 +107,7 @@ end;
 procedure TForm1.buttonLoadDataClick(Sender: TObject);
 begin
  QueryAble := From   ( Cliente )
-              .Select([ Cliente.Id.&As, Cliente.Nome.&As, Cliente.Observacao.&As ])
+              .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
               .Order ( Cliente.Nome.&As );
  DataSource1.DataSet := ClientDataSet1;
  ClientDataSet1.Data := Context.GetData( QueryAble );
@@ -127,7 +127,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Cliente := TCliente.Create;
-  Context := TDataContext.Create;
+  Context := TDataContext.Create(Cliente);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
