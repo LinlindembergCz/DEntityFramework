@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient,
   Entity.Cliente,
   EF.Engine.DataContext,
-  EF.QueryAble.Interfaces, Vcl.ExtCtrls;
+  EF.QueryAble.base, Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
