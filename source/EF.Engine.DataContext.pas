@@ -71,14 +71,11 @@ Type
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
   end;
 
-
   function From(E: String): TFrom; overload;
   function From(E: TEntityBase): TFrom; overload;
   function From(E: array of TEntityBase): TFrom; overload;
   function From(E: TClass): TFrom; overload;
   function From(E: IQueryAble): TFrom; overload;
-
-
 
 implementation
 
@@ -92,8 +89,9 @@ function TDataContext.GetData(QueryAble: IQueryAble): OleVariant;
 begin
   qryQuery := Connection.CreateDataSet( GetQuery(QueryAble) );
 
-  CreateProvider(qryQuery, trim(fStringReplace(QueryAble.SEntity,
-    trim(StrFrom), '')));
+  CreateProvider( qryQuery,
+                  trim(fStringReplace(QueryAble.SEntity,
+                  trim(StrFrom), '')));
   CreateClientDataSet(drpProvider);
 
   result := ClientDataSet.Data;
@@ -344,9 +342,12 @@ procedure TDataContext.InsertDirect;
 var
   SQLInsert: string;
 begin
-  SQLInsert := 'Insert into ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) +
+  SQLInsert := Format(  'Insert into %s ( %s ) ) values ( %s ) ',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
+                                                                  TAutoMapper.GetAttributies(FEntity),
+                                                                  TAutoMapper.GetValuesFields(FEntity)  ] );
+ { 'Insert into ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) +
     ' (' + TAutoMapper.GetAttributies(FEntity) + ') values ( ' +
-    TAutoMapper.GetValuesFields(FEntity) + ' )';
+    TAutoMapper.GetValuesFields(FEntity) + ' )';}
   Connection.ExecutarSQL(SQLInsert);
 end;
 

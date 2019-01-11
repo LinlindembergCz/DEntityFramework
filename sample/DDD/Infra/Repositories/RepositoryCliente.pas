@@ -20,14 +20,6 @@ implementation
 
 { TRepositoryCliente }
 
-{constructor TRepositoryCliente.Create(dbContext:TContext);
- begin
-//-  _RepositoryCliente := TRepository<TCliente>.create(dbContext) ;
-//-
-  inherited;
-  _RepositoryCliente := TRepository<TCliente>.create(dbContext);
- end;}
-
 constructor TRepositoryCliente.Create(dbContext:TContext);
 begin
   _RepositoryCliente := TRepository<TCliente>.create(dbContext);
