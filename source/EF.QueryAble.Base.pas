@@ -137,20 +137,9 @@ type
     function OrderDesc(Fields: array of string): IQueryAble;overload;
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
-
     function GetQuery(Q: IQueryAble): string;
     property Entity : TEntityBase read GetEntity write SetEntity;
-    property SEntity: string read GetSEntity write SetSEntity;
-    property SJoin: string read GetSJoin write SetSJoin;
-    property SWhere: string read GetSWhere write SetSWhere;
-    property SGroupBy: string read GetSGroupBy write SetSGroupBy;
-    property SOrder: string read GetSOrder write SetSOrder;
-    property SSelect: string read GetSSelect write SetSSelect;
-    property SConcat: string read GetSConcat write SetSConcat;
-    property SUnion: string read GetSUnion write SetSUnion;
-    property SExcept: string read GetSExcept write SetSExcept;
-    property SIntersect: string read GetSIntersect write SetSIntersect;
-    property SCount: string read GetSCount write SetSCount;
+
   end;
 
   TFrom = class(TQueryAble)
@@ -205,23 +194,23 @@ function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin
   with Q as TQueryAble do
   begin
-    result := Concat(SSelect + SCount, ifthen(Pos('Select', SEntity) > 0,
-              fStringReplace(SEntity, 'From ', 'From (') + ')', SEntity),
+    result := Concat(FSSelect + FSCount, ifthen(Pos('Select', FSEntity) > 0,
+              fStringReplace(FSEntity, 'From ', 'From (') + ')', FSEntity),
 
-              SJoin + ifthen((SJoin <> '') and (Pos('(', SSelect) > 0), ')', ''),
+              FSJoin + ifthen((FSJoin <> '') and (Pos('(', FSSelect) > 0), ')', ''),
 
-              SWhere + ifthen((SWhere <> '') and (SJoin = '') and
-              (Pos('(', SSelect) > 0), ')', ''),
+              FSWhere + ifthen((FSWhere <> '') and (FSJoin = '') and
+              (Pos('(', FSSelect) > 0), ')', ''),
 
-              ifthen(SExcept <> '', ifthen(SWhere = '', StrWhere, _And) +
+              ifthen(FSExcept <> '', ifthen(FSWhere = '', StrWhere, _And) +
 
-              StrNot + '(' + StrExist + '(' + SExcept + ')' + ')', ''),
+              StrNot + '(' + StrExist + '(' + FSExcept + ')' + ')', ''),
 
-              ifthen(SIntersect <> '', ifthen(SWhere = '', StrWhere, _And) + StrExist +
-              '(' + SIntersect + ')', ''),
+              ifthen(FSIntersect <> '', ifthen(FSWhere = '', StrWhere, _And) + StrExist +
+              '(' + FSIntersect + ')', ''),
 
-              SGroupBy, SOrder, ifthen(SUnion <> '', StrUnion + SUnion, ''),
-              ifthen(SConcat <> '', StrUnionAll + SConcat, ''));
+              FSGroupBy, FSOrder, ifthen(FSUnion <> '', StrUnion + FSUnion, ''),
+              ifthen(FSConcat <> '', StrUnionAll + FSConcat, ''));
     //oFrom.Free;
   end;
 end;
@@ -289,15 +278,15 @@ end;
 class function Linq.From(E: String): TFrom;
 begin
   oFrom := GetFromSigleton;
-  oFrom.SEntity := StrFrom + E;
+  oFrom.FSEntity := StrFrom + E;
   result := oFrom;
 end;
 
 class function Linq.From(E: TEntityBase): TFrom;
 begin
   oFrom := GetFromSigleton;
-  oFrom.SEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
-  oFrom.Entity := E;
+  oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
+  oFrom.FEntity := E;
   result := oFrom;
 end;
 
@@ -311,16 +300,16 @@ begin
   for E in Entities do
     sFrom := sFrom + ifthen(sFrom <> '', ',', '') + TAutoMapper.GetTableAttribute
       (E.ClassType);
-  oFrom.SEntity := StrFrom + sFrom;
-  oFrom.Entity := Entities[0];
+  oFrom.FSEntity := StrFrom + sFrom;
+  oFrom.FEntity := Entities[0];
   result := oFrom;
 end;
 
 class function Linq.From(E: TClass): TFrom;
 begin
   oFrom := GetFromSigleton;
-  oFrom.SEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
-  oFrom.Entity := (E.Create as TEntityBase);
+  oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
+  oFrom.FEntity := (E.Create as TEntityBase);
   result := oFrom;
 end;
 
@@ -394,72 +383,72 @@ end;
 
 function TQueryAble.Join(E, _On: string): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrInnerJoin + E + StrOn + _On;
+  self.FSJoin := self.FSJoin + StrInnerJoin + E + StrOn + _On;
   result := self;
 end;
 
 function TQueryAble.Join(E: TEntityBase; _On: TString): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
+  self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
 function TQueryAble.Join(E: TEntityBase): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
-    (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.Entity, E);
+  self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
+    (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
   result := self;
 end;
 
 function TQueryAble.Join(E: TClass): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
-    (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.Entity, E);
+  self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
+    (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
   result := self;
 end;
 
 function TQueryAble.JoinLeft(E, _On: string): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrLeftJoin + E + StrOn + _On;
+  self.FSJoin := self.FSJoin + StrLeftJoin + E + StrOn + _On;
   result := self;
 end;
 
 function TQueryAble.JoinLeft(E: TEntityBase; _On: TString): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
+  self.FSJoin := self.FSJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
 function TQueryAble.JoinRight(E, _On: string): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrRightJoin + E + StrOn + _On;
+  self.FSJoin := self.FSJoin + StrRightJoin + E + StrOn + _On;
   result := self;
 end;
 
 function TQueryAble.JoinRight(E: TEntityBase; _On: TString): IQueryAble;
 begin
-  self.SJoin := self.SJoin + StrRightJoin + TAutoMapper.GetTableAttribute
+  self.FSJoin := self.FSJoin + StrRightJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
 function TQueryAble.Where(condition: string): IQueryAble;
 begin
-  self.SWhere := StrWhere + condition;
+  self.FSWhere := StrWhere + condition;
   result := self;
 end;
 
 function TQueryAble.Where(condition: TString): IQueryAble;
 begin
-  self.SWhere := Concat(StrWhere, condition);
+  self.FSWhere := Concat(StrWhere, condition);
   result := self;
 end;
 
 function TQueryAble.GroupBy(Fields: string): IQueryAble;
 begin
-  self.SGroupBy := Concat(StrGroupBy, Fields);
+  self.FSGroupBy := Concat(StrGroupBy, Fields);
   result := self;
 end;
 
@@ -472,7 +461,7 @@ begin
   begin
     values := values + ifthen(values <> '', ', ', '') + Value;
   end;
-  self.SGroupBy := Concat(StrGroupBy, values);
+  self.FSGroupBy := Concat(StrGroupBy, values);
   result := self;
 end;
 
@@ -483,7 +472,7 @@ end;
 
 function TQueryAble.Order(Fields: string): IQueryAble;
 begin
-  self.SOrder := Concat(StrOrderBy, Fields);
+  self.FSOrder := Concat(StrOrderBy, Fields);
   result := self;
 end;
 
@@ -496,13 +485,13 @@ begin
   begin
     values := values + ifthen(values <> '', ', ', '') + Value;
   end;
-  self.SOrder := StrOrderBy + values;
+  self.FSOrder := StrOrderBy + values;
   result := self;
 end;
 
 function TQueryAble.OrderDesc(Fields: string): IQueryAble;
 begin
-  self.SOrder := Concat(StrOrderBy, Fields, StrDesc);
+  self.FSOrder := Concat(StrOrderBy, Fields, StrDesc);
   result := self;
 end;
 
@@ -515,7 +504,7 @@ begin
   begin
     values := values + ifthen(values <> '', ', ', '') + Value;
   end;
-  self.SOrder := StrOrderBy + values + StrDesc;
+  self.FSOrder := StrOrderBy + values + StrDesc;
   result := self;
 end;
 
@@ -527,9 +516,9 @@ begin
   if Pos('Select', Fields) > 0 then
     Fields := '(' + Fields + ')';
 
-  self.SSelect := StrSelect + ifthen( self.SSelect <> '' ,
+  self.FSSelect := StrSelect + ifthen( self.FSSelect <> '' ,
                                     ifthen( Fields  <> '', Fields,
-                                          ifthen( _Atribs <> '', _Atribs,'*')) + ' From (' + self.SSelect ,
+                                          ifthen( _Atribs <> '', _Atribs,'*')) + ' From (' + self.FSSelect ,
                                                 ifthen( Fields  <> '', Fields,
                                                       ifthen(_Atribs  <> '', _Atribs,'*')));
   TSelect(self).FFields := Fields;
@@ -549,7 +538,7 @@ begin
     _Fields := _Fields + ifthen(_Fields <> '', ', ', '') + Field;
   end;
   TSelect(self).FFields:= _Fields;
-  self.SSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
+  self.FSSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
   result := TSelect(self);
 end;
 
@@ -617,59 +606,59 @@ end;
 
 function TSelect.&Except(Q: IQueryAble): IQueryAble;
 begin
-  SExcept := GetQuery(Q);
+  FSExcept := GetQuery(Q);
   result := self;
 end;
 
 function TSelect.Intersect(Q: IQueryAble): IQueryAble;
 begin
-  SIntersect := GetQuery(Q);
+  FSIntersect := GetQuery(Q);
   result := self;
 end;
 
 function TSelect.Concat(Q: IQueryAble): IQueryAble;
 begin
-  SConcat := GetQuery(Q);
+  FSConcat := GetQuery(Q);
   result := self;
 end;
 
 function TSelect.Count: IQueryAble;
 begin
-  SSelect := trim(fStringReplace(SSelect, '*', ''));
+  FSSelect := trim(fStringReplace(FSSelect, '*', ''));
   if FFields <> '' then
-     SSelect := fStringReplace(SSelect,
+     FSSelect := fStringReplace(FSSelect,
                             StrSelect,
                             StrSelect +
                             StrCount + '(*)' +
-                            ifthen(SSelect <> 'Select', ', ', ''))
+                            ifthen(FSSelect <> 'Select', ', ', ''))
   else
-     SSelect := StrSelect + StrCount + '(*)';
+     FSSelect := StrSelect + StrCount + '(*)';
   result := self;
 end;
 
 function TSelect.Distinct(Field: TString): IQueryAble;
 begin
-  SSelect := fStringReplace(SSelect, StrSelect, StrSelect + StrDistinct +
+  FSSelect := fStringReplace(FSSelect, StrSelect, StrSelect + StrDistinct +
     ifthen(assigned(@Field), '(' + Field.&As + '),', '') + ' ');
   result := self;
 end;
 
 function TSelect.Distinct(Field: String): IQueryAble;
 begin
-  SSelect := fStringReplace(SSelect, StrSelect, StrSelect + StrDistinct +
+  FSSelect := fStringReplace(FSSelect, StrSelect, StrSelect + StrDistinct +
     ifthen(Field <> '', '(' + Field + '),', '') + ' ');
   result := self;
 end;
 
 function TSelect.TopFirst(i: integer): IQueryAble;
 begin
-  SSelect := fStringReplace(SSelect, StrSelect, StrSelect + StrTop + inttostr(i)
+  FSSelect := fStringReplace(FSSelect, StrSelect, StrSelect + StrTop + inttostr(i)
     + ' ');
 end;
 
 function TSelect.Union(Q: IQueryAble): IQueryAble;
 begin
-  SUnion := GetQuery(Q);
+  FSUnion := GetQuery(Q);
   result := self;
 end;
 
