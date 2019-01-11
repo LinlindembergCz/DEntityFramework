@@ -432,7 +432,7 @@ end;
 procedure TDataContext.InitEntity(Contener: TComponent);
 begin
   //FEntity:= TEntityBase.create;
-  Entity.Id:= 0;
+  FEntity.Id:= 0;
   TAutoMapper.Read(Contener, FEntity, true);
 end;
 
@@ -512,7 +512,7 @@ begin
   if drpProvider <> nil then    drpProvider.Free;
   if qryQuery <> nil then       qryQuery.Free;
   if oFrom <> nil then          oFrom.Free;
-  if Entity <> nil then         Entity.Free;
+  if FEntity <> nil then         FEntity.Free;
   if TableList <> nil then      TableList.Free;
   //if FConnection <> nil then    FConnection.Free;
 end;
