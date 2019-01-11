@@ -36,7 +36,7 @@ function TRepositoryCliente.LoadPorNome(value: string): TDataSet;
 var
   E:TCliente;
 begin
-  E := (Context.Entity as TCliente);
+  E := GetEntity;
   result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select('') );
 end;
 
