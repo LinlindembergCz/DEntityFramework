@@ -12,15 +12,15 @@ type
   private
     FId: TInteger;
     Mapped: boolean;
-  //FDataCadastro: TEntityDatetime;
+    // FDataCadastro: TEntityDatetime;
   public
-    procedure Validation;virtual;
-    constructor Create;virtual;
-    destructor Destroy;override;
+    procedure Validation; virtual;
+    constructor Create; virtual;
+    destructor Destroy; override;
   published
-    [EntityField('ID','integer',false,true, true)]
-    property Id:TInteger read FId write FId;
-  //property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
+    [EntityField('ID', 'integer', false, true, true)]
+    property Id: TInteger read FId write FId;
+    // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
 
 implementation
@@ -46,38 +46,40 @@ begin
   typeRtti := ctx.GetType(self.ClassType);
   for propRtti in typeRtti.GetProperties do
   begin
-      for atrbRtti in propRtti.GetAttributes do
+    for atrbRtti in propRtti.GetAttributes do
+    begin
+      if atrbRtti is EntityNotNull then
       begin
-          if atrbRtti is EntityNotNull then
-          begin
-              mensagem := 'Campo "'+propRtti.Name+'" Requerido!';
-              if not(atrbRtti as EntityValidation).
-              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name), mensagem ) then
-              begin
-               abort;
-              end;
-          end
-          else
-          if atrbRtti is EntityRangeValues then
-          begin
-              mensagem := 'Valor "'+propRtti.Name+'" inválido para o intervalor!';
-              if not(atrbRtti as EntityValidation).
-              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name).ToInteger , mensagem ) then
-              begin
-                abort;
-              end;
-          end
-          else
-          if atrbRtti is EntityValueLengthMin then
-          begin
-              mensagem :=  'Valor "'+propRtti.Name+'" é inválido para o mínimo requerido !';
-              if not(atrbRtti as EntityValidation).
-              Validar( TAutoMapper.GetValueProperty( self , propRtti.Name) , mensagem ) then
-              begin
-                abort;
-              end;
-          end;
+        mensagem := 'Campo "' + propRtti.Name + '" Requerido!';
+        if not(atrbRtti as EntityValidation)
+            .Validar(TAutoMapper.GetValueProperty(self, propRtti.Name), mensagem)
+        then
+        begin
+          abort;
+        end;
+      end
+      else if atrbRtti is EntityRangeValues then
+      begin
+        mensagem := 'Valor "' + propRtti.Name + '" inválido para o intervalor!';
+        if not(atrbRtti as EntityValidation)
+            .Validar(TAutoMapper.GetValueProperty(self, propRtti.Name)
+            .ToInteger, mensagem) then
+        begin
+          abort;
+        end;
+      end
+      else if atrbRtti is EntityValueLengthMin then
+      begin
+        mensagem := 'Valor "' + propRtti.Name +
+            '" é inválido para o mínimo requerido !';
+        if not(atrbRtti as EntityValidation)
+            .Validar(TAutoMapper.GetValueProperty(self, propRtti.Name), mensagem)
+        then
+        begin
+          abort;
+        end;
       end;
+    end;
   end;
   ctx.Free;
 end;
