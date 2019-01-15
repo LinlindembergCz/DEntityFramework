@@ -3,7 +3,8 @@ unit EF.Drivers.Connection;
 interface
 
 uses
-  Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils, EF.Schema.Abstract;
+  Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils, EF.Schema.Abstract,
+  FireDAC.Comp.Client;
 
 type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
@@ -18,7 +19,7 @@ type
     FUser: string;
     FPassword: string;
     FDriver: string;
-    procedure InsereFields(ADataSet: TDataSet);
+    procedure InsereFields(ADataSet: TFDQuery);
     procedure BeforeConnect(Sender: TObject);virtual;abstract;
   public
     constructor Create(aDriver,aUser,aPassword,aServer,aDataBase: string);virtual; abstract;
@@ -27,7 +28,7 @@ type
     procedure ExecutarSQL(prsSQL: string); virtual; abstract;
     procedure AlterTable(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
     procedure AlterColumn(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
-    function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TDataSet; virtual; abstract;
+    function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; virtual; abstract;
     procedure LoadFromFile(IniFileName: string);virtual; abstract;
     property CustomConnection: TCustomConnection read FCustomConnection write FCustomConnection;
     property CustomTypeDataBase: TCustomDataBase read FCustomTypeDataBase write FCustomTypeDataBase;
@@ -40,7 +41,7 @@ type
 
 implementation
 
-procedure TEntityConn.InsereFields(ADataSet: TDataSet);
+procedure TEntityConn.InsereFields(ADataSet: TFDQuery);
 var
   i: integer;
   Field: TComponent;

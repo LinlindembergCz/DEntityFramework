@@ -19,7 +19,7 @@ type
     procedure GetTableNames(var List: TStringList); override;
     procedure GetFieldNames(var List: TStringList; Table: string); override;
     procedure ExecutarSQL(prsSQL: string); override;
-    function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TDataSet; override;
+    function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; override;
     procedure LoadFromFile(IniFileName: string);override;
     constructor Create(aDriver,aUser,aPassword,aServer,aDataBase: string);override;
   end;
@@ -38,7 +38,7 @@ resourcestring
 
 { TLinqFDConnection }
 
-function TEntityFDConnection.CreateDataSet(prsSQL: string; Keys:TStringList = nil ): TDataSet;
+function TEntityFDConnection.CreateDataSet(prsSQL: string; Keys:TStringList = nil ): TFDQuery;
 var
   qryVariavel: TFDQuery;
   J : integer;
@@ -63,20 +63,6 @@ begin
         Fields[J].ProviderFlags:=[pfInUpdate];
       end;
     end;
-    {
-    if Keys <> nil then
-    begin
-      for I := 0 to Keys.Count-1 do
-      begin
-        if uppercase( Keys.Strings[i] ) <> 'ID' then
-        begin
-          Fieldbyname(Keys.Strings[i]).ProviderFlags :=[pfInWhere, pfInKey, pfInUpdate];
-          Fieldbyname(Keys.Strings[i]).Required := false;
-          Fieldbyname(Keys.Strings[i]).ReadOnly := false;
-        end;
-      end;
-    end;
-    }
   end;
   result := qryVariavel;
 end;
