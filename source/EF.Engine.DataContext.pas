@@ -504,6 +504,7 @@ begin
     result:= qryQuery.ToJson();
   finally
     qryQuery.Free;
+    //Keys.Free;
   end;
 end;
 

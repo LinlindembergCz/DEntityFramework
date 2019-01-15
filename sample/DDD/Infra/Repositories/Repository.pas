@@ -28,9 +28,6 @@ type
     procedure Delete;virtual;
     procedure AddOrUpdate( State:TEntityState);virtual;
     procedure Commit;virtual;
-    property Entity: T read GetEntity;
-    property Context: Context.TContext Read GetContext;
-
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;
   end;

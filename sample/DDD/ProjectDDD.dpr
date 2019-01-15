@@ -18,7 +18,7 @@ uses
   Email in 'Domain\ValuesObjects\Email.pas',
   FactoryEntity in 'Domain\Factories\FactoryEntity.pas',
   InterfaceRepositoryCliente in 'Domain\IRepositories\InterfaceRepositoryCliente.pas',
-  classCliente in 'Domain\Entities\classCliente.pas',
+  classCliente in 'Domain\Entities\classCliente.pas' {/unit in Caminho.pas},
   Entities in 'Domain\Entities\Entities.pas',
   FactoryService in 'Service\Factories\FactoryService.pas',
   RepositoryBase in 'Infra\Repositories\RepositoryBase.pas',
@@ -27,7 +27,9 @@ uses
   ControllerCliente in 'UI\Controllers\ControllerCliente.pas',
   RepositoryCliente in 'Infra\Repositories\RepositoryCliente.pas',
   ServiceCliente in 'Service\ServiceCliente.pas',
-  ServiceBase in 'Service\ServiceBase.pas';
+  ServiceBase in 'Service\ServiceBase.pas',
+  Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
+  System.uJson in '..\..\source\System.uJson.pas';
 
 {$R *.res}
 
