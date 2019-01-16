@@ -172,7 +172,7 @@ type
   private
     class var oFrom: TFrom;
     class function GetFromSigleton: TFrom;
-    class function MontarCaseOf(Expression: string; _When, _then: array of variant): string; static;
+    class function MakeCaseOf(Expression: string; _When, _then: array of variant): string; static;
   public
     class function From(E: String): TFrom; overload;
     class function From(E: TEntityBase): TFrom; overload;
@@ -192,25 +192,25 @@ uses EF.Mapping.AutoMapper;
 
 function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin
-  with Q as TQueryAble do
+  with Q  do  //as TQueryAble
   begin
     result := Concat(FSSelect + FSCount, ifthen(Pos('Select', FSEntity) > 0,
-              fStringReplace(FSEntity, 'From ', 'From (') + ')', FSEntity),
+                     fStringReplace(FSEntity, 'From ', 'From (') + ')', FSEntity),
 
-              FSJoin + ifthen((FSJoin <> '') and (Pos('(', FSSelect) > 0), ')', ''),
+                     FSJoin + ifthen((FSJoin <> '') and (Pos('(', FSSelect) > 0), ')', ''),
 
-              FSWhere + ifthen((FSWhere <> '') and (FSJoin = '') and
-              (Pos('(', FSSelect) > 0), ')', ''),
+                     FSWhere + ifthen((FSWhere <> '') and (FSJoin = '') and
+                     (Pos('(', FSSelect) > 0), ')', ''),
 
-              ifthen(FSExcept <> '', ifthen(FSWhere = '', StrWhere, _And) +
+                     ifthen(FSExcept <> '', ifthen(FSWhere = '', StrWhere, _And) +
 
-              StrNot + '(' + StrExist + '(' + FSExcept + ')' + ')', ''),
+                     StrNot + '(' + StrExist + '(' + FSExcept + ')' + ')', ''),
 
-              ifthen(FSIntersect <> '', ifthen(FSWhere = '', StrWhere, _And) + StrExist +
-              '(' + FSIntersect + ')', ''),
+                     ifthen(FSIntersect <> '', ifthen(FSWhere = '', StrWhere, _And) + StrExist +
+                     '(' + FSIntersect + ')', ''),
 
-              FSGroupBy, FSOrder, ifthen(FSUnion <> '', StrUnion + FSUnion, ''),
-              ifthen(FSConcat <> '', StrUnionAll + FSConcat, ''));
+                     FSGroupBy, FSOrder, ifthen(FSUnion <> '', StrUnion + FSUnion, ''),
+                     ifthen(FSConcat <> '', StrUnionAll + FSConcat, ''));
     //oFrom.Free;
   end;
 end;
@@ -326,7 +326,7 @@ begin
   result := oFrom;
 end;
 
-class function Linq.MontarCaseOf(Expression: string; _When, _then: array of variant): string;
+class function Linq.MakeCaseOf(Expression: string; _When, _then: array of variant): string;
 var
   s: string;
   i: integer;
@@ -343,13 +343,13 @@ end;
 class function Linq.Caseof(Expression: TString;
   _When, _then: array of variant): TString;
 begin
-  result.SetAs( MontarCaseOf( Expression.&As,_When , _then) );
+  result.SetAs( MakeCaseOf( Expression.&As,_When , _then) );
 end;
 
 class function Linq.Caseof(Expression: TInteger;
   _When, _then: array of variant): TString;
 begin
-  result.SetAs( MontarCaseOf( Expression.&As,_When , _then) );
+  result.SetAs( MakeCaseOf( Expression.&As,_When , _then) );
 end;
 
 { TFrom }
