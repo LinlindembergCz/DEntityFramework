@@ -41,7 +41,6 @@ Type
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
-
     procedure InputEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
     procedure InitEntity(Contener: TComponent);
@@ -52,14 +51,14 @@ Type
     function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
     function GetList<T: Class>(QueryAble: IQueryAble): TList<T>; overload;
     function GetJson(QueryAble: IQueryAble): string;
-    procedure InsertDirect;
-    procedure UpdateDirect;
-    procedure DeleteDirect;
-    procedure ApplyUpdates;
     procedure RefreshDataSet;
     procedure Delete;
     procedure Insert;
     procedure Update;
+    procedure InsertDirect;
+    procedure UpdateDirect;
+    procedure DeleteDirect;
+    procedure ApplyUpdates;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
   published
@@ -219,22 +218,16 @@ begin
       ListAtributes := nil;
       ListAtributes := TAutoMapper.GetListAtributes(classe);
       KeyList := TStringList.Create(true);
+      FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
       if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
       begin
-        FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable
-            (ListAtributes, Table, KeyList));
         with TFirebird(FConnection.CustomTypeDataBase) do
         begin
           FConnection.ExecutarSQL(CreateGenarator(Table, trim(KeyList.Text)));
           FConnection.ExecutarSQL(SetGenarator(Table, trim(KeyList.Text)));
-          FConnection.ExecutarSQL(CrateTriggerGenarator(Table,
-              trim(KeyList.Text)));
+          FConnection.ExecutarSQL(CrateTriggerGenarator(Table,trim(KeyList.Text)));
         end;
-      end
-      else
-        FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable
-            (ListAtributes, Table, KeyList));
-      // ListAtributes.Free;
+      end;
       result := true;
     finally
       KeyList.Free;
@@ -330,9 +323,9 @@ var
   SQLInsert: string;
 begin
   SQLInsert := Format('Insert into %s ( %s ) ) values ( %s ) ',
-      [TAutoMapper.GetTableAttribute(FEntity.ClassType),
-      TAutoMapper.GetAttributies(FEntity),
-      TAutoMapper.GetValuesFields(FEntity)]);
+                      [TAutoMapper.GetTableAttribute(FEntity.ClassType),
+                      TAutoMapper.GetAttributies(FEntity),
+                      TAutoMapper.GetValuesFields(FEntity)]);
   Connection.ExecutarSQL(SQLInsert);
 end;
 
@@ -376,10 +369,10 @@ begin
       ListPrimaryKey := TAutoMapper.GetAttributiesPrimaryKeyList(FEntity);
       FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity);
 
-      SQL := 'Update ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) +
-          ' Set ' + fParserUpdate(TAutoMapper.GetAttributiesList(FEntity),
-          TAutoMapper.GetValuesFieldsList(FEntity)) + ' Where ' +
-          fParserWhere(ListPrimaryKey, FieldsPrimaryKey);
+      SQL := Format( 'Update %s Set %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
+                                                  fParserUpdate(TAutoMapper.GetAttributiesList(FEntity),
+                                                                TAutoMapper.GetValuesFieldsList(FEntity)),
+                                                  fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
       Connection.ExecutarSQL(SQL);
     except
       on E: Exception do
@@ -467,9 +460,8 @@ begin
     try
       ListPrimaryKey := TAutoMapper.GetAttributiesPrimaryKeyList(FEntity);
       FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity);
-
-      SQL := 'Delete From ' + TAutoMapper.GetTableAttribute(FEntity.ClassType) +
-          ' ' + ' Where ' + fParserWhere(ListPrimaryKey, FieldsPrimaryKey);
+      SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
+                                                fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
       Connection.ExecutarSQL(SQL);
       // verificar aqui se é o mesmo  registro
       if ClientDataSet <> nil then
