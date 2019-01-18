@@ -4,7 +4,9 @@ uses
   Vcl.Forms,
   Unit1 in 'Unit1.pas' {Form1},
   Entity.Cliente in '..\Entities\Entity.Cliente.pas',
-  UDataModule in 'UDataModule.pas' {DataModule1: TDataModule};
+  UDataModule in 'UDataModule.pas' {DataModule1: TDataModule},
+  Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
+  System.uJson in '..\..\source\System.uJson.pas';
 
 {$R *.res}
 

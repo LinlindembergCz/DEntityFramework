@@ -24,22 +24,22 @@ type
 
   IQueryAble = Interface(IInterface)
     ['{554062C0-0BD3-4378-BFA2-DFA85CCC5938}']
-    function Join(E: string; _On: string): IQueryAble; overload;
-    function Join(E: TEntityBase; _On: TString): IQueryAble; overload;
-    function Join(E: TEntityBase): IQueryAble; overload;
-    function Join(E: TClass): IQueryAble; overload;
-    function JoinLeft(E, _On: string): IQueryAble; overload;
-    function JoinLeft(E: TEntityBase; _On: TString): IQueryAble; overload;
-    function JoinRight(E, _On: string): IQueryAble; overload;
-    function JoinRight(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Include(E: string; _On: string): IQueryAble; overload;
+    function Include(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Include(E: TEntityBase): IQueryAble; overload;
+    function Include(E: TClass): IQueryAble; overload;
+    function IncludeLeft(E, _On: string): IQueryAble; overload;
+    function IncludeLeft(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function IncludeRight(E, _On: string): IQueryAble; overload;
+    function IncludeRight(E: TEntityBase; _On: TString): IQueryAble; overload;
     function Where(condition: string): IQueryAble; overload;
     function Where(condition: TString): IQueryAble; overload;
     function GroupBy(Fields: string): IQueryAble; overload;
     function GroupBy(Fields: array of string): IQueryAble; overload;
-    function Order(Fields: string): IQueryAble; overload;
-    function Order(Fields: array of string): IQueryAble; overload;
-    function OrderDesc(Fields: string): IQueryAble; overload;
-    function OrderDesc(Fields: array of string): IQueryAble; overload;
+    function OrderBy(Fields: string): IQueryAble; overload;
+    function OrderBy(Fields: array of string): IQueryAble; overload;
+    function OrderByDesc(Fields: string): IQueryAble; overload;
+    function OrderByDesc(Fields: array of string): IQueryAble; overload;
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     //não estou achando seguro manter essa referencia aqui nessa classe!
@@ -124,24 +124,24 @@ type
     FSConcat: string;
     FSCount: string;
   public
-    function Join(E, _On: string): IQueryAble; overload;
-    function Join(E: TEntityBase; _On: TString): IQueryAble; overload;
-    function Join(E: TEntityBase): IQueryAble; overload;
-    function Join(E: TClass): IQueryAble; overload;
-    function JoinLeft(E, _On: string): IQueryAble; overload;
-    function JoinLeft(E: TEntityBase; _On: TString): IQueryAble;
+    function Include(E, _On: string): IQueryAble; overload;
+    function Include(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Include(E: TEntityBase): IQueryAble; overload;
+    function Include(E: TClass): IQueryAble; overload;
+    function IncludeLeft(E, _On: string): IQueryAble; overload;
+    function IncludeLeft(E: TEntityBase; _On: TString): IQueryAble;
       overload;
-    function JoinRight(E, _On: string): IQueryAble; overload;
-    function JoinRight(E: TEntityBase; _On: TString): IQueryAble;
+    function IncludeRight(E, _On: string): IQueryAble; overload;
+    function IncludeRight(E: TEntityBase; _On: TString): IQueryAble;
       overload;
     function Where(condition: string): IQueryAble; overload;
     function Where(condition: TString): IQueryAble; overload;
     function GroupBy(Fields: string): IQueryAble; overload;
     function GroupBy(Fields: array of string): IQueryAble; overload;
-    function Order(Fields: string): IQueryAble; overload;
-    function Order(Fields: array of string): IQueryAble; overload;
-    function OrderDesc(Fields: string): IQueryAble; overload;
-    function OrderDesc(Fields: array of string): IQueryAble;overload;
+    function OrderBy(Fields: string): IQueryAble; overload;
+    function OrderBy(Fields: array of string): IQueryAble; overload;
+    function OrderByDesc(Fields: string): IQueryAble; overload;
+    function OrderByDesc(Fields: array of string): IQueryAble;overload;
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     function GetQuery(Q: IQueryAble): string;
@@ -388,53 +388,53 @@ end;
 
 { TCustomLinqQueryAble }
 
-function TQueryAble.Join(E, _On: string): IQueryAble;
+function TQueryAble.Include(E, _On: string): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TQueryAble.Join(E: TEntityBase; _On: TString): IQueryAble;
+function TQueryAble.Include(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TQueryAble.Join(E: TEntityBase): IQueryAble;
+function TQueryAble.Include(E: TEntityBase): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
   result := self;
 end;
 
-function TQueryAble.Join(E: TClass): IQueryAble;
+function TQueryAble.Include(E: TClass): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
   result := self;
 end;
 
-function TQueryAble.JoinLeft(E, _On: string): IQueryAble;
+function TQueryAble.IncludeLeft(E, _On: string): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrLeftJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TQueryAble.JoinLeft(E: TEntityBase; _On: TString): IQueryAble;
+function TQueryAble.IncludeLeft(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TQueryAble.JoinRight(E, _On: string): IQueryAble;
+function TQueryAble.IncludeRight(E, _On: string): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrRightJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TQueryAble.JoinRight(E: TEntityBase; _On: TString): IQueryAble;
+function TQueryAble.IncludeRight(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrRightJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
@@ -477,13 +477,13 @@ begin
 
 end;
 
-function TQueryAble.Order(Fields: string): IQueryAble;
+function TQueryAble.OrderBy(Fields: string): IQueryAble;
 begin
   self.FSOrder := Concat(StrOrderBy, Fields);
   result := self;
 end;
 
-function TQueryAble.Order(Fields: array of string): IQueryAble;
+function TQueryAble.OrderBy(Fields: array of string): IQueryAble;
 var
   values: string;
   Value: string;
@@ -496,13 +496,13 @@ begin
   result := self;
 end;
 
-function TQueryAble.OrderDesc(Fields: string): IQueryAble;
+function TQueryAble.OrderByDesc(Fields: string): IQueryAble;
 begin
   self.FSOrder := Concat(StrOrderBy, Fields, StrDesc);
   result := self;
 end;
 
-function TQueryAble.OrderDesc(Fields: array of string): IQueryAble;
+function TQueryAble.OrderByDesc(Fields: array of string): IQueryAble;
 var
   values: string;
   Value: string;

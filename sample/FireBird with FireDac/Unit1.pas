@@ -65,7 +65,7 @@ procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
  QueryAble := From   ( Cliente )
               .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
-              .Order ( Cliente.Nome );
+              .OrderBy ( Cliente.Nome );
  DataSource1.DataSet := Context.GetDataSet( QueryAble );
 end;
 
@@ -82,7 +82,7 @@ procedure TForm1.buttonGetSQLClick(Sender: TObject);
 begin
  QueryAble := From   ( Cliente )
               .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
-              .Order ( Cliente.Nome );
+              .OrderBy ( Cliente.Nome );
  mlog.Lines.Text := Context.GetQuery( QueryAble );
 end;
 
@@ -108,7 +108,7 @@ procedure TForm1.buttonLoadDataClick(Sender: TObject);
 begin
  QueryAble := From   ( Cliente )
               .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
-              .Order ( Cliente.Nome );
+              .OrderBy ( Cliente.Nome );
  DataSource1.DataSet := ClientDataSet1;
  ClientDataSet1.Data := Context.GetData( QueryAble );
 end;

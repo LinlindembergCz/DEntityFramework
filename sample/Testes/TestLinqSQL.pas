@@ -143,8 +143,7 @@ type
 
 implementation
 
-uses EF.Drivers.ADO, EF.Drivers.Connection, EF.Drivers.FireDac,
-  EF.Drivers.dbExpress;
+uses EF.Drivers.Connection, EF.Drivers.FireDac;
 
 procedure TTest.SetUp;
 begin
@@ -974,9 +973,9 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                Join(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
+                Include(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
                 Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
+                OrderBy([Pessoa.Nome]).
                 Select([Pessoa.Nome]);
   CheckEquals('Select Clientes.Nome From Clientes Inner Join Clientes On Clientes.ID = Clientes.ID Where Clientes.ID = 1 Order by Clientes.Nome',
   Context.GetQuery(Query) );
@@ -1004,9 +1003,9 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                JoinLeft(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
+                IncludeLeft(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
                 Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
+                OrderBy([Pessoa.Nome]).
                 Select([Pessoa.Nome]);
   CheckEquals('Select Clientes.Nome From Clientes Left Join Clientes On Clientes.ID = Clientes.ID Where Clientes.ID = 1 Order by Clientes.Nome',
   Context.GetQuery(Query) );
@@ -1017,9 +1016,9 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                JoinRight(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
+                IncludeRight(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
                 Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
+                OrderBy([Pessoa.Nome]).
                 Select([Pessoa.Nome]);
   CheckEquals('Select Clientes.Nome From Clientes Right Join Clientes On Clientes.ID = Clientes.ID Where Clientes.ID = 1 Order by Clientes.Nome',
   Context.GetQuery(Query) );
@@ -1030,7 +1029,7 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                 OrderDesc(Pessoa.Nome).
+                 OrderByDesc(Pessoa.Nome).
                  Select([Pessoa.Nome]);
   CheckEquals('Select Clientes.Nome From Clientes Order by Clientes.Nome Desc',
   Context.GetQuery(Query) );
@@ -1041,7 +1040,7 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-               Order(Pessoa.Nome).
+               OrderBy(Pessoa.Nome).
                      Select;
   CheckEquals('Select Nome, NomeFantasia, CPFCNPJ, Renda, Idade, RG, DataNascimento, Ativo, Situacao, Tipo, EstadoCivil, Observacao, Email, ID From Clientes Order by Clientes.Nome',
   Context.GetQuery(Query) );
@@ -1166,7 +1165,7 @@ var
   Query : TQueryAble;
 begin
   Query  := From( From( Pessoa ).
-                  Join(PessoaFisica, Pessoa.Id = PessoaFisica.Id ).
+                  Include(PessoaFisica, Pessoa.Id = PessoaFisica.Id ).
                   Select(Pessoa.Nome) ).Select('NomeFantasia');
 
   CheckEquals('Select NomeFantasia From '+
@@ -1236,7 +1235,7 @@ var
 begin
   Query := From('Clientes').
                 Where('Nome = 30').
-                Order( 'Nome' ).
+                OrderBy( 'Nome' ).
                 Select('Nome');
   CheckEquals('Select Nome From Clientes Where Nome = 30 Order by Nome',
   Context.GetQuery(Query) );
@@ -1247,9 +1246,9 @@ var
   Query: IQueryAble;
 begin
   Query := From('Clientes').
-                Join('Tabela2', 'Tabela2.Id = Clientes.ID').
+                Include('Tabela2', 'Tabela2.Id = Clientes.ID').
                 Where('0=1').
-                Order('Nome').
+                OrderBy('Nome').
                 Select('Nome');
   CheckEquals('Select Nome From Clientes Inner Join Tabela2 On Tabela2.Id = Clientes.ID Where 0=1 Order by Nome',
   Context.GetQuery(Query) );
@@ -1260,9 +1259,9 @@ var
   Query: IQueryAble;
 begin
   Query := From('Clientes').
-                JoinLeft('Clientes', 'Clientes.ID = Clientes.ID').
+                IncludeLeft('Clientes', 'Clientes.ID = Clientes.ID').
                 Where('0=1').
-                Order('Nome').
+                OrderBy('Nome').
                 Select('Nome');
   CheckEquals('Select Nome From Clientes Left Join Clientes On Clientes.ID = Clientes.ID Where 0=1 Order by Nome',
   Context.GetQuery(Query) );
@@ -1273,9 +1272,9 @@ var
   Query: IQueryAble;
 begin
   Query := From('Clientes').
-                JoinRight('Clientes', 'Clientes.ID = Clientes.ID').
+                IncludeRight('Clientes', 'Clientes.ID = Clientes.ID').
                 Where('0=1').
-                Order('Nome').
+                OrderBy('Nome').
                 Select('Nome');
   CheckEquals('Select Nome From Clientes Right Join Clientes On Clientes.ID = Clientes.ID Where 0=1 Order by Nome',
   Context.GetQuery(Query) );
@@ -1286,10 +1285,10 @@ var
   Query: IQueryAble;
 begin
   Query := From('Tabela').
-                Join('Tabela2', 'Tabela2.Id = Tabela.Id').
-                JoinLeft('Tabela3','Tabela3.Id = Tabela2.Id').
+                Include('Tabela2', 'Tabela2.Id = Tabela.Id').
+                IncludeLeft('Tabela3','Tabela3.Id = Tabela2.Id').
                 Where('0=1').
-                Order('Nome').
+                OrderBy('Nome').
                 Select('Nome');
   CheckEquals('Select Nome From Tabela Inner Join Tabela2 On Tabela2.Id = Tabela.Id '+
   'Left Join Tabela3 On Tabela3.Id = Tabela2.Id Where 0=1 Order by Nome',
@@ -1302,11 +1301,11 @@ var
   Query: IQueryAble;
 begin
   Query := From('Tabela').
-                Join('Tabela2', 'Tabela2.Id = Tabela.Id').
-                JoinLeft('Tabela3','Tabela3.Id = Tabela2.Id').
-                JoinLeft('Tabela4','Tabela4.Id = Tabela3.Id').
+                Include('Tabela2', 'Tabela2.Id = Tabela.Id').
+                IncludeLeft('Tabela3','Tabela3.Id = Tabela2.Id').
+                IncludeLeft('Tabela4','Tabela4.Id = Tabela3.Id').
                 Where('0=1').
-                Order('Nome').
+                OrderBy('Nome').
                 Select('Nome');
   CheckEquals('Select Nome From Tabela Inner Join Tabela2 On Tabela2.Id = Tabela.Id '+
   'Left Join Tabela3 On Tabela3.Id = Tabela2.Id Left Join Tabela4 On Tabela4.Id = Tabela3.Id Where 0=1 Order by Nome',
@@ -1318,11 +1317,11 @@ var
   Query: IQueryAble;
 begin
   Query := From('Tabela').
-                Join('Tabela2','Tabela2.Id = Tabela.Id').
-                Join('Tabela3','Tabela3.Id = Tabela2.Id').
-                Join('Tabela4','Tabela4.Id = Tabela3.Id').
+                Include('Tabela2','Tabela2.Id = Tabela.Id').
+                Include('Tabela3','Tabela3.Id = Tabela2.Id').
+                Include('Tabela4','Tabela4.Id = Tabela3.Id').
                 Where('0=1').
-                Order('Nome').
+                OrderBy('Nome').
                 Select('Nome');
   CheckEquals('Select Nome From Tabela Inner Join Tabela2 On Tabela2.Id = Tabela.Id '+
   'Inner Join Tabela3 On Tabela3.Id = Tabela2.Id Inner Join Tabela4 On Tabela4.Id = Tabela3.Id Where 0=1 Order by Nome',

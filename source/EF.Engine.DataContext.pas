@@ -22,7 +22,10 @@ uses
   EF.Mapping.Base,
   EF.Core.Functions,
   EF.QueryAble.Base,
-  EF.QueryAble.Interfaces, FireDAC.Comp.Client, System.uJson, Data.DB.Helper ;
+  EF.QueryAble.Interfaces,
+  FireDAC.Comp.Client,
+  System.uJson,
+  Data.DB.Helper ;
 
 Type
   TDataContext = class(TQueryAble)
@@ -108,12 +111,21 @@ end;
 
 procedure TDataContext.FreeObjects;
 begin
+
   if ClientDataSet <> nil then
+  begin
+    ClientDataSet.Close;
     ClientDataSet.Free;
+  end;
   if drpProvider <> nil then
+  begin
     drpProvider.Free;
+  end;
   if qryQuery <> nil then
+  begin
+    qryQuery.close;
     qryQuery.Free;
+  end;
 end;
 
 function TDataContext.GetDataSet(QueryAble: IQueryAble): TClientDataSet;
@@ -130,8 +142,7 @@ begin
 
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
 
-        CreateProvider(qryQuery, trim(fStringReplace(QueryAble.SEntity,
-            trim(StrFrom), '')));
+        CreateProvider(qryQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')));
 
         CreateClientDataSet(drpProvider);
       end
@@ -139,8 +150,6 @@ begin
       begin
         CreateClientDataSet(nil, GetQuery(QueryAble));
       end;
-      //Nao vejo necessidade de Converter nesse momento
-      //TAutoMapper.DataToEntity(ClientDataSet, FEntity);
       result := ClientDataSet;
     except
       on E: Exception do
@@ -470,9 +479,6 @@ begin
       SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
                                                 fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
       Connection.ExecutarSQL(SQL);
-      // verificar aqui se é o mesmo  registro
-      if ClientDataSet <> nil then
-        ClientDataSet.Delete;
     except
       on E: Exception do
       begin
@@ -509,12 +515,12 @@ end;
 
 destructor TDataContext.Destroy;
 begin
-  if ClientDataSet <> nil then
-    ClientDataSet.Free;
   if drpProvider <> nil then
     drpProvider.Free;
   if qryQuery <> nil then
     qryQuery.Free;
+  if ClientDataSet <> nil then
+    ClientDataSet.Free;
   if oFrom <> nil then
     oFrom.Free;
   if FEntity <> nil then

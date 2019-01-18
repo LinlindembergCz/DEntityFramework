@@ -73,7 +73,6 @@ begin
   begin
     FDbContext.Free;
     FDbContext:= nil;
-
   end;
 end;
 
@@ -89,7 +88,6 @@ end;
 
 procedure TRepository<T>.AddOrUpdate(State:TEntityState);
 begin
-  FEntity.Validation;
 //FDbContext.SaveChanges(State);
   case State of
     esInsert: FDbContext.Insert;
