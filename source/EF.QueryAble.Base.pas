@@ -199,7 +199,7 @@ uses EF.Mapping.AutoMapper;
 
 function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin
-  with Q  do  //as TQueryAble
+  with Q as TQueryAble do
   begin
     result := Concat(FSSelect + FSCount, ifthen(Pos('Select', FSEntity) > 0,
                      fStringReplace(FSEntity, 'From ', 'From (') + ')', FSEntity),

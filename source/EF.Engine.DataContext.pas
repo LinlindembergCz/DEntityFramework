@@ -365,6 +365,38 @@ begin
     InsertDirect;
 end;
 
+procedure TDataContext.Update;
+var
+  ListField, ListValues: TStringList;
+  i: integer;
+begin
+  FEntity.Validation;
+  if ClientDataSet <> nil then
+  begin
+    try
+      try
+        ListField := TAutoMapper.GetAttributiesList(FEntity);
+        ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
+        ClientDataSet.Edit;
+        pParserDataSet(ListField, ListValues, ClientDataSet);
+        ClientDataSet.Post;
+      except
+        on E: Exception do
+        begin
+          raise Exception.Create(E.message);
+        end;
+      end;
+    finally
+      ListField.Free;
+      ListField := nil;
+      ListValues.Free;
+      ListValues := nil;
+    end;
+  end
+  else
+    UpdateDirect;
+end;
+
 procedure TDataContext.UpdateDirect;
 var
   SQL: string;
@@ -424,37 +456,6 @@ procedure TDataContext.ReconcileError(DataSet: TCustomClientDataSet;
     E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction);
 begin
   showmessage(E.message);
-end;
-
-procedure TDataContext.Update;
-var
-  ListField, ListValues: TStringList;
-  i: integer;
-begin
-  if ClientDataSet <> nil then
-  begin
-    try
-      try
-        ListField := TAutoMapper.GetAttributiesList(FEntity);
-        ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
-        ClientDataSet.Edit;
-        pParserDataSet(ListField, ListValues, ClientDataSet);
-        ClientDataSet.Post;
-      except
-        on E: Exception do
-        begin
-          raise Exception.Create(E.message);
-        end;
-      end;
-    finally
-      ListField.Free;
-      ListField := nil;
-      ListValues.Free;
-      ListValues := nil;
-    end;
-  end
-  else
-    UpdateDirect;
 end;
 
 procedure TDataContext.DeleteDirect;
