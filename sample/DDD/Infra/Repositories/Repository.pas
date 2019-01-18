@@ -50,7 +50,7 @@ begin
   if iId = 0 then
      result := FDbContext.GetDataset( From(FEntity).Select( Fields) ) as TDataSet
   else
-     result := FDbContext.GetDataset( From(FEntity).where( Format('ID = %s ', [inttostr(iId)] ) ).Select( Fields) ) as TDataSet;
+     result := FDbContext.GetDataset( From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )} ).Select( Fields) ) as TDataSet;
 end;
 
 function TRepository<T>.LoadEntity(iId: Integer): T;
@@ -58,7 +58,7 @@ begin
   if iId = 0 then
      result := FDbContext.GetEntity<TEntityBase>(From(FEntity).Select) as T
   else
-     result := FDbContext.GetEntity<TEntityBase>(From(FEntity).where( Format('ID = %s ', [inttostr(iId)] )  ).Select) as T;
+     result := FDbContext.GetEntity<TEntityBase>(From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )}  ).Select) as T;
 end;
 
 procedure TRepository<T>.Delete;
