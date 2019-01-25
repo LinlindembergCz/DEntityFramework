@@ -5,7 +5,7 @@ interface
 uses
   System.TypInfo, RTTI, SysUtils, System.Classes,
   EF.Mapping.Atributes,
-  EF.Core.Types;
+  EF.Core.Types, JsonDataObjects;
 
 type
   TEntityBase = class(TPersistent)
@@ -20,6 +20,7 @@ type
   published
     [EntityField('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
+    function ToJson: string;
     // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
 
@@ -32,6 +33,22 @@ uses EF.Mapping.AutoMapper;
 destructor TEntityBase.Destroy;
 begin
   FreeAndNilProperties(self);
+end;
+
+function TEntityBase.ToJson: string;
+var
+  json: TJsonObject;
+  ListField , ListValues : TStringList;
+  I:integer;
+begin
+  json:= TJsonObject.Create;
+  ListField:= TAutoMapper.GetAttributiesList(self);
+  ListValues := TAutoMapper.GetValuesFieldsList(self);
+  for I := 0 to ListField.Count -1 do
+  begin
+     json.S[ListField.Strings[i]]:=  ListValues.Strings[i];
+  end;
+   result:= json.ToJSON;
 end;
 
 procedure TEntityBase.Validation;

@@ -139,6 +139,8 @@ type
     procedure Testar_Reference;
 
     procedure Testar_Validation_campo_CNPJ_requerido;
+
+    procedure Testar_ObjetoToJson;
   end;
 
 implementation
@@ -566,6 +568,19 @@ begin
    Cli.Ativo := 'S';
 
    checkEquals(''''','''',''02316937454'',1000,0,'''',01/01/2015,''S'','''','''','''','''',,1', TAutoMapper.GetValuesFields(Cli) );
+end;
+
+procedure TTest.Testar_ObjetoToJson;
+var
+   Cli: TCliente;
+begin
+   Cli:= TCliente.Create;
+   Cli.Nome:= 'Lindemberg';
+   Cli.CPFCNPJ:= '02316937454';
+   CheckEquals( Cli.ToJson , '{"Nome":"''Lindemberg''","NomeFantasia":"''''",'+
+                             '"CPFCNPJ":"''02316937454''","Renda":"0","Idade":"0","RG":"''''","DataNascimento":"",'+
+                             '"Ativo":"''''","Situacao":"''''","Tipo":"''''","EstadoCivil":"''''",'+
+                             '"Observacao":"''''","Email":"''''"}' );
 end;
 
 procedure TTest.Testar_GetData;

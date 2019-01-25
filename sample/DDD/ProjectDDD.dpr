@@ -12,7 +12,14 @@ uses
   Context in 'Infra\Contexto\Context.pas',
   FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
   FactoryRepository in 'Infra\Factories\FactoryRepository.pas',
-  InterfaceService in 'Domain\IService\InterfaceService.pas',
+  InterfaceService in 'Domain\IService\InterfaceService.pas' {,
+  ClassAluno in 'Domain\Entities\ClassAluno.pas',
+  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
+  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
+  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
+  ServiceAluno in 'Service\ServiceAluno.pas',
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   CPF in 'Domain\ValuesObjects\CPF.pas',
   Email in 'Domain\ValuesObjects\Email.pas',
@@ -29,7 +36,8 @@ uses
   ServiceCliente in 'Service\ServiceCliente.pas',
   ServiceBase in 'Service\ServiceBase.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
-  System.uJson in '..\..\source\System.uJson.pas';
+  System.uJson in '..\..\source\System.uJson.pas',
+  JsonDataObjects in '..\..\source\JsonDataObjects.pas';
 
 {$R *.res}
 
