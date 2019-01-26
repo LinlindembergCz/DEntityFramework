@@ -41,14 +41,20 @@ var
   ListField , ListValues : TStringList;
   I:integer;
 begin
-  json:= TJsonObject.Create;
-  ListField:= TAutoMapper.GetAttributiesList(self);
-  ListValues := TAutoMapper.GetValuesFieldsList(self);
-  for I := 0 to ListField.Count -1 do
-  begin
-     json.S[ListField.Strings[i]]:=  ListValues.Strings[i];
+  try
+    json:= TJsonObject.Create;
+    ListField  := TAutoMapper.GetAttributiesList(self);
+    ListValues := TAutoMapper.GetValuesFieldsList(self);
+    for I := 0 to ListField.Count -1 do
+    begin
+       json.S[ListField.Strings[i]]:=  ListValues.Strings[i];
+    end;
+    result:= json.ToJSON;
+  finally
+     ListField.Free;
+     ListValues.Free;
+     json.Free;
   end;
-   result:= json.ToJSON;
 end;
 
 procedure TEntityBase.Validation;
