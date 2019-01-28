@@ -18,10 +18,10 @@ type
     FValue: string;
     FAs: string;
     FInContext: boolean;
-    procedure SetValue(const Value: string);
     procedure SetInContext(const Value: boolean);
   public
     procedure SetAs(const Value: string);
+    procedure SetValue(const Value: string);
     class operator Equal(const a: TString; const b: TString): TString; overload;
     class operator Equal(const a: TString; b: string): TString; overload;
     class operator NotEqual(const a: TString; const b: TString): TString; overload;

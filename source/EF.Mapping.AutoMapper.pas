@@ -783,8 +783,11 @@ begin
       else if TypeClassName = uppercase(cString) then
       begin
         sString := Val.AsType<TString>;
-        sString.SetAs(Valor);
         sString.InContext := InContext;
+        if InContext then
+           sString.SetAs(Valor)
+        else
+           sString.SetValue(Valor);
         TValue.Make(@sString, TypeInfo(TString), Val);
       end
       else if TypeClassName = uppercase(cDateTime) then
@@ -793,8 +796,7 @@ begin
         dDatetime.SetAs(Valor);
         TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
       end;
-
-      Field.SetValue(Entity, Val);
+      Field.SetValue(Entity, Val );
       break;
     end;
 end;
