@@ -60,9 +60,10 @@ type
   private
     FValue: Double;
     FAs: string;
-    procedure SetValue(const Value: Double);
+
   public
     procedure SetAs(const Value: string);
+    procedure SetValue(const Value: Double);
     class operator Equal(const a: TFloat; const b: TFloat): TString; overload;
     class operator Equal(const a: TFloat; b: Double): TString; overload;
     class operator NotEqual(const a: TFloat; const b: TFloat): TString;overload;
@@ -106,9 +107,9 @@ type
   private
     FValue: TDatetime;
     FAs: string;
-    procedure SetValue(const Value: TDatetime);
   public
     procedure SetAs(const Value: string);
+    procedure SetValue(const Value: TDatetime);
     class operator Equal(const a: TTDatetime; const b: TTDatetime)
       : TString; overload;
     class operator Equal(const a: TTDatetime; b: TDatetime)
@@ -160,9 +161,10 @@ type
   private
     FValue: integer;
     FAs: string;
-    procedure SetValue(const Value: integer);
+
   public
     procedure SetAs(const Value: string);
+    procedure SetValue(const Value: integer);
     class operator Equal(const a: TInteger; const b: TInteger)
       : TString; overload;
     class operator Equal(const a: TInteger; b: integer): TString; overload;

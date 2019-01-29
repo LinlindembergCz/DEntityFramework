@@ -77,7 +77,6 @@ begin
         if joJSON.Contains(PropRtti.Name) then
         begin
           TAutoMapper.SetAtribute( self, PropRtti.Name, joJSON.S[PropRtti.Name], false );
-          break;
         end;
       end;
     end;

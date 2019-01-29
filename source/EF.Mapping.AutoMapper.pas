@@ -771,13 +771,19 @@ begin
       if TypeClassName = uppercase(cInteger) then
       begin
         iInteger := Val.AsType<TInteger>;
-        iInteger.SetAs(Valor);
+        if InContext then
+           iInteger.SetAs(Valor)
+        else
+           iInteger.SetValue(strtoint(Valor));
         TValue.Make(@iInteger, TypeInfo(TInteger), Val);
       end
       else if TypeClassName = uppercase(cFloat) then
       begin
         fFloat := Val.AsType<TFloat>;
-        fFloat.SetAs(Valor);
+        if InContext then
+           fFloat.SetAs(Valor)
+        else
+           fFloat.SetValue( strtofloat(Valor));
         TValue.Make(@fFloat, TypeInfo(TFloat), Val);
       end
       else if TypeClassName = uppercase(cString) then
@@ -793,7 +799,10 @@ begin
       else if TypeClassName = uppercase(cDateTime) then
       begin
         dDatetime := Val.AsType<TTDatetime>;
-        dDatetime.SetAs(Valor);
+        if InContext then
+           dDatetime.SetAs(Valor)
+        else
+           dDatetime.SetValue(strtodate(Valor));
         TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
       end;
       Field.SetValue(Entity, Val );
