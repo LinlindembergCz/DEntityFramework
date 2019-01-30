@@ -96,7 +96,7 @@ end;
 
 function TServiceBase.LoadEntity(iId: Integer= 0): TEntityBase;
 begin
-  result := Repository.LoadEntity(iId);
+  result := Repository.Load(iId);
 end;
 
 procedure TServiceBase.RefresData;

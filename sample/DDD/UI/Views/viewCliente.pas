@@ -46,7 +46,7 @@ uses ControllerCliente;
 procedure TFormViewCliente.Button4Click(Sender: TObject);
 begin
   inherited;
-  dsEntity.DataSet :=  (ControllerQuery as TControllerCliente).LoadPorNome( '%'+edit1.Text+'%' );
+  dsEntity.DataSet :=  (ControllerQuery as TControllerCliente).LoadDataSetPorNome( '%'+edit1.Text+'%' );
 end;
 
 initialization RegisterClass(TFormViewCliente);

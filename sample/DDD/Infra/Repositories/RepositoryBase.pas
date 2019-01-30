@@ -18,7 +18,7 @@ type
 
      procedure RefreshDataSet; virtual;
      function  LoadDataSet(iId:Integer; Fields: string = ''): TDataSet;virtual;
-     function  LoadEntity(iId: Integer = 0): TEntityBase;virtual;
+     function  Load(iId: Integer = 0): TEntityBase;virtual;
      procedure Delete;virtual;
      procedure AddOrUpdate( State: TEntityState);virtual;
      procedure Commit;virtual;
@@ -64,9 +64,9 @@ begin
   result := _RepositoryBase.LoadDataSet(iId, Fields)
 end;
 
-function TRepositoryBase.LoadEntity(iId: Integer): TEntityBase;
+function TRepositoryBase.Load(iId: Integer): TEntityBase;
 begin
- result := _RepositoryBase.LoadEntity(iId)
+ result := _RepositoryBase.Load(iId)
 end;
 
 procedure TRepositoryBase.RefreshDataSet;

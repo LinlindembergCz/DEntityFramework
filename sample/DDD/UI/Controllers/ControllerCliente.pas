@@ -8,7 +8,7 @@ uses
 type
   TControllerCliente = class(TControllerBase)
   public
-     function LoadPorNome( Value: string ): TDataSet;
+     function LoadDataSetPorNome( Value: string ): TDataSet;
   end;
 
 implementation
@@ -17,9 +17,9 @@ implementation
 
 uses ServiceCliente;
 
-function TControllerCliente.LoadPorNome(Value: string): TDataSet;
+function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin
-   result := (Service as TServiceCliente).LoadPorNome( Value );
+   result := (Service as TServiceCliente).LoadDataSetPorNome( Value );
 end;
 
 initialization RegisterClass(TControllerCliente);

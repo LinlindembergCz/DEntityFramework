@@ -13,7 +13,7 @@ type
   public
     Constructor Create(dbContext:TContext);override;
     function GetEntity: TCliente;
-    function LoadPorNome(value: string):TDataSet;
+    function LoadDataSetPorNome(value: string):TDataSet;
   end;
 
 implementation
@@ -32,7 +32,7 @@ begin
   result:= _RepositoryCliente.Entity;
 end;
 
-function TRepositoryCliente.LoadPorNome(value: string): TDataSet;
+function TRepositoryCliente.LoadDataSetPorNome(value: string): TDataSet;
 var
   E:TCliente;
 begin

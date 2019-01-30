@@ -24,7 +24,7 @@ type
 
     procedure RefreshDataSet;virtual;
     function  LoadDataSet(iId:Integer ; Fields: string = '') : TDataSet;virtual;
-    function  LoadEntity(iId: Integer = 0): T;virtual;
+    function  Load(iId: Integer = 0): T;virtual;
     procedure Delete;virtual;
     procedure AddOrUpdate( State:TEntityState);virtual;
     procedure Commit;virtual;
@@ -53,7 +53,7 @@ begin
      result := FDbContext.GetDataset( From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )} ).Select( Fields) ) as TDataSet;
 end;
 
-function TRepository<T>.LoadEntity(iId: Integer): T;
+function TRepository<T>.Load(iId: Integer): T;
 begin
   if iId = 0 then
      result := FDbContext.GetEntity<TEntityBase>(From(FEntity).Select) as T

@@ -533,7 +533,6 @@ end;
 procedure TTest.Testar_COUNT;
 var
   Query: IQueryAble;
-  dts: TClientDataSet;
   Cli: TCliente;
 begin
   Cli:= TCliente.create;
@@ -541,7 +540,6 @@ begin
            GroupBy([cli.CPFCNPJ]).
            Select([cli.CPFCNPJ]).
            Count;
-  dts:= TClientDataSet.create(application);
   CheckEquals( 'Select COUNT(*), Clientes.CPFCNPJ From Clientes Group by Clientes.CPFCNPJ',
   Context.GetQuery(query)  );
 end;

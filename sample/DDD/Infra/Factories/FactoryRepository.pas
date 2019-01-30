@@ -3,7 +3,7 @@ unit FactoryRepository;
 interface
 
 uses
-  Sysutils, FactoryEntity, InterfaceRepository, Dialogs;
+  Sysutils, FactoryEntity, InterfaceRepository;
 
 type
   TFactoryRepository = class

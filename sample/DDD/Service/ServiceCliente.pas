@@ -8,7 +8,7 @@ System.Classes, ServiceBase, InterfaceServiceCliente, FactoryEntity, DB;
 type
   TServiceCliente=class( TServiceBase , IServiceCliente)
   public
-     function LoadPorNome( Value: string ): TDataSet;
+     function LoadDataSetPorNome( Value: string ): TDataSet;
   end;
 
 implementation
@@ -19,9 +19,9 @@ uses RepositoryCliente;
 
 { TServiceCliente }
 
-function TServiceCliente.LoadPorNome(Value: string): TDataSet;
+function TServiceCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin
-  result := (Repository as TRepositoryCliente ).LoadPorNome( Value  );
+  result := (Repository as TRepositoryCliente ).LoadDataSetPorNome( Value  );
 end;
 
 initialization RegisterClass(TServiceCliente);
