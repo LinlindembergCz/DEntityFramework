@@ -33,6 +33,7 @@ object Form1: TForm1
     BevelOuter = bvNone
     TabOrder = 1
     ExplicitLeft = -4
+    ExplicitTop = -6
     object buttonInsert: TButton
       Left = 14
       Top = 143
@@ -96,6 +97,24 @@ object Form1: TForm1
       TabOrder = 6
       OnClick = buttonDeleteClick
     end
+    object Button2: TButton
+      Left = 14
+      Top = 236
+      Width = 147
+      Height = 25
+      Caption = 'TOJSON'
+      TabOrder = 7
+      OnClick = Button2Click
+    end
+    object Button3: TButton
+      Left = 14
+      Top = 267
+      Width = 147
+      Height = 25
+      Caption = 'FromJSON'
+      TabOrder = 8
+      OnClick = Button3Click
+    end
   end
   object Panel2: TPanel
     Left = 185
@@ -107,10 +126,6 @@ object Form1: TForm1
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitLeft = 232
-    ExplicitTop = 392
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
@@ -135,7 +150,6 @@ object Form1: TForm1
       BevelOuter = bvNone
       Caption = 'panelEdits'
       TabOrder = 1
-      ExplicitTop = 344
     end
   end
   object mLog: TMemo
@@ -145,9 +159,6 @@ object Form1: TForm1
     Height = 89
     Align = alBottom
     TabOrder = 3
-    ExplicitLeft = 40
-    ExplicitTop = 48
-    ExplicitWidth = 185
   end
   object ClientDataSet1: TClientDataSet
     Aggregates = <>

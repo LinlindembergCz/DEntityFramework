@@ -26,6 +26,8 @@ type
     buttonGetEntity: TButton;
     buttonUpdate: TButton;
     buttonDelete: TButton;
+    Button2: TButton;
+    Button3: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure buttonInsertClick(Sender: TObject);
@@ -35,6 +37,8 @@ type
     procedure buttonGetEntityClick(Sender: TObject);
     procedure buttonUpdateClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -53,6 +57,17 @@ implementation
 
 uses UDataModule;
 
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+    mLog.Text:= Cliente.ToJson;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  Cliente.FromJson(mLog.Text);
+
+end;
 
 procedure TForm1.buttonDeleteClick(Sender: TObject);
 begin
