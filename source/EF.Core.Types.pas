@@ -103,55 +103,54 @@ type
     function Round(decimal: integer): string;
   end;
 
-  TTDatetime = record
+  TDate = record
   private
     FValue: TDatetime;
     FAs: string;
   public
     procedure SetAs(const Value: string);
     procedure SetValue(const Value: TDatetime);
-    class operator Equal(const a: TTDatetime; const b: TTDatetime)
+    class operator Equal(const a: TDate; const b: TDate)
       : TString; overload;
-    class operator Equal(const a: TTDatetime; b: TDatetime)
+    class operator Equal(const a: TDate; b: TDatetime)
       : TString; overload;
-    class operator NotEqual(const a: TTDatetime; const b: TTDatetime)
+    class operator NotEqual(const a: TDate; const b: TDate)
       : TString; overload;
-    class operator NotEqual(const a: TTDatetime; b: TDatetime)
+    class operator NotEqual(const a: TDate; b: TDatetime)
       : TString; overload;
-    class operator LogicalAnd(a: TTDatetime; b: TTDatetime)
+    class operator LogicalAnd(a: TDate; b: TDate)
       : TString; overload;
-    class operator LogicalAnd(a: TTDatetime; b: TDatetime)
+    class operator LogicalAnd(a: TDate; b: TDatetime)
       : TString; overload;
-    class operator LogicalOr(a: TTDatetime; b: TTDatetime)
+    class operator LogicalOr(a: TDate; b: TDate)
       : TString; overload;
-    class operator LogicalOr(a: TTDatetime; b: TDatetime)
+    class operator LogicalOr(a: TDate; b: TDatetime)
       : TString; overload;
-    class operator GreaterThan(a: TTDatetime; b: TTDatetime)
+    class operator GreaterThan(a: TDate; b: TDate)
       : TString; overload;
-    class operator GreaterThan(a: TTDatetime; b: TDatetime)
+    class operator GreaterThan(a: TDate; b: TDatetime)
       : TString; overload;
-    class operator LessThan(a: TTDatetime; b: TTDatetime)
+    class operator LessThan(a: TDate; b: TDate)
       : TString; overload;
-    class operator LessThan(a: TTDatetime; b: TDatetime): TString;
+    class operator LessThan(a: TDate; b: TDatetime): TString;
       overload;
-    class operator GreaterThanOrEqual(a: TTDatetime; b: TTDatetime)
+    class operator GreaterThanOrEqual(a: TDate; b: TDate)
       : TString; overload;
-    class operator GreaterThanOrEqual(a: TTDatetime; b: TDatetime)
+    class operator GreaterThanOrEqual(a: TDate; b: TDatetime)
       : TString; overload;
-    class operator LessThanOrEqual(a: TTDatetime; b: TTDatetime)
+    class operator LessThanOrEqual(a: TDate; b: TDate)
       : TString; overload;
-    class operator LessThanOrEqual(a: TTDatetime; b: TDatetime)
+    class operator LessThanOrEqual(a: TDate; b: TDatetime)
       : TString; overload;
-    class operator Implicit(const a: TDatetime): TTDatetime; overload;
-    class operator Implicit(const a: TTDatetime): TDatetime; overload;
-    class operator Implicit(const a: TTDatetime): string; overload;
+    class operator Implicit(const a: TDatetime): TDate; overload;
+    class operator Implicit(const a: TDate): TDatetime; overload;
+    class operator Implicit(const a: TDate): string; overload;
 
-    class operator Add(const a, b: TTDatetime): TString; overload;
-    class operator Add(const a: TTDatetime; b: TDatetime)
+    class operator Add(const a, b: TDate): TString; overload;
+    class operator Add(const a: TDate; b: TDatetime)
       : TString; overload;
-    class operator Subtract(const a, b: TTDatetime): TString; overload;
-    class operator Subtract(const a: TTDatetime; b: TDatetime)
-      : TString; overload;
+    class operator Subtract(const a, b: TDate): TString; overload;
+    class operator Subtract(const a: TDate; b: TDatetime): TString; overload;
 
     property Value: TDatetime read FValue write SetValue;
     function &As(_as: string = ''): string;
@@ -607,142 +606,142 @@ begin
     copy(FAs, Pos('.', FAs) + 1, length(FAs));
 end;
 
-class operator TTDatetime.Equal(const a, b: TTDatetime): TString;
+class operator TDate.Equal(const a, b: TDate): TString;
 begin
   result := fEqual(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.Equal(const a: TTDatetime;
+class operator TDate.Equal(const a: TDate;
   b: TDatetime): TString;
 begin
   result := fEqual(a.FAs, datetimetostr(b));
 end;
 
-class operator TTDatetime.GreaterThan(a, b: TTDatetime): TString;
+class operator TDate.GreaterThan(a, b: TDate): TString;
 begin
   result := fGreaterThan(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.GreaterThan(a: TTDatetime;
+class operator TDate.GreaterThan(a: TDate;
   b: TDatetime): TString;
 begin
   result := fGreaterThan(a.FAs, datetimetostr(b));
 end;
 
-class operator TTDatetime.GreaterThanOrEqual(a,
-  b: TTDatetime): TString;
+class operator TDate.GreaterThanOrEqual(a,
+  b: TDate): TString;
 begin
   result := fGreaterThanOrEqual(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.GreaterThanOrEqual(a: TTDatetime;
+class operator TDate.GreaterThanOrEqual(a: TDate;
   b: TDatetime): TString;
 begin
   result := fGreaterThanOrEqual(a.FAs, datetimetostr(b));
 end;
 
-class operator TTDatetime.LogicalAnd(a, b: TTDatetime): TString;
+class operator TDate.LogicalAnd(a, b: TDate): TString;
 begin
   result := fLogicalAnd(datetostr(a.Value), datetostr(b.Value));
 end;
 
-class operator TTDatetime.LogicalAnd(a: TTDatetime;
+class operator TDate.LogicalAnd(a: TDate;
   b: TDatetime): TString;
 begin
   result := fLogicalAnd(datetostr(a.Value), datetimetostr(b));
 end;
 
-class operator TTDatetime.LessThan(a, b: TTDatetime): TString;
+class operator TDate.LessThan(a, b: TDate): TString;
 begin
   result := fLessThan(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.LessThan(a: TTDatetime;
+class operator TDate.LessThan(a: TDate;
   b: TDatetime): TString;
 begin
   result := fLessThan(a.FAs, datetimetostr(b));
 end;
 
-class operator TTDatetime.LessThanOrEqual(a, b: TTDatetime): TString;
+class operator TDate.LessThanOrEqual(a, b: TDate): TString;
 begin
   result := fLessThanOrEqual(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.LessThanOrEqual(a: TTDatetime;
+class operator TDate.LessThanOrEqual(a: TDate;
   b: TDatetime): TString;
 begin
   result := fLessThanOrEqual(a.FAs, datetimetostr(b));
 end;
 
-class operator TTDatetime.LogicalOr(a, b: TTDatetime): TString;
+class operator TDate.LogicalOr(a, b: TDate): TString;
 begin
   result := fLogicalOr(datetostr(a.Value), datetostr(b.Value));
 end;
 
-class operator TTDatetime.LogicalOr(a: TTDatetime;
+class operator TDate.LogicalOr(a: TDate;
   b: TDatetime): TString;
 begin
   result := fLogicalOr(datetostr(a.Value), floattostr(b));
 end;
 
-class operator TTDatetime.NotEqual(const a, b: TTDatetime): TString;
+class operator TDate.NotEqual(const a, b: TDate): TString;
 begin
   result := fNotEqual(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.NotEqual(const a: TTDatetime;
+class operator TDate.NotEqual(const a: TDate;
   b: TDatetime): TString;
 begin
   result := fNotEqual(a.FAs, datetostr(b));
 end;
 
-class operator TTDatetime.Implicit(const a: TDatetime): TTDatetime;
+class operator TDate.Implicit(const a: TDatetime): TDate;
 begin
   result.FValue := a;
 end;
 
-class operator TTDatetime.Implicit(const a: TTDatetime): TDatetime;
+class operator TDate.Implicit(const a: TDate): TDatetime;
 begin
   result := a.FValue;
 end;
 
-class operator TTDatetime.Implicit(const a: TTDatetime): string;
+class operator TDate.Implicit(const a: TDate): string;
 begin
   result := a.FAs;
 end;
 
-procedure TTDatetime.SetAs(const Value: string);
+procedure TDate.SetAs(const Value: string);
 begin
   FAs := Value;
 end;
 
-procedure TTDatetime.SetValue(const Value: TDatetime);
+procedure TDate.SetValue(const Value: TDatetime);
 begin
   FValue := Value;
 end;
 
-class operator TTDatetime.Add(const a, b: TTDatetime): TString;
+class operator TDate.Add(const a, b: TDate): TString;
 begin
   result := fAdd(a.FAs, b.FAs);
 end;
 
-function TTDatetime.&As(_as: string = ''): string;
+function TDate.&As(_as: string = ''): string;
 begin
   result := fGetAs(FAs, _as);
 end;
 
-class operator TTDatetime.Add(const a: TTDatetime;
+class operator TDate.Add(const a: TDate;
   b: TDatetime): TString;
 begin
   result := fAdd(a.FAs, datetimetostr(b));
 end;
 
-class operator TTDatetime.Subtract(const a, b: TTDatetime): TString;
+class operator TDate.Subtract(const a, b: TDate): TString;
 begin
   result := fSubtract(a.FAs, b.FAs);
 end;
 
-class operator TTDatetime.Subtract(const a: TTDatetime;
+class operator TDate.Subtract(const a: TDate;
   b: TDatetime): TString;
 begin
   result := fSubtract(a.FAs, datetimetostr(b));

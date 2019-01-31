@@ -37,7 +37,21 @@ uses
   ServiceBase in 'Service\ServiceBase.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
   System.uJson in '..\..\source\System.uJson.pas',
-  JsonDataObjects in '..\..\source\JsonDataObjects.pas';
+  JsonDataObjects in '..\..\source\JsonDataObjects.pas',
+  EF.Core.Consts in '..\..\source\EF.Core.Consts.pas',
+  EF.Core.Functions in '..\..\source\EF.Core.Functions.pas',
+  EF.Core.Types in '..\..\source\EF.Core.Types.pas',
+  EF.Drivers.Connection in '..\..\source\EF.Drivers.Connection.pas',
+  EF.Drivers.FireDac in '..\..\source\EF.Drivers.FireDac.pas',
+  EF.Engine.DataContext in '..\..\source\EF.Engine.DataContext.pas',
+  EF.Mapping.Atributes in '..\..\source\EF.Mapping.Atributes.pas',
+  EF.Mapping.AutoMapper in '..\..\source\EF.Mapping.AutoMapper.pas',
+  EF.Mapping.Base in '..\..\source\EF.Mapping.Base.pas',
+  EF.QueryAble.Base in '..\..\source\EF.QueryAble.Base.pas',
+  EF.QueryAble.Interfaces in '..\..\source\EF.QueryAble.Interfaces.pas',
+  EF.Schema.Abstract in '..\..\source\EF.Schema.Abstract.pas',
+  EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
+  EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas';
 
 {$R *.res}
 

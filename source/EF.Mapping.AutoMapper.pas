@@ -35,14 +35,13 @@ type
 
     class function GetTableAttribute(Obj: TClass): String; overload;
     class function GetTableAttribute(ClassInfo: Pointer): String; overload;
-    class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;
-      InContext: boolean = false); static;
     class function GetAttributies(E: TEntityBase;OnlyPublished:boolean = false): String; static;
-    class function GetAttributiesList(E: TEntityBase;
-      OnlyPublished: boolean = false): TStringList;overload;
-    class function GetAttributiesList(E: Pointer;
-      OnlyPublished: boolean = false): TStringList;overload;
+    class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
+
+    class function GetAttributiesList(E: TEntityBase;OnlyPublished: boolean = false): TStringList;overload;
+    class function GetAttributiesList(E: Pointer; OnlyPublished: boolean = false): TStringList;overload;
     class function GetAttributiesPrimaryKeyList(E: TEntityBase): TStringList;
+
     class function GetListAtributes(Obj: TClass): TList;
     class function GetValuesFields(E: TEntityBase): String; static;
     class function GetValuesFieldsList(E: TEntityBase): TStringList; static;
@@ -74,7 +73,7 @@ type
   cFLOAT    = 'TFLOAT';
   cInteger  = 'TINTEGER';
   cString   = 'TSTRING';
-  cDatetime = 'TTDATETIME';
+  cDatetime = 'TDATE';
 
 implementation
 
@@ -87,6 +86,7 @@ uses
 
 class function TAutoMapper.PropIsFloat(Prop: TRttiProperty): boolean;
 begin
+
    result:= UpperCase(prop.PropertyType.ToString) = cFLOAT;
 end;
 
@@ -533,7 +533,7 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
-  dDatetime: TTDatetime;
+  dDatetime: TDate;
   Value, TypeClassName: string;
 begin
   Val := Field.GetValue(E);
@@ -555,7 +555,7 @@ begin
   end
   else if TypeClassName = uppercase(cDateTime) then
   begin
-    dDatetime := Val.AsType<TTDatetime>;
+    dDatetime := Val.AsType<TDate>;
     if not fEmpty(dDatetime.Value) then
       Value := datetostr(dDatetime.Value);
   end;
@@ -760,7 +760,7 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
-  dDatetime: TTDatetime;
+  dDatetime: TDate;
   TypeClassName: string;
 begin
   for Field in ctx.GetType(Entity.ClassType).GetFields do
@@ -798,12 +798,12 @@ begin
       end
       else if TypeClassName = uppercase(cDateTime) then
       begin
-        dDatetime := Val.AsType<TTDatetime>;
+        dDatetime := Val.AsType<TDate>;
         if InContext then
            dDatetime.SetAs(Valor)
         else
            dDatetime.SetValue(strtodate(Valor));
-        TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
+        TValue.Make(@dDatetime, TypeInfo(TDate), Val);
       end;
       Field.SetValue(Entity, Val );
       break;
@@ -819,7 +819,7 @@ var
   iInteger: TInteger;
   fFloat: TFloat;
   sString: TString;
-  dDatetime: TTDatetime;
+  dDatetime: TDate;
   TypeClassName: string;
 begin
   for Field in ctx.GetType(Entity.ClassType).GetFields do
@@ -847,10 +847,10 @@ begin
       end
       else if TypeClassName = uppercase(cDateTime) then
       begin
-        dDatetime := Val.AsType<TTDatetime>;
+        dDatetime := Val.AsType<TDate>;
         if not fEmpty(Valor) then
           dDatetime.Value := Valor;
-        TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
+        TValue.Make(@dDatetime, TypeInfo(TDate), Val);
       end;
       Field.SetValue(Entity, Val);
       break;
@@ -866,7 +866,7 @@ var
   fFloat: TFloat;
   sString: TString;
   vInstance:Variant;
-  dDatetime: TTDatetime;
+  dDatetime: TDate;
   TypeClassName: string;
 begin
     TypeClassName := uppercase(Campo.PropertyType.ToString);
@@ -891,10 +891,10 @@ begin
     end
     else if TypeClassName = uppercase(cDateTime) then
     begin
-      dDatetime := Val.AsType<TTDatetime>;
+      dDatetime := Val.AsType<TDate>;
       if not fEmpty(Valor) then
         dDatetime.Value := Valor;
-      TValue.Make(@dDatetime, TypeInfo(TTDatetime), Val);
+      TValue.Make(@dDatetime, TypeInfo(TDate), Val);
     end;
     Campo.SetValue(Entity, Val);
 end;
@@ -1164,36 +1164,36 @@ begin
         TypObj := ctx.GetType(Entity.ClassInfo);
         for Prop in TypObj.GetProperties do
         begin
-           if PropNameEqualComponentName(Prop,Componente ) then
-           begin
-               if PropIsInstance(prop)  then
-                  Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
-               else
-               if SetDefaultValue then
-                 Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
-               else
-                 Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
+          if PropNameEqualComponentName(Prop,Componente ) then
+          begin
+            if PropIsInstance(prop)  then
+               Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
+            else
+            if SetDefaultValue then
+              Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
+            else
+              Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
 
-               if Componente.InheritsFrom(TCustomMemo) then
-                 SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
-               if Componente.InheritsFrom(TCustomCombobox) then
-                 SetValueCombobox else
-               if Componente.InheritsFrom(TCustomDBLookupComboBox) then
-                 setValueDBLookUpCombobox else
-               if Componente.InheritsFrom(TCommonCalendar) then
-                 SetValueDateTimePicker else
-               if Componente.InheritsFrom(TCustomCheckBox) then
-                 SetValueCheckBox else
-               if Componente.InheritsFrom(TCustomLabel) then
-                 SetValueLabel else
-               if Componente.InheritsFrom(TCustomRadioGroup) then
-                 SetValueRadioGroup else
-               if Componente.InheritsFrom(TCustomMaskEdit) then
-                 SetValueMaskEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
-               if Componente.InheritsFrom(TCustomEdit) then
-                 SetValueEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) );
-               break;
-           end;
+            if Componente.InheritsFrom(TCustomMemo) then
+              SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
+            if Componente.InheritsFrom(TCustomCombobox) then
+              SetValueCombobox else
+            if Componente.InheritsFrom(TCustomDBLookupComboBox) then
+              setValueDBLookUpCombobox else
+            if Componente.InheritsFrom(TCommonCalendar) then
+              SetValueDateTimePicker else
+            if Componente.InheritsFrom(TCustomCheckBox) then
+              SetValueCheckBox else
+            if Componente.InheritsFrom(TCustomLabel) then
+              SetValueLabel else
+            if Componente.InheritsFrom(TCustomRadioGroup) then
+              SetValueRadioGroup else
+            if Componente.InheritsFrom(TCustomMaskEdit) then
+              SetValueMaskEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) ) else
+            if Componente.InheritsFrom(TCustomEdit) then
+              SetValueEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) );
+            break;
+          end;
         end;
       end;
     end;
