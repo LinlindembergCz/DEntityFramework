@@ -100,31 +100,30 @@ begin
   begin
     for atrbRtti in PropRtti.GetAttributes do
     begin
-      if atrbRtti is EntityNotNull then
+      if atrbRtti is NotNull then
       begin
         mensagem := 'Campo "' + PropRtti.Name + '" Requerido!';
-        if not(atrbRtti as EntityValidation)
-            .Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
+        if not(atrbRtti as Valiator).Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
         then
         begin
           abort;
         end;
       end
-      else if atrbRtti is EntityRangeValues then
+      else if atrbRtti is Range then
       begin
         mensagem := 'Valor "' + PropRtti.Name + '" inválido para o intervalor!';
-        if not(atrbRtti as EntityValidation)
+        if not(atrbRtti as Valiator)
             .Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name)
             .ToInteger, mensagem) then
         begin
           abort;
         end;
       end
-      else if atrbRtti is EntityValueLengthMin then
+      else if atrbRtti is LengthMin then
       begin
         mensagem := 'Valor "' + PropRtti.Name +
             '" é inválido para o mínimo requerido !';
-        if not(atrbRtti as EntityValidation)
+        if not(atrbRtti as Valiator)
             .Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
         then
         begin

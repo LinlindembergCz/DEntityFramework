@@ -28,17 +28,17 @@ type
     constructor Create;override;
     procedure Validation; override;
   published
-    [EntityField('Nome','varchar(50)',false)][EntityValueLengthMin(10)][Edit]
+    [EntityField('Nome','varchar(50)',false)][LengthMin(10)][Edit]
     property Nome: TString read FNome write FNome;
     [EntityField('NomeFantasia','varchar(50)',false)][Edit]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;
-    [EntityField('CPFCNPJ','varchar(15)',true)][EntityValueLengthMin(11)][EntityNotNull][EntityNotSpecialChar][Edit]
+    [EntityField('CPFCNPJ','varchar(15)',true)][LengthMin(11)][NotNull][EntityNotSpecialChar][Edit]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
     [EntityField('Renda','float',true)][Edit]
     property Renda:TFloat read FRenda write FRenda;
     [EntityField('Idade','integer',true)][Edit]
     property Idade: TInteger read FIdade write FIdade;
-    [EntityField('RG','varchar(10)',true)][EntityValueLengthMin(6)][Edit]
+    [EntityField('RG','varchar(10)',true)][LengthMin(6)][Edit]
     property RG: TString read FRG write FRG;
     [EntityField('DataNascimento','Date',true)][DateTimePicker]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
@@ -46,7 +46,7 @@ type
     property Ativo: TString read FAtivo write FAtivo;
     [EntityField('Situacao','varchar(20)',true)]
     [EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')]
-    [EntityDefault('L')] [Combobox]
+    [Default('L')] [Combobox]
     property Situacao:TString read FSituacao write FSituacao;
     [EntityField('Tipo','varchar(20)',true)]
     [EntityItems('F=Fisica;J=Juridica')]

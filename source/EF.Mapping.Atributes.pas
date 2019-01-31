@@ -80,7 +80,7 @@ type
     property Items: TStringList read FItems write FItems;
   end;
 
-  EntityDefault = class(TCustomAttribute)
+  Default = class(TCustomAttribute)
   private
     FName: string;
   public
@@ -88,7 +88,7 @@ type
     property Name: string read FName;
   end;
 
-  EntityMaxLength = class(TCustomAttribute)
+  MaxLength = class(TCustomAttribute)
   private
     FValue: integer;
   public
@@ -96,7 +96,7 @@ type
     property Value: integer read FValue;
   end;
 
-  EntityLog = class(TCustomAttribute)
+  Log = class(TCustomAttribute)
   private
     FValue: boolean;
   public
@@ -104,7 +104,7 @@ type
     property Value: boolean read FValue;
   end;
 
-  EntityValidation = class(TCustomAttribute)
+  Valiator = class(TCustomAttribute)
   private
     FMensagem: String;
     procedure AfterValidar(pValido: boolean);
@@ -117,13 +117,13 @@ type
   end;
 
   //Nao permitir valor nulo
-  EntityNotNull = class(EntityValidation)
+  NotNull = class(Valiator)
   public
     function Validar(pValue: TValue; pMensagem: string = ''): boolean; override;
   end;
 
   //Verificar o tamanho do valor minimo informado
-  EntityValueLengthMin = class(EntityValidation)
+  LengthMin = class(Valiator)
   private
     FMin: integer;
   public
@@ -132,7 +132,7 @@ type
   end;
 
   //Verificar se o valor está dentro do intervalo
-  EntityRangeValues = class(EntityValidation)
+  Range = class(Valiator)
   private
     FMax: integer;
     FMin: integer;
@@ -214,19 +214,19 @@ begin
   FItems.Free;
 end;
 
-constructor EntityDefault.Create(aName: string);
+constructor Default.Create(aName: string);
 begin
   FName := aName;
 end;
 
-constructor EntityRangeValues.Create(pMin, pMax: integer; pMensagem: String = '');
+constructor Range.Create(pMin, pMax: integer; pMensagem: String = '');
 begin
   inherited Create(pMensagem);
   FMin := pMin;
   FMax := pMax;
 end;
 
-constructor EntityValidation.Create(pMensagem: String = '');
+constructor Valiator.Create(pMensagem: String = '');
 begin
   if pMensagem <> '' then
     FMensagem := pMensagem
@@ -234,27 +234,27 @@ begin
     FMensagem := 'Campo requerido!';
 end;
 
-function EntityNotNull.Validar(pValue: TValue;pMensagem: string = ''): boolean;
+function NotNull.Validar(pValue: TValue;pMensagem: string = ''): boolean;
 begin
   FMensagem := pMensagem;
   result := pValue.AsString <> '';
   AfterValidar(result);
 end;
 
-procedure EntityValidation.AfterValidar(pValido: boolean);
+procedure Valiator.AfterValidar(pValido: boolean);
 begin
   if (not pValido) then
     ShowMessage(FMensagem);
 end;
 
-function EntityValidation.Validar(pValue: TValue; pMensagem: string = ''): boolean;
+function Valiator.Validar(pValue: TValue; pMensagem: string = ''): boolean;
 begin
   FMensagem := pMensagem;
   result := true;
   AfterValidar(result);
 end;
 
-function EntityRangeValues.Validar(pValue: TValue;pMensagem: string = ''): boolean;
+function Range.Validar(pValue: TValue;pMensagem: string = ''): boolean;
 begin
   FMensagem := pMensagem;
   result := true;
@@ -267,14 +267,14 @@ end;
 
 { EntityMaxLenth }
 
-constructor EntityMaxLength.Create(pMaxLength: integer);
+constructor MaxLength.Create(pMaxLength: integer);
 begin
   FValue:= pMaxLength;
 end;
 
 { EntityLog }
 
-constructor EntityLog.Create(pValue: boolean);
+constructor Log.Create(pValue: boolean);
 begin
   FValue := pValue;
 end;
@@ -289,7 +289,7 @@ end;
 
 { EntityValueLengthMin }
 
-function EntityValueLengthMin.Validar(pValue: TValue;
+function LengthMin.Validar(pValue: TValue;
   pMensagem: string): boolean;
 begin
   FMensagem := pMensagem;
@@ -299,7 +299,7 @@ begin
   AfterValidar(result);
 end;
 
-constructor EntityValueLengthMin.Create(pMin: integer; pMensagem: String);
+constructor LengthMin.Create(pMin: integer; pMensagem: String);
 begin
   inherited Create(pMensagem);
   FMin := pMin;

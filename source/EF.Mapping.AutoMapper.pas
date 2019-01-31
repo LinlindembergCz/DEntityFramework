@@ -483,9 +483,9 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is EntityDefault then
+          if Atrib is Default then
           begin
-            result := EntityDefault(Atrib).Name;
+            result := Default(Atrib).Name;
             exit;
           end;
         end;
@@ -514,9 +514,9 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is EntityMaxLength then
+          if Atrib is MaxLength then
           begin
-            result := EntityMaxLength(Atrib).Value;
+            result := MaxLength(Atrib).Value;
             exit;
           end;
         end;
