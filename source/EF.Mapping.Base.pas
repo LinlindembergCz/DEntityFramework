@@ -4,7 +4,7 @@ interface
 
 uses
   System.TypInfo, RTTI, SysUtils, System.Classes,
-  EF.Mapping.Atributes, EF.Core.Types, JsonDataObjects;
+  EF.Mapping.Atributes, EF.Core.Types,{REST.JSON,} JsonDataObjects;
 
 type
   TEntityBase = class(TPersistent)
@@ -21,7 +21,7 @@ type
     [EntityField('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
     function ToJson: string;
-    procedure FromJson(const AJson: String);
+    procedure FromJson{<T: class, constructor>}(const AJson: String);
     // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
 
@@ -42,6 +42,7 @@ var
   ListField, ListValues: TStringList;
   I: integer;
 begin
+  //result:= TJson.ObjectToJsonString(self);
   try
     json := TJsonObject.Create;
     ListField := TAutoMapper.GetAttributiesList(self);
@@ -58,13 +59,14 @@ begin
   end;
 end;
 
-procedure TEntityBase.FromJson(const AJson: String);
-var
+procedure TEntityBase.FromJson{<T>}(const AJson: String);
+ var
   Contexto: TRttiContext;
   TipoRtti: TRttiType;
   PropRtti: TRttiProperty;
   joJSON: TJsonObject;
 begin
+  //self := TJson.JsonToObject<T>( AJson ) as TEntityBase;
   Contexto := TRttiContext.Create;
   try
     joJSON := TJsonObject.Create;
@@ -84,6 +86,7 @@ begin
     Contexto.Free;
     FreeAndNil(joJSON);
   end;
+
 end;
 
 procedure TEntityBase.Validation;
