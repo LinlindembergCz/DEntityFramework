@@ -24,7 +24,6 @@ uses
   EF.QueryAble.Base,
   EF.QueryAble.Interfaces,
   FireDAC.Comp.Client,
-  System.uJson,
   Data.DB.Helper ;
 
 Type
