@@ -12,7 +12,14 @@ uses
   Context in 'Infra\Contexto\Context.pas',
   FactoryConnection in 'Infra\Factories\FactoryConnection.pas',
   FactoryRepository in 'Infra\Factories\FactoryRepository.pas',
-  InterfaceService in 'Domain\IService\InterfaceService.pas' ,
+  InterfaceService in 'Domain\IService\InterfaceService.pas' {,
+  ClassAluno in 'Domain\Entities\ClassAluno.pas',
+  InterfaceRepositoryAluno in 'Domain\IRepositories\InterfaceRepositoryAluno.pas',
+  RepositoryAluno in 'Infra\Repositories\RepositoryAluno.pas',
+  InterfaceServiceAluno in 'Domain\IService\InterfaceServiceAluno.pas',
+  ServiceAluno in 'Service\ServiceAluno.pas',
+  ControllerAluno in 'UI\Controllers\ControllerAluno.pas',
+  viewAluno in 'UI\Views\viewAluno.pas' {FormViewAluno},
   InterfaceServiceCliente in 'Domain\IService\InterfaceServiceCliente.pas',
   CPF in 'Domain\ValuesObjects\CPF.pas',
   Email in 'Domain\ValuesObjects\Email.pas',
@@ -44,7 +51,8 @@ uses
   EF.QueryAble.Interfaces in '..\..\source\EF.QueryAble.Interfaces.pas',
   EF.Schema.Abstract in '..\..\source\EF.Schema.Abstract.pas',
   EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
-  EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas';
+  EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas',
+  EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas';
 
 {$R *.res}
 

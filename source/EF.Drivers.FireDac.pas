@@ -35,9 +35,10 @@ implementation
 uses
  EF.Core.Functions,
  EF.Schema.MSSQL,
- EF.Schema.Firebird;
+ EF.Schema.Firebird, EF.Schema.MySQL;
 
 resourcestring
+  StrMyQL = 'MySQL';
   StrMSSQL = 'MSSQL';
   StrFirebird = 'Firebird';
   StrFB = 'FB';
@@ -113,9 +114,13 @@ begin
   FUser     := aUser;
   FPassword := aPassword;
   if FDriver = StrMSSQL then
-     CustomTypeDataBase:= TMSSQL.create;
+     CustomTypeDataBase:= TMSSQL.create
+  else
   if (FDriver = StrFirebird) or (FDriver = StrFB) then
-     CustomTypeDataBase:= TFirebird.create;
+     CustomTypeDataBase:= TFirebird.create
+  else
+  if FDriver = StrMyQL then
+     CustomTypeDataBase:= TMySQL.create;
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);
