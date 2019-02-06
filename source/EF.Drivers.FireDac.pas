@@ -18,6 +18,8 @@ uses
   EF.Drivers.Connection;
 
 type
+
+
   TEntityFDConnection = class(TEntityConn)
   private
     procedure BeforeConnect(Sender: TObject);
@@ -27,8 +29,10 @@ type
     procedure ExecutarSQL(prsSQL: string); override;
     function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; override;
     procedure LoadFromFile(IniFileName: string);override;
-    constructor Create(aDriver,aUser,aPassword,aServer,aDataBase: string);override;
+    constructor Create(aDriver: FDConn; aUser,aPassword,aServer,aDataBase: string);override;
   end;
+
+
 
 implementation
 
@@ -101,26 +105,41 @@ begin
   TFDConnection(CustomConnection).Params.LoadFromFile(IniFileName);
 end;
 
-constructor TEntityFDConnection.Create(aDriver,aUser,aPassword,aServer,aDataBase: string);
+constructor TEntityFDConnection.Create(aDriver: FDConn; aUser,aPassword,aServer,aDataBase: string);
 begin
   inherited;
   CustomConnection := TFDConnection.Create(application);
   CustomConnection.LoginPrompt:= false;
   CustomConnection.BeforeConnect:= BeforeConnect;
 
-  FDriver   := aDriver;
+
   FServer   := aServer;
   FDataBase := aDataBase;
   FUser     := aUser;
   FPassword := aPassword;
-  if FDriver = StrMSSQL then
-     CustomTypeDataBase:= TMSSQL.create
-  else
-  if (FDriver = StrFirebird) or (FDriver = StrFB) then
-     CustomTypeDataBase:= TFirebird.create
-  else
-  if FDriver = StrMyQL then
-     CustomTypeDataBase:= TMySQL.create;
+
+  case aDriver of
+     fdMyQL:
+     begin
+        CustomTypeDataBase := TMySQL.create;
+        FDriver   := StrMyQL;
+     end;
+     fdMSSQL:
+     begin
+        CustomTypeDataBase := TMSSQL.create;
+        FDriver   := StrMSSQL;
+     end;
+     fdFirebird:
+     begin
+        CustomTypeDataBase := TFirebird.create;
+        FDriver   := StrFirebird;
+     end;
+     fdFB:
+     begin
+        CustomTypeDataBase := TFirebird.create;
+        FDriver   := StrFB;
+     end;
+  end;
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);

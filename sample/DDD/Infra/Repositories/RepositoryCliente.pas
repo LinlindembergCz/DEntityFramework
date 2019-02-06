@@ -37,7 +37,7 @@ var
   E:TCliente;
 begin
   E := GetEntity;
-  result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select('') );
+  result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 end;
 
 initialization RegisterClass(TRepositoryCliente);

@@ -31,7 +31,7 @@ begin
                                                  'masterkey',
                                                  'LocalHost',
                                                  'D:\Lindemberg\Linq\DDD\DBLINQ.FDB'); }
-      FConnection := TEntityFDConnection.Create('FB',
+      FConnection := TEntityFDConnection.Create( fdFB ,
                                                  'SYSDBA',
                                                  'masterkey',
                                                  'LocalHost',

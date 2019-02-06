@@ -40,8 +40,8 @@ type
     procedure EntityToDBGrid(Grid: TDBGrid);
     procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ; DataSource: TDataSource; E:string);
     property State: TEntityState read FState write FState;
-    property Contener: TComponent read GetContener write SetContener;
-    property AutoApply :boolean read GetAutoApply write SetAutoApply;
+    //property Contener: TComponent read GetContener write SetContener;
+    //property AutoApply :boolean read GetAutoApply write SetAutoApply;
 
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;
@@ -129,7 +129,7 @@ begin
   Service.InputEntity(FContener);
   Service.Post( State );
   UpdateState(esBrowser);
-  if AutoApply then
+  if FAutoApply then
   begin
      Apply;
      with FContener as TFormViewBase do

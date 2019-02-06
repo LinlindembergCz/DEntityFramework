@@ -14,7 +14,7 @@ uses
 
 type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
-
+  FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB );
   TEntityConn = class
   private
     FCustomTypeDataBase: TCustomDataBase;
@@ -28,7 +28,7 @@ type
     procedure InsereFields(ADataSet: TFDQuery);
     procedure BeforeConnect(Sender: TObject);virtual;abstract;
   public
-    constructor Create(aDriver,aUser,aPassword,aServer,aDataBase: string);virtual; abstract;
+    constructor Create(aDriver:FDConn; aUser,aPassword,aServer,aDataBase: string);virtual; abstract;
     procedure GetTableNames(var List: TStringList); virtual; abstract;
     procedure GetFieldNames(var List: TStringList; Table: string); virtual;abstract;
     procedure ExecutarSQL(prsSQL: string); virtual; abstract;
