@@ -45,7 +45,7 @@ begin
   //result:= TJson.ObjectToJsonString(self);
   try
     json := TJsonObject.Create;
-    ListField := TAutoMapper.GetAttributiesList(self);
+    ListField := TAutoMapper.GetFieldsList(self);
     ListValues := TAutoMapper.GetValuesFieldsList(self);
     for I := 0 to ListField.Count - 1 do
     begin

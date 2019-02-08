@@ -165,7 +165,7 @@ type
   private
     FFields:String;
   public
-    function TopFirst(i: integer): IQueryAble;
+    //function TopFirst(i: integer): IQueryAble;
     function Distinct(Field: String = ''): IQueryAble; overload;
     function Distinct(Field: TString): IQueryAble; overload;
     function Union(Q: IQueryAble): IQueryAble;
@@ -657,11 +657,11 @@ begin
   result := self;
 end;
 
-function TSelect.TopFirst(i: integer): IQueryAble;
+{function TSelect.TopFirst(i: integer): IQueryAble;
 begin
   FSSelect := fStringReplace(FSSelect, StrSelect, StrSelect + StrTop + inttostr(i)
     + ' ');
-end;
+end;}
 
 function TSelect.Union(Q: IQueryAble): IQueryAble;
 begin

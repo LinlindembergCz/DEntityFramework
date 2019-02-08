@@ -38,9 +38,9 @@ type
     class function GetAttributies(E: TEntityBase;OnlyPublished:boolean = false): String; static;
     class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
 
-    class function GetAttributiesList(E: TEntityBase;OnlyPublished: boolean = false): TStringList;overload;
-    class function GetAttributiesList(E: Pointer; OnlyPublished: boolean = false): TStringList;overload;
-    class function GetAttributiesPrimaryKeyList(E: TEntityBase): TStringList;
+    class function GetFieldsList(E: TEntityBase;OnlyPublished: boolean = false): TStringList;overload;
+    class function GetFieldsList(E: Pointer; OnlyPublished: boolean = false): TStringList;overload;
+    class function GetFieldsPrimaryKeyList(E: TEntityBase): TStringList;
 
     class function GetListAtributes(Obj: TClass): TList;
     class function GetValuesFields(E: TEntityBase): String; static;
@@ -327,7 +327,7 @@ begin
            ( Prop.Name <> 'Package' );
 end;
 
-class function TAutoMapper.GetAttributiesList(E: TEntityBase;
+class function TAutoMapper.GetFieldsList(E: TEntityBase;
   OnlyPublished: boolean = false): TStringList;
 var
   Prop: TRttiProperty;
@@ -345,8 +345,8 @@ begin
     begin
       if  PropIsInstance(prop)  then
       begin
-         //tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
-         tempStrings:= ( TAutoMapper.GetAttributiesList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
+         //tempStrings:= ( GetFieldsList( Prop.ClassInfo , true ) );
+         tempStrings:= ( TAutoMapper.GetFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.free;
@@ -379,7 +379,7 @@ begin
   end;
 end;
 
-class function TAutoMapper.GetAttributiesList(E: Pointer;
+class function TAutoMapper.GetFieldsList(E: Pointer;
   OnlyPublished: boolean = false): TStringList;
 var
   Prop: TRttiProperty;
@@ -397,7 +397,7 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-         tempStrings:= ( GetAttributiesList( Prop.ClassInfo , true ) );
+         tempStrings:= ( GetFieldsList( Prop.ClassInfo , true ) );
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
@@ -432,7 +432,7 @@ begin
 end;
 
 
-class function TAutoMapper.GetAttributiesPrimaryKeyList(E: TEntityBase)
+class function TAutoMapper.GetFieldsPrimaryKeyList(E: TEntityBase)
   : TStringList;
 var
   Prop: TRttiProperty;

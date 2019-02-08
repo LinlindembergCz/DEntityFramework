@@ -20,7 +20,7 @@ const
   StrUnionAll = ' Union all ';
   StrUnion = ' Union ';
   StrSelect = 'Select ';
-  StrTop = 'Top ';
+  //StrTop = 'Top ';
   // StrTop      = 'First ';
   StrDistinct = 'Distinct';
   StrDesc = ' Desc';

@@ -37,6 +37,7 @@ Type
     FProviderName: string;
     FTypeConnetion: TTypeConnection;
     FClientDataSet: TClientDataSet;
+    ListField: TStringList;
     function CreateTables: boolean; // (aClass: array of TClass);
     function AlterTables: boolean;
     procedure FreeObjects;
@@ -136,7 +137,7 @@ begin
       FreeObjects;
       if FProviderName = '' then
       begin
-        Keys := TAutoMapper.GetAttributiesPrimaryKeyList(QueryAble.Entity);
+        Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
         FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
         qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
@@ -345,7 +346,7 @@ end;
 
 procedure TDataContext.Insert;
 var
-  ListField, ListValues: TStringList;
+  ListValues: TStringList;
   i: integer;
 begin
   FEntity.Validation;
@@ -353,7 +354,8 @@ begin
   begin
     try
       try
-        ListField := TAutoMapper.GetAttributiesList(FEntity);
+        if ListField = nil then
+           ListField := TAutoMapper.GetFieldsList(FEntity);
         ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
         ClientDataSet.append;
         pParserDataSet(ListField, ListValues, ClientDataSet);
@@ -365,7 +367,7 @@ begin
         end;
       end;
     finally
-      ListField.Free;
+      //ListField.Free;
       ListValues.Free;
     end;
   end
@@ -375,7 +377,7 @@ end;
 
 procedure TDataContext.Update;
 var
-  ListField, ListValues: TStringList;
+   ListValues: TStringList;
   i: integer;
 begin
   FEntity.Validation;
@@ -383,7 +385,8 @@ begin
   begin
     try
       try
-        ListField := TAutoMapper.GetAttributiesList(FEntity);
+        if ListField = nil then
+           ListField := TAutoMapper.GetFieldsList(FEntity);
         ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
         ClientDataSet.Edit;
         pParserDataSet(ListField, ListValues, ClientDataSet);
@@ -395,8 +398,8 @@ begin
         end;
       end;
     finally
-      ListField.Free;
-      ListField := nil;
+      //ListField.Free;
+      //ListField := nil;
       ListValues.Free;
       ListValues := nil;
     end;
@@ -412,13 +415,37 @@ var
 begin
   try
     try
-      ListPrimaryKey := TAutoMapper.GetAttributiesPrimaryKeyList(FEntity);
+      ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(FEntity);
       FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity);
 
       SQL := Format( 'Update %s Set %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
-                                                  fParserUpdate(TAutoMapper.GetAttributiesList(FEntity),
+                                                  fParserUpdate(TAutoMapper.GetFieldsList(FEntity),
                                                                 TAutoMapper.GetValuesFieldsList(FEntity)),
                                                   fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
+      Connection.ExecutarSQL(SQL);
+    except
+      on E: Exception do
+      begin
+        raise Exception.Create(E.message);
+      end;
+    end;
+  finally
+    ListPrimaryKey.Free;
+    FieldsPrimaryKey.Free;
+  end;
+end;
+
+procedure TDataContext.DeleteDirect;
+var
+  SQL: string;
+  ListPrimaryKey, FieldsPrimaryKey: TStringList;
+begin
+  try
+    try
+      ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(FEntity);
+      FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity);
+      SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
+                                                fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
       Connection.ExecutarSQL(SQL);
     except
       on E: Exception do
@@ -466,30 +493,6 @@ begin
   showmessage(E.message);
 end;
 
-procedure TDataContext.DeleteDirect;
-var
-  SQL: string;
-  ListPrimaryKey, FieldsPrimaryKey: TStringList;
-begin
-  try
-    try
-      ListPrimaryKey := TAutoMapper.GetAttributiesPrimaryKeyList(FEntity);
-      FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity);
-      SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
-                                                fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
-      Connection.ExecutarSQL(SQL);
-    except
-      on E: Exception do
-      begin
-        raise Exception.Create(E.message);
-      end;
-    end;
-  finally
-    ListPrimaryKey.Free;
-    FieldsPrimaryKey.Free;
-  end;
-end;
-
 function TDataContext.GetFieldList: Data.DB.TFieldList;
 begin
   result := ClientDataSet.FieldList;
@@ -500,7 +503,7 @@ function TDataContext.GetJson(QueryAble: IQueryAble): string;
   Keys: TStringList;
 begin
   try
-    Keys     := TAutoMapper.GetAttributiesPrimaryKeyList(QueryAble.Entity);
+    Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
     qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
     if not qryQuery.Active then
@@ -526,6 +529,8 @@ begin
     FEntity.Free;
   if TableList <> nil then
     TableList.Free;
+  if ListField <> nil then
+    ListField.Free;
   // if FConnection <> nil then    FConnection.Free;
 end;
 
