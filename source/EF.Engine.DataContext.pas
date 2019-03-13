@@ -228,8 +228,11 @@ function TDataContext.CriarTabela(i: integer): boolean;
 var
   Table: string;
   ListAtributes: TList;
+  ListForeignKeys: TList;
   KeyList: TStringList;
   classe: TClass;
+  index:integer;
+
 begin
   classe := Classes[i];
   Table := TAutoMapper.GetTableAttribute(classe);
@@ -242,11 +245,16 @@ begin
       FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
       if FConnection.CustomTypeDataBase is TFirebird then
       begin
+        ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
         with FConnection.CustomTypeDataBase as TFirebird do
         begin
-          FConnection.ExecutarSQL(CreateGenarator(Table, trim(KeyList.Text)));
-          FConnection.ExecutarSQL(SetGenarator(Table, trim(KeyList.Text)));
-          FConnection.ExecutarSQL(CrateTriggerGenarator(Table,trim(KeyList.Text)));
+          FConnection.ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
+          FConnection.ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
+          FConnection.ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
+          for index := 0 to ListForeignKeys.Count -1  do
+          begin
+            FConnection.ExecutarSQL( CreateForenKey( ListForeignKeys[index], Table ) );
+          end;
         end;
       end;
       result := true;

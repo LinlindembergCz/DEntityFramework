@@ -29,6 +29,7 @@ type
     class function PropIsVisible(prop: TRttiProperty): boolean; static;
     class function PropNameEqualComponentName(Prop: TRttiProperty;
       Componente: TComponent): boolean; static;
+
   public
     class function CreateObject(AQualifiedClassName: string): TObject; overload;
     class function CreateObject(ARttiType: TRttiType): TObject;overload;
@@ -36,6 +37,7 @@ type
     class function GetTableAttribute(Obj: TClass): String; overload;
     class function GetTableAttribute(ClassInfo: Pointer): String; overload;
     class function GetAttributies(E: TEntityBase;OnlyPublished:boolean = false): String; static;
+    class function GetListAtributesForeignKeys(Obj: TClass): TList; static;
     class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
 
     class function GetFieldsList(E: TEntityBase;OnlyPublished: boolean = false): TStringList;overload;
@@ -182,6 +184,43 @@ begin
           AddFieldByDefault;
         end;
 
+      end;
+    end;
+  finally
+    ctx.Free;
+    result := List;
+  end;
+end;
+
+class function TAutoMapper.GetListAtributesForeignKeys(Obj: TClass): TList;
+var
+  ctx: TRttiContext;
+  Prop: TRttiProperty;
+  TypObj: TRttiType;
+  Atributo: TCustomAttribute;
+  Atributies: PParamForeignKeys;
+  List: TList;
+  Found:Boolean;
+begin
+  try
+    List := TObjectList.Create(true);
+    ctx := TRttiContext.Create;
+    TypObj := ctx.GetType(Obj.ClassInfo);
+    for Prop in TypObj.GetProperties do
+    begin
+      Found:= false;
+      for Atributo in Prop.GetAttributes do
+      begin
+        if (Atributo is EntityForeignKey) then
+        begin
+          New(Atributies);
+          Atributies^.ForeignKey:= EntityForeignKey(Atributo).ForeignKey;
+          Atributies^.Name := EntityForeignKey(Atributo).Name;
+          Atributies^.OnDelete:=EntityForeignKey(Atributo).OnDelete;
+          Atributies^.OnUpdate:=EntityForeignKey(Atributo).OnUpdate;
+          List.Add(Atributies);
+          Found:= true;
+        end;
       end;
     end;
   finally

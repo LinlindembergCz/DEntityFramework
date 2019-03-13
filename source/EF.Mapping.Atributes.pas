@@ -23,6 +23,18 @@ type
     AutoInc: boolean;
   end;
 
+  TRule = ( rlCascade, rlSetNull, rlNoAction );
+
+  PParamForeignKeys = ^TParamForeignKeys;
+
+  TParamForeignKeys= record
+    ForeignKey: string;
+    Name: string;
+    OnDelete: TRule;
+    OnUpdate: TRule;
+  end;
+
+
   EntityTable = class(TCustomAttribute)
   private
     FName: string;
@@ -51,20 +63,19 @@ type
     property AutoInc: boolean read FAutoInc write SetAutoInc;
   end;
 
-  EntityForenKey = class(TCustomAttribute)
+  EntityForeignKey = class(TCustomAttribute)
   private
+    FForeignKey: string;
     FName: string;
-    FTipo: string;
-    FIsNull: boolean;
-    FCascade: boolean;
-    FForenKey: string;
+    FOnDelete: TRule;
+    FOnUpdate: TRule;
   public
-    constructor Create(aName: String; aTipo: string;aIsNull:boolean;aForenKey: string; aCascade: boolean =true);
+    constructor Create(aForeignKey : string; aName: String; aOnDelete: TRule; aOnUpdate: TRule );
+    property ForeignKey: string read FForeignKey;
     property Name: string read FName;
-    property Tipo: string read FTipo;
-    property IsNull: boolean read FIsNull;
-    property ForenKey: string read FForenKey;
-    property Cascade: boolean read FCascade;
+    property OnDelete: TRule read FOnDelete;
+    property OnUpdate: TRule read FOnUpdate;
+
   end;
 
   EntityRef = class(TCustomAttribute)
@@ -324,13 +335,12 @@ end;
 { EntityForenKey }
 
 //'ClienteId','integer',true,'CLIENTES.ID',True
-constructor EntityForenKey.Create(aName: String; aTipo: string;aIsNull:boolean;aForenKey: string; aCascade: boolean =true);
+constructor EntityForeignKey.Create(aForeignKey : string; aName: String; aOnDelete: TRule; aOnUpdate: TRule );
 begin
+  FForeignKey:= aForeignKey;
   FName := aName;
-  FTipo:= aTipo;
-  FCascade := aCascade;
-  FIsNull:= aIsNull;
-  FForenKey := aForenKey
+  FOnDelete := aOnDelete;
+  FOnUpdate := aOnUpdate;
 //ALTER TABLE CONTATOS ADD CONSTRAINT FK_CONTATOS_1 FOREIGN KEY (CLIENTEID) REFERENCES CLIENTES(ID) ON DELETE CASCADE
 end;
 

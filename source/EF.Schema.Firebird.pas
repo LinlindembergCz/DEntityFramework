@@ -25,11 +25,26 @@ type
     function CreateGenarator(Table,FieldAutoInc:string):string;
     function SetGenarator(Table,FieldAutoInc:string): string;
     function CrateTriggerGenarator(Table,FieldAutoInc:string): string;
+    function CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
   end;
 
 implementation
 
 { TFirebird }
+
+function TFirebird.CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
+begin
+   result:= 'ALTER TABLE '+Table +
+            ' ADD CONSTRAINT FK_'+AtributoForeignKey.ForeignKey+
+            ' FOREIGN KEY ('+AtributoForeignKey.ForeignKey+')'+
+            ' REFERENCES '+AtributoForeignKey.Name+'(ID) '+
+            ' ON DELETE '+ ifthen( AtributoForeignKey.OnDelete = rlCascade, ' CASCADE ',
+                           ifthen( AtributoForeignKey.OnDelete = rlSetNull, ' SET NULL ',
+                                                                          ' NO ACTION' ))+
+            ' ON Update '+ ifthen( AtributoForeignKey.OnUpdate = rlCascade, ' CASCADE ',
+                           ifthen( AtributoForeignKey.OnUpdate = rlSetNull, ' SET NULL ',
+                                                                          ' NO ACTION' ));
+end;
 
 function TFirebird.CreateGenarator(Table, FieldAutoInc: string): string;
 begin
