@@ -131,12 +131,12 @@ type
     property Value: boolean read FValue;
   end;
 
-  Valiator = class(TCustomAttribute)
+  Validator = class(TCustomAttribute)
   private
     FMensagem: String;
-    procedure AfterValidar(pValido: boolean);
+    procedure AfterValid(pValido: boolean);
   public
-    function Validar(pValue: TValue; pMensagem: string = ''): boolean; virtual;
+    function IsValid(pValue: TValue; pMensagem: string = ''): boolean; virtual;
     constructor Create(pMensagem: String = '');
   end;
 
@@ -144,28 +144,28 @@ type
   end;
 
   //Nao permitir valor nulo
-  NotNull = class(Valiator)
+  NotNull = class(Validator)
   public
-    function Validar(pValue: TValue; pMensagem: string = ''): boolean; override;
+    function IsValid(pValue: TValue; pMensagem: string = ''): boolean; override;
   end;
 
   //Verificar o tamanho do valor minimo informado
-  LengthMin = class(Valiator)
+  LengthMin = class(Validator)
   private
     FMin: integer;
   public
     constructor Create(pMin: integer; pMensagem: String= ''); reintroduce;
-    function Validar( pValue: TValue; pMensagem: string = ''): boolean; override;
+    function IsValid( pValue: TValue; pMensagem: string = ''): boolean; override;
   end;
 
   //Verificar se o valor está dentro do intervalo
-  Range = class(Valiator)
+  Range = class(Validator)
   private
     FMax: integer;
     FMin: integer;
   public
     constructor Create(pMin, pMax: integer; pMensagem: String= ''); reintroduce;
-    function Validar(pValue: TValue; pMensagem: string = ''): boolean; override;
+    function IsValid(pValue: TValue; pMensagem: string = ''): boolean; override;
   end;
 
   PItem = ^TItem;
@@ -253,7 +253,7 @@ begin
   FMax := pMax;
 end;
 
-constructor Valiator.Create(pMensagem: String = '');
+constructor Validator.Create(pMensagem: String = '');
 begin
   if pMensagem <> '' then
     FMensagem := pMensagem
@@ -261,27 +261,27 @@ begin
     FMensagem := 'Campo requerido!';
 end;
 
-function NotNull.Validar(pValue: TValue;pMensagem: string = ''): boolean;
+function NotNull.IsValid(pValue: TValue;pMensagem: string = ''): boolean;
 begin
   FMensagem := pMensagem;
   result := pValue.AsString <> '';
-  AfterValidar(result);
+  AfterValid(result);
 end;
 
-procedure Valiator.AfterValidar(pValido: boolean);
+procedure Validator.AfterValid(pValido: boolean);
 begin
   if (not pValido) then
     ShowMessage(FMensagem);
 end;
 
-function Valiator.Validar(pValue: TValue; pMensagem: string = ''): boolean;
+function Validator.IsValid(pValue: TValue; pMensagem: string = ''): boolean;
 begin
   FMensagem := pMensagem;
   result := true;
-  AfterValidar(result);
+  AfterValid(result);
 end;
 
-function Range.Validar(pValue: TValue;pMensagem: string = ''): boolean;
+function Range.IsValid(pValue: TValue;pMensagem: string = ''): boolean;
 begin
   FMensagem := pMensagem;
   result := true;
@@ -289,7 +289,7 @@ begin
     result := false;
   if (pValue.AsInteger > FMax) then
     result := false;
-  AfterValidar(result);
+  AfterValid(result);
 end;
 
 { EntityMaxLenth }
@@ -316,14 +316,14 @@ end;
 
 { EntityValueLengthMin }
 
-function LengthMin.Validar(pValue: TValue;
+function LengthMin.IsValid(pValue: TValue;
   pMensagem: string): boolean;
 begin
   FMensagem := pMensagem;
   result := true;
   if (pValue.AsString.Length < FMin) then
     result := false;
-  AfterValidar(result);
+  AfterValid(result);
 end;
 
 constructor LengthMin.Create(pMin: integer; pMensagem: String);

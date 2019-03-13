@@ -106,7 +106,7 @@ begin
       if atrbRtti is NotNull then
       begin
         mensagem := 'Campo "' + PropRtti.Name + '" Requerido!';
-        if not(atrbRtti as Valiator).Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
+        if not(atrbRtti as Validator).IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
         then
         begin
           abort;
@@ -115,8 +115,8 @@ begin
       else if atrbRtti is Range then
       begin
         mensagem := 'Valor "' + PropRtti.Name + '" inválido para o intervalor!';
-        if not(atrbRtti as Valiator)
-            .Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name)
+        if not(atrbRtti as Validator)
+            .IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name)
             .ToInteger, mensagem) then
         begin
           abort;
@@ -126,8 +126,8 @@ begin
       begin
         mensagem := 'Valor "' + PropRtti.Name +
             '" é inválido para o mínimo requerido !';
-        if not(atrbRtti as Valiator)
-            .Validar(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
+        if not(atrbRtti as Validator)
+            .IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
         then
         begin
           abort;
