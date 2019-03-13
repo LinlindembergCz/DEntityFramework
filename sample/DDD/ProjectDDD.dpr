@@ -52,13 +52,27 @@ uses
   EF.Schema.Abstract in '..\..\source\EF.Schema.Abstract.pas',
   EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
   EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas',
-  EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas';
+  EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas',
+  ClassContato in 'Domain\Entities\ClassContato.pas';
 
 {$R *.res}
+
+var
+  c:TDataContext;
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+
+  try
+    c:= TDataContext.Create;
+    c.Connection:= TFactoryConnection.GetConnection;
+    c.UpdateDataBase([TCliente, TContato]);
+  except
+    application.Terminate;
+    exit;
+  end;
+
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   Application.Run;
 end.

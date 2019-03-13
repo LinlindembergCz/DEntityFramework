@@ -42,6 +42,7 @@ Type
     function AlterTables: boolean;
     procedure FreeObjects;
     function CriarTabela(i: integer): boolean;
+    function IsFireBird: boolean;
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
@@ -218,6 +219,11 @@ begin
   end;
 end;
 
+function TDataContext.IsFireBird:boolean;
+begin
+  result:= (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB');
+end;
+
 function TDataContext.CriarTabela(i: integer): boolean;
 var
   Table: string;
@@ -234,9 +240,9 @@ begin
       ListAtributes := TAutoMapper.GetListAtributes(classe);
       KeyList := TStringList.Create(true);
       FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
-      if (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB') then
+      if FConnection.CustomTypeDataBase is TFirebird then
       begin
-        with TFirebird(FConnection.CustomTypeDataBase) do
+        with FConnection.CustomTypeDataBase as TFirebird do
         begin
           FConnection.ExecutarSQL(CreateGenarator(Table, trim(KeyList.Text)));
           FConnection.ExecutarSQL(SetGenarator(Table, trim(KeyList.Text)));

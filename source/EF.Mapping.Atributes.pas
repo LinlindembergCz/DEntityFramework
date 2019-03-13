@@ -51,6 +51,22 @@ type
     property AutoInc: boolean read FAutoInc write SetAutoInc;
   end;
 
+  EntityForenKey = class(TCustomAttribute)
+  private
+    FName: string;
+    FTipo: string;
+    FIsNull: boolean;
+    FCascade: boolean;
+    FForenKey: string;
+  public
+    constructor Create(aName: String; aTipo: string;aIsNull:boolean;aForenKey: string; aCascade: boolean =true);
+    property Name: string read FName;
+    property Tipo: string read FTipo;
+    property IsNull: boolean read FIsNull;
+    property ForenKey: string read FForenKey;
+    property Cascade: boolean read FCascade;
+  end;
+
   EntityRef = class(TCustomAttribute)
   private
     FName: string;
@@ -303,6 +319,19 @@ constructor LengthMin.Create(pMin: integer; pMensagem: String);
 begin
   inherited Create(pMensagem);
   FMin := pMin;
+end;
+
+{ EntityForenKey }
+
+//'ClienteId','integer',true,'CLIENTES.ID',True
+constructor EntityForenKey.Create(aName: String; aTipo: string;aIsNull:boolean;aForenKey: string; aCascade: boolean =true);
+begin
+  FName := aName;
+  FTipo:= aTipo;
+  FCascade := aCascade;
+  FIsNull:= aIsNull;
+  FForenKey := aForenKey
+//ALTER TABLE CONTATOS ADD CONSTRAINT FK_CONTATOS_1 FOREIGN KEY (CLIENTEID) REFERENCES CLIENTES(ID) ON DELETE CASCADE
 end;
 
 end.
