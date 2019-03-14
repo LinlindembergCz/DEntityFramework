@@ -23,7 +23,7 @@ type
     AutoInc: boolean;
   end;
 
-  TRule = ( rlCascade, rlSetNull, rlNoAction );
+  TRule = ( rlCascade, rlSetNull, rlRestrict, rlNoAction );
 
   PParamForeignKeys = ^TParamForeignKeys;
 

@@ -34,16 +34,18 @@ implementation
 
 function TFirebird.CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
 begin
-   result:= 'ALTER TABLE '+Table +
-            ' ADD CONSTRAINT FK_'+AtributoForeignKey.ForeignKey+
-            ' FOREIGN KEY ('+AtributoForeignKey.ForeignKey+')'+
-            ' REFERENCES '+AtributoForeignKey.Name+'(ID) '+
-            ' ON DELETE '+ ifthen( AtributoForeignKey.OnDelete = rlCascade, ' CASCADE ',
-                           ifthen( AtributoForeignKey.OnDelete = rlSetNull, ' SET NULL ',
-                                                                          ' NO ACTION' ))+
-            ' ON Update '+ ifthen( AtributoForeignKey.OnUpdate = rlCascade, ' CASCADE ',
-                           ifthen( AtributoForeignKey.OnUpdate = rlSetNull, ' SET NULL ',
-                                                                          ' NO ACTION' ));
+result:= 'ALTER TABLE '+Table +
+         ' ADD CONSTRAINT FK_'+AtributoForeignKey.ForeignKey+
+         ' FOREIGN KEY ('+AtributoForeignKey.ForeignKey+')'+
+         ' REFERENCES '+AtributoForeignKey.Name+' (ID) '+
+         ' ON DELETE '+ ifthen( AtributoForeignKey.OnDelete = rlCascade, ' CASCADE ',
+                        ifthen( AtributoForeignKey.OnDelete = rlSetNull, ' SET NULL ',
+                        ifthen( AtributoForeignKey.OnDelete = rlRestrict,' RESTRICT ',
+                                                                         ' NO ACTION ' )))+
+         ' ON Update '+ ifthen( AtributoForeignKey.OnUpdate = rlCascade, ' CASCADE ',
+                        ifthen( AtributoForeignKey.OnUpdate = rlSetNull, ' SET NULL ',
+                        ifthen( AtributoForeignKey.OnUpdate = rlRestrict,' RESTRICT ',
+                                                                         ' NO ACTION ' )));
 end;
 
 function TFirebird.CreateGenarator(Table, FieldAutoInc: string): string;

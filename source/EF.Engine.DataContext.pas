@@ -243,20 +243,24 @@ begin
       ListAtributes := TAutoMapper.GetListAtributes(classe);
       KeyList := TStringList.Create(true);
       FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
+
+      ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
+
       if FConnection.CustomTypeDataBase is TFirebird then
       begin
-        ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
         with FConnection.CustomTypeDataBase as TFirebird do
         begin
           FConnection.ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
           FConnection.ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
           FConnection.ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
-          for index := 0 to ListForeignKeys.Count -1  do
-          begin
-            FConnection.ExecutarSQL( CreateForenKey( ListForeignKeys[index], Table ) );
-          end;
         end;
       end;
+
+      for index := 0 to ListForeignKeys.Count -1  do
+      begin
+        FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateForenKey( ListForeignKeys[index], Table ) );
+      end;
+
       result := true;
     finally
       KeyList.Free;
