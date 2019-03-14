@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base,
-  EF.Core.Types, EF.Mapping.Atributes, ClassCliente;
+  EF.Core.Types, EF.Mapping.Atributes;
 
 
 type
@@ -14,7 +14,6 @@ type
     FNome: TString;
     FTelefone: TString;
     FClienteId: TInteger;
-    FCliente : TCliente;
   public
     [EntityField('Nome','varchar(50)',false)]
     [LengthMin(10)][Edit]

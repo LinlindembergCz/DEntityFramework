@@ -3,7 +3,8 @@ unit ClassCliente;
 interface
 
 uses
-  System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types, EF.Mapping.Atributes;
+  System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
+  EF.Mapping.Atributes, ClassContato, System.Generics.Collections;
 
 type
   [EntityTable('Clientes')]
@@ -24,6 +25,7 @@ type
     FObservacao: TString;
     FEmail:TEmail;
     FCalcRenda: TFloat;
+    FContados: TList<TContato>;
   public
     constructor Create;override;
     procedure Validation; override;
@@ -58,11 +60,13 @@ type
     property Observacao:TString read FObservacao write FObservacao;
     [Edit]
     property Email:TEmail read FEmail write FEmail;
-    //[EntityExpression('CalcRenda','Renda * 2')]
-    //property CalcRenda:TFloat read FCalcRenda;
+    [NotMapper]
+    property Contados: TList<TContato> read FContados write FContados;
+
   end;
 
 implementation
+
 
 constructor TCliente.Create;
 begin

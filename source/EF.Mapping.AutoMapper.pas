@@ -148,13 +148,26 @@ begin
     List := TObjectList.Create(true);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Obj.ClassInfo);
+
     for Prop in TypObj.GetProperties do
     begin
       if PropIsInstance(Prop) then
       begin
-         tempList := GetListAtributes( Prop.Propertytype.AsInstance.MetaclassType);
-         if tempList.Count > 0 then
-            List.Add( tempList[0] );
+         Found:= false;
+         for Atributo in Prop.GetAttributes do
+         begin
+            if (Atributo is NotMapper) then
+            begin
+               Found:= true;
+               break;
+            end
+         end;
+         if not Found then
+         begin
+           tempList := GetListAtributes( Prop.Propertytype.AsInstance.MetaclassType);
+           if tempList.Count > 0 then
+              List.Add( tempList[0] );
+         end;
          //tempList.Clear;
       end
       else
@@ -178,7 +191,6 @@ begin
             Found:= true;
           end;
         end;
-
         if not Found then
         begin
           AddFieldByDefault;

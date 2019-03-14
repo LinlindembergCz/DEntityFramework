@@ -34,6 +34,9 @@ type
     OnUpdate: TRule;
   end;
 
+  NotMapper = class(TCustomAttribute)
+  end;
+
 
   EntityTable = class(TCustomAttribute)
   private
@@ -332,7 +335,7 @@ begin
   FMin := pMin;
 end;
 
-{ EntityForenKey }
+{ EntityForeignKey }
 
 //'ClienteId','integer',true,'CLIENTES.ID',True
 constructor EntityForeignKey.Create(aForeignKey : string; aName: String; aOnDelete: TRule; aOnUpdate: TRule );
