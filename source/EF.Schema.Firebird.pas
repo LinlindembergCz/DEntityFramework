@@ -25,14 +25,14 @@ type
     function CreateGenarator(Table,FieldAutoInc:string):string;
     function SetGenarator(Table,FieldAutoInc:string): string;
     function CrateTriggerGenarator(Table,FieldAutoInc:string): string;
-    function CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
+    function CreateForeignKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;override;
   end;
 
 implementation
 
 { TFirebird }
 
-function TFirebird.CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
+function TFirebird.CreateForeignKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
 begin
 result:= 'ALTER TABLE '+Table +
          ' ADD CONSTRAINT FK_'+AtributoForeignKey.ForeignKey+

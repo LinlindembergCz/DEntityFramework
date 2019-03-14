@@ -17,7 +17,7 @@ type
      function AlterColumn(Table, Field, Tipo: string; IsNull: boolean): string ;virtual; abstract;
      function CreateTable( List: TList; Table: string; Key:TStringList = nil ): string ;virtual; abstract;
      function AlterTable(Table, Field, Tipo: string; IsNull: boolean;ColumnExist:boolean): string ;virtual; abstract;
-     function CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string): string;virtual; abstract;
+     function CreateForeignKey(AtributoForeignKey: PParamForeignKeys; Table: string): string;virtual; abstract;
   end;
 
 implementation

@@ -24,8 +24,7 @@ type
      function CreateTable( List: TList; Table: string;  Key:TStringList = nil): string ;override;
      function AlterTable( Table, Field, Tipo: string; IsNull: boolean;ColumnExist: boolean): string ;override;
      function GetPrimaryKey( Table, Fields: string):string;
-     function CreateForenKey(AtributoForeignKey: PParamForeignKeys;
-      Table: string): string;
+     function CreateForeignKey(AtributoForeignKey: PParamForeignKeys;Table: string): string;override;
   end;
 
 implementation
@@ -110,7 +109,7 @@ begin
             '] ASC) ON [PRIMARY])';
 end;
 
-function TMSSQL.CreateForenKey(AtributoForeignKey: PParamForeignKeys;
+function TMSSQL.CreateForeignKey(AtributoForeignKey: PParamForeignKeys;
   Table: string): string;
 begin
   result:= 'ALTER TABLE '+Table +

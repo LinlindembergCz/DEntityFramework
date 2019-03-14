@@ -24,7 +24,7 @@ type
      function AlterTable( Table, Field, Tipo: string; IsNull: boolean;ColumnExist: boolean): string ;override;
 
      function GetPrimaryKey( Table, Fields: string):string;
-     function CreateForenKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;
+     function CreateForeignKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;override;
   end;
 
 implementation
@@ -47,7 +47,7 @@ begin
             Tipo + ' ' + ifthen(IsNull, '', 'NOT NULL')
 end;
 
-function TMySQL.CreateForenKey(AtributoForeignKey: PParamForeignKeys;
+function TMySQL.CreateForeignKey(AtributoForeignKey: PParamForeignKeys;
   Table: string): string;
 begin
 result:= 'ALTER TABLE '+Table +

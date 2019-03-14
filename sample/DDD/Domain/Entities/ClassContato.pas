@@ -23,7 +23,7 @@ type
     [LengthMin(10)][Edit]
     property Telefone: TString read FTelefone write FTelefone;
     [EntityField('ClienteId','Integer',true)]
-    [EntityForenKey('ClienteId','Clientes', rlCascade, rlCascade )]
+    [EntityForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
   end;
 

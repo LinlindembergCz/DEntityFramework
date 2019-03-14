@@ -258,7 +258,7 @@ begin
 
       for index := 0 to ListForeignKeys.Count -1  do
       begin
-        FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateForenKey( ListForeignKeys[index], Table ) );
+        FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
       end;
 
       result := true;
