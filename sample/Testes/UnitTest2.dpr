@@ -21,7 +21,8 @@ uses
   CPF in '..\DDD\Domain\ValuesObjects\CPF.pas',
   Email in '..\DDD\Domain\ValuesObjects\Email.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
-  System.uJson in '..\..\source\System.uJson.pas';
+  System.uJson in '..\..\source\System.uJson.pas',
+  ClassContato in '..\DDD\Domain\Entities\ClassContato.pas';
 
 {$R *.RES}
 
