@@ -60,8 +60,8 @@ type
     property Observacao:TString read FObservacao write FObservacao;
     [Edit]
     property Email:TEmail read FEmail write FEmail;
-   // [NotMapper]
-   // property Contados: TList<TContato> read FContados write FContados;
+    [NotMapper]
+    property Contados: TList<TContato> read FContados write FContados;
 
   end;
 

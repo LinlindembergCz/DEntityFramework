@@ -322,7 +322,17 @@ begin
        begin
          if (PropIsInstance(Prop)) then
          begin
-            Attributies := Attributies + ', ' + GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );         
+           FoundAttribute:= false;
+           for Atributo in Prop.GetAttributes do
+           begin
+              if (Atributo is NotMapper) then
+              begin
+                 FoundAttribute:= true;
+                 break;
+              end
+           end;
+           if not FoundAttribute then
+              Attributies := Attributies + ', ' + GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );
          end
          else
          begin
@@ -397,10 +407,22 @@ begin
       if  PropIsInstance(prop)  then
       begin
          //tempStrings:= ( GetFieldsList( Prop.ClassInfo , true ) );
-         tempStrings:= ( TAutoMapper.GetFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
-         if tempStrings.Count > 0 then
-            L.AddStrings( tempStrings );
-         tempStrings.free;
+         FoundAttribute:= false;
+         for Atributo in Prop.GetAttributes do
+         begin
+            if (Atributo is NotMapper) then
+            begin
+               FoundAttribute:= true;
+               break;
+            end
+         end;
+         if not FoundAttribute then
+         begin
+           tempStrings:= ( TAutoMapper.GetFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase , true ) );
+           if tempStrings.Count > 0 then
+              L.AddStrings( tempStrings );
+           tempStrings.free;
+         end;
       end
       else
       if (PropIsVisible(Prop) and (OnlyPublished)) or
@@ -448,11 +470,23 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-         tempStrings:= ( GetFieldsList( Prop.ClassInfo , true ) );
-         if tempStrings.Count > 0 then
-            L.AddStrings( tempStrings );
-         tempStrings.Clear;
-         tempStrings.Free;
+         FoundAttribute:= false;
+         for Atributo in Prop.GetAttributes do
+         begin
+            if (Atributo is NotMapper) then
+            begin
+               FoundAttribute:= true;
+               break;
+            end
+         end;
+         if not FoundAttribute then
+         begin
+           tempStrings:= ( GetFieldsList( Prop.ClassInfo , true ) );
+           if tempStrings.Count > 0 then
+              L.AddStrings( tempStrings );
+           tempStrings.Clear;
+           tempStrings.Free;
+         end;
       end
       else 
       if (PropIsVisible(Prop) and (OnlyPublished)) or
@@ -674,6 +708,7 @@ var
   L: TStringList;
   typ: TRttiType;
   tempStrings:TStrings;
+  FoundAttribute:boolean;
 begin
   try
     L := TStringList.Create(true);
@@ -682,11 +717,23 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
+          FoundAttribute:= false;
+         for Atrib in Prop.GetAttributes do
+         begin
+            if (Atrib is NotMapper) then
+            begin
+               FoundAttribute:= true;
+               break;
+            end
+         end;
+         if not FoundAttribute then
+         begin
          tempStrings:= GetValuesFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase );
          if tempStrings.Count > 0 then
             L.AddStrings( tempStrings );
          tempStrings.Clear;
          tempStrings.Free;
+         end;
       end
       else
       begin
@@ -1017,7 +1064,17 @@ begin
       begin
         if PropIsInstance(Prop) then
         begin
-           DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
+           breaked:= false;
+           for Atrib in Prop.GetAttributes do
+           begin
+              if (Atrib is NotMapper) then
+              begin
+                 breaked:= true;
+                 break;
+              end
+           end;
+           if not breaked then
+              DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
         end
         else
         begin
@@ -1065,6 +1122,8 @@ var
   Componente: TComponent;
   ctx: TRttiContext;
   Value: string;
+  breaked:boolean;
+  Atributo: TCustomAttribute;
 
   procedure setValueDBLookUpCombobox;
   begin
@@ -1117,6 +1176,7 @@ var
     ValueItem: string;
     IndexOf: integer;
     lsText, lsValue: string;
+
   begin
     IndexOf := -1;
     for Atrib in Prop.GetAttributes do
@@ -1218,7 +1278,19 @@ begin
           if PropNameEqualComponentName(Prop,Componente ) then
           begin
             if PropIsInstance(prop)  then
-               Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
+            begin
+               breaked:= false;
+               for Atributo in Prop.GetAttributes do
+               begin
+                  if (Atributo is NotMapper) then
+                  begin
+                     breaked:= true;
+                     break;
+                  end
+               end;
+               if not breaked then
+                  Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
+            end
             else
             if SetDefaultValue then
               Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
