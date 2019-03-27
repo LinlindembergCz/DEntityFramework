@@ -656,16 +656,19 @@ var
 begin
   for Prop in ctx.GetType(E.ClassType).GetProperties do
   begin
-    for Field in ctx.GetType(E.ClassType).GetFields do
+    if not PropIsInstance(Prop) then
     begin
-      if uppercase(Field.Name) = uppercase('F' + Prop.Name) then
+      for Field in ctx.GetType(E.ClassType).GetFields do
       begin
-        Value := GetValueField(E, Field);
-        if values = '' then
-          values := Value
-        else
-          values := values + ',' + Value;
-        break;
+        if uppercase(Field.Name) = uppercase('F' + Prop.Name) then
+        begin
+          Value := GetValueField(E, Field);
+          if values = '' then
+            values := Value
+          else
+            values := values + ',' + Value;
+          break;
+        end;
       end;
     end;
   end;
@@ -681,21 +684,25 @@ var
   values, Value: string;
 begin
   for Prop in ctx.GetType(E.ClassType).GetProperties do
-    for Field in ctx.GetType(E.ClassType).GetFields do
+  begin
+    if not PropIsInstance(Prop) then
     begin
-      if (uppercase(Field.Name) = uppercase('F' + Propert)) and
-        (uppercase(Propert) = uppercase(Prop.Name)) then
+      for Field in ctx.GetType(E.ClassType).GetFields do
       begin
-        Value := GetValueField(E, Field);
-
-        if values = '' then
-          values := Value
-        else
-          values := values + ',' + Value;
-        break;
+        if (uppercase(Field.Name) = uppercase('F' + Propert)) and
+            (uppercase(Propert) = uppercase(Prop.Name)) then
+        begin
+          Value := GetValueField(E, Field);
+          if values = '' then
+             values := Value
+          else
+             values := values + ',' + Value;
+          break;
+        end;
       end;
     end;
-    result := fStringReplace(values, '''', '');
+  end;
+  result := fStringReplace(values, '''', '');
 end;
 
 class function TAutoMapper.GetValuesFieldsList(E: TEntityBase): TStringList;

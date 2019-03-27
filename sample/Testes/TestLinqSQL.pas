@@ -566,7 +566,7 @@ begin
    Cli.DataNascimento := strtodate( '01/01/2015' );
    Cli.Ativo := 'S';
 
-   checkEquals(''''','''',''02316937454'',1000,0,'''',01/01/2015,''S'','''','''','''','''',,1', TAutoMapper.GetValuesFields(Cli) );
+   checkEquals(''''','''',''02316937454'',1000,0,'''',01/01/2015,''S'','''','''','''','''',1', TAutoMapper.GetValuesFields(Cli) );
 end;
 
 procedure TTest.Testar_ObjetoFromJson;
