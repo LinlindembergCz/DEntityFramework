@@ -8,17 +8,17 @@ uses
 
 type
    {$M+}
-   TRepositoryBase = Class(TInterfacedPersistent, IRepositoryBase)
+   TRepositoryBase<T:TEntitybase> = Class(TInterfacedPersistent, IRepositoryBase<T>)
    private
      FRefCount: integer;
    protected
-     _RepositoryBase: IRepository<TEntityBase>;
+     _RepositoryBase: IRepository<T>;
    public
      Constructor Create(dbContext:Context.TContext);virtual;
 
      procedure RefreshDataSet; virtual;
      function  LoadDataSet(iId:Integer; Fields: string = ''): TDataSet;virtual;
-     function  Load(iId: Integer = 0): TEntityBase;virtual;
+     function  Load(iId: Integer = 0): T;virtual;
      procedure Delete;virtual;
      procedure AddOrUpdate( State: TEntityState);virtual;
      procedure Commit;virtual;
@@ -34,53 +34,53 @@ implementation
 
 uses Winapi.Windows;
 
-procedure TRepositoryBase.AddOrUpdate(State: TEntityState);
+procedure TRepositoryBase<T>.AddOrUpdate(State: TEntityState);
 begin
  _RepositoryBase.AddOrUpdate(State);
 end;
 
-procedure TRepositoryBase.Commit;
+procedure TRepositoryBase<T>.Commit;
 begin
  _RepositoryBase.Commit;
 end;
 
-procedure TRepositoryBase.Delete;
+procedure TRepositoryBase<T>.Delete;
 begin
   _RepositoryBase.Delete;
 end;
 
-function TRepositoryBase.Context: Context.TContext;
+function TRepositoryBase<T>.Context: Context.TContext;
 begin
   result:= _RepositoryBase.Context;
 end;
 
-constructor TRepositoryBase.Create(dbContext: Context.TContext);
+constructor TRepositoryBase<T>.Create(dbContext: Context.TContext);
 begin
    inherited Create;
 end;
 
-function TRepositoryBase.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
+function TRepositoryBase<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
 begin
   result := _RepositoryBase.LoadDataSet(iId, Fields)
 end;
 
-function TRepositoryBase.Load(iId: Integer): TEntityBase;
+function TRepositoryBase<T>.Load(iId: Integer): T;
 begin
  result := _RepositoryBase.Load(iId)
 end;
 
-procedure TRepositoryBase.RefreshDataSet;
+procedure TRepositoryBase<T>.RefreshDataSet;
 begin
  _RepositoryBase.RefreshDataSet;
 end;
 
-function TRepositoryBase._AddRef: Integer;
+function TRepositoryBase<T>._AddRef: Integer;
 begin
   Result := inherited _AddRef;
   InterlockedIncrement(FRefCount);
 end;
 
-function TRepositoryBase._Release: Integer;
+function TRepositoryBase<T>._Release: Integer;
 begin
   Result := inherited _Release;
   InterlockedDecrement(FRefCount);

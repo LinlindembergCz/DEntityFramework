@@ -23,7 +23,7 @@ class function TFactoryEntity.GetEntity(E: string ):TEntityBase;
 var
   Instance:TObject;
 begin
-    result := TEntityBase( TAutoMapper.GetInstance( 'Class'+E+'.T'+E )).Create;
+    result := TEntityBase( TAutoMapper.GetInstance2( 'Class'+E+'.T'+E )).Create;
 end;
 
 end.

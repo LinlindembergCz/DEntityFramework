@@ -8,7 +8,7 @@ uses
    System.Generics.Collections,
    EF.Mapping.Atributes,
    EF.Mapping.Base,
-   EF.Core.Types;
+   EF.Core.Types, ViewBase;
 
 type
   TAutoMapper = class
@@ -67,7 +67,8 @@ type
       Valor: variant); overload;static;
     class procedure SetFieldValue(Entity: TEntityBase; Campo: TRttiProperty;
      Valor: variant);overload;static;
-    class function GetInstance(const Str_Class: TValue): TObject; static;
+    class function GetInstance<T:TEntityBase>(const Str_Class: TValue): T; static;
+    class function GetInstance2(const Str_Class: TValue): TObject;
     class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
   end;
 
@@ -312,6 +313,7 @@ var
   ctx, ctx2: TRttiContext;
   Atributo: TCustomAttribute;
   FoundAttribute:boolean;
+  FieldName: string;
 begin
   try
     if E <> nil then
@@ -332,7 +334,11 @@ begin
               end
            end;
            if not FoundAttribute then
-              Attributies := Attributies + ', ' + GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );
+           begin
+              FieldName := GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );
+              if FieldName <> '' then
+                 Attributies := Attributies + ', ' + FieldName;
+           end;
          end
          else
          begin
@@ -366,10 +372,12 @@ begin
            end;
            ctx2.Free;
            if not FoundAttribute then
+           begin
              if Attributies = '' then
                 Attributies := Prop.Name
              else
                 Attributies := Attributies + ', ' +Prop.Name;
+           end;
          end;
        end;
     end;
@@ -694,15 +702,15 @@ begin
         begin
           Value := GetValueField(E, Field);
           if values = '' then
-             values := Value
+            values := Value
           else
-             values := values + ',' + Value;
+            values := values + ',' + Value;
           break;
         end;
       end;
     end;
   end;
-  result := fStringReplace(values, '''', '');
+  result := fStringReplace( values, '''', '' );
 end;
 
 class function TAutoMapper.GetValuesFieldsList(E: TEntityBase): TStringList;
@@ -724,7 +732,7 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-          FoundAttribute:= false;
+         FoundAttribute:= false;
          for Atrib in Prop.GetAttributes do
          begin
             if (Atrib is NotMapper) then
@@ -735,11 +743,11 @@ begin
          end;
          if not FoundAttribute then
          begin
-         tempStrings:= GetValuesFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase );
-         if tempStrings.Count > 0 then
-            L.AddStrings( tempStrings );
-         tempStrings.Clear;
-         tempStrings.Free;
+           tempStrings:= GetValuesFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase );
+           if tempStrings.Count > 0 then
+              L.AddStrings( tempStrings );
+           tempStrings.Clear;
+           tempStrings.Free;
          end;
       end
       else
@@ -1468,7 +1476,40 @@ begin
   end;
 end;
 
-class function TAutoMapper.GetInstance(const Str_Class: TValue): TObject;
+class function TAutoMapper.GetInstance<T>(const Str_Class: TValue): T;
+var
+  C: TRttiContext;
+  instancia: TRttiInstanceType;
+  p: TRttiType;
+  Erro: String;
+begin
+  try
+    case Str_Class.Kind of
+      tkString, tkLString, tkWString, tkUString:
+      begin
+          Erro := Str_Class.AsString + ' Classe Não encontrada';
+          instancia := (C.FindType(Str_Class.AsString) as TRttiInstanceType);
+          result := T(instancia.MetaclassType.Create);
+      end;
+      tkClassRef:
+      begin
+          Erro := 'O parâmetro passado deve ser do tipo Tclass' + sLineBreak;
+          p := C.GetType(Str_Class.AsClass);
+          instancia := (C.FindType(p.QualifiedName) as TRttiInstanceType);
+          result := T(instancia.MetaclassType.Create);
+      end;
+      else
+      begin
+          Erro := 'O parâmetro passado não é válidado para a função' + sLineBreak;
+          abort;
+      end;
+    end;
+  except
+    raise Exception.Create(Erro);
+  end;
+end;
+
+class function TAutoMapper.GetInstance2(const Str_Class: TValue): TObject;
 var
   C: TRttiContext;
   instancia: TRttiInstanceType;
@@ -1488,7 +1529,7 @@ begin
           Erro := 'O parâmetro passado deve ser do tipo Tclass' + sLineBreak;
           p := C.GetType(Str_Class.AsClass);
           instancia := (C.FindType(p.QualifiedName) as TRttiInstanceType);
-          result := instancia.MetaclassType.Create;
+          result := (instancia.MetaclassType.Create);
       end;
       else
       begin

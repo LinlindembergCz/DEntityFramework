@@ -3,12 +3,15 @@ unit ServiceCliente;
 interface
 
 uses
-System.Classes, ServiceBase, InterfaceServiceCliente, FactoryEntity, DB;
+System.Classes, ServiceBase, InterfaceServiceCliente, FactoryEntity, DB,ClassCliente;
 
 type
-  TServiceCliente=class( TServiceBase , IServiceCliente)
+  TServiceCliente<T:TCliente> =class( TServiceBase<T> , IServiceCliente<T>)
   public
      function LoadDataSetPorNome( Value: string ): TDataSet;
+  end;
+
+  TServiceCliente =  class sealed (TServiceCliente<TCliente>)
   end;
 
 implementation
@@ -19,9 +22,9 @@ uses RepositoryCliente;
 
 { TServiceCliente }
 
-function TServiceCliente.LoadDataSetPorNome(Value: string): TDataSet;
+function TServiceCliente<T>.LoadDataSetPorNome(Value: string): TDataSet;
 begin
-  result := (Repository as TRepositoryCliente ).LoadDataSetPorNome( Value  );
+  result := (Repository as TRepositoryCliente<T> ).LoadDataSetPorNome( Value  );
 end;
 
 initialization RegisterClass(TServiceCliente);

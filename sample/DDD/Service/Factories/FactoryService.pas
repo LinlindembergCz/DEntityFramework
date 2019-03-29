@@ -3,30 +3,30 @@ unit FactoryService;
 interface
 
 uses
-    FactoryEntity, InterfaceService, VCL.Dialogs, Sysutils;
+    FactoryEntity, InterfaceService, VCL.Dialogs, Sysutils, EF.Mapping.Base;
 
 type
    TFactoryService = class
   private
    public
-     class function GetService( E: string ):IServiceBase;
+     class function GetService( E: string ):IServiceBase<TEntitybase>;
    end;
 
 implementation
 
-uses  FactoryRepository, InterfaceRepository, ServiceBase, EF.Mapping.AutoMapper;//ServiceEntity;
+uses  FactoryRepository, InterfaceRepository, ServiceBase, EF.Mapping.AutoMapper, ClassCliente;//ServiceEntity;
 
 { TFactoryService }
 
-class function TFactoryService.GetService(E: string): IServiceBase;
+class function TFactoryService.GetService(E: string): IServiceBase<TEntitybase>;
 var
-  Service     : IServiceBase;
-  Instance      : TObject;
+  Service     : IServiceBase<TEntitybase>;
+  Instance    : TEntitybase;
 begin
-  Instance := TAutoMapper.GetInstance(  'Service'+E+'.TService'+E );
+  Instance := TAutoMapper.GetInstance<TCliente>( 'Service'+E+'.TService'+E);
   if Instance <> nil then
   begin
-    Service :=  TServiceBase( Instance ).create( TFactoryRepository.GetRepository(E) );
+    Service :=  TServiceBase<TEntitybase>( Instance ).create( TFactoryRepository.GetRepository(E) );
     result:= Service;
   end;
 end;

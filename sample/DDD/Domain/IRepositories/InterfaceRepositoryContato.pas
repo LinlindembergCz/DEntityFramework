@@ -6,8 +6,8 @@ uses
 InterfaceRepository, classContato, System.Generics.Collections;
 
 type
-  IRepositoryContato = interface(IRepositoryBase)
-    ['{0CA799B5-84C6-49D5-8615-ED1278D3043A}']
+  IRepositoryContato<T:TContato> = interface(IRepositoryBase<T>)
+    ['{B554BA67-0B56-4860-AFC6-344EB02F8CD5}']
     function GetEntity: TContato;
     function LoadContatos(ClienteId: Integer): TList<TContato>;
   end;

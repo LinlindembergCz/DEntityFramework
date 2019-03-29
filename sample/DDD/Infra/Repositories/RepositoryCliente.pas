@@ -7,36 +7,33 @@ DB, Classes, Repository, classCliente, RepositoryBase, InterfaceRepositoryClient
 InterfaceRepository,  Context, EF.Mapping.Base,EF.Core.Types, EF.Engine.DataContext;
 
 type
-  TRepositoryCliente = class(TRepositoryBase ,IRepositoryCliente)
+  TRepositoryCliente<T:TCliente> = class(TRepositoryBase<T> ,IRepositoryCliente<T>)
   private
-    _RepositoryCliente:IRepository<TCliente>;
+    _RepositoryCliente:IRepository<T>;
   public
     Constructor Create(dbContext:TContext);override;
-    function GetEntity: TCliente;
     function LoadDataSetPorNome(value: string):TDataSet;
   end;
+
+   TRepositoryCliente = class sealed (TRepositoryCliente<TCliente>)
+   end;
 
 implementation
 
 { TRepositoryCliente }
 
-constructor TRepositoryCliente.Create(dbContext:TContext);
+constructor TRepositoryCliente<T>.Create(dbContext:TContext);
 begin
-  _RepositoryCliente := TRepository<TCliente>.create(dbContext);
-  _RepositoryBase    := _RepositoryCliente As IRepository<TEntityBase>;
+  _RepositoryCliente := TRepository<T>.create(dbContext);
+  _RepositoryBase    := _RepositoryCliente As IRepository<T>;
   inherited;
 end;
 
-function TRepositoryCliente.GetEntity: TCliente;
-begin
-  result:= _RepositoryCliente.Entity;
-end;
-
-function TRepositoryCliente.LoadDataSetPorNome(value: string): TDataSet;
+function TRepositoryCliente<T>.LoadDataSetPorNome(value: string): TDataSet;
 var
   E:TCliente;
 begin
-  E := GetEntity;
+  E := _RepositoryCliente.Entity;
   result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 end;
 

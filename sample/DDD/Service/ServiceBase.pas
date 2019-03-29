@@ -8,21 +8,21 @@ Winapi.Windows;
 
 type
   {$M+}
-  TServiceBase = class(TInterfacedPersistent, IServiceBase)
+  TServiceBase<T:TEntityBase> = class(TInterfacedPersistent, IServiceBase<T>)
   private
     FRefCount: Integer;
   protected
-    Repository: IRepositoryBase;
+    Repository: IRepositoryBase<T>;
   public
-    constructor Create( pRepository: IRepositoryBase);virtual;
+    constructor Create( pRepository: IRepositoryBase<T>);virtual;
 
     procedure RefresData;virtual;
     function  Load(iId:Integer; Fields: string = ''): TDataSet;virtual;
-    function  LoadEntity(iId: Integer = 0): TEntityBase;virtual;
+    function  LoadEntity(iId: Integer = 0): T;virtual;
     procedure Delete;virtual;
     procedure Post( State: TEntityState);virtual;
     procedure Persist;virtual;
-    function GetEntity: TEntityBase;virtual;
+    function GetEntity: T;virtual;
     procedure InputEntity(Contener: TComponent);virtual;
     procedure InitEntity(Contener: TComponent); virtual;
 
@@ -38,79 +38,79 @@ implementation
 
 uses  EF.Mapping.AutoMapper;
 
-constructor TServiceBase.Create(pRepository: IRepositoryBase);
+constructor TServiceBase<T>.Create(pRepository: IRepositoryBase<T>);
 begin
   Inherited Create;
   Repository:= pRepository;
 end;
 
-procedure TServiceBase.Post(State: TEntityState);
+procedure TServiceBase<T>.Post(State: TEntityState);
 begin
    Repository.AddOrUpdate(State);
 end;
 
-procedure TServiceBase.Persist;
+procedure TServiceBase<T>.Persist;
 begin
   Repository.Commit;
 end;
 
-procedure TServiceBase.Delete;
+procedure TServiceBase<T>.Delete;
 begin
   Repository.Delete;
 end;
 
-function TServiceBase.FieldList: TFieldList;
+function TServiceBase<T>.FieldList: TFieldList;
 begin
   result:= Repository.Context.GetFieldList;
 end;
 
-function TServiceBase.GetEntity: TEntityBase;
+function TServiceBase<T>.GetEntity: T;
 begin
   //result:= Repository.GetEntity;
 end;
 
-procedure TServiceBase.InitEntity(Contener: TComponent);
+procedure TServiceBase<T>.InitEntity(Contener: TComponent);
 begin
   Repository.Context.InitEntity(Contener);
 end;
 
-procedure TServiceBase.ReadEntity(Contener: TComponent);
+procedure TServiceBase<T>.ReadEntity(Contener: TComponent);
 begin
   Repository.Context.ReadEntity(Contener);
 end;
 
-procedure TServiceBase.InputEntity(Contener: TComponent);
+procedure TServiceBase<T>.InputEntity(Contener: TComponent);
 begin
   Repository.Context.InputEntity(Contener);
 end;
 
-function TServiceBase.ChangeCount: Integer;
+function TServiceBase<T>.ChangeCount: Integer;
 begin
   result:= Repository.Context.ChangeCount;
 end;
 
-function TServiceBase.Load(iId:Integer; Fields: string = ''): TDataSet;
+function TServiceBase<T>.Load(iId:Integer; Fields: string = ''): TDataSet;
 begin
   result := Repository.LoadDataSet(iID , Fields );
 end;
 
-function TServiceBase.LoadEntity(iId: Integer= 0): TEntityBase;
+function TServiceBase<T>.LoadEntity(iId: Integer= 0): T;
 begin
   result := Repository.Load(iId);
 end;
 
-procedure TServiceBase.RefresData;
+procedure TServiceBase<T>.RefresData;
 begin
   Repository.RefreshDataSet;
 end;
 
-function TServiceBase._AddRef: Integer;
+function TServiceBase<T>._AddRef: Integer;
 begin
   Result := inherited _AddRef;
   InterlockedIncrement(FRefCount);
 end;
 
-function TServiceBase._Release: Integer;
+function TServiceBase<T>._Release: Integer;
 begin
   Result := inherited _Release;
   InterlockedDecrement(FRefCount);

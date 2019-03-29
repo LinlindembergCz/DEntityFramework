@@ -64,7 +64,7 @@ var
   ControllerCommand : IControllerBase;
 begin
   result:= nil;
-  Instance := TFormViewBase( TAutoMapper.GetInstance( 'view'+E+'.TFormView'+ E ) );
+  Instance := TFormViewBase( TAutoMapper.GetInstance2( 'view'+E+'.TFormView'+ E ) );
 
   if Instance <> nil then
   begin

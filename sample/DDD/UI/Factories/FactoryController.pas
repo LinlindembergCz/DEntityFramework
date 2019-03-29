@@ -25,7 +25,7 @@ var
   Controller     : IControllerBase;
   Instance      : TObject;
 begin
-  Instance := TAutoMapper.GetInstance( 'Controller'+E+'.TController'+ E );
+  Instance := TAutoMapper.GetInstance2( 'Controller'+E+'.TController'+ E );
   if Instance <> nil then
   begin
     Controller :=  TControllerBase( Instance ).create( TFactoryService.GetService(E) );

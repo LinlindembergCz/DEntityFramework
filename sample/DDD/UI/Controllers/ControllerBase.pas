@@ -6,7 +6,7 @@ uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Winapi.Windows, Context, InterfaceController, Vcl.DBGrids, Variants,
   Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
-  InterfaceService; //<<-- EntityFramework
+  InterfaceService, EF.Mapping.Base; //<<-- EntityFramework
                     //Está aqui temporariamente
                     //devido o metodo LoadLookUp
 type
@@ -23,11 +23,11 @@ type
     FContener: TComponent;
     FAutoApply: Boolean;
   //EntityDataSet: TClientDataSet;
-    Service:IServiceBase;
+    Service:IServiceBase<TEntitybase>;
     procedure CleanComponents;
     procedure UpdateState(const ValueState: TEntityState);
   public
-    constructor Create( pService:IServiceBase );virtual;
+    constructor Create( pService:IServiceBase<TEntitybase> );virtual;
     function Load(iId:Integer; Fields: string = '' ): TDataSet; virtual;
     procedure Refresh; virtual;
     procedure Read; virtual;
@@ -55,7 +55,7 @@ implementation
 uses   ViewBase, EF.Drivers.Connection, FactoryConnection, FactoryRepository, EF.Mapping.AutoMapper,
   FactoryService;
 
-constructor TControllerBase.Create(pService:IServiceBase);
+constructor TControllerBase.Create(pService:IServiceBase<TEntitybase>);
 begin
   Inherited Create;
   Service   := pService;
