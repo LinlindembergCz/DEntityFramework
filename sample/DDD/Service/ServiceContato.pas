@@ -9,7 +9,6 @@ System.Classes, ServiceBase,InterfaceRepository,
 type
   TServiceContato<T:TContato>=class( TServiceBase<T> , IServiceContato<T>)
   public
-    // function LoadDataSetPorNome( ClienteId: integer ): TDataSet;
     function Load(iId:Integer; Fields: string = ''): TDataSet;override;
   end;
 

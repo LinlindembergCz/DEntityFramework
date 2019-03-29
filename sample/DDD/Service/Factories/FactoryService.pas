@@ -26,7 +26,7 @@ begin
   Instance := TAutoMapper.GetInstance<TCliente>( 'Service'+E+'.TService'+E);
   if Instance <> nil then
   begin
-    Service :=  TServiceBase<TEntitybase>( Instance ).create( TFactoryRepository.GetRepository(E) );
+    Service :=  TServiceBase<TEntitybase>( Instance ).create( TFactoryRepository.GetRepository<TCliente>(E) );
     result:= Service;
   end;
 end;
