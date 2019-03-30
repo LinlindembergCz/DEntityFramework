@@ -8,7 +8,7 @@ uses
    System.Generics.Collections,
    EF.Mapping.Atributes,
    EF.Mapping.Base,
-   EF.Core.Types, ViewBase;
+   EF.Core.Types;
 
 type
   TAutoMapper = class

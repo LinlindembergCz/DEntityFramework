@@ -999,7 +999,7 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                Include(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
+                Inner(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
                 Where(Pessoa.Id=1).
                 OrderBy([Pessoa.Nome]).
                 Select([Pessoa.Nome]);
@@ -1029,7 +1029,7 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                IncludeLeft(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
+                InnerLeft(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
                 Where(Pessoa.Id=1).
                 OrderBy([Pessoa.Nome]).
                 Select([Pessoa.Nome]);
@@ -1042,7 +1042,7 @@ var
   Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                IncludeRight(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
+                InnerRight(PessoaFisica, PessoaFisica.Id=Pessoa.Id).
                 Where(Pessoa.Id=1).
                 OrderBy([Pessoa.Nome]).
                 Select([Pessoa.Nome]);
@@ -1191,7 +1191,7 @@ var
   Query : TQueryAble;
 begin
   Query  := From( From( Pessoa ).
-                  Include(PessoaFisica, Pessoa.Id = PessoaFisica.Id ).
+                  Inner(PessoaFisica, Pessoa.Id = PessoaFisica.Id ).
                   Select(Pessoa.Nome) ).Select('NomeFantasia');
 
   CheckEquals('Select NomeFantasia From '+
@@ -1272,7 +1272,7 @@ var
   Query: IQueryAble;
 begin
   Query := From('Clientes').
-                Include('Tabela2', 'Tabela2.Id = Clientes.ID').
+                Inner('Tabela2', 'Tabela2.Id = Clientes.ID').
                 Where('0=1').
                 OrderBy('Nome').
                 Select('Nome');
@@ -1285,7 +1285,7 @@ var
   Query: IQueryAble;
 begin
   Query := From('Clientes').
-                IncludeLeft('Clientes', 'Clientes.ID = Clientes.ID').
+                InnerLeft('Clientes', 'Clientes.ID = Clientes.ID').
                 Where('0=1').
                 OrderBy('Nome').
                 Select('Nome');
@@ -1298,7 +1298,7 @@ var
   Query: IQueryAble;
 begin
   Query := From('Clientes').
-                IncludeRight('Clientes', 'Clientes.ID = Clientes.ID').
+                InnerRight('Clientes', 'Clientes.ID = Clientes.ID').
                 Where('0=1').
                 OrderBy('Nome').
                 Select('Nome');
@@ -1311,8 +1311,8 @@ var
   Query: IQueryAble;
 begin
   Query := From('Tabela').
-                Include('Tabela2', 'Tabela2.Id = Tabela.Id').
-                IncludeLeft('Tabela3','Tabela3.Id = Tabela2.Id').
+                Inner('Tabela2', 'Tabela2.Id = Tabela.Id').
+                InnerLeft('Tabela3','Tabela3.Id = Tabela2.Id').
                 Where('0=1').
                 OrderBy('Nome').
                 Select('Nome');
@@ -1327,9 +1327,9 @@ var
   Query: IQueryAble;
 begin
   Query := From('Tabela').
-                Include('Tabela2', 'Tabela2.Id = Tabela.Id').
-                IncludeLeft('Tabela3','Tabela3.Id = Tabela2.Id').
-                IncludeLeft('Tabela4','Tabela4.Id = Tabela3.Id').
+                Inner('Tabela2', 'Tabela2.Id = Tabela.Id').
+                InnerLeft('Tabela3','Tabela3.Id = Tabela2.Id').
+                InnerLeft('Tabela4','Tabela4.Id = Tabela3.Id').
                 Where('0=1').
                 OrderBy('Nome').
                 Select('Nome');
@@ -1343,9 +1343,9 @@ var
   Query: IQueryAble;
 begin
   Query := From('Tabela').
-                Include('Tabela2','Tabela2.Id = Tabela.Id').
-                Include('Tabela3','Tabela3.Id = Tabela2.Id').
-                Include('Tabela4','Tabela4.Id = Tabela3.Id').
+                Inner('Tabela2','Tabela2.Id = Tabela.Id').
+                Inner('Tabela3','Tabela3.Id = Tabela2.Id').
+                Inner('Tabela4','Tabela4.Id = Tabela3.Id').
                 Where('0=1').
                 OrderBy('Nome').
                 Select('Nome');

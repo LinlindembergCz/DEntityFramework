@@ -24,14 +24,14 @@ type
 
   IQueryAble = Interface(IInterface)
     ['{554062C0-0BD3-4378-BFA2-DFA85CCC5938}']
-    function Include(E: string; _On: string): IQueryAble; overload;
-    function Include(E: TEntityBase; _On: TString): IQueryAble; overload;
-    function Include(E: TEntityBase): IQueryAble; overload;
-    function Include(E: TClass): IQueryAble; overload;
-    function IncludeLeft(E, _On: string): IQueryAble; overload;
-    function IncludeLeft(E: TEntityBase; _On: TString): IQueryAble; overload;
-    function IncludeRight(E, _On: string): IQueryAble; overload;
-    function IncludeRight(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Inner(E: string; _On: string): IQueryAble; overload;
+    function Inner(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Inner(E: TEntityBase): IQueryAble; overload;
+    function Inner(E: TClass): IQueryAble; overload;
+    function InnerLeft(E, _On: string): IQueryAble; overload;
+    function InnerLeft(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function InnerRight(E, _On: string): IQueryAble; overload;
+    function InnerRight(E: TEntityBase; _On: TString): IQueryAble; overload;
     function Where(condition: string): IQueryAble; overload;
     function Where(condition: TString): IQueryAble; overload;
     function GroupBy(Fields: string): IQueryAble; overload;
@@ -124,15 +124,15 @@ type
     FSConcat: string;
     FSCount: string;
   public
-    function Include(E, _On: string): IQueryAble; overload;
-    function Include(E: TEntityBase; _On: TString): IQueryAble; overload;
-    function Include(E: TEntityBase): IQueryAble; overload;
-    function Include(E: TClass): IQueryAble; overload;
-    function IncludeLeft(E, _On: string): IQueryAble; overload;
-    function IncludeLeft(E: TEntityBase; _On: TString): IQueryAble;
+    function Inner(E, _On: string): IQueryAble; overload;
+    function Inner(E: TEntityBase; _On: TString): IQueryAble; overload;
+    function Inner(E: TEntityBase): IQueryAble; overload;
+    function Inner(E: TClass): IQueryAble; overload;
+    function InnerLeft(E, _On: string): IQueryAble; overload;
+    function InnerLeft(E: TEntityBase; _On: TString): IQueryAble;
       overload;
-    function IncludeRight(E, _On: string): IQueryAble; overload;
-    function IncludeRight(E: TEntityBase; _On: TString): IQueryAble;
+    function InnerRight(E, _On: string): IQueryAble; overload;
+    function InnerRight(E: TEntityBase; _On: TString): IQueryAble;
       overload;
     function Where(condition: string): IQueryAble; overload;
     function Where(condition: TString): IQueryAble; overload;
@@ -388,53 +388,53 @@ end;
 
 { TCustomLinqQueryAble }
 
-function TQueryAble.Include(E, _On: string): IQueryAble;
+function TQueryAble.Inner(E, _On: string): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TQueryAble.Include(E: TEntityBase; _On: TString): IQueryAble;
+function TQueryAble.Inner(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TQueryAble.Include(E: TEntityBase): IQueryAble;
+function TQueryAble.Inner(E: TEntityBase): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
   result := self;
 end;
 
-function TQueryAble.Include(E: TClass): IQueryAble;
+function TQueryAble.Inner(E: TClass): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
   result := self;
 end;
 
-function TQueryAble.IncludeLeft(E, _On: string): IQueryAble;
+function TQueryAble.InnerLeft(E, _On: string): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrLeftJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TQueryAble.IncludeLeft(E: TEntityBase; _On: TString): IQueryAble;
+function TQueryAble.InnerLeft(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
-function TQueryAble.IncludeRight(E, _On: string): IQueryAble;
+function TQueryAble.InnerRight(E, _On: string): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrRightJoin + E + StrOn + _On;
   result := self;
 end;
 
-function TQueryAble.IncludeRight(E: TEntityBase; _On: TString): IQueryAble;
+function TQueryAble.InnerRight(E: TEntityBase; _On: TString): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrRightJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
