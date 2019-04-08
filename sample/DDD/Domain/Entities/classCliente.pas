@@ -7,6 +7,7 @@ uses
   EF.Mapping.Atributes, ClassContato, System.Generics.Collections;
 
 type
+
   [EntityTable('Clientes')]
   TCliente = class( TEntityBase )
   private
@@ -25,7 +26,7 @@ type
     FObservacao: TString;
     FEmail:TEmail;
     FCalcRenda: TFloat;
-    FContados: TList<TContato>;
+    FContados: TEntityList<TContato>;
   public
     constructor Create;override;
     procedure Validation; override;
@@ -61,8 +62,7 @@ type
     [Edit]
     property Email:TEmail read FEmail write FEmail;
     [NotMapper]
-    property Contados: TList<TContato> read FContados write FContados;
-
+    property Contados: TEntityList<TContato> read FContados write FContados;
   end;
 
 implementation
@@ -71,7 +71,8 @@ implementation
 constructor TCliente.Create;
 begin
   inherited;
-  Email:= TEmail.Create;
+  Email    := TEmail.Create;
+  Contados := TEntityList<TContato>.create(TContato.create);
 end;
 
 procedure TCliente.Validation;
@@ -79,6 +80,8 @@ begin
   inherited;
   Email.validar;
 end;
+
+{ TContatos }
 
 initialization RegisterClass(TCliente);
 finalization UnRegisterClass(TCliente);

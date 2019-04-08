@@ -2,7 +2,7 @@
 {         Copyright(c) Lindemberg Cortez.               }
 {              All rights reserved                      }
 {         https://github.com/LinlindembergCz            }
-{		Since 01/01/2019                        }
+{		            Since 01/01/2019                        }
 {*******************************************************}
 unit EF.Engine.DataContext;
 
@@ -29,6 +29,7 @@ uses
 Type
   TDataContext = class(TQueryAble)
   private
+    ListObjectsInclude:TObjectList;
     Classes: array of TClass;
     TableList: TStringList;
     qryQuery: TFDQuery;
@@ -43,6 +44,9 @@ Type
     procedure FreeObjects;
     function CriarTabela(i: integer): boolean;
     function IsFireBird: boolean;
+
+
+
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
@@ -59,8 +63,11 @@ Type
     function GetEntity<T: Class>(QueryAble: IQueryAble): T; overload;
     function GetData(QueryAble: IQueryAble): OleVariant;
     function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
-    function GetList<T: Class>(QueryAble: IQueryAble): TList<T>; overload;
+    function GetList(QueryAble: IQueryAble): TList;overload;
+    function GetList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
     function GetJson(QueryAble: IQueryAble): string;
+    function FirstOrDefault(Condicion: TString): TEntityBase;
+    function Include( E: TObject ):TDataContext;
     procedure RefreshDataSet;
     procedure Delete;
     procedure Insert;
@@ -173,6 +180,30 @@ begin
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     List := TList<T>.Create;
+    DataSet := TClientDataSet.Create(Application);
+    DataSet.Data := GetData(QueryAble);
+    while not DataSet.Eof do
+    begin
+      TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
+      List.Add(QueryAble.Entity);
+      DataSet.Next;
+    end;
+    result := List;
+  finally
+    FreeAndNil(DataSet);
+  end;
+end;
+
+function TDataContext.GetList(QueryAble: IQueryAble): TList;
+var
+  List: TList;
+  DataSet: TClientDataSet;
+begin
+  try
+    FEntity := QueryAble.Entity;
+    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+
+    List := TList.Create;
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := GetData(QueryAble);
     while not DataSet.Eof do
@@ -621,6 +652,36 @@ begin
   ClientDataSet.open;
 end;
 
+
+function TDataContext.FirstOrDefault(Condicion: TString ): TEntityBase;
+var
+  I:integer;
+  max:integer;
+  E: TEntityBase;
+begin
+  max:= ListObjectsInclude.Count-1;
+  for I := 0 to max do
+  begin
+    E:= TEntityBase(ListObjectsInclude.Items[i]);
+    if i = 0 then
+       ListObjectsInclude.Items[i] := GetEntity( From(TEntityBase(E)).Where( Condicion ).Select )
+    else
+       ListObjectsInclude.Items[i] := GetEntity( From(E).Select );
+  end;
+  result:= ListObjectsInclude.Items[0] as TEntityBase;
+end;
+
+function TDataContext.Include( E: TObject ):TDataContext;
+begin
+   if ListObjectsInclude = nil then
+      ListObjectsInclude:= TObjectList.Create;
+   ListObjectsInclude.Add( E );
+ { if ListClassInclude = nil then
+      ListClassInclude:= TClassList.Create;
+   ListClassInclude.Add( E.ClassType );}
+   result:= self;
+end;
+
 { TLinq }
 
 function From(E: TEntityBase): TFrom;
@@ -647,5 +708,7 @@ function From(E: IQueryAble): TFrom;
 begin
   result := TFrom(Linq.From(E));
 end;
+
+
 
 end.

@@ -20,6 +20,9 @@ type
 
 implementation
 
+uses
+  Vcl.Dialogs;
+
 { TRepositoryCliente }
 
 constructor TRepositoryCliente<T>.Create(dbContext:TContext);
@@ -34,6 +37,13 @@ var
   E:TCliente;
 begin
   E := _RepositoryCliente.Entity;
+  {
+  if Context.Include( E ).
+             Include( E.Contados.List ).
+             FirstOrDefault( E.Nome.Contains( value ) ) <> nil then
+  showmessage( E.Nome.value +'   '+ E.Contados[0].Nome.value );
+  }
+
   result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 end;
 

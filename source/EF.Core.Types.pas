@@ -9,8 +9,7 @@ unit EF.Core.Types;
 interface
 
 uses
-   SysUtils, strUtils,
-   EF.Core.Functions;
+   SysUtils, strUtils, RTTI, EF.Core.Functions, System.Generics.Collections;
 
 type
   TString = record
@@ -242,6 +241,12 @@ type
 
     property Value: boolean read FValue write SetValue;
     function &As(_as: string = ''): string;
+  end;
+
+  TEntityList<T:Class> = class( TObjectList<T> )
+  public
+    function List: T;
+    constructor Create( instance:TObject = nil);
   end;
 
 implementation
@@ -1040,6 +1045,20 @@ end;
 procedure TBoolean.SetValue(const Value: boolean);
 begin
   FValue := Value;
+end;
+
+{ TEntityList<T> }
+
+constructor TEntityList<T>.Create( instance:TObject = nil);
+begin
+  inherited Create;
+  if instance <> nil then
+     Add( instance );
+end;
+
+function TEntityList<T>.List: T;
+begin
+   result:= first;
 end;
 
 end.
