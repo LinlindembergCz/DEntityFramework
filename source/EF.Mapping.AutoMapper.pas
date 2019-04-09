@@ -1071,8 +1071,8 @@ var
 begin
   try
     ctx := TRttiContext.Create;
-    for J := 0 to DataSet.fieldcount - 1 do
-    begin
+    //for J := 0 to DataSet.fieldcount - 1 do
+    //begin
       breaked:= false;
       TypObj := ctx.GetType(Entity.ClassInfo);
       for Prop in TypObj.GetProperties do
@@ -1097,6 +1097,14 @@ begin
           begin
             if Atrib is EntityField then
             begin
+              if DataSet.FindField(EntityField(Atrib).Name) <> nil then
+              begin
+                SetFieldValue(Entity, Prop,
+                              DataSet.Fieldbyname(EntityField(Atrib).Name).AsVariant);
+                breaked:= true;
+                break;
+              end;
+              {
               if uppercase(EntityField(Atrib).Name)
                 = uppercase(DataSet.Fields[J].FieldName) then
               begin
@@ -1105,13 +1113,14 @@ begin
                 breaked:= true;
                 break;
               end;
+              }
             end;
           end;
         end;
-        if breaked then
-           break;
+        //if breaked then
+        //   break;
       end;
-    end;
+    //end;
   finally
     ctx.Free;
   end;

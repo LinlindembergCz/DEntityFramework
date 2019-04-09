@@ -655,20 +655,25 @@ end;
 
 function TDataContext.FirstOrDefault(Condicion: TString ): TEntityBase;
 var
-  I:integer;
+  I:Integer;
   max:integer;
-  E: TEntityBase;
+  FirstEntidy, CurrentEntidy: TEntityBase;
+  TableForeignKey: string;
 begin
   max:= ListObjectsInclude.Count-1;
   for I := 0 to max do
   begin
-    E:= TEntityBase(ListObjectsInclude.Items[i]);
+    CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
     if i = 0 then
-       ListObjectsInclude.Items[i] := GetEntity( From(TEntityBase(E)).Where( Condicion ).Select )
+    begin
+       FirstEntidy:= ListObjectsInclude.Items[0] as TEntityBase;
+       TableForeignKey := Copy(FirstEntidy.ClassName,2,length(FirstEntidy.ClassName) );
+       FirstEntidy := GetEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
+    end
     else
-       ListObjectsInclude.Items[i] := GetEntity( From(E).Select );
+       ListObjectsInclude.Items[i] := GetEntity( From(CurrentEntidy).Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).Select );
   end;
-  result:= ListObjectsInclude.Items[0] as TEntityBase;
+  result:= FirstEntidy;
 end;
 
 function TDataContext.Include( E: TObject ):TDataContext;
