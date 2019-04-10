@@ -63,7 +63,7 @@ end;
 
 procedure TRepository<T>.Delete;
 begin
-  FDbContext.Delete;
+  FDbContext.Remove;
 end;
 
 destructor TRepository<T>.Destroy;
@@ -90,7 +90,7 @@ procedure TRepository<T>.AddOrUpdate(State:TEntityState);
 begin
 //FDbContext.SaveChanges(State);
   case State of
-    esInsert: FDbContext.Insert;
+    esInsert: FDbContext.Add;
     esEdit  : FDbContext.Update;
   else
     FDbContext.RefreshDataSet;

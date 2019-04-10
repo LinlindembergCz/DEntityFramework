@@ -39,15 +39,15 @@ begin
   E := _RepositoryCliente.Entity;
   {
    Context.Include( E ).
-                       Include( E.Veiculo ).
-                       Include( E.Contados.list ).
-                       FirstOrDefault( E.Nome.Contains( value ));
+           Include( E.Veiculo ).
+           Include( E.Contados.list ).
+           FirstOrDefault( E.Nome.Contains( value ));
 
    showmessage( E.Nome.Value  +'  '+  E.Veiculo.Placa.Value + '   '+E.Contados[0].Nome.Value );
    }
 
 
-  //result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
+  result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 end;
 
 initialization RegisterClass(TRepositoryCliente);

@@ -32,12 +32,14 @@ Type
     ListObjectsInclude:TObjectList;
     Classes: array of TClass;
     TableList: TStringList;
-    qryQuery: TFDQuery;
+    FFDQuery: TFDQuery;
     drpProvider: TDataSetProvider;
+    FDbSet: TClientDataSet;
+
     FConnection: TEntityConn;
     FProviderName: string;
     FTypeConnetion: TTypeConnection;
-    FClientDataSet: TClientDataSet;
+
     ListField: TStringList;
     function CreateTables: boolean; // (aClass: array of TClass);
     function AlterTables: boolean;
@@ -67,17 +69,17 @@ Type
     function Include( E: TObject ):TDataContext;
     function Where(Condicion: TString): TDataContext;
     procedure RefreshDataSet;
-    procedure Delete;
-    procedure Insert;
+    procedure Remove;
+    procedure Add;
     procedure Update;
-    procedure InsertDirect;
+    procedure AddDirect;
     procedure UpdateDirect;
-    procedure DeleteDirect;
+    procedure RemoveDirect;
     procedure ApplyUpdates;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
   published
-    property ClientDataSet: TClientDataSet read FClientDataSet write FClientDataSet;
+    property DbSet: TClientDataSet read FDbSet write FDbSet;
     property Connection: TEntityConn read FConnection write FConnection;
     property ProviderName: string read FProviderName write FProviderName;
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
@@ -100,37 +102,37 @@ uses
 function TDataContext.GetData(QueryAble: IQueryAble): OleVariant;
 begin
   try
-    qryQuery := Connection.CreateDataSet(GetQuery(QueryAble));
+    FFDQuery := Connection.CreateDataSet(GetQuery(QueryAble));
 
-    CreateProvider(qryQuery, trim(fStringReplace(QueryAble.SEntity,
+    CreateProvider(FFDQuery, trim(fStringReplace(QueryAble.SEntity,
         trim(StrFrom), '')));
     CreateClientDataSet(drpProvider);
 
-    result := ClientDataSet.Data;
+    result := DbSet.Data;
 
   finally
-    ClientDataSet.Free;
+    DbSet.Free;
     drpProvider.Free;
-    qryQuery.Free;
+    FFDQuery.Free;
   end;
 end;
 
 procedure TDataContext.FreeObjects;
 begin
 
-  if ClientDataSet <> nil then
+  if DbSet <> nil then
   begin
-    ClientDataSet.Close;
-    ClientDataSet.Free;
+    DbSet.Close;
+    DbSet.Free;
   end;
   if drpProvider <> nil then
   begin
     drpProvider.Free;
   end;
-  if qryQuery <> nil then
+  if FFDQuery <> nil then
   begin
-    qryQuery.close;
-    qryQuery.Free;
+    FFDQuery.close;
+    FFDQuery.Free;
   end;
 end;
 
@@ -146,9 +148,9 @@ begin
         Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
         FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
-        qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
+        FFDQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
 
-        CreateProvider(qryQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')));
+        CreateProvider(FFDQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')));
 
         CreateClientDataSet(drpProvider);
       end
@@ -156,7 +158,7 @@ begin
       begin
         CreateClientDataSet(nil, GetQuery(QueryAble));
       end;
-      result := ClientDataSet;
+      result := DbSet;
     except
       on E: Exception do
       begin
@@ -380,7 +382,7 @@ begin
   end;
 end;
 
-procedure TDataContext.InsertDirect;
+procedure TDataContext.AddDirect;
 var
   SQLInsert: string;
 begin
@@ -391,22 +393,22 @@ begin
   Connection.ExecutarSQL(SQLInsert);
 end;
 
-procedure TDataContext.Insert;
+procedure TDataContext.Add;
 var
   ListValues: TStringList;
   i: integer;
 begin
   FEntity.Validation;
-  if ClientDataSet <> nil then
+  if DbSet <> nil then
   begin
     try
       try
         if ListField = nil then
            ListField := TAutoMapper.GetFieldsList(FEntity);
         ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
-        ClientDataSet.append;
-        pParserDataSet(ListField, ListValues, ClientDataSet);
-        ClientDataSet.Post;
+        DbSet.append;
+        pParserDataSet(ListField, ListValues, DbSet);
+        DbSet.Post;
       except
         on E: Exception do
         begin
@@ -419,7 +421,7 @@ begin
     end;
   end
   else
-    InsertDirect;
+    AddDirect;
 end;
 
 procedure TDataContext.Update;
@@ -428,16 +430,16 @@ var
   i: integer;
 begin
   FEntity.Validation;
-  if ClientDataSet <> nil then
+  if DbSet <> nil then
   begin
     try
       try
         if ListField = nil then
            ListField := TAutoMapper.GetFieldsList(FEntity);
         ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
-        ClientDataSet.Edit;
-        pParserDataSet(ListField, ListValues, ClientDataSet);
-        ClientDataSet.Post;
+        DbSet.Edit;
+        pParserDataSet(ListField, ListValues, DbSet);
+        DbSet.Post;
       except
         on E: Exception do
         begin
@@ -482,7 +484,7 @@ begin
   end;
 end;
 
-procedure TDataContext.DeleteDirect;
+procedure TDataContext.RemoveDirect;
 var
   SQL: string;
   ListPrimaryKey, FieldsPrimaryKey: TStringList;
@@ -521,8 +523,8 @@ begin
   // Refatorar
   if DataSet <> nil then
     TAutoMapper.Read(Contener, FEntity, false, DataSet)
-  else if not ClientDataSet.IsEmpty then
-    TAutoMapper.Read(Contener, FEntity, false, ClientDataSet)
+  else if not DbSet.IsEmpty then
+    TAutoMapper.Read(Contener, FEntity, false, DbSet)
   else
     TAutoMapper.Read(Contener, FEntity, false);
 end;
@@ -542,7 +544,7 @@ end;
 
 function TDataContext.GetFieldList: Data.DB.TFieldList;
 begin
-  result := ClientDataSet.FieldList;
+  result := DbSet.FieldList;
 end;
 
 function TDataContext.GetJson(QueryAble: IQueryAble): string;
@@ -552,12 +554,12 @@ begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
-    qryQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
-    if not qryQuery.Active then
-       qryQuery.Open;
-    result:= qryQuery.ToJson();
+    FFDQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
+    if not FFDQuery.Active then
+       FFDQuery.Open;
+    result:= FFDQuery.ToJson();
   finally
-    qryQuery.Free;
+    FFDQuery.Free;
     //Keys.Free;
   end;
 end;
@@ -566,10 +568,10 @@ destructor TDataContext.Destroy;
 begin
   if drpProvider <> nil then
     drpProvider.Free;
-  if qryQuery <> nil then
-    qryQuery.Free;
-  if ClientDataSet <> nil then
-    ClientDataSet.Free;
+  if FFDQuery <> nil then
+    FFDQuery.Free;
+  if DbSet <> nil then
+    DbSet.Free;
   if oFrom <> nil then
     oFrom.Free;
   if FEntity <> nil then
@@ -587,27 +589,27 @@ begin
   TableName := uppercase(FSEntity);
 end;
 
-procedure TDataContext.Delete;
+procedure TDataContext.Remove;
 begin
-  if (ClientDataSet.Active) and (not ClientDataSet.IsEmpty) then
-    ClientDataSet.Delete;
+  if (DbSet.Active) and (not DbSet.IsEmpty) then
+    DbSet.Delete;
 end;
 
 procedure TDataContext.ApplyUpdates;
 begin
   if ChangeCount > 0 then
-    ClientDataSet.ApplyUpdates(0);
+    DbSet.ApplyUpdates(0);
 end;
 
 procedure TDataContext.RefreshDataSet;
 begin
-  if (ClientDataSet.Active) then
-    ClientDataSet.Refresh;
+  if (DbSet.Active) then
+    DbSet.Refresh;
 end;
 
 function TDataContext.ChangeCount: integer;
 begin
-  result := FClientDataSet.ChangeCount;
+  result := FDbSet.ChangeCount;
 end;
 
 procedure TDataContext.CreateProvider(var proSQLQuery: TFDQuery;
@@ -633,21 +635,21 @@ procedure TDataContext.CreateClientDataSet(proDataSetProvider: TDataSetProvider;
 begin
   if proDataSetProvider <> nil then
   begin
-    ClientDataSet := TClientDataSet.Create(Application);
-    ClientDataSet.OnReconcileError := ReconcileError;
-    ClientDataSet.ProviderName := proDataSetProvider.Name;
+    DbSet := TClientDataSet.Create(Application);
+    DbSet.OnReconcileError := ReconcileError;
+    DbSet.ProviderName := proDataSetProvider.Name;
   end
   else if FProviderName <> '' then
   begin
-    ClientDataSet.ProviderName := FProviderName + formatdatetime('SS', now);
-    ClientDataSet.DataRequest(SQL);
+    DbSet.ProviderName := FProviderName + formatdatetime('SS', now);
+    DbSet.DataRequest(SQL);
   end
   else
   begin
     showmessage('DataSetProvider não foi definido!');
     abort;
   end;
-  ClientDataSet.open;
+  DbSet.open;
 end;
 
 
