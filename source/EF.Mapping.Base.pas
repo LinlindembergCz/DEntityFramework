@@ -4,7 +4,7 @@ interface
 
 uses
   System.TypInfo, RTTI, SysUtils, System.Classes,
-  EF.Mapping.Atributes, EF.Core.Types,{REST.JSON,} JsonDataObjects;
+  EF.Mapping.Atributes, EF.Core.Types,REST.JSON, JsonDataObjects;
 
 type
   TEntityBase = class(TPersistent)
@@ -20,7 +20,7 @@ type
   published
     [EntityField('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
-    function ToJson: string;
+    function ToJson(UsingRestJson:boolean = false): string;
     procedure FromJson{<T: class, constructor>}(const AJson: String);
     // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
@@ -36,27 +36,32 @@ begin
   FreeAndNilProperties(self);
 end;
 
-function TEntityBase.ToJson: string;
+function TEntityBase.ToJson(UsingRestJson:boolean = false): string;
 var
   json: TJsonObject;
   ListField, ListValues: TStringList;
   I: integer;
 begin
-  //result:= TJson.ObjectToJsonString(self);
-  try
-    json := TJsonObject.Create;
-    ListField := TAutoMapper.GetFieldsList(self);
-    ListValues := TAutoMapper.GetValuesFieldsList(self);
-    for I := 0 to ListField.Count - 1 do
-    begin
-      json.S[ListField.Strings[I]] := ListValues.Strings[I];
+  if UsingRestJson then
+     result:= TJson.ObjectToJsonString(self)
+  else
+  begin
+    try
+      json := TJsonObject.Create;
+      ListField := TAutoMapper.GetFieldsList(self);
+      ListValues := TAutoMapper.GetValuesFieldsList(self);
+      for I := 0 to ListField.Count - 1 do
+      begin
+        json.S[ListField.Strings[I]] := ListValues.Strings[I];
+      end;
+      result := json.ToJson;
+    finally
+      ListField.Free;
+      ListValues.Free;
+      json.Free;
     end;
-    result := json.ToJson;
-  finally
-    ListField.Free;
-    ListValues.Free;
-    json.Free;
   end;
+
 end;
 
 procedure TEntityBase.FromJson{<T>}(const AJson: String);

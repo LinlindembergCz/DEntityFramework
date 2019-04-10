@@ -38,10 +38,10 @@ var
 begin
   E := _RepositoryCliente.Entity;
   {
-  if Context.Include( E ).
-             Include( E.Contados.List ).
-             FirstOrDefault( E.Nome.Contains( value ) ) <> nil then
-  showmessage( E.Nome.value +'   '+ E.Contados[0].Nome.value );
+  showmessage( Context.Include( E ).
+                       Include( E.Contados.list ).
+                       FirstOrDefault( E.Nome.Contains( value )).
+                       ToJson );
   }
 
   result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );

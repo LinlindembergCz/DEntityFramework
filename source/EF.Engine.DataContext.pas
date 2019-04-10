@@ -44,9 +44,6 @@ Type
     procedure FreeObjects;
     function CriarTabela(i: integer): boolean;
     function IsFireBird: boolean;
-
-
-
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
@@ -68,6 +65,7 @@ Type
     function GetJson(QueryAble: IQueryAble): string;
     function FirstOrDefault(Condicion: TString): TEntityBase;
     function Include( E: TObject ):TDataContext;
+    function Where(Condicion: TString): TDataContext;
     procedure RefreshDataSet;
     procedure Delete;
     procedure Insert;
@@ -657,7 +655,7 @@ function TDataContext.FirstOrDefault(Condicion: TString ): TEntityBase;
 var
   I:Integer;
   max:integer;
-  FirstEntidy, CurrentEntidy: TEntityBase;
+  FirstEntidy, PriorEntity, CurrentEntidy: TEntityBase;
   TableForeignKey: string;
 begin
   max:= ListObjectsInclude.Count-1;
@@ -671,9 +669,43 @@ begin
        FirstEntidy := GetEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
     end
     else
-       ListObjectsInclude.Items[i] := GetEntity( From(CurrentEntidy).Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).Select );
+    begin
+       ListObjectsInclude.Items[i] := GetEntity( From(CurrentEntidy).
+                                                 Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).
+                                                 Select );
+    end;
   end;
   result:= FirstEntidy;
+end;
+
+function TDataContext.Where(Condicion: TString): TDataContext;
+var
+  I:Integer;
+  max:integer;
+  FirstEntidy, PriorEntity, CurrentEntidy: TEntityBase;
+  TableForeignKey: string;
+begin
+  {
+  max:= ListObjectsInclude.Count-1;
+  for I := 0 to max do
+  begin
+    CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
+    if i = 0 then
+    begin
+       FirstEntidy:= ListObjectsInclude.Items[0] as TEntityBase;
+       FirstEntidy := GetEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
+    end
+    else
+    begin
+       TableForeignKey := Copy(FirstEntidy.ClassName,2,length(FirstEntidy.ClassName) );
+       ListObjectsInclude.Items[i] := GetEntity( From(CurrentEntidy).
+                                                 Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).
+                                                 Select );
+    end;
+  end;
+  result:= nil;
+  }
+
 end;
 
 function TDataContext.Include( E: TObject ):TDataContext;
