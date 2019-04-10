@@ -56,9 +56,9 @@ end;
 function TRepository<T>.Load(iId: Integer): T;
 begin
   if iId = 0 then
-     result := FDbContext.GetEntity<TEntityBase>(From(FEntity).Select) as T
+     result := FDbContext.FindEntity<TEntityBase>(From(FEntity).Select) as T
   else
-     result := FDbContext.GetEntity<TEntityBase>(From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )}  ).Select) as T;
+     result := FDbContext.FindEntity<TEntityBase>(From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )}  ).Select) as T;
 end;
 
 procedure TRepository<T>.Delete;
@@ -99,7 +99,7 @@ end;
 
 procedure TRepository<T>.Commit;
 begin
-   FDbContext.ApplyUpdates;
+   FDbContext.SaveChanges;
 end;
 
 procedure TRepository<T>.RefreshDataSet;

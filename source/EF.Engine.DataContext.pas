@@ -54,28 +54,28 @@ Type
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
-    procedure InputEntity(Contener: TComponent);
-    procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
-    procedure InitEntity(Contener: TComponent);
-    function UpdateDataBase(aClasses: array of TClass): boolean;
-    function GetEntity(QueryAble: IQueryAble): TEntityBase; overload;
-    function GetEntity<T: Class>(QueryAble: IQueryAble): T; overload;
+    procedure Add;
+    procedure Update;
+    procedure Remove;
+    procedure SaveChanges;
+    function FindEntity(QueryAble: IQueryAble): TEntityBase; overload;
+    function FindEntity<T: Class>(QueryAble: IQueryAble): T; overload;
+    function FirstOrDefault(Condicion: TString): TEntityBase;
+    function Include( E: TObject ):TDataContext;
+    function Where(Condicion: TString): TDataContext;
     function GetData(QueryAble: IQueryAble): OleVariant;
     function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
     function GetList(QueryAble: IQueryAble): TList;overload;
     function GetList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
     function GetJson(QueryAble: IQueryAble): string;
-    function FirstOrDefault(Condicion: TString): TEntityBase;
-    function Include( E: TObject ):TDataContext;
-    function Where(Condicion: TString): TDataContext;
-    procedure RefreshDataSet;
-    procedure Remove;
-    procedure Add;
-    procedure Update;
     procedure AddDirect;
     procedure UpdateDirect;
     procedure RemoveDirect;
-    procedure ApplyUpdates;
+    procedure InputEntity(Contener: TComponent);
+    procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
+    procedure InitEntity(Contener: TComponent);
+    function UpdateDataBase(aClasses: array of TClass): boolean;
+    procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
   published
@@ -218,7 +218,7 @@ begin
   end;
 end;
 
-function TDataContext.GetEntity(QueryAble: IQueryAble): TEntityBase;
+function TDataContext.FindEntity(QueryAble: IQueryAble): TEntityBase;
 var
   DataSet: TClientDataSet;
 begin
@@ -235,7 +235,7 @@ begin
   end;
 end;
 
-function TDataContext.GetEntity<T>(QueryAble: IQueryAble): T;
+function TDataContext.FindEntity<T>(QueryAble: IQueryAble): T;
 var
   DataSet: TClientDataSet;
 begin
@@ -595,7 +595,7 @@ begin
     DbSet.Delete;
 end;
 
-procedure TDataContext.ApplyUpdates;
+procedure TDataContext.SaveChanges;
 begin
   if ChangeCount > 0 then
     DbSet.ApplyUpdates(0);
@@ -668,11 +668,11 @@ begin
     begin
        FirstEntidy:= ListObjectsInclude.Items[0] as TEntityBase;
        TableForeignKey := Copy(FirstEntidy.ClassName,2,length(FirstEntidy.ClassName) );
-       FirstEntidy := GetEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
+       FirstEntidy := FindEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
     end
     else
     begin
-       ListObjectsInclude.Items[i] := GetEntity( From(CurrentEntidy).
+       ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
                                                  Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).
                                                  Select );
     end;

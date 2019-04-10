@@ -45,8 +45,6 @@ begin
 
    showmessage( E.Nome.Value  +'  '+  E.Veiculo.Placa.Value + '   '+E.Contados[0].Nome.Value );
    }
-
-
   result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 end;
 
