@@ -214,11 +214,11 @@ end;
 procedure TControllerBase.LoadLookUp(DBLookupComboBox: TDBLookupComboBox;
                                      DataSource:TDataSource; E : string);
 var
-  LookUpContext: TContext;
+  LookUpContext: TdbContext;
   LookUpDataSet: TClientDataSet;
 begin
   try
-     LookUpContext:= TContext.Create(E);
+     LookUpContext:= TdbContext.Create(E);
      if LookUpContext.Connection <> nil then
      begin
        LookUpDataSet := TClientDataSet.Create(application);

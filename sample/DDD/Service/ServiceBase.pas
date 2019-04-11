@@ -61,7 +61,7 @@ end;
 
 function TServiceBase<T>.FieldList: TFieldList;
 begin
-  result:= Repository.Context.GetFieldList;
+  result:= Repository.dbContext.GetFieldList;
 end;
 
 function TServiceBase<T>.GetEntity: T;
@@ -71,22 +71,22 @@ end;
 
 procedure TServiceBase<T>.InitEntity(Contener: TComponent);
 begin
-  Repository.Context.InitEntity(Contener);
+  Repository.dbContext.InitEntity(Contener);
 end;
 
 procedure TServiceBase<T>.ReadEntity(Contener: TComponent);
 begin
-  Repository.Context.ReadEntity(Contener);
+  Repository.dbContext.ReadEntity(Contener);
 end;
 
 procedure TServiceBase<T>.InputEntity(Contener: TComponent);
 begin
-  Repository.Context.InputEntity(Contener);
+  Repository.dbContext.InputEntity(Contener);
 end;
 
 function TServiceBase<T>.ChangeCount: Integer;
 begin
-  result:= Repository.Context.ChangeCount;
+  result:= Repository.dbContext.ChangeCount;
 end;
 
 function TServiceBase<T>.Load(iId:Integer; Fields: string = ''): TDataSet;

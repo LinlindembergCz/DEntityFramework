@@ -29,7 +29,7 @@ uses
 Type
   TDataContext = class(TQueryAble)
   private
-    ListObjectsInclude:TObjectList;
+    ListObjectsInclude:TList;
     Classes: array of TClass;
     TableList: TStringList;
     FFDQuery: TFDQuery;
@@ -112,8 +112,11 @@ begin
 
   finally
     DbSet.Free;
+    DbSet:= nil;
     drpProvider.Free;
+    drpProvider:= nil;
     FFDQuery.Free;
+    FFDQuery:= nil;
   end;
 end;
 
@@ -666,7 +669,7 @@ begin
     CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
     if i = 0 then
     begin
-       FirstEntidy:= ListObjectsInclude.Items[0] as TEntityBase;
+       FirstEntidy:= TEntityBase(ListObjectsInclude.Items[0]);
        TableForeignKey := Copy(FirstEntidy.ClassName,2,length(FirstEntidy.ClassName) );
        FirstEntidy := FindEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
     end
@@ -678,6 +681,8 @@ begin
     end;
   end;
   result:= FirstEntidy;
+  ListObjectsInclude.clear;
+
 end;
 
 function TDataContext.Where(Condicion: TString): TDataContext;
@@ -713,7 +718,7 @@ end;
 function TDataContext.Include( E: TObject ):TDataContext;
 begin
    if ListObjectsInclude = nil then
-      ListObjectsInclude:= TObjectList.Create;
+      ListObjectsInclude:= TList.Create;
    ListObjectsInclude.Add( E );
  { if ListClassInclude = nil then
       ListClassInclude:= TClassList.Create;

@@ -14,12 +14,12 @@ type
     FRefCount: integer;
   protected
     FEntity: T;
-    FDbContext: Context.TContext;
+    FDbContext: Context.TdbContext;
   private
     function GetEntity: T;
-    function GetContext:Context.TContext;
+    function GetContext:Context.TdbContext;
   public
-    constructor Create(dbContext: Context.TContext);virtual;
+    constructor Create(dbContext: Context.TdbContext);virtual;
     destructor Destroy;override;
 
     procedure RefreshDataSet;virtual;
@@ -38,7 +38,7 @@ implementation
 uses Winapi.Windows, System.SysUtils;
 { TRepository }
 
-constructor TRepository<T>.Create(dbContext: Context.TContext);
+constructor TRepository<T>.Create(dbContext: Context.TdbContext);
 begin
     Inherited Create;
   FDbContext := dbContext;
@@ -76,7 +76,7 @@ begin
   end;
 end;
 
-function TRepository<T>.GetContext: Context.TContext;
+function TRepository<T>.GetContext: Context.TdbContext;
 begin
   result := FDbContext;
 end;

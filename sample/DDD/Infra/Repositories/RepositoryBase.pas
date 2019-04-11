@@ -14,7 +14,7 @@ type
    protected
      _RepositoryBase: IRepository<T>;
    public
-     Constructor Create(dbContext:Context.TContext);virtual;
+     Constructor Create(dbContext:Context.TdbContext);virtual;
 
      procedure RefreshDataSet; virtual;
      function  LoadDataSet(iId:Integer; Fields: string = ''): TDataSet;virtual;
@@ -22,7 +22,7 @@ type
      procedure Delete;virtual;
      procedure AddOrUpdate( State: TEntityState);virtual;
      procedure Commit;virtual;
-     function Context: Context.TContext;virtual;
+     function dbContext: Context.TdbContext;virtual;
 
 
     function _AddRef: Integer; stdcall;
@@ -49,12 +49,12 @@ begin
   _RepositoryBase.Delete;
 end;
 
-function TRepositoryBase<T>.Context: Context.TContext;
+function TRepositoryBase<T>.dbContext: Context.TdbContext;
 begin
-  result:= _RepositoryBase.Context;
+  result:= _RepositoryBase.dbContext;
 end;
 
-constructor TRepositoryBase<T>.Create(dbContext: Context.TContext);
+constructor TRepositoryBase<T>.Create(dbContext: Context.TdbContext);
 begin
    inherited Create;
 end;

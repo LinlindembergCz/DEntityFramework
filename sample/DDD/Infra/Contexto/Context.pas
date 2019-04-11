@@ -9,7 +9,7 @@ uses
 type
   TEntityState = (esInsert, esEdit, esBrowser);
 
-  TContext = class(TDataContext)
+  TdbContext = class(TDataContext)
   public
     constructor Create(E: string);reintroduce;
   end;
@@ -21,7 +21,7 @@ implementation
 
 uses  FactoryConnection;
 
-constructor TContext.Create(E: string);
+constructor TdbContext.Create(E: string);
 begin
   Connection:= TFactoryConnection.GetConnection;
   inherited Create( TFactoryEntity.GetEntity(E) );

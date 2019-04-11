@@ -26,7 +26,7 @@ begin
   Instance := TAutoMapper.GetInstance<T>( 'Repository'+E+'.TRepository'+E );
   if Instance <> nil then
   begin
-    Repository :=  TRepositoryBase<TEntitybase>( Instance ).create( TContext.Create(E) );  //as IRepositoryBase
+    Repository :=  TRepositoryBase<TEntitybase>( Instance ).create( TdbContext.Create(E) );  //as IRepositoryBase
     result:= Repository;
   end;
 end;

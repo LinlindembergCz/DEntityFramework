@@ -15,7 +15,7 @@ type
     procedure Delete;
     procedure AddOrUpdate( State: TEntityState);
     procedure Commit;
-    function Context: TContext;
+    function dbContext: TdbContext;
   end;
 
 
@@ -28,9 +28,9 @@ type
     procedure AddOrUpdate( State: TEntityState);
     procedure Commit;
     function GetEntity: T;
-    function GetContext:TContext;
+    function GetContext:TdbContext;
     property Entity: T read GetEntity;
-    property Context: TContext read GetContext;
+    property dbContext: TdbContext read GetContext;
   end;
 
 implementation

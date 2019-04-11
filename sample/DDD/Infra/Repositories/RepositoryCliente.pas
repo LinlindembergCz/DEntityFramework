@@ -11,7 +11,7 @@ type
   private
     _RepositoryCliente:IRepository<T>;
   public
-    Constructor Create(dbContext:TContext);override;
+    Constructor Create(dbContext:TdbContext);override;
     function LoadDataSetPorNome(value: string):TDataSet;
   end;
 
@@ -25,7 +25,7 @@ uses
 
 { TRepositoryCliente }
 
-constructor TRepositoryCliente<T>.Create(dbContext:TContext);
+constructor TRepositoryCliente<T>.Create(dbContext:TdbContext);
 begin
   _RepositoryCliente := TRepository<T>.create(dbContext);
   _RepositoryBase    := _RepositoryCliente As IRepository<T>;
@@ -34,18 +34,19 @@ end;
 
 function TRepositoryCliente<T>.LoadDataSetPorNome(value: string): TDataSet;
 var
-  E:TCliente;
+  E: TCliente;
 begin
-  E := _RepositoryCliente.Entity;
-  {
-   Context.Include( E ).
-           Include( E.Veiculo ).
-           Include( E.Contados.list ).
-           FirstOrDefault( E.Nome.Contains( value ));
+   E := _RepositoryCliente.Entity;
+   {
+   dbContext.Include( E ).
+             Include( E.Veiculo ).
+             Include( E.Contados.list ).
+             FirstOrDefault( E.Nome.Contains( value ));
 
-   showmessage( E.Nome.Value  +'  '+  E.Veiculo.Placa.Value + '   '+E.Contados[0].Nome.Value );
+   showmessage( E.Nome.Value  +'   '+  E.Veiculo.Placa.Value + '   '+E.Contados[0].Nome.Value );
    }
-  result := Context.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
+
+   result := dbContext.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 end;
 
 initialization RegisterClass(TRepositoryCliente);
