@@ -11,9 +11,9 @@ type
   private
     FId: TInteger;
     Mapped: boolean;
-
     // FDataCadastro: TEntityDatetime;
   public
+    thenInclude:boolean;
     procedure Validation; virtual;
     constructor Create; virtual;
     destructor Destroy; override;
@@ -22,6 +22,7 @@ type
     property Id: TInteger read FId write FId;
     function ToJson(UsingRestJson:boolean = false): string;
     procedure FromJson{<T: class, constructor>}(const AJson: String);
+
     // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
 

@@ -53,7 +53,10 @@ uses
   EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
   EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas',
   EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas',
-  ClassContato in 'Domain\Entities\ClassContato.pas';
+  ClassContato in 'Domain\Entities\ClassContato.pas',
+  ClassVeiculo in 'Domain\Entities\ClassVeiculo.pas',
+  ClassClienteTabelaPreco in 'Domain\Entities\ClassClienteTabelaPreco.pas',
+  ClassTabelaPreco in 'Domain\Entities\ClassTabelaPreco.pas';
 
 {$R *.res}
 
@@ -63,11 +66,12 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  ReportMemoryLeaksOnShutdown:= true;
 
   try
     c:= TDataContext.Create;
     c.Connection:= TFactoryConnection.GetConnection;
-    c.UpdateDataBase([TCliente, TContato]);
+    c.UpdateDataBase([TCliente, TContato, TVeiculo, TClienteTabelaPreco, TTabelaPreco ]);
   except
     application.Terminate;
     exit;

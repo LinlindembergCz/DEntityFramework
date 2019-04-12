@@ -46,6 +46,7 @@ Type
     procedure FreeObjects;
     function CriarTabela(i: integer): boolean;
     function IsFireBird: boolean;
+
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
@@ -61,7 +62,8 @@ Type
     function FindEntity(QueryAble: IQueryAble): TEntityBase; overload;
     function FindEntity<T: Class>(QueryAble: IQueryAble): T; overload;
     function FirstOrDefault(Condicion: TString): TEntityBase;
-    function Include( E: TObject ):TDataContext;
+    function Include( E: TEntityBase ):TDataContext;
+    function ThenInclude(E: TEntityBase): TDataContext;
     function Where(Condicion: TString): TDataContext;
     function GetData(QueryAble: IQueryAble): OleVariant;
     function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
@@ -111,31 +113,28 @@ begin
     result := DbSet.Data;
 
   finally
-    DbSet.Free;
-    DbSet:= nil;
-    drpProvider.Free;
-    drpProvider:= nil;
-    FFDQuery.Free;
-    FFDQuery:= nil;
+    FreeObjects;
   end;
 end;
 
 procedure TDataContext.FreeObjects;
 begin
-
   if DbSet <> nil then
   begin
     DbSet.Close;
     DbSet.Free;
+    DbSet:= nil;
   end;
   if drpProvider <> nil then
   begin
     drpProvider.Free;
+    drpProvider:= nil;
   end;
   if FFDQuery <> nil then
   begin
     FFDQuery.close;
     FFDQuery.Free;
+    FFDQuery:= nil;
   end;
 end;
 
@@ -583,6 +582,8 @@ begin
     TableList.Free;
   if ListField <> nil then
     ListField.Free;
+  if ListObjectsInclude <> nil then
+    ListObjectsInclude.Free;
   // if FConnection <> nil then    FConnection.Free;
 end;
 
@@ -660,29 +661,56 @@ function TDataContext.FirstOrDefault(Condicion: TString ): TEntityBase;
 var
   I:Integer;
   max:integer;
-  FirstEntidy, PriorEntity, CurrentEntidy: TEntityBase;
+  ReferenceEntidy, FirstEntity, PriorEntity, CurrentEntidy: TEntityBase;
   TableForeignKey: string;
 begin
   max:= ListObjectsInclude.Count-1;
+  if ListObjectsInclude.Count = 0 then
+     ListObjectsInclude.Add(FEntity);
   for I := 0 to max do
   begin
     CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
     if i = 0 then
     begin
-       FirstEntidy:= TEntityBase(ListObjectsInclude.Items[0]);
-       TableForeignKey := Copy(FirstEntidy.ClassName,2,length(FirstEntidy.ClassName) );
-       FirstEntidy := FindEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
+       FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
+       TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
+       FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
     end
     else
     begin
-       ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
-                                                 Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).
-                                                 Select );
+       if not CurrentEntidy.thenInclude then
+          ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
+                                                     Where(TableForeignKey+'Id='+ FirstEntity.Id.Value.ToString ).
+                                                     Select )
+       else
+       begin
+          ReferenceEntidy := ListObjectsInclude.Items[i-1];
+          ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
+                                                     Where( CurrentEntidy.Id = ReferenceEntidy.Id.Value ).
+                                                     Select )
+       end;
+
     end;
   end;
-  result:= FirstEntidy;
+  result:= FirstEntity;
   ListObjectsInclude.clear;
+end;
 
+function TDataContext.Include( E: TEntityBase ):TDataContext;
+begin
+   if ListObjectsInclude = nil then
+      ListObjectsInclude:= TList.Create;
+   ListObjectsInclude.Add( E );
+   result:= self;
+end;
+
+function TDataContext.ThenInclude( E: TEntityBase ):TDataContext;
+begin
+   if ListObjectsInclude = nil then
+      ListObjectsInclude:= TList.Create;
+   e.thenInclude:= true;
+   ListObjectsInclude.Add( E );
+   result:= self;
 end;
 
 function TDataContext.Where(Condicion: TString): TDataContext;
@@ -715,16 +743,7 @@ begin
 
 end;
 
-function TDataContext.Include( E: TObject ):TDataContext;
-begin
-   if ListObjectsInclude = nil then
-      ListObjectsInclude:= TList.Create;
-   ListObjectsInclude.Add( E );
- { if ListClassInclude = nil then
-      ListClassInclude:= TClassList.Create;
-   ListClassInclude.Add( E.ClassType );}
-   result:= self;
-end;
+
 
 { TLinq }
 

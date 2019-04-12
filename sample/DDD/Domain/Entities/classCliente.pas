@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
-  EF.Mapping.Atributes, ClassContato, ClassVeiculo, System.Generics.Collections;
+  EF.Mapping.Atributes, ClassContato, ClassVeiculo,ClassClienteTabelaPreco, System.Generics.Collections;
 
 type
 
@@ -28,6 +28,7 @@ type
     FCalcRenda: TFloat;
     FContados: TEntityList<TContato>;
     FVeiculo: TVeiculo;
+    FClienteTabelaPreco: TClienteTabelaPreco;
   public
     constructor Create;override;
     procedure Validation; override;
@@ -66,6 +67,8 @@ type
     property Contados: TEntityList<TContato> read FContados write FContados;
     [NotMapper]
     property Veiculo: TVeiculo read  FVeiculo write FVeiculo;
+    [NotMapper]
+    property ClienteTabelaPreco: TClienteTabelaPreco  read  FClienteTabelaPreco write FClienteTabelaPreco;
 
   end;
 
@@ -78,6 +81,7 @@ begin
   Email    := TEmail.Create;
   Contados := TEntityList<TContato>.create(TContato.create);
   Veiculo  := TVeiculo.create;
+  ClienteTabelaPreco:= TClienteTabelaPreco.Create;
 end;
 
 procedure TCliente.Validation;
