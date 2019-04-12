@@ -192,7 +192,8 @@ begin
     end;
     result := List;
   finally
-    FreeAndNil(DataSet);
+     DataSet.Free;
+     DataSet:= nil;
   end;
 end;
 
@@ -216,7 +217,8 @@ begin
     end;
     result := List;
   finally
-    FreeAndNil(DataSet);
+     DataSet.Free;
+     DataSet:= nil;
   end;
 end;
 
@@ -225,6 +227,7 @@ var
   DataSet: TClientDataSet;
 begin
   try
+
     FEntity := QueryAble.Entity;
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
@@ -233,7 +236,8 @@ begin
     TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
     result := QueryAble.Entity;
   finally
-    FreeAndNil(DataSet);
+     DataSet.Free;
+     DataSet:= nil;
   end;
 end;
 
@@ -248,7 +252,8 @@ begin
     TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
     result := QueryAble.Entity as T;
   finally
-    FreeAndNil(DataSet);
+     DataSet.Free;
+     DataSet:= nil;
   end;
 end;
 
@@ -562,6 +567,7 @@ begin
     result:= FFDQuery.ToJson();
   finally
     FFDQuery.Free;
+    FFDQuery:= nil;
     //Keys.Free;
   end;
 end;
@@ -664,42 +670,57 @@ var
   ReferenceEntidy, FirstEntity, PriorEntity, CurrentEntidy: TEntityBase;
   TableForeignKey: string;
 begin
-  max:= ListObjectsInclude.Count-1;
-  if ListObjectsInclude.Count = 0 then
-     ListObjectsInclude.Add(FEntity);
-  for I := 0 to max do
-  begin
-    CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
-    if i = 0 then
-    begin
-       FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
-       TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-       FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
-    end
-    else
-    begin
-       if not CurrentEntidy.thenInclude then
-          ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
-                                                     Where(TableForeignKey+'Id='+ FirstEntity.Id.Value.ToString ).
-                                                     Select )
-       else
-       begin
-          ReferenceEntidy := ListObjectsInclude.Items[i-1];
-          ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
-                                                     Where( CurrentEntidy.Id = ReferenceEntidy.Id.Value ).
-                                                     Select )
-       end;
+  try
+    if ListObjectsInclude = nil then
+       ListObjectsInclude:= TList.Create;
 
+    //Adicionar primeira a entidade principal do contexto
+    if ListObjectsInclude.Count = 0 then
+       ListObjectsInclude.Add(FEntity);
+    max:= ListObjectsInclude.Count-1;
+    for I := 0 to max do
+    begin
+      CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
+      if i = 0 then
+      begin
+         FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
+         TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
+         FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
+         FreeObjects;
+      end
+      else
+      begin
+         if not CurrentEntidy.thenInclude then
+            ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
+                                                       Where(TableForeignKey+'Id='+ FirstEntity.Id.Value.ToString ).
+                                                       Select )
+         else
+         begin
+            ReferenceEntidy := ListObjectsInclude.Items[i-1];
+            ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
+                                                       Where( CurrentEntidy.Id = ReferenceEntidy.Id.Value ).
+                                                       Select )
+         end;
+         FreeObjects;
+      end;
     end;
+    FEntity := FirstEntity;
+    result  := FEntity;
+  finally
+    ListObjectsInclude.clear;
+    ListObjectsInclude.Free;
+    ListObjectsInclude:= nil;
   end;
-  result:= FirstEntity;
-  ListObjectsInclude.clear;
+
 end;
 
 function TDataContext.Include( E: TEntityBase ):TDataContext;
 begin
    if ListObjectsInclude = nil then
+   begin
       ListObjectsInclude:= TList.Create;
+      ListObjectsInclude.Add(FEntity);
+   end;
    ListObjectsInclude.Add( E );
    result:= self;
 end;
@@ -707,7 +728,9 @@ end;
 function TDataContext.ThenInclude( E: TEntityBase ):TDataContext;
 begin
    if ListObjectsInclude = nil then
-      ListObjectsInclude:= TList.Create;
+   begin
+      raise Exception.Create('Nenhum entidade adicionada a consulta');
+   end;
    e.thenInclude:= true;
    ListObjectsInclude.Add( E );
    result:= self;
