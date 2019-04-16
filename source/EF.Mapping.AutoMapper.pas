@@ -191,6 +191,10 @@ begin
             end;
             Found:= true;
           end;
+          if (Atributo is NotMapper) then
+          begin
+            Found:= true;
+          end;
         end;
         if not Found then
         begin
@@ -367,6 +371,12 @@ begin
                     Attributies := Attributies + ', (' + EntityExpression(Atributo).Expression +') as '+EntityExpression(Atributo).Display;
                  FoundAttribute:= true;
                  break;
+               end
+               else
+               if Atributo IS NotMapper then
+               begin
+                  FoundAttribute:= true;
+                  break;
                end;
              end;
            end;

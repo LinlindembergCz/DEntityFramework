@@ -59,20 +59,22 @@ Type
     procedure Update;
     procedure Remove;
     procedure SaveChanges;
+    procedure AddDirect;
+    procedure UpdateDirect;
+    procedure RemoveDirect;
+
     function FindEntity(QueryAble: IQueryAble): TEntityBase; overload;
     function FindEntity<T: Class>(QueryAble: IQueryAble): T; overload;
     function FirstOrDefault(Condicion: TString): TEntityBase;
     function Include( E: TEntityBase ):TDataContext;
     function ThenInclude(E: TEntityBase): TDataContext;
-    function Where(Condicion: TString): TDataContext;
     function GetData(QueryAble: IQueryAble): OleVariant;
     function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
     function GetList(QueryAble: IQueryAble): TList;overload;
     function GetList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
     function GetJson(QueryAble: IQueryAble): string;
-    procedure AddDirect;
-    procedure UpdateDirect;
-    procedure RemoveDirect;
+    function Where(Condicion: TString): TDataContext;
+
     procedure InputEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
     procedure InitEntity(Contener: TComponent);
@@ -673,7 +675,6 @@ begin
   try
     if ListObjectsInclude = nil then
        ListObjectsInclude:= TList.Create;
-
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(FEntity);
@@ -686,7 +687,6 @@ begin
          FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
          TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
          FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
-         FreeObjects;
       end
       else
       begin
@@ -701,8 +701,8 @@ begin
                                                        Where( CurrentEntidy.Id = ReferenceEntidy.Id.Value ).
                                                        Select )
          end;
-         FreeObjects;
       end;
+      FreeObjects;
     end;
     FEntity := FirstEntity;
     result  := FEntity;

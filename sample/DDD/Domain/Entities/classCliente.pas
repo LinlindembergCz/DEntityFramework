@@ -29,8 +29,11 @@ type
     FContados: TEntityList<TContato>;
     FVeiculo: TVeiculo;
     FClienteTabelaPreco: TClienteTabelaPreco;
+
+    procedure Initialize;override;
   public
     constructor Create;override;
+    destructor Destroy;override;
     procedure Validation; override;
   published
     [EntityField('Nome','varchar(50)',false)][LengthMin(10)][Edit]
@@ -64,7 +67,7 @@ type
     [Edit]
     property Email:TEmail read FEmail write FEmail;
     [NotMapper]
-    property Contados: TEntityList<TContato> read FContados write FContados;
+    property Contatos: TEntityList<TContato> read FContados write FContados;
     [NotMapper]
     property Veiculo: TVeiculo read  FVeiculo write FVeiculo;
     [NotMapper]
@@ -77,11 +80,31 @@ implementation
 
 constructor TCliente.Create;
 begin
+  CollateOn:= true;
+  inherited Create;
+  Initialize;
+end;
+
+destructor TCliente.Destroy;
+begin
   inherited;
-  Email    := TEmail.Create;
-  Contados := TEntityList<TContato>.create(TContato.create);
-  Veiculo  := TVeiculo.create;
-  ClienteTabelaPreco:= TClienteTabelaPreco.Create;
+end;
+
+procedure TCliente.Initialize;
+begin
+  inherited;
+  Email    := Collate.RegisterObject<TEmail>(  TEmail.Create );
+  Veiculo  := Collate.RegisterObject<TVeiculo>(  TVeiculo.create );
+
+  ClienteTabelaPreco:= Collate.RegisterObject<TClienteTabelaPreco>( TClienteTabelaPreco.Create(true) );
+  ClienteTabelaPreco.Initialize;
+
+  Contatos:= Collate.RegisterObjectList<TContato>(
+                                     TEntityList<TContato>.create(
+                                             TContato.create ) );
+
+  //TEntityList<TContato>.create(TContato.create);
+
 end;
 
 procedure TCliente.Validation;

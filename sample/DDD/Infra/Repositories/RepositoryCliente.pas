@@ -21,7 +21,7 @@ type
 implementation
 
 uses
-  Vcl.Dialogs;
+  Vcl.Dialogs, System.SysUtils;
 
 { TRepositoryCliente }
 
@@ -34,19 +34,29 @@ end;
 
 function TRepositoryCliente<T>.LoadDataSetPorNome(value: string): TDataSet;
 var
-  E: TCliente;
+  E: T;
+  dbClienteContext: TdbContext;
 begin
-  { E := _RepositoryCliente.Entity;
+   E := _RepositoryCliente.Entity;
 
-    dbContext.Include( E.Veiculo ).
-                  Include( E.Contados.list ).
-                  Include( E.ClienteTabelaPreco).
-                  ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                  FirstOrDefault( E.Nome.Contains( value ));
+   dbClienteContext:= dbContext;
 
-   showmessage( E.Nome.Value );  }
+   dbClienteContext.Include( E.Veiculo ).
+                    Include( E.Contatos.list ).
+                    Include( E.ClienteTabelaPreco).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
+                    FirstOrDefault( E.Nome.Contains( value ) );
+
+   showmessage( E.Nome.Value+' '+
+                inttostr(E.Contatos.Count)+'  '+
+                E.ClienteTabelaPreco.ClienteId.Value.ToString+'  '+
+                inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)+ ' ' +
+                E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto.Descricao);
 
    result := dbContext.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
+
 
 
 end;

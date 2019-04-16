@@ -56,7 +56,9 @@ uses
   ClassContato in 'Domain\Entities\ClassContato.pas',
   ClassVeiculo in 'Domain\Entities\ClassVeiculo.pas',
   ClassClienteTabelaPreco in 'Domain\Entities\ClassClienteTabelaPreco.pas',
-  ClassTabelaPreco in 'Domain\Entities\ClassTabelaPreco.pas';
+  ClassTabelaPreco in 'Domain\Entities\ClassTabelaPreco.pas',
+  ClassProduto in 'Domain\Entities\ClassProduto.pas',
+  ClassItensTabelaPreco in 'Domain\Entities\ClassItensTabelaPreco.pas';
 
 {$R *.res}
 
@@ -71,7 +73,14 @@ begin
   try
     c:= TDataContext.Create;
     c.Connection:= TFactoryConnection.GetConnection;
-    c.UpdateDataBase([TCliente, TContato, TVeiculo, TClienteTabelaPreco, TTabelaPreco ]);
+    //A ordem de criação das tabelas que se relacionam é importante!!!!
+    c.UpdateDataBase([TCliente,
+                      TContato,
+                      TVeiculo,
+                      TTabelaPreco,
+                      TClienteTabelaPreco,
+                      TProduto,
+                      TItensTabelaPreco ]);
   except
     application.Terminate;
     exit;

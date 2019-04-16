@@ -13,6 +13,8 @@ type
     FClienteId: TInteger;
     FTabelaPrecoId: TInteger;
     FTabelaPreco: TTabelaPreco;
+    //FCliente: TCliente;
+
   public
     [EntityField('ClienteId','Integer',true)]
     [EntityForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
@@ -24,8 +26,11 @@ type
 
     [NotMapper]
     property TabelaPreco: TTabelaPreco read  FTabelaPreco write FTabelaPreco;
+    //[NotMapper]
+    //property Cliente: TCliente read  FCliente write FCliente;
 
     constructor Create;override;
+    procedure Initialize;override;
   end;
 
 implementation
@@ -34,10 +39,18 @@ implementation
 
 { TClienteTabelaPreco }
 
+
+
 constructor TClienteTabelaPreco.Create;
 begin
   inherited;
-  TabelaPreco:= TTabelaPreco.Create;
+end;
+
+procedure TClienteTabelaPreco.Initialize;
+begin
+  inherited;
+  TabelaPreco:= Collate.RegisterObject<TTabelaPreco>( TTabelaPreco.Create(true) );
+  //Cliente:= TCliente.Create;
 end;
 
 initialization RegisterClass(TClienteTabelaPreco);
