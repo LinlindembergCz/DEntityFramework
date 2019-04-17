@@ -17,17 +17,18 @@ program UnitTest2;
 uses
   DUnitTestRunner,
   TestLinqSQL in 'TestLinqSQL.pas',
-  classCliente in '..\DDD\Domain\Entities\classCliente.pas',
-  CPF in '..\DDD\Domain\ValuesObjects\CPF.pas',
-  Email in '..\DDD\Domain\ValuesObjects\Email.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
   System.uJson in '..\..\source\System.uJson.pas',
-  ClassClienteTabelaPreco in '..\DDD\Domain\Entities\ClassClienteTabelaPreco.pas',
-  ClassContato in '..\DDD\Domain\Entities\ClassContato.pas',
-  ClassItensTabelaPreco in '..\DDD\Domain\Entities\ClassItensTabelaPreco.pas',
-  ClassProduto in '..\DDD\Domain\Entities\ClassProduto.pas',
-  ClassTabelaPreco in '..\DDD\Domain\Entities\ClassTabelaPreco.pas',
-  ClassVeiculo in '..\DDD\Domain\Entities\ClassVeiculo.pas';
+  Domain.Entity.Cliente in '..\DDD\Domain\Entities\Domain.Entity.Cliente.pas',
+  Domain.Entity.ClienteTabelaPreco in '..\DDD\Domain\Entities\Domain.Entity.ClienteTabelaPreco.pas',
+  Domain.Entity.Contato in '..\DDD\Domain\Entities\Domain.Entity.Contato.pas',
+  Domain.Entity.Entities in '..\DDD\Domain\Entities\Domain.Entity.Entities.pas',
+  Domain.Entity.ItensTabelaPreco in '..\DDD\Domain\Entities\Domain.Entity.ItensTabelaPreco.pas',
+  Domain.Entity.Produto in '..\DDD\Domain\Entities\Domain.Entity.Produto.pas',
+  Domain.Entity.TabelaPreco in '..\DDD\Domain\Entities\Domain.Entity.TabelaPreco.pas',
+  Domain.Entity.Veiculo in '..\DDD\Domain\Entities\Domain.Entity.Veiculo.pas',
+  Domain.ValuesObject.CPF in '..\DDD\Domain\ValuesObjects\Domain.ValuesObject.CPF.pas',
+  Domain.ValuesObject.Email in '..\DDD\Domain\ValuesObjects\Domain.ValuesObject.Email.pas';
 
 {$R *.RES}
 

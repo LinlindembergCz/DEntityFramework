@@ -4,9 +4,10 @@ interface
 
 uses
   TestFramework, System.SysUtils, Vcl.Graphics, Winapi.Windows, System.Variants,
-  Vcl.Dialogs, Vcl.Controls, Vcl.Forms, Winapi.Messages, classCliente,
+  Vcl.Dialogs, Vcl.Controls, Vcl.Forms, Winapi.Messages,
   Math, strUtils, DB, Data.SqlExpr, DBClient, System.Classes,
   System.Generics.Collections, Data.Win.ADODB,FireDAC.Comp.Client,
+  Domain.Entity.Cliente,
   EF.Engine.DataContext,
   EF.QueryAble.Base,
   EF.Mapping.Atributes,
