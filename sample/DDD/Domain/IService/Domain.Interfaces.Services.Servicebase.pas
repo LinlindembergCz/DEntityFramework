@@ -1,9 +1,9 @@
-unit InterfaceService;
+unit Domain.Interfaces.Services.Servicebase;
 
 interface
 
 uses
-System.Classes, DB, EF.Mapping.Base, InterfaceRepository, Context;
+System.Classes, DB, EF.Mapping.Base, Domain.Interfaces.Repositorios.Repositorybase, Context;
 
 type
   IServiceBase<T:TEntityBase> = interface(IInterface)

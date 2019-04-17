@@ -206,6 +206,34 @@
         <DCCReference Include="Principal.pas">
             <Form>FormPrincipal</Form>
         </DCCReference>
+        <DCCReference Include="Domain\Entities\Domain.Entity.Cliente.pas">
+            <Form>/unit in Caminho.pas</Form>
+        </DCCReference>
+        <DCCReference Include="Domain\Entities\Domain.Entity.Contato.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.Veiculo.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.ClienteTabelaPreco.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.TabelaPreco.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.Produto.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.ItensTabelaPreco.pas"/>
+        <DCCReference Include="Domain\IRepositories\Domain.Interfaces.Repositorios.RepositoryBase.pas"/>
+        <DCCReference Include="Domain\IRepositories\Domain.Interfaces.Repositorios.Cliente.pas"/>
+        <DCCReference Include="Domain\Factories\FactoryEntity.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.Entities.pas"/>
+        <DCCReference Include="Infra\Contexto\Context.pas"/>
+        <DCCReference Include="Infra\Factories\FactoryConnection.pas"/>
+        <DCCReference Include="Infra\Repositories\Infra.Repository.Repository.pas"/>
+        <DCCReference Include="Infra\Repositories\Infra.Repository.Base.pas"/>
+        <DCCReference Include="Infra\Repositories\Infra.Repository.Cliente.pas"/>
+        <DCCReference Include="Infra\Factories\FactoryRepository.pas"/>
+        <DCCReference Include="Domain\IService\Domain.Interfaces.Services.Servicebase.pas"/>
+        <DCCReference Include="Domain\IService\Domain.Interfaces.Services.Cliente.pas"/>
+        <DCCReference Include="Service\Service.Cliente.pas"/>
+        <DCCReference Include="Service\Service.Base.pas"/>
+        <DCCReference Include="Service\Factories\FactoryService.pas"/>
+        <DCCReference Include="UI\Controllers\InterfaceController.pas"/>
+        <DCCReference Include="UI\Controllers\ControllerBase.pas"/>
+        <DCCReference Include="UI\Controllers\ControllerCliente.pas"/>
+        <DCCReference Include="UI\Factories\FactoryController.pas"/>
         <DCCReference Include="UI\Factories\FactoryView.pas"/>
         <DCCReference Include="UI\Views\ViewBase.pas">
             <Form>FormViewBase</Form>
@@ -213,39 +241,8 @@
         <DCCReference Include="UI\Views\viewCliente.pas">
             <Form>FormViewBase</Form>
         </DCCReference>
-        <DCCReference Include="UI\Controllers\InterfaceController.pas"/>
-        <DCCReference Include="UI\Factories\FactoryController.pas"/>
-        <DCCReference Include="UI\Controllers\ControllerBase.pas"/>
-        <DCCReference Include="Infra\Contexto\Context.pas"/>
-        <DCCReference Include="Infra\Factories\FactoryConnection.pas"/>
-        <DCCReference Include="Infra\Factories\FactoryRepository.pas"/>
-        <DCCReference Include="Domain\IService\InterfaceService.pas">
-            <Form>,
-  ClassAluno in &apos;Domain\Entities\ClassAluno.pas&apos;,
-  InterfaceRepositoryAluno in &apos;Domain\IRepositories\InterfaceRepositoryAluno.pas&apos;,
-  RepositoryAluno in &apos;Infra\Repositories\RepositoryAluno.pas&apos;,
-  InterfaceServiceAluno in &apos;Domain\IService\InterfaceServiceAluno.pas&apos;,
-  ServiceAluno in &apos;Service\ServiceAluno.pas&apos;,
-  ControllerAluno in &apos;UI\Controllers\ControllerAluno.pas&apos;,
-  viewAluno in &apos;UI\Views\viewAluno.pas&apos; {FormViewAluno</Form>
-        </DCCReference>
-        <DCCReference Include="Domain\IService\InterfaceServiceCliente.pas"/>
-        <DCCReference Include="Domain\ValuesObjects\CPF.pas"/>
-        <DCCReference Include="Domain\ValuesObjects\Email.pas"/>
-        <DCCReference Include="Domain\Factories\FactoryEntity.pas"/>
-        <DCCReference Include="Domain\IRepositories\InterfaceRepositoryCliente.pas"/>
-        <DCCReference Include="Domain\Entities\classCliente.pas">
-            <Form>/unit in Caminho.pas</Form>
-        </DCCReference>
-        <DCCReference Include="Domain\Entities\Entities.pas"/>
-        <DCCReference Include="Service\Factories\FactoryService.pas"/>
-        <DCCReference Include="Infra\Repositories\RepositoryBase.pas"/>
-        <DCCReference Include="Domain\IRepositories\InterfaceRepository.pas"/>
-        <DCCReference Include="Infra\Repositories\Repository.pas"/>
-        <DCCReference Include="UI\Controllers\ControllerCliente.pas"/>
-        <DCCReference Include="Infra\Repositories\RepositoryCliente.pas"/>
-        <DCCReference Include="Service\ServiceCliente.pas"/>
-        <DCCReference Include="Service\ServiceBase.pas"/>
+        <DCCReference Include="Domain\ValuesObjects\Domain.ValuesObject.CPF.pas"/>
+        <DCCReference Include="Domain\ValuesObjects\Domain.ValuesObject.Email.pas"/>
         <DCCReference Include="..\..\source\Data.DB.Helper.pas"/>
         <DCCReference Include="..\..\source\System.uJson.pas"/>
         <DCCReference Include="..\..\source\JsonDataObjects.pas"/>
@@ -263,6 +260,7 @@
         <DCCReference Include="..\..\source\EF.Schema.Abstract.pas"/>
         <DCCReference Include="..\..\source\EF.Schema.Firebird.pas"/>
         <DCCReference Include="..\..\source\EF.Schema.MSSQL.pas"/>
+        <DCCReference Include="..\..\source\EF.Schema.MySQL.pas"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txvpck"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txaPackage"/>
         <None Include="ModelSupport_Project2Tests\LinqXE\default.txvpck"/>
@@ -393,25 +391,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\viewFornecedor\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\ClienteService\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="ModelSupport_ProjectDDD\Context\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityXE\default.txaPackage" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\Mapping\AutoMapper\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -489,6 +487,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\Unit1\default.txaPackage" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="bin\ProjectDDD.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjectDDD.exe</RemoteName>
@@ -502,12 +506,6 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="ModelSupport_Project2Tests\Repositorio\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\Unit1\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -639,13 +637,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\RepositoryBase\default.txaPackage" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\Mapping\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\Mapping\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\RepositoryBase\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -711,6 +709,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\Mapping\AutoMapper\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="ModelSupport_ProjectDDD\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -736,6 +740,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="ModelSupport_ProjectDDD\RepositoryCliente\default.txaPackage" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -922,18 +932,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\viewFornecedor\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\ClienteService\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="ModelSupport_ProjectDDD\ServiceBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -946,7 +944,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityXE\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

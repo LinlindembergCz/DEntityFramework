@@ -1,9 +1,11 @@
-unit ServiceBase;
+unit Service.Base;
 
 interface
 
 uses
-System.Classes, DB, EF.Mapping.Base, InterfaceService, InterfaceRepository, Context,
+System.Classes, DB, EF.Mapping.Base,
+Domain.Interfaces.Services.ServiceBase,
+Domain.Interfaces.Repositorios.Repositorybase, Context,
 Winapi.Windows;
 
 type

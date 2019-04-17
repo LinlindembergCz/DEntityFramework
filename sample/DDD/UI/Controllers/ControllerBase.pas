@@ -6,7 +6,7 @@ uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Winapi.Windows, Context, InterfaceController, Vcl.DBGrids, Variants,
   Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
-  InterfaceService, EF.Mapping.Base; //<<-- EntityFramework
+  Domain.Interfaces.Services.ServiceBase, EF.Mapping.Base; //<<-- EntityFramework
                     //Está aqui temporariamente
                     //devido o metodo LoadLookUp
 type

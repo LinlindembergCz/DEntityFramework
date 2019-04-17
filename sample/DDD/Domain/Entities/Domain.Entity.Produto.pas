@@ -1,13 +1,13 @@
-unit ClassProduto;
+unit Domain.Entity.Produto;
 
 interface
 
 uses
-  System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
+  System.Classes,  Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
   EF.Mapping.Atributes;
 
 type
-  [EntityTable('Produtos')]
+  [EntityTable('Produto')]
   TProduto = class( TEntityBase )
   private
     FDescricao: string;

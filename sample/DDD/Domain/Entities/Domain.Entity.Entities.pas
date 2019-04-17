@@ -1,9 +1,9 @@
-unit Entities;
+unit Domain.Entity.Entities;
 
 interface
 
 uses
-  System.Classes, Dialogs, SysUtils, EF.Mapping.Base, EF.Core.Types, EF.Mapping.Atributes, CPF, classCLiente;
+  System.Classes, Dialogs, SysUtils, EF.Mapping.Base, EF.Core.Types, EF.Mapping.Atributes, Domain.ValuesObject.CPF, Domain.Entity.Cliente;
 
 type
   [EntityTable('Endereco')]

@@ -15,7 +15,7 @@ implementation
 
 { TControllerCliente }
 
-uses ServiceCliente;
+uses Service.Cliente;
 
 function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin

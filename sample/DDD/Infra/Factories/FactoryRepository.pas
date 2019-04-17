@@ -3,7 +3,7 @@ unit FactoryRepository;
 interface
 
 uses
-  Sysutils, FactoryEntity, InterfaceRepository, EF.Mapping.Base, System.Generics.Collections;
+  Sysutils, FactoryEntity, Domain.Interfaces.Repositorios.Repositorybase, EF.Mapping.Base, System.Generics.Collections;
 
 type
   TFactoryRepository = class
@@ -15,7 +15,7 @@ type
 implementation
 
 { TFactoryEntity }
-uses Context , EF.Mapping.AutoMapper, RepositoryBase;
+uses Context , EF.Mapping.AutoMapper, Infra.Repository.Base;
 
 
 class function TFactoryRepository.GetRepository<T>(E: string): IRepositoryBase<TEntitybase>;
@@ -23,7 +23,7 @@ var
   Repository    : IRepositoryBase<TEntitybase>;
   Instance      : TEntitybase;
 begin
-  Instance := TAutoMapper.GetInstance<T>( 'Repository'+E+'.TRepository'+E );
+  Instance := TAutoMapper.GetInstance<T>( 'Infra.Repository.'+E+'.TRepository'+E );
   if Instance <> nil then
   begin
     Repository :=  TRepositoryBase<TEntitybase>( Instance ).create( TdbContext.Create(E) );  //as IRepositoryBase

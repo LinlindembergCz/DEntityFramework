@@ -458,6 +458,10 @@ begin
                FoundAttribute:= true;
             end;
           end;
+          if Atributo is NotMapper then
+          begin
+            FoundAttribute:= true;
+          end;
         end;
         ctx2.Free;
         if (not FoundAttribute) and (not EntityField(Atributo).AutoInc) then
@@ -776,7 +780,13 @@ begin
                   L.Add(Value);
                   break;
                 end;
+              end
+              else
+              if Atrib is NotMapper then
+              begin
+                  break;
               end;
+
             end;
           end;//break;
         end;

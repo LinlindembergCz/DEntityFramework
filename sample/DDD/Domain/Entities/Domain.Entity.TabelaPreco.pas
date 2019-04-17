@@ -1,10 +1,10 @@
-unit ClassTabelaPreco;
+unit Domain.Entity.TabelaPreco;
 
 interface
 
 uses
-  System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
-  EF.Mapping.Atributes, ClassItensTabelaPreco;
+  System.Classes, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
+  EF.Mapping.Atributes, Domain.Entity.ItensTabelaPreco;
 
 type
   [EntityTable('TabelaPrecos')]

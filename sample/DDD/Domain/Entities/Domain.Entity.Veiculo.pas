@@ -1,9 +1,9 @@
-unit ClassVeiculo;
+unit Domain.Entity.Veiculo;
 
 interface
 
 uses
-  System.Classes,  Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
+  System.Classes, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
   EF.Mapping.Atributes;
 
 type

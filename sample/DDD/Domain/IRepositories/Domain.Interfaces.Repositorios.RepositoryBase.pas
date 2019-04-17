@@ -1,10 +1,9 @@
-unit InterfaceRepository;
+unit Domain.Interfaces.Repositorios.RepositoryBase;
 
 interface
 
 uses
   EF.Mapping.Base, Context, FactoryEntity,DB;
-
 
 type
   IRepositoryBase<T:TEntitybase> = interface(IInterface)

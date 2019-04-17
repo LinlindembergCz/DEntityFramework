@@ -1,11 +1,11 @@
-unit Repository;
+unit Infra.Repository.Repository;
 
 interface
 
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Vcl.DBGrids, Variants, Vcl.StdCtrls, Vcl.DBCtrls,
-  EF.Engine.DataContext, FactoryEntity, InterfaceRepository, EF.Mapping.Base, Context;
+  EF.Engine.DataContext, FactoryEntity, Domain.Interfaces.Repositorios.Repositorybase, EF.Mapping.Base, Context;
 
 type
    {$M+}
