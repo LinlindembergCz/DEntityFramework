@@ -22,7 +22,12 @@ uses
   Email in '..\DDD\Domain\ValuesObjects\Email.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
   System.uJson in '..\..\source\System.uJson.pas',
-  ClassContato in '..\DDD\Domain\Entities\ClassContato.pas';
+  ClassClienteTabelaPreco in '..\DDD\Domain\Entities\ClassClienteTabelaPreco.pas',
+  ClassContato in '..\DDD\Domain\Entities\ClassContato.pas',
+  ClassItensTabelaPreco in '..\DDD\Domain\Entities\ClassItensTabelaPreco.pas',
+  ClassProduto in '..\DDD\Domain\Entities\ClassProduto.pas',
+  ClassTabelaPreco in '..\DDD\Domain\Entities\ClassTabelaPreco.pas',
+  ClassVeiculo in '..\DDD\Domain\Entities\ClassVeiculo.pas';
 
 {$R *.RES}
 
