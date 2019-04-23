@@ -8,7 +8,7 @@ uses
    System.Generics.Collections,
    EF.Mapping.Atributes,
    EF.Mapping.Base,
-   EF.Core.Types;
+   EF.Core.Types, Rest.json, System.JSON;
 
 type
   TAutoMapper = class
@@ -29,6 +29,7 @@ type
     class function PropIsVisible(prop: TRttiProperty): boolean; static;
     class function PropNameEqualComponentName(Prop: TRttiProperty;
       Componente: TComponent): boolean; static;
+
 
   public
     class function CreateObject(AQualifiedClassName: string): TObject; overload;
@@ -67,9 +68,13 @@ type
       Valor: variant); overload;static;
     class procedure SetFieldValue(Entity: TEntityBase; Campo: TRttiProperty;
      Valor: variant);overload;static;
+    class procedure SetFieldValue(Entity: TEntityBase; Campo: TRttiProperty;
+     Valor: Tdatetime);overload;static;
+
     class function GetInstance<T:TEntityBase>(const Str_Class: TValue): T; static;
     class function GetInstance2(const Str_Class: TValue): TObject;
     class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
+    class procedure JsonToObject(Json: TJSOnObject; O: TEntityBase);
   end;
 
   Const
@@ -1811,6 +1816,72 @@ begin
     ctx.Free;
   end;
 
+end;
+
+class procedure  TAutoMapper.JsonToObject(Json:TJSOnObject; O:TEntityBase);
+
+    function FormatDateJson(Datahora: variant):string;
+    var
+      ano, mes, dia, hora, minuto, segundo: string;
+    begin
+      ano    := copy(string(DataHora),1,4);
+      mes    := copy(string(DataHora),6,2);
+      dia    := copy(string(DataHora),9,2);
+      hora   := copy(string(DataHora),12,2);
+      minuto := copy(string(DataHora),15,2);
+      segundo:= copy(string(DataHora),18,2);
+
+      result:= dia +'/'+ mes+'/'+ano +' '+ hora+':'+minuto+':'+segundo;
+    end;
+
+var
+  L:TStringList;
+  I:integer;
+  Name: string;
+  jsonName: string;
+  value:Variant;
+begin
+   L := TAutoMapper.GetFieldsList(O.ClassInfo);
+   for I := 0 to L.Count - 1 do
+   begin
+      try
+          Name := L.Strings[I];
+          TAutoMapper.SetFieldValue( O, Name , json.Values[lowercase(Name)].Value );
+      except
+          try
+              jsonName:= lowercase(copy(Name,1,1))+Copy(Name,2,20);
+              TAutoMapper.SetFieldValue( O, Name , json.Values[ jsonName ].Value );
+          except
+              on E:Exception do
+              begin
+                  if pos('Could not convert variant of type (UnicodeString) into type (Double)',e.Message) > 0 then
+                  begin
+                     value:= json.Values[ jsonName ].Value;
+                     TAutoMapper.SetFieldValue( O, Name , strtodatetime(FormatDateJson(value)) );
+                  end;
+              end;
+          end;
+      end;
+   end;
+end;
+
+class procedure TAutoMapper.SetFieldValue(Entity: TEntityBase;
+  Campo: TRttiProperty; Valor: Tdatetime);
+  var
+  ctx: TRttiContext;
+  Val: TValue;
+  iInteger: TInteger;
+  fFloat: TFloat;
+  sString: TString;
+  vInstance:Variant;
+  dDatetime: TDate;
+  TypeClassName: string;
+begin
+  dDatetime := Val.AsType<TDate>;
+  if not fEmpty(Valor) then
+    dDatetime.Value := Valor;
+  TValue.Make(@dDatetime, TypeInfo(TDate), Val);
+    Campo.SetValue(Entity, Val);
 end;
 
 end.

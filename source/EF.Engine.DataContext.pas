@@ -570,7 +570,7 @@ begin
   finally
     FFDQuery.Free;
     FFDQuery:= nil;
-    //Keys.Free;
+    Keys.Free;
   end;
 end;
 
