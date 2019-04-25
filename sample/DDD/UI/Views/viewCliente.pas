@@ -40,7 +40,7 @@ implementation
 
 {$R *.dfm}
 
-uses ControllerCliente;
+uses UI.Controller.Cliente;
 
 //Nosso crud so precisa disso e mais nada!
 procedure TFormViewCliente.Button4Click(Sender: TObject);

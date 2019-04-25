@@ -25,9 +25,6 @@ uses
   Service.Cliente in 'Service\Service.Cliente.pas',
   Service.Base in 'Service\Service.Base.pas',
   FactoryService in 'Service\Factories\FactoryService.pas',
-  InterfaceController in 'UI\Controllers\InterfaceController.pas',
-  ControllerBase in 'UI\Controllers\ControllerBase.pas',
-  ControllerCliente in 'UI\Controllers\ControllerCliente.pas',
   FactoryController in 'UI\Factories\FactoryController.pas',
   FactoryView in 'UI\Factories\FactoryView.pas',
   ViewBase in 'UI\Views\ViewBase.pas' {FormViewBase},
@@ -52,7 +49,10 @@ uses
   EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
   EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas',
   EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas',
-  UI.Model.Cliente in 'UI\Model\UI.Model.Cliente.pas';
+  UI.Model.Cliente in 'UI\Model\UI.Model.Cliente.pas',
+  UI.Controller.Base in 'UI\Controllers\UI.Controller.Base.pas',
+  UI.Controller.Cliente in 'UI\Controllers\UI.Controller.Cliente.pas',
+  UI.Interfaces.ControllerBase in 'UI\Controllers\UI.Interfaces.ControllerBase.pas';
 
 {$R *.res}
 

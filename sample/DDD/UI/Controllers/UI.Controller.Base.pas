@@ -1,10 +1,10 @@
-unit ControllerBase;
+unit UI.Controller.Base;
 
 interface
 
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
-  Winapi.Windows, Context, InterfaceController, Vcl.DBGrids, Variants,
+  Winapi.Windows, Context, UI.Interfaces.ControllerBase, Vcl.DBGrids, Variants,
   Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
   Service.Interfaces.Services.ServiceBase, EF.Mapping.Base, System.JSON; //<<-- EntityFramework
                     //Está aqui temporariamente
