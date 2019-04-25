@@ -18,13 +18,13 @@ implementation
 
 { TClienteService }
 
-uses Infra.Repository.Cliente;
+uses Domain.Interfaces.Repositorios.Cliente;
 
 { TServiceCliente }
 
 function TServiceCliente<T>.LoadDataSetPorNome(Value: string): TDataSet;
 begin
-  result := (Repository as TRepositoryCliente<T> ).LoadDataSetPorNome( Value  );
+  result := (Repository as IRepositoryCliente<T> ).LoadDataSetPorNome( Value  );
 end;
 
 initialization RegisterClass(TServiceCliente);

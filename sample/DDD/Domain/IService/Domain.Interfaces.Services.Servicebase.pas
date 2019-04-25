@@ -3,7 +3,7 @@ unit Domain.Interfaces.Services.Servicebase;
 interface
 
 uses
-System.Classes, DB, EF.Mapping.Base, Domain.Interfaces.Repositorios.Repositorybase, Context;
+System.Classes, DB, EF.Mapping.Base, Domain.Interfaces.Repositorios.Repositorybase, Context, System.JSON;
 
 type
   IServiceBase<T:TEntityBase> = interface(IInterface)
@@ -15,7 +15,8 @@ type
     procedure Post( State: TEntityState);
     procedure Persist;
     function GetEntity: T;
-    procedure InputEntity(Contener: TComponent);
+    procedure InputEntity(Contener: TComponent);overload;
+    procedure InputEntity(JSOnObject: TJSOnObject);overload;
     procedure InitEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent);
     function FieldList:TFieldList;

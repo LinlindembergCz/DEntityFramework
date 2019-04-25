@@ -6,7 +6,7 @@ uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Winapi.Windows, Context, InterfaceController, Vcl.DBGrids, Variants,
   Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
-  Domain.Interfaces.Services.ServiceBase, EF.Mapping.Base; //<<-- EntityFramework
+  Domain.Interfaces.Services.ServiceBase, EF.Mapping.Base, System.JSON; //<<-- EntityFramework
                     //Está aqui temporariamente
                     //devido o metodo LoadLookUp
 type
@@ -34,7 +34,8 @@ type
     procedure Insert; virtual;
     procedure Edit; virtual;
     procedure Delete; virtual;
-    procedure Post; virtual;
+    procedure Post; overload;virtual;
+    procedure Post(JSOnObject:TJSOnObject); overload;virtual;
     procedure Cancel; virtual;
     procedure Apply; virtual;
     procedure EntityToDBGrid(Grid: TDBGrid);
@@ -127,6 +128,21 @@ end;
 procedure TControllerBase.Post;
 begin
   Service.InputEntity(FContener);
+  Service.Post( State );
+  UpdateState(esBrowser);
+  if FAutoApply then
+  begin
+     Apply;
+     with FContener as TFormViewBase do
+     begin
+       pgPrincipal.ActivePageIndex:= 0;
+     end;
+  end;
+end;
+
+procedure TControllerBase.Post(JSOnObject: TJSOnObject);
+begin
+  Service.InputEntity(JSOnObject);
   Service.Post( State );
   UpdateState(esBrowser);
   if FAutoApply then

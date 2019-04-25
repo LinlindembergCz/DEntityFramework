@@ -1037,6 +1037,25 @@ begin
     Campo.SetValue(Entity, Val);
 end;
 
+class procedure TAutoMapper.SetFieldValue(Entity: TEntityBase;
+  Campo: TRttiProperty; Valor: Tdatetime);
+  var
+  ctx: TRttiContext;
+  Val: TValue;
+  iInteger: TInteger;
+  fFloat: TFloat;
+  sString: TString;
+  vInstance:Variant;
+  dDatetime: TDate;
+  TypeClassName: string;
+begin
+  dDatetime := Val.AsType<TDate>;
+  if not fEmpty(Valor) then
+    dDatetime.Value := Valor;
+  TValue.Make(@dDatetime, TypeInfo(TDate), Val);
+    Campo.SetValue(Entity, Val);
+end;
+
 class function TAutoMapper.ToMapping(Entity: TEntityBase;
   InContext: boolean): boolean;
 var
@@ -1865,24 +1884,7 @@ begin
    end;
 end;
 
-class procedure TAutoMapper.SetFieldValue(Entity: TEntityBase;
-  Campo: TRttiProperty; Valor: Tdatetime);
-  var
-  ctx: TRttiContext;
-  Val: TValue;
-  iInteger: TInteger;
-  fFloat: TFloat;
-  sString: TString;
-  vInstance:Variant;
-  dDatetime: TDate;
-  TypeClassName: string;
-begin
-  dDatetime := Val.AsType<TDate>;
-  if not fEmpty(Valor) then
-    dDatetime.Value := Valor;
-  TValue.Make(@dDatetime, TypeInfo(TDate), Val);
-    Campo.SetValue(Entity, Val);
-end;
+
 
 end.
 

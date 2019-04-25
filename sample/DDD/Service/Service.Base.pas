@@ -6,13 +6,14 @@ uses
 System.Classes, DB, EF.Mapping.Base,
 Domain.Interfaces.Services.ServiceBase,
 Domain.Interfaces.Repositorios.Repositorybase, Context,
-Winapi.Windows;
+Winapi.Windows, System.JSON;
 
 type
   {$M+}
   TServiceBase<T:TEntityBase> = class(TInterfacedPersistent, IServiceBase<T>)
   private
     FRefCount: Integer;
+    procedure InitEntity(Contener: TComponent);
   protected
     Repository: IRepositoryBase<T>;
   public
@@ -25,8 +26,8 @@ type
     procedure Post( State: TEntityState);virtual;
     procedure Persist;virtual;
     function GetEntity: T;virtual;
-    procedure InputEntity(Contener: TComponent);virtual;
-    procedure InitEntity(Contener: TComponent); virtual;
+    procedure InputEntity(Contener: TComponent);overload;virtual;
+    procedure InputEntity(JSOnObject: TJSOnObject);overload; virtual;
 
     function FieldList:TFieldList;virtual;
     procedure ReadEntity(Contener: TComponent);virtual;
@@ -76,6 +77,8 @@ begin
   Repository.dbContext.InitEntity(Contener);
 end;
 
+
+
 procedure TServiceBase<T>.ReadEntity(Contener: TComponent);
 begin
   Repository.dbContext.ReadEntity(Contener);
@@ -84,6 +87,12 @@ end;
 procedure TServiceBase<T>.InputEntity(Contener: TComponent);
 begin
   Repository.dbContext.InputEntity(Contener);
+end;
+
+procedure TServiceBase<T>.InputEntity(JSOnObject: TJSOnObject);
+begin
+  TAutoMapper.JsonToObject( JSOnObject, Repository.dbContext.Entity );
+  //Repository.dbContext.InputEntity(Json);
 end;
 
 function TServiceBase<T>.ChangeCount: Integer;

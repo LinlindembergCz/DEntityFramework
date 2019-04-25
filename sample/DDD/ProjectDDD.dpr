@@ -51,7 +51,8 @@ uses
   EF.Schema.Abstract in '..\..\source\EF.Schema.Abstract.pas',
   EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
   EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas',
-  EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas';
+  EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas',
+  UI.Model.Cliente in 'UI\Model\UI.Model.Cliente.pas';
 
 {$R *.res}
 
