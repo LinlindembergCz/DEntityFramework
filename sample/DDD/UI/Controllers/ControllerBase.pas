@@ -6,7 +6,7 @@ uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Winapi.Windows, Context, InterfaceController, Vcl.DBGrids, Variants,
   Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
-  Domain.Interfaces.Services.ServiceBase, EF.Mapping.Base, System.JSON; //<<-- EntityFramework
+  Service.Interfaces.Services.ServiceBase, EF.Mapping.Base, System.JSON; //<<-- EntityFramework
                     //Está aqui temporariamente
                     //devido o metodo LoadLookUp
 type
@@ -22,7 +22,6 @@ type
     FState: TEntityState;
     FContener: TComponent;
     FAutoApply: Boolean;
-  //EntityDataSet: TClientDataSet;
     Service:IServiceBase<TEntitybase>;
     procedure CleanComponents;
     procedure UpdateState(const ValueState: TEntityState);
@@ -41,8 +40,6 @@ type
     procedure EntityToDBGrid(Grid: TDBGrid);
     procedure LoadLookUp(DBLookupComboBox: TDBLookupComboBox ; DataSource: TDataSource; E:string);
     property State: TEntityState read FState write FState;
-    //property Contener: TComponent read GetContener write SetContener;
-    //property AutoApply :boolean read GetAutoApply write SetAutoApply;
 
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;

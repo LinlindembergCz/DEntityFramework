@@ -1,9 +1,9 @@
-unit Domain.Interfaces.Services.Cliente;
+unit Service.Interfaces.Services.Cliente;
 
 interface
 
 uses
-Domain.Interfaces.Services.ServiceBase, Domain.Entity.Cliente;
+Service.Interfaces.Services.ServiceBase, Domain.Entity.Cliente;
 
 type
   IServiceCliente<T:TCliente> = interface(IServiceBase<T>)

@@ -1,4 +1,4 @@
-unit Domain.Interfaces.Repositorios.RepositoryBase;
+unit Infra.Interfaces.Repositorios.RepositoryBase;
 
 interface
 

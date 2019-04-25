@@ -3,9 +3,9 @@ unit Infra.Repository.Cliente;
 interface
 
 uses
-DB, Classes, Infra.Repository.Repository, Domain.Entity.Cliente, Infra.Repository.Base,
-Domain.Interfaces.Repositorios.Cliente,
-Domain.Interfaces.Repositorios.Repositorybase,  Context, EF.Core.Types, EF.Engine.DataContext;
+DB, Classes, Infra.Repository.GenericRepository, Domain.Entity.Cliente, Infra.Repository.Base,
+Infra.Interfaces.Repositorios.Cliente,
+Infra.Interfaces.Repositorios.Repositorybase,  Context, EF.Core.Types, EF.Engine.DataContext;
 
 type
   TRepositoryCliente<T:TCliente> = class(TRepositoryBase<T> ,IRepositoryCliente<T>)

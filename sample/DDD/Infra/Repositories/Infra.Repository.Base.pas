@@ -3,7 +3,7 @@ unit Infra.Repository.Base;
 interface
 
 uses
- Classes, Infra.Repository.Repository, Domain.Interfaces.Repositorios.Repositorybase,
+ Classes, Infra.Repository.GenericRepository, Infra.Interfaces.Repositorios.Repositorybase,
  DB, Context, EF.Engine.DataContext, EF.Mapping.Base;
 
 type

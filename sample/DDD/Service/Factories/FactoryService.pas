@@ -4,8 +4,8 @@ interface
 
 uses
     FactoryEntity,
-    Domain.Interfaces.Services.Servicebase,
-    Domain.Interfaces.Repositorios.RepositoryBase, VCL.Dialogs, Sysutils, EF.Mapping.Base;
+    Service.Interfaces.Services.Servicebase,
+    infra.Interfaces.Repositorios.RepositoryBase, VCL.Dialogs, Sysutils, EF.Mapping.Base;
 
 type
    TFactoryService = class

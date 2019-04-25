@@ -3,7 +3,7 @@ unit FactoryRepository;
 interface
 
 uses
-  Sysutils, FactoryEntity, Domain.Interfaces.Repositorios.Repositorybase, EF.Mapping.Base, System.Generics.Collections;
+  Sysutils, FactoryEntity, infra.Interfaces.Repositorios.Repositorybase, EF.Mapping.Base, System.Generics.Collections;
 
 type
   TFactoryRepository = class
