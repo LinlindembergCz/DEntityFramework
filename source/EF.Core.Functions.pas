@@ -29,6 +29,7 @@ var
   pParserDataSet: TProc<TStringList, TStringList, TDataSet>;
   fEmpty: TFunc<variant, boolean>;
   fStringReplace:TFunc<string, string,string,string>;
+  fFormatDateJson: TFunc<variant, string>;
 
 implementation
 
@@ -264,5 +265,19 @@ fStringReplace:= function (aString: string;Ch1, ch2: string): string
                     Result := sb.ToString();
                     sb.Free;
                   end;
+
+ fFormatDateJson:= function (Datahora: variant):string
+                      var
+                        ano, mes, dia, hora, minuto, segundo: string;
+                      begin
+                        ano    := copy(string(DataHora),1,4);
+                        mes    := copy(string(DataHora),6,2);
+                        dia    := copy(string(DataHora),9,2);
+                        hora   := copy(string(DataHora),12,2);
+                        minuto := copy(string(DataHora),15,2);
+                        segundo:= copy(string(DataHora),18,2);
+
+                        result:= dia +'/'+ mes+'/'+ano +' '+ hora+':'+minuto+':'+segundo;
+                      end;
 
 end.
