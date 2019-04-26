@@ -4,12 +4,10 @@ interface
 
 uses
  DB, DBClient, System.Classes, UI.Controller.Base,  FactoryEntity, SysUtils, strUtils,
- Rest.Json, System.JSON;
+ Rest.Json, System.JSON, RTTI, System.TypInfo;
 
 type
   TControllerCliente = class(TControllerBase)
-  private
-
   public
      function LoadDataSetPorNome( Value: string ): TDataSet;
      procedure Post;override;
@@ -19,7 +17,7 @@ implementation
 
 { TControllerCliente }
 
-uses Service.Cliente, UI.Model.Cliente, viewCliente;
+uses Service.Cliente, UI.Model.Cliente, viewCliente, UI.Utils.DataBind;
 
 function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin
@@ -28,32 +26,25 @@ end;
 
 procedure TControllerCliente.Post;
 var
-  C: TModelCliente;
-  F: TFormViewCliente;
+  C: TClienteDetail;
   JsonObject:TJsonObject;
 begin
-  C:= TModelCliente.Create;
-  F:= TFormViewCliente(FContener);
-  with C do
-  begin
-    CPFCNPJ:= F.edtCPFCNPJ.Text;
-    Renda:= strtofloat( F.edtRenda.Text );
-    Nome:=F.edtNome.Text;
-    RG:=F.edtRG.Text;
-    DataNascimento:=F.DataNascimento.date;
-    Ativo:= ifthen( F.Ativo.Checked,'S','N' );
-    NomeFantasia:=F.edtNomeFantasia.Text;
-    Tipo:=ifthen( F.rdgTipo.ItemIndex = 0,'F','J' );
-    Observacao:=F.Observacao.Text;
-    Email:= F.edtEmail.Text;
+  try
+     try
+        C:= TClienteDetail.Create;
+        JsonObject:= TJson.ObjectToJsonObject(  TDataBind.Put(FContener, C) );
+        inherited Post( JsonObject );
+     except
+       On E:Exception do
+       begin
+         raise Exception.Create('Erro(TControllerCliente.Post):'+E.message);
+       end;
+     end;
+  finally
+    JsonObject.Free;
+    C.Free;
   end;
-  JsonObject:= TJson.ObjectToJsonObject( C );
-  inherited Post( JsonObject );
-  JsonObject.Free;
-  C.Free;
 end;
-
-
 
 initialization RegisterClass(TControllerCliente);
 finalization UnRegisterClass(TControllerCliente);

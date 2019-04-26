@@ -7,7 +7,7 @@ uses
 
 type
   //json.Text := TJson.ObjectToJsonString(CooperadoDTO);
-  TModelCliente = class(TPersistent)
+  TClienteDetail = class(TPersistent)
   private
     FCPFCNPJ: String;
     FRenda: Double;
@@ -42,7 +42,7 @@ type
 
 implementation
 
-initialization RegisterClass(TModelCliente);
-finalization UnRegisterClass(TModelCliente);
+initialization RegisterClass(TClienteDetail);
+finalization UnRegisterClass(TClienteDetail);
 
 end.
