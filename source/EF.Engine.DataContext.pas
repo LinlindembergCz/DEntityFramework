@@ -520,10 +520,14 @@ end;
 procedure TDataContext.InputEntity(Contener: TComponent);
 begin
   // refatorar
+  {
+  //Foi descontinuado
+
   if Contener is TForm then
     TAutoMapper.Puts(Contener, FEntity)
   else
     TAutoMapper.PutsFromControl(Contener as TCustomControl, FEntity);
+  }
 end;
 
 procedure TDataContext.ReadEntity(Contener: TComponent;
