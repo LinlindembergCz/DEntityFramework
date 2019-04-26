@@ -13,20 +13,18 @@ type
      FRefCount: integer;
    protected
      _RepositoryBase: IRepository<T>;
+      function dbContext: Context.TdbContext;virtual;
    public
      Constructor Create(dbContext:Context.TdbContext);virtual;
-
      procedure RefreshDataSet; virtual;
      function  LoadDataSet(iId:Integer; Fields: string = ''): TDataSet;virtual;
      function  Load(iId: Integer = 0): T;virtual;
      procedure Delete;virtual;
      procedure AddOrUpdate( State: TEntityState);virtual;
      procedure Commit;virtual;
-     function dbContext: Context.TdbContext;virtual;
-
-
-    function _AddRef: Integer; stdcall;
-    function _Release: Integer; stdcall;
+     function GetEntity: T;
+     function _AddRef: Integer; stdcall;
+     function _Release: Integer; stdcall;
    End;
    {$M-}
 
@@ -47,6 +45,11 @@ end;
 procedure TRepositoryBase<T>.Delete;
 begin
   _RepositoryBase.Delete;
+end;
+
+function TRepositoryBase<T>.GetEntity: T;
+begin
+  result:= dbContext.Entity as T;
 end;
 
 function TRepositoryBase<T>.dbContext: Context.TdbContext;

@@ -17,7 +17,7 @@ implementation
 
 { TControllerCliente }
 
-uses Service.Cliente, UI.Model.Cliente, viewCliente, UI.Utils.DataBind;
+uses Service.Cliente, UI.Model.Cliente,  UI.Utils.DataBind;
 
 function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin

@@ -52,7 +52,8 @@ uses
   UI.Model.Cliente in 'UI\Model\UI.Model.Cliente.pas',
   UI.Controller.Base in 'UI\Controllers\UI.Controller.Base.pas',
   UI.Controller.Cliente in 'UI\Controllers\UI.Controller.Cliente.pas',
-  UI.Interfaces.ControllerBase in 'UI\Controllers\UI.Interfaces.ControllerBase.pas';
+  UI.Interfaces.ControllerBase in 'UI\Controllers\UI.Interfaces.ControllerBase.pas',
+  UI.Utils.DataBind in 'UI\Utils\UI.Utils.DataBind.pas';
 
 {$R *.res}
 

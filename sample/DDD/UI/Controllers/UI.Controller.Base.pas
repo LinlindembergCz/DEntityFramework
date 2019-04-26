@@ -5,10 +5,11 @@ interface
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Winapi.Windows, Context, UI.Interfaces.ControllerBase, Vcl.DBGrids, Variants,
-  Vcl.StdCtrls, EF.Engine.DataContext, FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
-  Service.Interfaces.Services.ServiceBase, EF.Mapping.Base, System.JSON; //<<-- EntityFramework
-                    //Está aqui temporariamente
-                    //devido o metodo LoadLookUp
+  Vcl.StdCtrls,  FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
+  Service.Interfaces.Services.ServiceBase, System.JSON ,
+  EF.Engine.DataContext, EF.Mapping.Base; //<<-- EntityFramework
+                                          //Está aqui temporariamente
+                                          //devido o metodo LoadLookUp
 type
   {$M+}
   TControllerBase = class(TInterfacedPersistent, IControllerBase)
@@ -50,7 +51,7 @@ implementation
 
 { TControllerClient }
 
-uses   ViewBase, EF.Drivers.Connection, FactoryConnection, FactoryRepository, EF.Mapping.AutoMapper,
+uses   ViewBase,  FactoryConnection, FactoryRepository,
   FactoryService;
 
 constructor TControllerBase.Create(pService:IServiceBase<TEntitybase>);
@@ -122,9 +123,10 @@ begin
   UpdateState(esInsert);
 end;
 
+
 procedure TControllerBase.Post;
 begin
-  Service.InputEntity(FContener);
+ { Service.InputEntity(FContener);
   Service.Post( State );
   UpdateState(esBrowser);
   if FAutoApply then
@@ -134,8 +136,9 @@ begin
      begin
        pgPrincipal.ActivePageIndex:= 0;
      end;
-  end;
+  end; }
 end;
+
 
 procedure TControllerBase.Post(JSOnObject: TJSOnObject);
 begin

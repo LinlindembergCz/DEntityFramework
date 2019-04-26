@@ -15,7 +15,7 @@ type
     procedure Post( State: TEntityState);
     procedure Persist;
     function GetEntity: T;
-    procedure InputEntity(Contener: TComponent);overload;
+    //procedure InputEntity(Contener: TComponent);overload;
     procedure InputEntity(JSOnObject: TJSOnObject);overload;
     procedure InitEntity(Contener: TComponent);
     procedure ReadEntity(Contener: TComponent);

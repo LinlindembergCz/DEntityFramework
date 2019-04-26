@@ -14,6 +14,8 @@ type
     procedure Delete;
     procedure AddOrUpdate( State: TEntityState);
     procedure Commit;
+    function GetEntity: T;
+    property Entity: T read GetEntity;
     function dbContext: TdbContext;
   end;
 

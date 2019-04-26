@@ -26,7 +26,7 @@ type
     procedure Post( State: TEntityState);virtual;
     procedure Persist;virtual;
     function GetEntity: T;virtual;
-    procedure InputEntity(Contener: TComponent);overload;virtual;
+    //procedure InputEntity(Contener: TComponent);overload;virtual;
     procedure InputEntity(JSOnObject: TJSOnObject);overload; virtual;
 
     function FieldList:TFieldList;virtual;
@@ -77,22 +77,19 @@ begin
   Repository.dbContext.InitEntity(Contener);
 end;
 
-
-
 procedure TServiceBase<T>.ReadEntity(Contener: TComponent);
 begin
   Repository.dbContext.ReadEntity(Contener);
 end;
 
-procedure TServiceBase<T>.InputEntity(Contener: TComponent);
+{procedure TServiceBase<T>.InputEntity(Contener: TComponent);
 begin
   Repository.dbContext.InputEntity(Contener);
-end;
+end;}
 
 procedure TServiceBase<T>.InputEntity(JSOnObject: TJSOnObject);
 begin
-  TAutoMapper.JsonToObject( JSOnObject, Repository.dbContext.Entity );
-  //Repository.dbContext.InputEntity(Json);
+  TAutoMapper.JsonToObject( JSOnObject, Repository.Entity );
 end;
 
 function TServiceBase<T>.ChangeCount: Integer;
