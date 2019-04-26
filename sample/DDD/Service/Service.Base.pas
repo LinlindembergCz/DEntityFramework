@@ -89,7 +89,7 @@ end;}
 
 procedure TServiceBase<T>.InputEntity(JSOnObject: TJSOnObject);
 begin
-  TAutoMapper.JsonToObject( JSOnObject, Repository.Entity );
+  TAutoMapper.JsonObjectToObject<T>( JSOnObject, Repository.Entity );
 end;
 
 function TServiceBase<T>.ChangeCount: Integer;
