@@ -19,8 +19,7 @@ type
       : string; static;
     class function ValidComponent(Comp: TComponent): boolean; static;
     class function GetMaxLengthValue(E: TEntityBase; aProp: string): variant; static;
-    class function SetComponentValueProp(Componente: TComponent;
-      Prop: TRttiProperty; Entity: TEntityBase): boolean; static;
+    //class function SetComponentValueProp(Componente: TComponent;  Prop: TRttiProperty; Entity: TEntityBase): boolean; static;
     class function PropIsInstance(Prop: TRttiProperty): boolean; static;
     class function PropIsFloat(Prop: TRttiProperty): boolean; static;
     class function PropIsInteger(Prop: TRttiProperty): boolean; static;
@@ -54,8 +53,8 @@ type
       : variant; static;
     class function GetValueProperty(E: TEntityBase; Propert: string)
       : string; static;
-    class procedure Puts(Component: TComponent; Entity: TEntityBase;Valued: boolean = false);overload;
-    class procedure PutsFromControl(ComponentControl: TCustomControl; Entity: TEntityBase); static;
+    //class procedure Puts(Component: TComponent; Entity: TEntityBase;Valued: boolean = false);overload;
+    //class procedure PutsFromControl(ComponentControl: TCustomControl; Entity: TEntityBase); static;
     class procedure Read(Component: TComponent; Entity: TEntityBase;
       SetDefaultValue: boolean; DataSet :TDataSet = nil);
     class procedure DataToEntity(DataSet: TDataSet; Entity: TEntityBase);
@@ -74,7 +73,7 @@ type
     class function GetInstance<T:TEntityBase>(const Str_Class: TValue): T; static;
     class function GetInstance2(const Str_Class: TValue): TObject;
     class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
-    class procedure JsonToObject(Json: TJSOnObject; O: TEntityBase);
+    class procedure JsonObjectToObject<T:TEntityBase>(Json: TJSOnObject; O: T);
   end;
 
   Const
@@ -1393,6 +1392,7 @@ begin
   end;
 end;
 
+{
 class function TAutoMapper.SetComponentValueProp(Componente:TComponent;Prop: TRttiProperty; Entity: TEntityBase):boolean;
 var
   Value: variant;
@@ -1449,12 +1449,15 @@ begin
 
     result:= true;
 end;
+}
+
 
 class function TAutoMapper.PropNameEqualComponentName( Prop: TRttiProperty; Componente: TComponent):boolean;
 begin
   result:= Prop.Name = copy(Componente.Name, Pos(Prop.Name, Componente.Name), length(Componente.Name));
 end;
 
+{
 class procedure TAutoMapper.Puts(Component: TComponent; Entity: TEntityBase;Valued: boolean = false);
 var
   J: integer;
@@ -1498,7 +1501,9 @@ begin
     ctx.Free;
   end;
 end;
+}
 
+{
 class procedure TAutoMapper.PutsFromControl(ComponentControl: TCustomControl; Entity: TEntityBase);
 var
   J: integer;
@@ -1528,6 +1533,7 @@ begin
     ctx.Free;
   end;
 end;
+}
 
 class function TAutoMapper.GetInstance<T>(const Str_Class: TValue): T;
 var
@@ -1837,22 +1843,8 @@ begin
 
 end;
 
-class procedure  TAutoMapper.JsonToObject(Json:TJSOnObject; O:TEntityBase);
 
-    function FormatDateJson(Datahora: variant):string;
-    var
-      ano, mes, dia, hora, minuto, segundo: string;
-    begin
-      ano    := copy(string(DataHora),1,4);
-      mes    := copy(string(DataHora),6,2);
-      dia    := copy(string(DataHora),9,2);
-      hora   := copy(string(DataHora),12,2);
-      minuto := copy(string(DataHora),15,2);
-      segundo:= copy(string(DataHora),18,2);
-
-      result:= dia +'/'+ mes+'/'+ano +' '+ hora+':'+minuto+':'+segundo;
-    end;
-
+class procedure  TAutoMapper.JsonObjectToObject<T>(Json:TJSOnObject; O:T);
 var
   L:TStringList;
   I:integer;
@@ -1876,7 +1868,7 @@ begin
                   if pos('Could not convert variant of type (UnicodeString) into type (Double)',e.Message) > 0 then
                   begin
                      value:= json.Values[ jsonName ].Value;
-                     TAutoMapper.SetFieldValue( O, Name , strtodatetime(FormatDateJson(value)) );
+                     TAutoMapper.SetFieldValue( O, Name , strtodatetime(fFormatDateJson(value)) );
                   end;
               end;
           end;
