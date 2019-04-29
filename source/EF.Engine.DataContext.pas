@@ -74,10 +74,6 @@ Type
     function GetList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
     function GetJson(QueryAble: IQueryAble): string;
     function Where(Condicion: TString): TDataContext;
-
-    procedure InputEntity(Contener: TComponent);
-    procedure ReadEntity(Contener: TComponent; DataSet: TDataSet = nil);
-    procedure InitEntity(Contener: TComponent);
     function UpdateDataBase(aClasses: array of TClass): boolean;
     procedure RefreshDataSet;
     function ChangeCount: integer;
@@ -515,38 +511,6 @@ begin
     ListPrimaryKey.Free;
     FieldsPrimaryKey.Free;
   end;
-end;
-
-procedure TDataContext.InputEntity(Contener: TComponent);
-begin
-  // refatorar
-  {
-  //Foi descontinuado
-
-  if Contener is TForm then
-    TAutoMapper.Puts(Contener, FEntity)
-  else
-    TAutoMapper.PutsFromControl(Contener as TCustomControl, FEntity);
-  }
-end;
-
-procedure TDataContext.ReadEntity(Contener: TComponent;
-    DataSet: TDataSet = nil);
-begin
-  // Refatorar
-  if DataSet <> nil then
-    TAutoMapper.Read(Contener, FEntity, false, DataSet)
-  else if not DbSet.IsEmpty then
-    TAutoMapper.Read(Contener, FEntity, false, DbSet)
-  else
-    TAutoMapper.Read(Contener, FEntity, false);
-end;
-
-procedure TDataContext.InitEntity(Contener: TComponent);
-begin
-  // FEntity:= TEntityBase.create;
-  FEntity.Id := 0;
-  TAutoMapper.Read(Contener, FEntity, true);
 end;
 
 procedure TDataContext.ReconcileError(DataSet: TCustomClientDataSet;
