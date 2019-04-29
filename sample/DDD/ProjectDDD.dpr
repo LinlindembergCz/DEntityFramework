@@ -53,7 +53,7 @@ uses
   UI.Controller.Base in 'UI\Controllers\UI.Controller.Base.pas',
   UI.Controller.Cliente in 'UI\Controllers\UI.Controller.Cliente.pas',
   UI.Interfaces.ControllerBase in 'UI\Controllers\UI.Interfaces.ControllerBase.pas',
-  UI.Utils.DataBind in 'UI\Utils\UI.Utils.DataBind.pas';
+  Service.Utils.DataBind in 'Service\Utils\Service.Utils.DataBind.pas';
 
 {$R *.res}
 
