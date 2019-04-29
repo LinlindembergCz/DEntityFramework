@@ -123,26 +123,14 @@ begin
   UpdateState(esInsert);
 end;
 
-
 procedure TControllerBase.Post;
 begin
- { Service.InputEntity(FContener);
-  Service.Post( State );
-  UpdateState(esBrowser);
-  if FAutoApply then
-  begin
-     Apply;
-     with FContener as TFormViewBase do
-     begin
-       pgPrincipal.ActivePageIndex:= 0;
-     end;
-  end; }
-end;
 
+end;
 
 procedure TControllerBase.Post(JSOnObject: TJSOnObject);
 begin
-  Service.InputEntity(JSOnObject);
+  Service.Add(JSOnObject);
   Service.Post( State );
   UpdateState(esBrowser);
   if FAutoApply then
