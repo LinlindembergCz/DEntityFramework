@@ -17,7 +17,7 @@ implementation
 
 { TControllerCliente }
 
-uses Service.Cliente, UI.Model.Cliente,  UI.Utils.DataBind;
+uses Service.Cliente, UI.Model.Cliente,  Service.Utils.DataBind;
 
 function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin
@@ -31,8 +31,8 @@ var
 begin
   try
      try
-        C:= TClienteDetail.Create;
-        JsonObject:= TJson.ObjectToJsonObject(  TDataBind.Put(FContener, C) );
+        C := TClienteDetail.Create;
+        JsonObject:= TJson.ObjectToJsonObject(  TDataBind.Map(FContener, C) );
         inherited Post( JsonObject );
      except
        On E:Exception do
