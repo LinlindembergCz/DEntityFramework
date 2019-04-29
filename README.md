@@ -1,7 +1,7 @@
 # DEntityFramework
 DEntityFramework
 
-This is the EntityFramework for Delphi
+This is EntityFramework for Delphi
 
 ## Requirements
 
