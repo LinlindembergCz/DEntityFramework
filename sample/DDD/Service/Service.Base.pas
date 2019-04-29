@@ -26,8 +26,7 @@ type
     procedure Post( State: TEntityState);virtual;
     procedure Persist;virtual;
     function GetEntity: T;virtual;
-    //procedure InputEntity(Contener: TComponent);overload;virtual;
-    procedure InputEntity(JSOnObject: TJSOnObject);overload; virtual;
+    procedure Add(JSOnObject: TJSOnObject);overload; virtual;
 
     function FieldList:TFieldList;virtual;
     procedure ReadEntity(Contener: TComponent);virtual;
@@ -39,7 +38,7 @@ type
   {$M-}
 implementation
 
-uses  EF.Mapping.AutoMapper;
+uses  EF.Mapping.AutoMapper, Service.Utils.DataBind;
 
 constructor TServiceBase<T>.Create(pRepository: IRepositoryBase<T>);
 begin
@@ -74,20 +73,20 @@ end;
 
 procedure TServiceBase<T>.InitEntity(Contener: TComponent);
 begin
-  Repository.dbContext.InitEntity(Contener);
+  Repository.Entity.Id := 0;
+  TDataBind.Read(Contener, Repository.Entity, true);
 end;
 
 procedure TServiceBase<T>.ReadEntity(Contener: TComponent);
 begin
-  Repository.dbContext.ReadEntity(Contener);
+  if not Repository.dbContext.DbSet.IsEmpty then
+    TDataBind.Read(Contener, Repository.Entity, false, Repository.dbContext.DbSet)
+  else
+    TDataBind.Read(Contener, Repository.Entity, false);
+  //TDataBind.Read(Contener, Repository.Entity, false);
 end;
 
-{procedure TServiceBase<T>.InputEntity(Contener: TComponent);
-begin
-  Repository.dbContext.InputEntity(Contener);
-end;}
-
-procedure TServiceBase<T>.InputEntity(JSOnObject: TJSOnObject);
+procedure TServiceBase<T>.Add(JSOnObject: TJSOnObject);
 begin
   TAutoMapper.JsonObjectToObject<T>( JSOnObject, Repository.Entity );
 end;
