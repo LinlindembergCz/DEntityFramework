@@ -1,7 +1,7 @@
 # DEntityFramework
 DEntityFramework
 
-This is the EntityFramework for Delphi
+This is EntityFramework for Delphi
 
 ## Requirements
 
@@ -19,6 +19,16 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
+
+begin
+   dbContext.Include( E.Veiculo ).
+                    Include( E.Contatos.list ).
+                    Include( E.ClienteTabelaPreco).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
+                    FirstOrDefault( E.Nome.Contains( value ) );
+end;                    
 
 ## Authors
 
