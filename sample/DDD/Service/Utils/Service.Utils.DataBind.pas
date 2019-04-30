@@ -31,14 +31,6 @@ end;
 
 class function TDataBind.Map(Component: TComponent; Entity: TObject;Valued: boolean = false): TObject;
 
-    function PropIsInstance( Prop: TRttiProperty):boolean;
-    begin
-      result:= ( Prop.PropertyType.IsInstance) and
-               ( Prop.Name <> 'PropertyType' ) and
-               ( Prop.Name <> 'Parent' )       and
-               ( Prop.Name <> 'Package' );
-    end;
-
     function SetValueProp(Component:TComponent; Prop: TRttiProperty; Entity: TObject):boolean;
     var
       Value: variant;
@@ -66,37 +58,37 @@ class function TDataBind.Map(Component: TComponent; Entity: TObject;Valued: bool
         else
         if Component.InheritsFrom(TCustomCombobox) then
         begin
-          Value := TCombobox(Component).Items.ValueFromIndex[ TCombobox(Component).Items.IndexOf(TCombobox(Component).Text) ];
+            Value := TCombobox(Component).Items.ValueFromIndex[ TCombobox(Component).Items.IndexOf(TCombobox(Component).Text) ];
         end
         else if Component.InheritsFrom(TCommonCalendar) then
             Value := TDateTimePicker(Component).Datetime
         else
         if Component.InheritsFrom(TCustomRadioGroup) then
         begin
-          ItemIndex := (Component as TRadioGroup).ItemIndex;
-          Value := TRadioGroup(Component).Items.ValueFromIndex[ ItemIndex ];
+            ItemIndex := (Component as TRadioGroup).ItemIndex;
+            Value := TRadioGroup(Component).Items.ValueFromIndex[ ItemIndex ];
         end
         else
         if Component.InheritsFrom(TCustomCheckBox) then
         begin
-          if (Component as TCheckBox).Checked then
-            Value := '1'
-          else
-            Value := '0';
+            if (Component as TCheckBox).Checked then
+                Value := '1'
+            else
+                Value := '0';
         end;
 
         TypeClassName := uppercase(Prop.PropertyType.ToString);
         if TypeClassName = uppercase('Integer') then
-           Prop.SetValue(Entity,TValue.From<integer>(Value) )
+           Prop.SetValue( Entity,TValue.From<integer>(Value) )
         else
         if TypeClassName = uppercase('String') then
-           Prop.SetValue(Entity,TValue.From<string>(Value) )
+           Prop.SetValue( Entity,TValue.From<string>(Value) )
         else
         if TypeClassName = uppercase('Double') then
-           Prop.SetValue(Entity,TValue.From<Double>(Value) )
+           Prop.SetValue( Entity,TValue.From<Double>(Value) )
         else
         if TypeClassName = uppercase('TDateTime') then
-           Prop.SetValue(Entity,TValue.From<TDateTime>(Value) );
+           Prop.SetValue( Entity,TValue.From<TDateTime>(Value) );
 
         result:= true;
     end;
@@ -126,7 +118,7 @@ begin
         ComponentControl := Component.components[i];
         if PropNameEqualComponentName( Prop, ComponentControl) then
         begin
-          if not PropIsInstance(prop)  then
+          if not TAutoMapper.PropIsInstance(prop)  then
           begin
             if SetValueProp(ComponentControl,Prop, Entity ) then
                break;
@@ -238,8 +230,6 @@ var
               if Value = lsValue then
                  IndexOf:= i;
           end;
-          //EntityItems(Atrib).Items.Free;
-          //EntityItems(Atrib).Items := nil;
         end;
       end;
     end;
@@ -341,7 +331,7 @@ begin
               Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
 
             if Componente.InheritsFrom(TCustomMemo) then
-              SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) )
+               SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) )
               else
             if Componente.InheritsFrom(TCustomCombobox) then
               SetValueCombobox
