@@ -8,9 +8,29 @@ uses
 
 type
   TDataBind = class
+  strict private
+    class procedure SetValueCheckBox(Component: TComponent; Value: variant); static;
+    class procedure SetValueCombobox(Component: TComponent; Value: variant;
+      Prop: TRttiProperty); static;
+    class procedure SetValueDateTimePicker(Component: TComponent;
+      Value: variant); static;
+    class procedure SetValueDBLookUpCombobox(Component: TComponent;
+      Value: variant); static;
+    class procedure SetValueEdit(Component: TComponent; Value: variant;
+      MaxLength: integer=0); static;
+    class procedure SetValueLabel(Component: TComponent; Value: variant); static;
+    class procedure SetValueMaskEdit(Component: TComponent; Value: variant;
+      MaxLength: integer =0 ); static;
+    class procedure SetValueMemo(Component: TComponent; Value: variant;
+      MaxLength: integer =0); static;
+    class procedure SetValueRadioGroup(Component: TComponent; Value: variant;
+      Prop: TRttiProperty); static;
   private
     class function ValidComponent(Comp: TComponent): boolean; static;
     class procedure DataToEntity(DataSet: TDataSet; Entity: TEntityBase); static;
+    class function GetValueComponent(Component: TComponent): variant; static;
+    class procedure SetValueComponent(Component: TComponent;Entity: TEntityBase;
+                                      Value:variant; Prop: TRttiProperty); static;
   public
     class function Map(Component: TComponent; Entity: TObject;
       Valued: boolean= false): TObject;
@@ -29,53 +49,225 @@ begin
   result:= Prop.Name = copy(Component.Name, Pos(Prop.Name, Component.Name), length(Component.Name));
 end;
 
+class function TDataBind.GetValueComponent(Component: TComponent):variant;
+var
+  Value: variant;
+  ListField:string;
+  TextListField: string;
+  ItemIndex: integer;
+begin
+  if Component.InheritsFrom(TCustomMemo) then
+  begin
+      Value := TMemo(Component).Text
+  end
+  else
+  if (Component.InheritsFrom(TCustomEdit)) then
+  begin
+      Value := TEdit(Component).Text
+  end
+  else
+  if (Component.InheritsFrom(TCustomDBLookupComboBox)) then
+  begin
+      Value         := TDBLookUpCombobox(Component).KeyValue;
+      ListField     := TDBLookUpCombobox(Component).ListField;
+      TextListField := TDBLookUpCombobox(Component).text;
+  end
+  else
+  if Component.InheritsFrom(TCustomCombobox) then
+  begin
+      Value := TCombobox(Component).Items.ValueFromIndex[ TCombobox(Component).Items.IndexOf(TCombobox(Component).Text) ];
+  end
+  else if Component.InheritsFrom(TCommonCalendar) then
+      Value := TDateTimePicker(Component).Datetime
+  else
+  if Component.InheritsFrom(TCustomRadioGroup) then
+  begin
+      ItemIndex := (Component as TRadioGroup).ItemIndex;
+      Value := TRadioGroup(Component).Items.ValueFromIndex[ ItemIndex ];
+  end
+  else
+  if Component.InheritsFrom(TCustomCheckBox) then
+  begin
+      if (Component as TCheckBox).Checked then
+          Value := '1'
+      else
+          Value := '0';
+  end;
+  result:= Value;
+end;
+
+class procedure TDataBind.SetValueComponent(Component: TComponent;Entity: TEntityBase; Value:variant; Prop: TRttiProperty);
+begin
+  if Component.InheritsFrom(TCustomMemo) then
+     SetValueMemo( Component, Value,TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) )
+    else
+  if Component.InheritsFrom(TCustomCombobox) then
+    SetValueCombobox( Component, Value, Prop)
+    else
+  if Component.InheritsFrom(TCustomDBLookupComboBox) then
+    setValueDBLookUpCombobox( Component, Value )
+    else
+  if Component.InheritsFrom(TCommonCalendar) then
+    SetValueDateTimePicker( Component, Value)
+    else
+  if Component.InheritsFrom(TCustomCheckBox) then
+    SetValueCheckBox( Component, Value)
+    else
+  if Component.InheritsFrom(TCustomLabel) then
+    SetValueLabel( Component, Value)
+    else
+  if Component.InheritsFrom(TCustomRadioGroup) then
+    SetValueRadioGroup( Component, Value, Prop)
+    else
+  if Component.InheritsFrom(TCustomMaskEdit) then
+    SetValueMaskEdit( Component, Value,TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) )
+    else
+  if Component.InheritsFrom(TCustomEdit) then
+    SetValueEdit( Component, Value, TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) );
+end;
+
+class procedure TDataBind.SetValueDBLookUpCombobox(Component: TComponent; Value:variant);
+begin
+  TDBLookUpCombobox(Component).KeyValue := Value;
+end;
+
+class procedure TDataBind.SetValueDateTimePicker(Component: TComponent; Value:variant);
+begin
+  if Value <> '' then
+    TDateTimePicker(Component ).Datetime := strtodate(Value)
+  else
+    TDateTimePicker(Component ).Date := Date;
+end;
+
+class procedure TDataBind.SetValueCheckBox(Component: TComponent; Value:variant);
+begin
+  TCheckBox(Component ).Checked := strtoIntdef(Value, 0) = 1;//abs(strtofloatdef(Value, 0)) = 1;
+end;
+
+class procedure TDataBind.SetValueLabel(Component: TComponent; Value:variant);
+begin
+  TLabel(Component ).caption := Value;
+end;
+
+class procedure TDataBind.SetValueMemo(Component: TComponent; Value:variant ;MaxLength:integer = 0);
+begin
+  TMemo(Component).Text := Value;
+  if MaxLength > 0 then
+     TMemo(Component).MaxLength := MaxLength;
+end;
+
+class procedure TDataBind.SetValueEdit(Component: TComponent;Value:variant;MaxLength:integer = 0);
+begin
+  TEdit(Component).Text := Value;
+   if MaxLength > 0 then
+     TEdit(Component).MaxLength := MaxLength;
+end;
+
+class procedure TDataBind.SetValueMaskEdit(Component: TComponent; Value:variant ;MaxLength:integer = 0);
+begin
+  TMaskEdit(Component).Text := Value;
+   if MaxLength > 0 then
+     TMaskEdit(Component).MaxLength := MaxLength;
+end;
+
+class procedure TDataBind.SetValueCombobox(Component: TComponent; Value:variant;Prop: TRttiProperty);
+var
+  Atrib: TCustomAttribute;
+  i: integer;
+  ValueItem: string;
+  IndexOf: integer;
+  lsText, lsValue: string;
+begin
+  IndexOf := -1;
+  for Atrib in Prop.GetAttributes do
+  begin
+    if Atrib is EntityItems then
+    begin
+      if TCombobox(Component).Items.Count = 0 then
+      begin
+        for i := 0 to EntityItems(Atrib).Items.Count - 1 do
+        begin
+            ValueItem := EntityItems(Atrib).Items.Strings[i];
+            lsText := copy(ValueItem, Pos('=', ValueItem) + 1,length(ValueItem));
+            lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
+            if (Component as TCombobox).Items.Values[lsText] = '' then
+               TCombobox(Component).Items.AddPair( lsText, lsValue );
+            if Value = lsValue then
+               IndexOf:= i;
+        end;
+      end;
+    end;
+  end;
+  if IndexOf > - 1 then
+  begin
+     TCombobox(Component).ItemIndex := IndexOf;
+  end
+  else
+  for I := 0 to TCombobox(Component).Items.Count - 1 do
+  begin
+    if (Value =  TCombobox(Component).Items.ValueFromIndex[i]) then
+    begin
+       TCombobox(Component).ItemIndex := i;
+       break;
+    end;
+  end;
+end;
+
+class procedure TDataBind.SetValueRadioGroup(Component: TComponent; Value:variant;Prop: TRttiProperty);
+var
+  Atrib: TCustomAttribute;
+  i: integer;
+  ValueItem: string;
+  IndexOf: integer;
+  lsText, lsValue: string;
+begin
+  IndexOf := -1;
+  for Atrib in Prop.GetAttributes do
+  begin
+    if Atrib is EntityItems then
+    begin
+      if TRadioGroup(Component).Items.Count = 0 then
+      begin
+        for i := 0 to EntityItems(Atrib).Items.Count - 1 do
+        begin
+            ValueItem := EntityItems(Atrib).Items.Strings[i];
+            lsText := copy(ValueItem, Pos('=', ValueItem) + 1,
+              length(ValueItem));
+            lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
+            if (Component as TRadioGroup).Items.Values[lsText] = '' then
+               TRadioGroup(Component).Items.AddPair( lsText, lsValue );
+            if (Value = lsValue) then
+              IndexOf := i;
+        end;
+       // EntityItems(Atrib).Items.Free;
+       // EntityItems(Atrib).Items := nil;
+      end;
+    end;
+  end;
+  if IndexOf > - 1 then
+  begin
+      TRadioGroup(Component).ItemIndex := IndexOf;
+  end
+  else
+  for I := 0 to TRadioGroup(Component).Items.Count - 1 do
+  begin
+      if (Value =  TRadioGroup(Component).Items.ValueFromIndex[i]) then
+      begin
+        TRadioGroup(Component).ItemIndex := i;
+        break;
+      end;
+  end;
+end;
+
 class function TDataBind.Map(Component: TComponent; Entity: TObject;Valued: boolean = false): TObject;
 
     function SetValueProp(Component:TComponent; Prop: TRttiProperty; Entity: TObject):boolean;
     var
       Value: variant;
-      ListField:string;
-      TextListField: string;
-      ItemIndex: integer;
+
       TypeClassName: string;
     begin
-        if Component.InheritsFrom(TCustomMemo) then
-        begin
-            Value := TMemo(Component).Text
-        end
-        else
-        if (Component.InheritsFrom(TCustomEdit)) then
-        begin
-            Value := TEdit(Component).Text
-        end
-        else
-        if (Component.InheritsFrom(TCustomDBLookupComboBox)) then
-        begin
-            Value         := TDBLookUpCombobox(Component).KeyValue;
-            ListField     := TDBLookUpCombobox(Component).ListField;
-            TextListField := TDBLookUpCombobox(Component).text;
-        end
-        else
-        if Component.InheritsFrom(TCustomCombobox) then
-        begin
-            Value := TCombobox(Component).Items.ValueFromIndex[ TCombobox(Component).Items.IndexOf(TCombobox(Component).Text) ];
-        end
-        else if Component.InheritsFrom(TCommonCalendar) then
-            Value := TDateTimePicker(Component).Datetime
-        else
-        if Component.InheritsFrom(TCustomRadioGroup) then
-        begin
-            ItemIndex := (Component as TRadioGroup).ItemIndex;
-            Value := TRadioGroup(Component).Items.ValueFromIndex[ ItemIndex ];
-        end
-        else
-        if Component.InheritsFrom(TCustomCheckBox) then
-        begin
-            if (Component as TCheckBox).Checked then
-                Value := '1'
-            else
-                Value := '0';
-        end;
+        Value:= GetValueComponent(Component);
 
         TypeClassName := uppercase(Prop.PropertyType.ToString);
         if TypeClassName = uppercase('Integer') then
@@ -147,225 +339,6 @@ begin
              ( Comp.InheritsFrom(TCommonCalendar) );
 end;
 
-class procedure TDataBind.Read(Component: TComponent; Entity: TEntityBase;
-  SetDefaultValue: boolean; DataSet :TDataSet = nil);
-
-var
-  J: integer;
-  Prop: TRttiProperty;
-  Componente: TComponent;
-  ctx: TRttiContext;
-  Value: string;
-  breaked:boolean;
-  Atributo: TCustomAttribute;
-  TypObj: TRttiType;
-
-  procedure setValueDBLookUpCombobox;
-  begin
-    TDBLookUpCombobox(Componente).KeyValue := Value;
-  end;
-
-  procedure SetValueDateTimePicker;
-  begin
-    if Value <> '' then
-      TDateTimePicker(Componente ).Datetime := strtodate(Value)
-    else
-      TDateTimePicker(Componente ).Date := Date;
-  end;
-
-  procedure SetValueCheckBox;
-  begin
-    TCheckBox(Componente ).Checked := strtoIntdef(Value, 0) = 1;//abs(strtofloatdef(Value, 0)) = 1;
-  end;
-
-  procedure SetValueLabel;
-  begin
-    TLabel(Componente ).caption := Value;
-  end;
-
-  procedure SetValueMemo(MaxLength:integer = 0);
-  begin
-    TMemo(Componente).Text := Value;
-    if MaxLength > 0 then
-       TMemo(Componente).MaxLength := MaxLength;
-  end;
-
-  procedure SetValueEdit(MaxLength:integer = 0);
-  begin
-    TEdit(Componente).Text := Value;
-     if MaxLength > 0 then
-       TEdit(Componente).MaxLength := MaxLength;
-  end;
-
-  procedure SetValueMaskEdit(MaxLength:integer = 0);
-  begin
-    TMaskEdit(Componente).Text := Value;
-     if MaxLength > 0 then
-       TMaskEdit(Componente).MaxLength := MaxLength;
-  end;
-
-  procedure SetValueCombobox;
-  var
-    Atrib: TCustomAttribute;
-    i: integer;
-    ValueItem: string;
-    IndexOf: integer;
-    lsText, lsValue: string;
-
-  begin
-    IndexOf := -1;
-    for Atrib in Prop.GetAttributes do
-    begin
-      if Atrib is EntityItems then
-      begin
-        if TCombobox(Componente).Items.Count = 0 then
-        begin
-          for i := 0 to EntityItems(Atrib).Items.Count - 1 do
-          begin
-              ValueItem := EntityItems(Atrib).Items.Strings[i];
-              lsText := copy(ValueItem, Pos('=', ValueItem) + 1,length(ValueItem));
-              lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
-              if (Componente as TCombobox).Items.Values[lsText] = '' then
-                 TCombobox(Componente).Items.AddPair( lsText, lsValue );
-              if Value = lsValue then
-                 IndexOf:= i;
-          end;
-        end;
-      end;
-    end;
-    if IndexOf > - 1 then
-    begin
-       TCombobox(Componente).ItemIndex := IndexOf;
-    end
-    else
-    for I := 0 to TCombobox(Componente).Items.Count - 1 do
-    begin
-      if (Value =  TCombobox(Componente).Items.ValueFromIndex[i]) then
-      begin
-         TCombobox(Componente).ItemIndex := i;
-         break;
-      end;
-    end;
-  end;
-
-  procedure SetValueRadioGroup;
-  var
-    Atrib: TCustomAttribute;
-    i: integer;
-    ValueItem: string;
-    IndexOf: integer;
-    lsText, lsValue: string;
-  begin
-    IndexOf := -1;
-    for Atrib in Prop.GetAttributes do
-    begin
-      if Atrib is EntityItems then
-      begin
-        if TRadioGroup(Componente).Items.Count = 0 then
-        begin
-          for i := 0 to EntityItems(Atrib).Items.Count - 1 do
-          begin
-              ValueItem := EntityItems(Atrib).Items.Strings[i];
-              lsText := copy(ValueItem, Pos('=', ValueItem) + 1,
-                length(ValueItem));
-              lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
-              if (Componente as TRadioGroup).Items.Values[lsText] = '' then
-                 TRadioGroup(Componente).Items.AddPair( lsText, lsValue );
-              if (Value = lsValue) then
-                IndexOf := i;
-          end;
-         // EntityItems(Atrib).Items.Free;
-         // EntityItems(Atrib).Items := nil;
-        end;
-      end;
-    end;
-    if IndexOf > - 1 then
-    begin
-        TRadioGroup(Componente).ItemIndex := IndexOf;
-    end
-    else
-    for I := 0 to TRadioGroup(Componente).Items.Count - 1 do
-    begin
-        if (Value =  TRadioGroup(Componente).Items.ValueFromIndex[i]) then
-        begin
-          TRadioGroup(Componente).ItemIndex := i;
-          break;
-        end;
-    end;
-  end;
-
-begin
-  try
-    if DataSet <> nil then
-       DataToEntity(DataSet, Entity);
-
-    ctx := TRttiContext.Create;
-    for J := 0 to Component.componentcount - 1 do
-    begin
-      Componente := Component.components[J];
-      if ValidComponent(Componente) then
-      begin
-        TypObj := ctx.GetType(Entity.ClassInfo);
-        for Prop in TypObj.GetProperties do
-        begin
-          if PropNameEqualComponentName(Prop,Componente ) then
-          begin
-            if TAutoMapper.PropIsInstance(prop)  then
-            begin
-               breaked:= false;
-               for Atributo in Prop.GetAttributes do
-               begin
-                  if (Atributo is NotMapper) then
-                  begin
-                     breaked:= true;
-                     break;
-                  end
-               end;
-               if not breaked then
-                  Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
-            end
-            else
-            if SetDefaultValue then
-              Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
-            else
-              Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
-
-            if Componente.InheritsFrom(TCustomMemo) then
-               SetValueMemo( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) )
-              else
-            if Componente.InheritsFrom(TCustomCombobox) then
-              SetValueCombobox
-              else
-            if Componente.InheritsFrom(TCustomDBLookupComboBox) then
-              setValueDBLookUpCombobox
-              else
-            if Componente.InheritsFrom(TCommonCalendar) then
-              SetValueDateTimePicker
-              else
-            if Componente.InheritsFrom(TCustomCheckBox) then
-              SetValueCheckBox
-              else
-            if Componente.InheritsFrom(TCustomLabel) then
-              SetValueLabel
-              else
-            if Componente.InheritsFrom(TCustomRadioGroup) then
-              SetValueRadioGroup
-              else
-            if Componente.InheritsFrom(TCustomMaskEdit) then
-              SetValueMaskEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) )
-              else
-            if Componente.InheritsFrom(TCustomEdit) then
-              SetValueEdit( TAutoMapper.GetMaxLengthValue(Entity, Prop.Name) );
-            break;
-          end;
-        end;
-      end;
-    end;
-  finally
-    ctx.Free;
-  end;
-end;
-
 class procedure TDataBind.DataToEntity(DataSet: TDataSet; Entity: TEntityBase);
 var
   J: integer;
@@ -417,5 +390,66 @@ begin
     ctx.Free;
   end;
 end;
+
+class procedure TDataBind.Read(Component: TComponent; Entity: TEntityBase;
+  SetDefaultValue: boolean; DataSet :TDataSet = nil);
+
+var
+  J: integer;
+  Prop: TRttiProperty;
+  Componente: TComponent;
+  ctx: TRttiContext;
+  Value: string;
+  breaked:boolean;
+  Atributo: TCustomAttribute;
+  TypObj: TRttiType;
+begin
+  try
+    if (DataSet <> nil) and (not DataSet.IsEmpty ) then
+       DataToEntity(DataSet, Entity);
+
+    ctx := TRttiContext.Create;
+    for J := 0 to Component.componentcount - 1 do
+    begin
+      Componente := Component.components[J];
+      if ValidComponent(Componente) then
+      begin
+        TypObj := ctx.GetType(Entity.ClassInfo);
+        for Prop in TypObj.GetProperties do
+        begin
+          if PropNameEqualComponentName(Prop,Componente ) then
+          begin
+            if TAutoMapper.PropIsInstance(prop)  then
+            begin
+               breaked:= false;
+               for Atributo in Prop.GetAttributes do
+               begin
+                  if (Atributo is NotMapper) then
+                  begin
+                     breaked:= true;
+                     break;
+                  end
+               end;
+               if not breaked then
+                  Value := TAutoMapper.GetValueProperty( GetObjectProp( Entity ,Prop.Name) as TEntityBase , 'value' )
+            end
+            else
+            if SetDefaultValue then
+              Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
+            else
+              Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
+
+            SetValueComponent(Componente, Entity,Value, Prop);
+            break;
+          end;
+        end;
+      end;
+    end;
+  finally
+    ctx.Free;
+  end;
+end;
+
+
 
 end.

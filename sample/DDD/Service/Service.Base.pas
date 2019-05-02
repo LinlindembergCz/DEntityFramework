@@ -79,11 +79,7 @@ end;
 
 procedure TServiceBase<T>.Read(Contener: TComponent);
 begin
-  if not Repository.dbContext.DbSet.IsEmpty then
-    TDataBind.Read(Contener, Repository.Entity, false, Repository.dbContext.DbSet)
-  else
-    TDataBind.Read(Contener, Repository.Entity, false);
-  //TDataBind.Read(Contener, Repository.Entity, false);
+  TDataBind.Read(Contener, Repository.Entity, false, Repository.dbContext.DbSet);
 end;
 
 procedure TServiceBase<T>.Add(JSOnObject: TJSOnObject);
