@@ -27,9 +27,9 @@ type
     procedure Persist;virtual;
     function GetEntity: T;virtual;
     procedure Add(JSOnObject: TJSOnObject);overload; virtual;
-
+    procedure Read(Contener: TComponent);virtual;
     function FieldList:TFieldList;virtual;
-    procedure ReadEntity(Contener: TComponent);virtual;
+
     function ChangeCount:Integer;virtual;
 
     function _AddRef: Integer; stdcall;
@@ -77,7 +77,7 @@ begin
   TDataBind.Read(Contener, Repository.Entity, true);
 end;
 
-procedure TServiceBase<T>.ReadEntity(Contener: TComponent);
+procedure TServiceBase<T>.Read(Contener: TComponent);
 begin
   if not Repository.dbContext.DbSet.IsEmpty then
     TDataBind.Read(Contener, Repository.Entity, false, Repository.dbContext.DbSet)

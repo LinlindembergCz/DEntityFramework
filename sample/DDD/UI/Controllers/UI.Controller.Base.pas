@@ -151,7 +151,7 @@ end;
 
 procedure TControllerBase.Read;
 begin
-  Service.ReadEntity(FContener);
+  Service.Read(FContener);
 end;
 
 procedure TControllerBase.Edit;

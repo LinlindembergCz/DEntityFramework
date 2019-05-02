@@ -18,7 +18,7 @@ type
     //procedure InputEntity(Contener: TComponent);overload;
     procedure Add(JSOnObject: TJSOnObject);overload;
     procedure InitEntity(Contener: TComponent);
-    procedure ReadEntity(Contener: TComponent);
+    procedure Read(Contener: TComponent);
     function FieldList:TFieldList;
     function ChangeCount:Integer;
   end;
