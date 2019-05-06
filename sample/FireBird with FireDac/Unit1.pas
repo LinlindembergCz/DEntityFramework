@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient,
-  Entity.Cliente,
+  Domain.Entity.Cliente,
   EF.Engine.DataContext,
   EF.QueryAble.base, Vcl.ExtCtrls;
 
@@ -73,7 +73,7 @@ procedure TForm1.buttonDeleteClick(Sender: TObject);
 begin
  Cliente.Id := 5;
  Context.Entity := Cliente;
- Context.DeleteDirect;
+ Context.RemoveDirect;
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
@@ -89,7 +89,7 @@ begin
  QueryAble := From   ( Cliente )
               .Select
               .Where ( Cliente.Id = 2 );
- Cliente := Context.GetEntity( QueryAble ) as TCliente;
+ Cliente := Context.FindEntity( QueryAble ) as TCliente;
  mlog.Lines.Text := 'Nome: ' + Cliente.Nome.Value;
 end;
 
@@ -116,7 +116,7 @@ begin
  Cliente.EstadoCivil := 'Solteiro';
  Cliente.Observacao := 'Compra a cada 3 meses';
  Context.Entity := Cliente;
- Context.InsertDirect;
+ Context.AddDirect;
 end;
 
 procedure TForm1.buttonLoadDataClick(Sender: TObject);
@@ -133,7 +133,7 @@ begin
  QueryAble := From   ( Cliente )
               .Select
               .Where ( Cliente.Id = 2 );
- Cliente := Context.GetEntity( QueryAble ) as TCliente;
+ Cliente := Context.FindEntity( QueryAble ) as TCliente;
  Cliente.Observacao := 'Alterado em: ' + datetimeToStr( Now() );
  Context.Entity := Cliente;
  Context.UpdateDirect;

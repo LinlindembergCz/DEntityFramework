@@ -30,15 +30,13 @@ Uses
   EF.Drivers.FireDac;
 
 procedure TDataModule1.DataModuleCreate(Sender: TObject);
-var
- vDB : String;
 begin
-  vDB := extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB';
-  FConnection := TEntityFDConnection.Create('FB',
-                                                 'SYSDBA',
-                                                 'masterkey',
-                                                 'LocalHost',
-                                                 vDB);
+  FConnection := TEntityFDConnection.Create(fdFB ,
+                                       'SYSDBA',
+                                       'masterkey',
+                                       'LocalHost',
+                                       extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+
 end;
 
 end.
