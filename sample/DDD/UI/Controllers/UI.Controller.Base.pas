@@ -7,7 +7,7 @@ uses
   Winapi.Windows, Context, UI.Interfaces.ControllerBase, Vcl.DBGrids, Variants,
   Vcl.StdCtrls,  FactoryEntity, Vcl.DBCtrls, Vcl.ExtCtrls,
   Service.Interfaces.Services.ServiceBase, System.JSON ,
-  EF.Engine.DataContext, EF.Mapping.Base; //<<-- EntityFramework
+  EF.Mapping.Base; //<<-- EntityFramework
                                           //Está aqui temporariamente
                                           //devido o metodo LoadLookUp
 type
@@ -217,10 +217,11 @@ end;
 
 procedure TControllerBase.LoadLookUp(DBLookupComboBox: TDBLookupComboBox;
                                      DataSource:TDataSource; E : string);
-var
-  LookUpContext: TdbContext;
-  LookUpDataSet: TClientDataSet;
+//var
+  //LookUpContext: TdbContext;
+  //LookUpDataSet: TClientDataSet;
 begin
+  {
   try
      LookUpContext:= TdbContext.Create(E);
      if LookUpContext.Connection <> nil then
@@ -234,6 +235,7 @@ begin
   finally
     LookUpContext.Free;
   end;
+  }
 end;
 
 
