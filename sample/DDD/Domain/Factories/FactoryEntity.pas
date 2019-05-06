@@ -20,8 +20,6 @@ implementation
 uses  EF.Mapping.AutoMapper;
 
 class function TFactoryEntity.GetEntity(E: string ):TEntityBase;
-var
-  Instance:TObject;
 begin
   result := TEntityBase( TAutoMapper.GetInstance2( 'Domain.Entity.'+E+'.T'+E ) ).Create;
 end;

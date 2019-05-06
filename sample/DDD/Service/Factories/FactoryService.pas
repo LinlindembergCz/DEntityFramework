@@ -17,7 +17,7 @@ type
 
 implementation
 
-uses  FactoryRepository, Service.Base, EF.Mapping.AutoMapper;
+uses  Service.Base, FactoryRepository,  EF.Mapping.AutoMapper;
 
 { TFactoryService }
 
