@@ -9,7 +9,7 @@ type
   TFactoryRepository = class
   private
   public
-    class function GetRepository<T:TEntitybase>(E: string ): IRepositoryBase<TEntitybase>;
+    class function GetRepository<T:TEntitybase>(E: string ): IRepositoryBase<T>;
   end;
 
 implementation
@@ -18,15 +18,15 @@ implementation
 uses Context , EF.Mapping.AutoMapper, Infra.Repository.Base;
 
 
-class function TFactoryRepository.GetRepository<T>(E: string): IRepositoryBase<TEntitybase>;
+class function TFactoryRepository.GetRepository<T>(E: string): IRepositoryBase<T>;
 var
-  Repository    : IRepositoryBase<TEntitybase>;
+  Repository    : IRepositoryBase<T>;
   Instance      : TEntitybase;
 begin
   Instance := TAutoMapper.GetInstance<T>( 'Infra.Repository.'+E+'.TRepository'+E );
   if Instance <> nil then
   begin
-    Repository :=  TRepositoryBase<TEntitybase>( Instance ).create( TdbContext.Create(E) );  //as IRepositoryBase
+    Repository :=  TRepositoryBase<T>( Instance ).create( TdbContext.Create(E) );  //as IRepositoryBase
     result:= Repository;
   end;
 end;
