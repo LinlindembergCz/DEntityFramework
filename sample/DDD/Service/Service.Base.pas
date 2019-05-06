@@ -6,19 +6,20 @@ uses
 System.Classes, DB, EF.Mapping.Base,
 Service.Interfaces.Services.ServiceBase,
 infra.Interfaces.Repositorios.Repositorybase, Context,
-Winapi.Windows, System.JSON;
+Winapi.Windows, System.JSON, Service.Utils.DataBind;
 
 type
   {$M+}
   TServiceBase<T:TEntityBase> = class(TInterfacedPersistent, IServiceBase<T>)
   private
     FRefCount: Integer;
+    FDataBind: IDataBind;
     procedure InitEntity(Contener: TComponent);
   protected
     Repository: IRepositoryBase<T>;
   public
-    constructor Create( pRepository: IRepositoryBase<T>);virtual;
 
+    constructor Create( pRepository: IRepositoryBase<T>);virtual;
     procedure RefresData;virtual;
     function  Load(iId:Integer; Fields: string = ''): TDataSet;virtual;
     function  LoadEntity(iId: Integer = 0): T;virtual;
@@ -34,16 +35,18 @@ type
 
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;
+    function DataBind: IDataBind;
   end;
   {$M-}
 implementation
 
-uses  EF.Mapping.AutoMapper, Service.Utils.DataBind;
+uses  EF.Mapping.AutoMapper;
 
 constructor TServiceBase<T>.Create(pRepository: IRepositoryBase<T>);
 begin
   Inherited Create;
-  Repository:= pRepository;
+  Repository := pRepository;
+  FDataBind  := TVLCDataBind.Create;
 end;
 
 procedure TServiceBase<T>.Post(State: TEntityState);
@@ -54,6 +57,11 @@ end;
 procedure TServiceBase<T>.Persist;
 begin
   Repository.Commit;
+end;
+
+function TServiceBase<T>.DataBind: IDataBind;
+begin
+  result:= FDataBind;
 end;
 
 procedure TServiceBase<T>.Delete;
@@ -74,12 +82,13 @@ end;
 procedure TServiceBase<T>.InitEntity(Contener: TComponent);
 begin
   Repository.Entity.Id := 0;
-  TDataBind.Read(Contener, Repository.Entity, true);
+  DataBind.Read(Contener, Repository.dbContext, true);
 end;
 
 procedure TServiceBase<T>.Read(Contener: TComponent);
 begin
-  TDataBind.Read(Contener, Repository.Entity, false, Repository.dbContext.DbSet);
+  //Refatorar! Passar apenas o contexto
+  DataBind.Read(Contener, Repository.dbContext, false);
 end;
 
 procedure TServiceBase<T>.Add(JSOnObject: TJSOnObject);
