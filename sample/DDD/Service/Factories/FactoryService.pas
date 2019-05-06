@@ -10,14 +10,14 @@ uses
 type
    TFactoryService = class
    private
-     class function GetServiceCliente(E: string): IServiceBase<TCliente>;
+     class function GetService<T:TEntityBase>(E: string): IServiceBase<T>;overload;
    public
-     class function GetService( E: string ):IServiceBase<TEntitybase>;
+     class function GetService( E: string ):IServiceBase<TEntitybase>;overload;
    end;
 
 implementation
 
-uses  FactoryRepository, Service.Base, EF.Mapping.AutoMapper;//ServiceEntity;
+uses  FactoryRepository, Service.Base, EF.Mapping.AutoMapper;
 
 { TFactoryService }
 
@@ -26,20 +26,21 @@ var
   Service  : IServiceBase<TEntitybase>;
 begin
   if E = 'Cliente' then
-     result   := GetServiceCliente(E ) as IServiceBase<TEntitybase>;
+     result   := GetService<TCliente>(E ) as IServiceBase<TEntitybase>;
+  //...
 end;
 
-class function TFactoryService.GetServiceCliente(E: string ): IServiceBase<TCliente>;
+class function TFactoryService.GetService<T>(E: string ): IServiceBase<T>;
 var
   Instance    : TEntitybase;
-  pRepository : IRepositoryBase<TCliente>;
-  Service     : IServiceBase<TCliente>;
+  pRepository : IRepositoryBase<T>;
+  Service     : IServiceBase<T>;
 begin
-  pRepository := TFactoryRepository.GetRepository<TCliente>(E) as IRepositoryBase<TCliente>;
-  Instance    := TAutoMapper.GetInstance<TCliente>( 'Service.'+E+'.TService'+E);
+  pRepository := TFactoryRepository.GetRepository<T>(E) as IRepositoryBase<T>;
+  Instance    := TAutoMapper.GetInstance<T>( 'Service.'+E+'.TService'+E);
   if Instance <> nil then
   begin
-    Service :=  TServiceBase<TCliente>( Instance ).create(pRepository );
+    Service :=  TServiceBase<T>( Instance ).create(pRepository );
     result:= Service;
   end;
 end;
