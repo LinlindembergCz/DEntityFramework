@@ -58,24 +58,23 @@ uses
 {$R *.res}
 
 var
-  c:TDataContext;
-
+  c:TEntityConn;
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   ReportMemoryLeaksOnShutdown:= true;
-
   try
-    c:= TDataContext.Create;
-    c.Connection:= TFactoryConnection.GetConnection;
+    c:= TFactoryConnection.GetConnection;
     //A ordem de criação das tabelas que se relacionam é importante!!!!
-    c.UpdateDataBase([TCliente,
-                      TContato,
-                      TVeiculo,
-                      TTabelaPreco,
-                      TClienteTabelaPreco,
-                      TProduto,
-                      TItensTabelaPreco ]);
+    c.UpdateDataBase([ TCliente,
+                       TContato,
+                       TVeiculo,
+                       TTabelaPreco,
+                       TClienteTabelaPreco,
+                       TProduto,
+                       TItensTabelaPreco ]);
+    c.free;
+    c:= nil;
   except
     application.Terminate;
     exit;

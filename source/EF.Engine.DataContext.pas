@@ -30,8 +30,7 @@ Type
   TDataContext = class(TQueryAble)
   private
     ListObjectsInclude:TList;
-    Classes: array of TClass;
-    TableList: TStringList;
+    //Classes: array of TClass;
     FFDQuery: TFDQuery;
     drpProvider: TDataSetProvider;
     FDbSet: TClientDataSet;
@@ -41,17 +40,18 @@ Type
     FTypeConnetion: TTypeConnection;
 
     ListField: TStringList;
-    function CreateTables: boolean; // (aClass: array of TClass);
-    function AlterTables: boolean;
+    //function CreateTables: boolean; // (aClass: array of TClass);
+    //function AlterTables: boolean;
     procedure FreeObjects;
-    function CriarTabela(i: integer): boolean;
-    function IsFireBird: boolean;
+    //function CreateSingleTable(i: integer): boolean;
+    //function IsFireBird: boolean;
 
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
     procedure CreateClientDataSet(proDataSetProvider: TDataSetProvider; SQL: string = '');
     procedure CreateProvider(var proSQLQuery: TFDQuery; prsNomeProvider: string);
+
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
@@ -62,7 +62,6 @@ Type
     procedure AddDirect;
     procedure UpdateDirect;
     procedure RemoveDirect;
-
     function FindEntity(QueryAble: IQueryAble): TEntityBase; overload;
     function FindEntity<T: Class>(QueryAble: IQueryAble): T; overload;
     function FirstOrDefault(Condicion: TString): TEntityBase;
@@ -74,13 +73,13 @@ Type
     function GetList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
     function GetJson(QueryAble: IQueryAble): string;
     function Where(Condicion: TString): TDataContext;
-    function UpdateDataBase(aClasses: array of TClass): boolean;
+    //function UpdateDataBase(aClasses: array of TClass): boolean;
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
+    property Connection: TEntityConn read FConnection write FConnection;
   published
     property DbSet: TClientDataSet read FDbSet write FDbSet;
-    property Connection: TEntityConn read FConnection write FConnection;
     property ProviderName: string read FProviderName write FProviderName;
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
   end;
@@ -102,7 +101,7 @@ uses
 function TDataContext.GetData(QueryAble: IQueryAble): OleVariant;
 begin
   try
-    FFDQuery := Connection.CreateDataSet(GetQuery(QueryAble));
+    FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble));
 
     CreateProvider(FFDQuery, trim(fStringReplace(QueryAble.SEntity,
         trim(StrFrom), '')));
@@ -148,7 +147,7 @@ begin
         Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
         FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
-        FFDQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
+        FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
 
         CreateProvider(FFDQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')));
 
@@ -255,138 +254,6 @@ begin
   end;
 end;
 
-function TDataContext.IsFireBird:boolean;
-begin
-  result:= (FConnection.Driver = 'Firebird') or (FConnection.Driver = 'FB');
-end;
-
-function TDataContext.CriarTabela(i: integer): boolean;
-var
-  Table: string;
-  ListAtributes: TList;
-  ListForeignKeys: TList;
-  KeyList: TStringList;
-  classe: TClass;
-  index:integer;
-
-begin
-  classe := Classes[i];
-  Table := TAutoMapper.GetTableAttribute(classe);
-  if Pos(uppercase(Table), uppercase(TableList.Text)) = 0 then
-  begin
-    try
-      ListAtributes := nil;
-      ListAtributes := TAutoMapper.GetListAtributes(classe);
-      KeyList := TStringList.Create(true);
-      FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
-
-      ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
-
-      if FConnection.CustomTypeDataBase is TFirebird then
-      begin
-        with FConnection.CustomTypeDataBase as TFirebird do
-        begin
-          FConnection.ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
-          FConnection.ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
-          FConnection.ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
-        end;
-      end;
-
-      for index := 0 to ListForeignKeys.Count -1  do
-      begin
-        FConnection.ExecutarSQL( FConnection.CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
-      end;
-
-      result := true;
-    finally
-      KeyList.Free;
-    end;
-  end;
-end;
-
-function TDataContext.UpdateDataBase(aClasses: array of TClass): boolean;
-var
-  i: integer;
-  Created, Altered: boolean;
-begin
-  Created := false;
-  Altered := false;
-  if FConnection <> nil then
-  begin
-    TableList := TStringList.Create(true);
-    FConnection.GetTableNames(TableList);
-    SetLength(Classes, length(aClasses));
-    for i := 0 to length(aClasses) - 1 do
-    begin
-      Classes[i] := aClasses[i];
-    end;
-    if length(aClasses) > 0 then
-    begin
-      Created := CreateTables;
-      // Altered := AlterTables;
-    end;
-  end;
-  result := Created;
-end;
-
-function TDataContext.CreateTables: boolean;
-var
-  i: integer;
-  Created: boolean;
-begin
-  Created := false;
-  result := false;
-  for i := 0 to length(Classes) - 1 do
-  begin
-    Created := CriarTabela(i);
-    if Created then
-      result := Created;
-  end;
-end;
-
-function TDataContext.AlterTables: boolean;
-var
-  i, K, j: integer;
-  Table: string;
-  List: TList;
-  FieldList: TStringList;
-  ColumnExist: boolean;
-  Created: boolean;
-begin
-  try
-    Created := false;
-    FieldList := TStringList.Create(true);
-    for i := 0 to length(Classes) - 1 do
-    begin
-      Table := TAutoMapper.GetTableAttribute(Classes[i]);
-      if TableList.IndexOf(Table) <> -1 then
-      begin
-        FConnection.GetFieldNames(FieldList, Table);
-        List := TAutoMapper.GetListAtributes(Classes[i]);
-        for K := 0 to List.Count - 1 do
-        begin
-          if PParamAtributies(List.Items[K]).Tipo <> '' then
-          begin
-            ColumnExist := FieldList.IndexOf(PParamAtributies(List.Items[K])
-                .Name) <> -1;
-            if not ColumnExist then
-            begin
-              FConnection.ExecutarSQL(FConnection.CustomTypeDataBase.AlterTable
-                  (Table, PParamAtributies(List.Items[K]).Name,
-                  PParamAtributies(List.Items[K]).Tipo,
-                  PParamAtributies(List.Items[K]).IsNull, ColumnExist));
-              Created := true;
-            end;
-          end;
-        end;
-      end;
-    end;
-  finally
-    result := Created;
-    FieldList.Free;
-  end;
-end;
-
 procedure TDataContext.AddDirect;
 var
   SQLInsert: string;
@@ -395,7 +262,7 @@ begin
                       [TAutoMapper.GetTableAttribute(FEntity.ClassType),
                       TAutoMapper.GetAttributies(FEntity),
                       TAutoMapper.GetValuesFields(FEntity)]);
-  Connection.ExecutarSQL(SQLInsert);
+  FConnection.ExecutarSQL(SQLInsert);
 end;
 
 procedure TDataContext.Add;
@@ -476,7 +343,7 @@ begin
                                                   fParserUpdate(TAutoMapper.GetFieldsList(FEntity),
                                                                 TAutoMapper.GetValuesFieldsList(FEntity)),
                                                   fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
-      Connection.ExecutarSQL(SQL);
+      FConnection.ExecutarSQL(SQL);
     except
       on E: Exception do
       begin
@@ -500,7 +367,7 @@ begin
       FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(FEntity);
       SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(FEntity.ClassType),
                                                 fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
-      Connection.ExecutarSQL(SQL);
+      FConnection.ExecutarSQL(SQL);
     except
       on E: Exception do
       begin
@@ -531,7 +398,7 @@ begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
-    FFDQuery := Connection.CreateDataSet(GetQuery(QueryAble), Keys);
+    FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
     if not FFDQuery.Active then
        FFDQuery.Open;
     result:= FFDQuery.ToJson();
@@ -554,8 +421,6 @@ begin
     oFrom.Free;
   if FEntity <> nil then
     FEntity.Free;
-  if TableList <> nil then
-    TableList.Free;
   if ListField <> nil then
     ListField.Free;
   if ListObjectsInclude <> nil then

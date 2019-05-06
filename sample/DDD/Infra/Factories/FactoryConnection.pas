@@ -9,7 +9,6 @@ uses
 type
   TFactoryConnection = class
   private
-    class var FConnection: TEntityConn;
   public
     class function GetConnection: TEntityConn;
   end;
@@ -20,24 +19,12 @@ implementation
 
 
 class function TFactoryConnection.GetConnection: TEntityConn;
-var
- vDB : String;
 begin
-  vDB := extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB';
-  If FConnection = nil Then
-  begin
-    { FConnection := TEntitySQLConnection.Create('FB',
-                                                 'SYSDBA',
-                                                 'masterkey',
-                                                 'LocalHost',
-                                                 'D:\Lindemberg\Linq\DDD\DBLINQ.FDB'); }
-      FConnection := TEntityFDConnection.Create( fdFB ,
-                                                 'SYSDBA',
-                                                 'masterkey',
-                                                 'LocalHost',
-                                                 vDB);
-  end;
-  result:= FConnection;
+   result:= TEntityFDConnection.Create(fdFB ,
+                                       'SYSDBA',
+                                       'masterkey',
+                                       'LocalHost',
+                                       extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
 end;
 
 end.

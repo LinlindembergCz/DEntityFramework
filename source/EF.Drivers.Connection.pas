@@ -18,6 +18,13 @@ type
   TEntityConn = class
   private
     FCustomTypeDataBase: TCustomDataBase;
+    FTableList: TStringList;
+    FClasses: array of TClass;
+    function AlterTables: boolean;
+    function CreateSingleTable(i: integer): boolean;
+    function CreateTables: boolean;
+    function IsFireBird: boolean;
+
   protected
     FCustomConnection : TCustomConnection;
     FDataBase: string;
@@ -29,6 +36,7 @@ type
     procedure BeforeConnect(Sender: TObject);virtual;abstract;
   public
     constructor Create(aDriver:FDConn; aUser,aPassword,aServer,aDataBase: string);virtual; abstract;
+    destructor Destroy;virtual;
     procedure GetTableNames(var List: TStringList); virtual; abstract;
     procedure GetFieldNames(var List: TStringList; Table: string); virtual;abstract;
     procedure ExecutarSQL(prsSQL: string); virtual; abstract;
@@ -36,6 +44,7 @@ type
     procedure AlterColumn(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
     function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; virtual; abstract;
     procedure LoadFromFile(IniFileName: string);virtual; abstract;
+    function UpdateDataBase(aClasses: array of TClass): boolean;
     property CustomConnection: TCustomConnection read FCustomConnection write FCustomConnection;
     property CustomTypeDataBase: TCustomDataBase read FCustomTypeDataBase write FCustomTypeDataBase;
     property Driver: string read FDriver write FDriver;
@@ -46,6 +55,9 @@ type
   end;
 
 implementation
+
+uses
+  EF.Mapping.AutoMapper,EF.Mapping.Atributes, EF.Schema.Firebird;
 
 procedure TEntityConn.InsereFields(ADataSet: TFDQuery);
 var
@@ -114,6 +126,143 @@ begin
         end;
     end;
     Field.Name := ADataSet.Name + ADataSet.Fields[i].FieldName;
+  end;
+end;
+
+function TEntityConn.IsFireBird:boolean;
+begin
+  result:= (Driver = 'Firebird') or (Driver = 'FB');
+end;
+
+function TEntityConn.UpdateDataBase(aClasses: array of TClass): boolean;
+var
+  i: integer;
+  Created, Altered: boolean;
+begin
+  Created := false;
+  Altered := false;
+
+  FTableList := TStringList.Create(true);
+  GetTableNames(FTableList);
+  SetLength(FClasses, length(aClasses));
+  for i := 0 to length(aClasses) - 1 do
+  begin
+    FClasses[i] := aClasses[i];
+  end;
+  if length(aClasses) > 0 then
+  begin
+    Created := CreateTables;
+    // Altered := AlterTables;
+  end;
+
+  result := Created;
+end;
+
+function TEntityConn.CreateTables: boolean;
+var
+  i: integer;
+  Created: boolean;
+begin
+  Created := false;
+  result := false;
+  for i := 0 to length(FClasses) - 1 do
+  begin
+    Created := CreateSingleTable(i);
+    if Created then
+      result := Created;
+  end;
+end;
+
+destructor TEntityConn.Destroy;
+begin
+  if FTableList <> nil then
+     FTableList.Free;
+end;
+
+function TEntityConn.CreateSingleTable(i: integer): boolean;
+var
+  Table: string;
+  ListAtributes: TList;
+  ListForeignKeys: TList;
+  KeyList: TStringList;
+  classe: TClass;
+  index:integer;
+
+begin
+  classe := FClasses[i];
+  Table := TAutoMapper.GetTableAttribute(classe);
+  if Pos(uppercase(Table), uppercase(FTableList.Text)) = 0 then
+  begin
+    try
+      ListAtributes := nil;
+      ListAtributes := TAutoMapper.GetListAtributes(classe);
+      KeyList := TStringList.Create(true);
+      ExecutarSQL(CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
+
+      ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
+
+      if CustomTypeDataBase is TFirebird then
+      begin
+        with FCustomTypeDataBase as TFirebird do
+        begin
+          ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
+          ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
+          ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
+        end;
+      end;
+
+      for index := 0 to ListForeignKeys.Count -1  do
+      begin
+        ExecutarSQL( CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
+      end;
+
+      result := true;
+    finally
+      KeyList.Free;
+    end;
+  end;
+end;
+
+function TEntityConn.AlterTables: boolean;
+var
+  i, K, j: integer;
+  Table: string;
+  List: TList;
+  FieldList: TStringList;
+  ColumnExist: boolean;
+  Created: boolean;
+begin
+  try
+    Created := false;
+    FieldList := TStringList.Create(true);
+    for i := 0 to length(FClasses) - 1 do
+    begin
+      Table := TAutoMapper.GetTableAttribute(FClasses[i]);
+      if FTableList.IndexOf(Table) <> -1 then
+      begin
+        GetFieldNames(FieldList, Table);
+        List := TAutoMapper.GetListAtributes(FClasses[i]);
+        for K := 0 to List.Count - 1 do
+        begin
+          if PParamAtributies(List.Items[K]).Tipo <> '' then
+          begin
+            ColumnExist := FieldList.IndexOf(PParamAtributies(List.Items[K])
+                .Name) <> -1;
+            if not ColumnExist then
+            begin
+              ExecutarSQL( CustomTypeDataBase.AlterTable
+                  (Table, PParamAtributies(List.Items[K]).Name,
+                  PParamAtributies(List.Items[K]).Tipo,
+                  PParamAtributies(List.Items[K]).IsNull, ColumnExist));
+              Created := true;
+            end;
+          end;
+        end;
+      end;
+    end;
+  finally
+    result := Created;
+    FieldList.Free;
   end;
 end;
 
