@@ -8,21 +8,21 @@ uses
 
 
 type
-  [EntityTable('Contatos')]
+  [Table('Contatos')]
   TContato = class(TEntityBase)
   private
     FNome: TString;
     FTelefone: TString;
     FClienteId: TInteger;
   public
-    [EntityField('Nome','varchar(50)',false)]
+    [FieldTable('Nome','varchar(50)',false)]
     [LengthMin(10)][Edit]
     property Nome: TString read FNome write Fnome;
-    [EntityField('Telefone','varchar(15)',true)]
+    [FieldTable('Telefone','varchar(15)',true)]
     [LengthMin(10)][Edit]
     property Telefone: TString read FTelefone write FTelefone;
-    [EntityField('ClienteId','Integer',true)]
-    [EntityForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
+    [FieldTable('ClienteId','Integer',true)]
+    [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
   end;
 

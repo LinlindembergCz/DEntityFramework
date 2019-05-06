@@ -38,7 +38,7 @@ type
   end;
 
 
-  EntityTable = class(TCustomAttribute)
+  Table = class(TCustomAttribute)
   private
     FName: string;
   public
@@ -46,7 +46,7 @@ type
     property Name: string read FName;
   end;
 
-  EntityField = class(TCustomAttribute)
+  FieldTable = class(TCustomAttribute)
   private
     FName: String;
     FIsNull: boolean;
@@ -66,7 +66,7 @@ type
     property AutoInc: boolean read FAutoInc write SetAutoInc;
   end;
 
-  EntityForeignKey = class(TCustomAttribute)
+  ForeignKey = class(TCustomAttribute)
   private
     FForeignKey: string;
     FName: string;
@@ -81,7 +81,7 @@ type
 
   end;
 
-  EntityRef = class(TCustomAttribute)
+  Reference = class(TCustomAttribute)
   private
     FName: string;
   public
@@ -90,7 +90,7 @@ type
   end;
 
 
-  EntityExpression = class(TCustomAttribute)
+  Expression = class(TCustomAttribute)
   private
     FDisplay: string;
     FExpression: string;
@@ -101,7 +101,7 @@ type
   end;
 
 
-  EntityItems = class(TCustomAttribute)
+  Items = class(TCustomAttribute)
   private
     FItems: TStringList;
   public
@@ -143,7 +143,7 @@ type
     constructor Create(pMensagem: String = '');
   end;
 
-  EntityNotSpecialChar = class(TCustomAttribute)
+  NotSpecialChar = class(TCustomAttribute)
   end;
 
   //Nao permitir valor nulo
@@ -203,14 +203,14 @@ implementation
 
 
 { EntityTable }
-constructor EntityTable.Create(aName: String);
+constructor Table.Create(aName: String);
 begin
   FName := aName;
 end;
 
 { EntityField }
 
-constructor EntityField.Create(aName: String; aTipo: string =''; aIsNull: boolean=true;
+constructor FieldTable.Create(aName: String; aTipo: string =''; aIsNull: boolean=true;
   aPrimaryKey: boolean = false; aAutoInc: boolean = false);
 begin
   FName := aName;
@@ -220,26 +220,26 @@ begin
   FAutoInc := aAutoInc;
 end;
 
-procedure EntityField.SetAutoInc(const Value: boolean);
+procedure FieldTable.SetAutoInc(const Value: boolean);
 begin
   FAutoInc := Value;
 end;
 
 { EntityRef }
-constructor EntityRef.Create(aName: String);
+constructor Reference.Create(aName: String);
 begin
   FName := aName;
 end;
 
 { EntityItems }
-constructor EntityItems.Create(aItems: String);
+constructor Items.Create(aItems: String);
 begin
   FItems := TStringList.Create;
   FItems.delimiter := ';';
   FItems.DelimitedText := aItems;
 end;
 
-destructor EntityItems.Destroy;
+destructor Items.Destroy;
 begin
   FItems.Free;
 end;
@@ -311,7 +311,7 @@ end;
 
 { EntityExpression }
 
-constructor EntityExpression.Create(aDisplay: String; aExpression:string);
+constructor Expression.Create(aDisplay: String; aExpression:string);
 begin
   FDisplay:= aDisplay;
   FExpression := aExpression;
@@ -338,7 +338,7 @@ end;
 { EntityForeignKey }
 
 //'ClienteId','integer',true,'CLIENTES.ID',True
-constructor EntityForeignKey.Create(aForeignKey : string; aName: String; aOnDelete: TRule; aOnUpdate: TRule );
+constructor ForeignKey.Create(aForeignKey : string; aName: String; aOnDelete: TRule; aOnUpdate: TRule );
 begin
   FForeignKey:= aForeignKey;
   FName := aName;

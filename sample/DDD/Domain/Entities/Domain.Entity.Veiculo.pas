@@ -7,16 +7,16 @@ uses
   EF.Mapping.Atributes;
 
 type
-  [EntityTable('Veiculos')]
+  [Table('Veiculos')]
   TVeiculo = class( TEntityBase )
   private
     FPlaca: TString;
     FClienteId: TInteger;
   public
-    [EntityField('Placa','varchar(10)',false)]
+    [FieldTable('Placa','varchar(10)',false)]
      property Placa: TString read FPlaca write FPlaca;
-    [EntityField('ClienteId','Integer',true)]
-    [EntityForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
+    [FieldTable('ClienteId','Integer',true)]
+    [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
   end;
 

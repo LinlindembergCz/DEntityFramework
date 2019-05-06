@@ -7,7 +7,7 @@ uses
   EF.Mapping.Atributes, Domain.Entity.TabelaPreco;
 
 type
-  [EntityTable('ClienteTabelaPreco')]
+  [Table('ClienteTabelaPreco')]
   TClienteTabelaPreco = class( TEntityBase )
   private
     FClienteId: TInteger;
@@ -16,12 +16,12 @@ type
     //FCliente: TCliente;
 
   public
-    [EntityField('ClienteId','Integer',true)]
-    [EntityForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
+    [FieldTable('ClienteId','Integer',true)]
+    [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
 
-    [EntityField('TabelaPrecoId','Integer',true)]
-    [EntityForeignKey('TabelaPrecoId','TabelaPrecos', rlCascade, rlCascade )]
+    [FieldTable('TabelaPrecoId','Integer',true)]
+    [ForeignKey('TabelaPrecoId','TabelaPrecos', rlCascade, rlCascade )]
     property TabelaPrecoId: TInteger read FTabelaPrecoId write FTabelaPrecoId;
 
     [NotMapper]

@@ -171,17 +171,17 @@ begin
         Found:= false;
         for Atributo in Prop.GetAttributes do
         begin
-          if (Atributo is EntityField) then
+          if (Atributo is FieldTable) then
           begin
-            if EntityField(Atributo).Tipo <> '' then
+            if FieldTable(Atributo).Tipo <> '' then
             begin
               New(Atributies);
-              Atributies^.Name := EntityField(Atributo).Name;
-              Atributies^.Tipo := EntityField(Atributo).Tipo;
-              Atributies^.IsNull := EntityField(Atributo).IsNull;
-              Atributies^.PrimaryKey := EntityField(Atributo).PrimaryKey;
-              Atributies^.DefaultValue := EntityField(Atributo).DefaultValue;
-              Atributies^.AutoInc := EntityField(Atributo).AutoInc;
+              Atributies^.Name := FieldTable(Atributo).Name;
+              Atributies^.Tipo := FieldTable(Atributo).Tipo;
+              Atributies^.IsNull := FieldTable(Atributo).IsNull;
+              Atributies^.PrimaryKey := FieldTable(Atributo).PrimaryKey;
+              Atributies^.DefaultValue := FieldTable(Atributo).DefaultValue;
+              Atributies^.AutoInc := FieldTable(Atributo).AutoInc;
               List.Add(Atributies);
             end;
             Found:= true;
@@ -223,13 +223,13 @@ begin
       Found:= false;
       for Atributo in Prop.GetAttributes do
       begin
-        if (Atributo is EntityForeignKey) then
+        if (Atributo is ForeignKey) then
         begin
           New(Atributies);
-          Atributies^.ForeignKey:= EntityForeignKey(Atributo).ForeignKey;
-          Atributies^.Name := EntityForeignKey(Atributo).Name;
-          Atributies^.OnDelete:=EntityForeignKey(Atributo).OnDelete;
-          Atributies^.OnUpdate:=EntityForeignKey(Atributo).OnUpdate;
+          Atributies^.ForeignKey:= ForeignKey(Atributo).ForeignKey;
+          Atributies^.Name := ForeignKey(Atributo).Name;
+          Atributies^.OnDelete:=ForeignKey(Atributo).OnDelete;
+          Atributies^.OnUpdate:=ForeignKey(Atributo).OnUpdate;
           List.Add(Atributies);
           Found:= true;
         end;
@@ -260,9 +260,9 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is EntityRef then
+          if Atrib is Reference then
           begin
-            result := EntityRef(Atrib).Name;
+            result := Reference(Atrib).Name;
             exit;
           end;
         end;
@@ -292,9 +292,9 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is EntityRef then
+          if Atrib is Reference then
           begin
-            result := EntityRef(Atrib).Name;
+            result := Reference(Atrib).Name;
             exit;
           end;
         end;
@@ -347,23 +347,23 @@ begin
              if (PropIsVisible(Prop) and (OnlyPublished)) or (not OnlyPublished) then
              begin
                FoundAttribute:= false;
-               if Atributo is EntityField then
+               if Atributo is FieldTable then
                begin
                  if Attributies = '' then
-                    Attributies := EntityField(Atributo).Name
+                    Attributies := FieldTable(Atributo).Name
                  else
-                 if Pos( EntityField(Atributo).Name , Attributies ) = 0 then
-                    Attributies := Attributies + ', ' + EntityField(Atributo).Name;
+                 if Pos( FieldTable(Atributo).Name , Attributies ) = 0 then
+                    Attributies := Attributies + ', ' + FieldTable(Atributo).Name;
                  FoundAttribute:= true;
                  break;
                end
                else
-               if Atributo is EntityExpression then
+               if Atributo is Expression then
                begin
                  if Attributies = '' then
-                    Attributies := EntityExpression(Atributo).Expression
+                    Attributies := Expression(Atributo).Expression
                  else
-                    Attributies := Attributies + ', (' + EntityExpression(Atributo).Expression +') as '+EntityExpression(Atributo).Display;
+                    Attributies := Attributies + ', (' + Expression(Atributo).Expression +') as '+Expression(Atributo).Display;
                  FoundAttribute:= true;
                  break;
                end
@@ -444,11 +444,11 @@ begin
         ctx2 := TRttiContext.Create;
         for Atributo in Prop.GetAttributes do
         begin
-          if Atributo is EntityField then
+          if Atributo is FieldTable then
           begin
-            if not EntityField(Atributo).AutoInc then
+            if not FieldTable(Atributo).AutoInc then
             begin
-               L.Add(EntityField(Atributo).Name);
+               L.Add(FieldTable(Atributo).Name);
                FoundAttribute:= true;
             end;
           end;
@@ -458,7 +458,7 @@ begin
           end;
         end;
         ctx2.Free;
-        if (not FoundAttribute) and (not EntityField(Atributo).AutoInc) then
+        if (not FoundAttribute) and (not FieldTable(Atributo).AutoInc) then
            L.Add( Prop.Name );
       end;
     end;
@@ -512,17 +512,17 @@ begin
         ctx2 := TRttiContext.Create;
         for Atributo in Prop.GetAttributes do
         begin
-          if Atributo is EntityField then
+          if Atributo is FieldTable then
           begin
-            if not EntityField(Atributo).AutoInc then
+            if not FieldTable(Atributo).AutoInc then
             begin
-               L.Add(EntityField(Atributo).Name);
+               L.Add(FieldTable(Atributo).Name);
                FoundAttribute:= true;
             end;
           end;
         end;
         ctx2.Free;
-        if (not FoundAttribute) and (not EntityField(Atributo).AutoInc ) then
+        if (not FoundAttribute) and (not FieldTable(Atributo).AutoInc ) then
            L.Add( Prop.Name );
       end;
     end;
@@ -550,11 +550,11 @@ begin
       ctx2 := TRttiContext.Create;
       for Atrib in Prop.GetAttributes do
       begin
-        if Atrib is EntityField then
+        if Atrib is FieldTable then
         begin
-          if EntityField(Atrib).PrimaryKey then
+          if FieldTable(Atrib).PrimaryKey then
           begin
-            L.Add(EntityField(Atrib).Name);
+            L.Add(FieldTable(Atrib).Name);
             break;////////////////////////////
           end;
         end;
@@ -726,7 +726,7 @@ var
   ctx: TRttiContext;
   Prop: TRttiProperty;
   Atrib: TCustomAttribute;
-  Field: TRttiField;
+  lField: TRttiField;
   Value: string;
   L: TStringList;
   typ: TRttiType;
@@ -760,17 +760,17 @@ begin
       end
       else
       begin
-        for Field in typ.GetFields do
+        for lField in typ.GetFields do
         begin
-          if (uppercase(Field.Name) = uppercase('F' + Prop.Name)) or (Field.Name = 'Fvalue') then
+          if (uppercase(lField.Name) = uppercase('F' + Prop.Name)) or (lField.Name = 'Fvalue') then
           begin
             for Atrib in Prop.GetAttributes do
             begin
-              if Atrib is EntityField then
+              if Atrib is FieldTable then
               begin
-                if not EntityField(Atrib).AutoInc then
+                if not FieldTable(Atrib).AutoInc then
                 begin
-                  Value := GetValueField(E, Field);
+                  Value := GetValueField(E, lField);
                   L.Add(Value);
                   break;
                 end;
@@ -796,7 +796,7 @@ class function TAutoMapper.GetValuesFieldsPrimaryKeyList(E: TEntityBase)
 var
   ctx: TRttiContext;
   Prop: TRttiProperty;
-  Field: TRttiField;
+  lField: TRttiField;
   Value: string;
   L: TStringList;
   Atributo: TCustomAttribute;
@@ -806,16 +806,16 @@ begin
     L := TStringList.Create(true);
     for Prop in ctx.GetType(E.ClassType).GetProperties do
     begin
-      for Field in ctx.GetType(E.ClassType).GetFields do
+      for lField in ctx.GetType(E.ClassType).GetFields do
       begin
-        if uppercase(Field.Name) = uppercase('F' + Prop.Name) then
+        if uppercase(lField.Name) = uppercase('F' + Prop.Name) then
         begin
           for Atributo in Prop.GetAttributes do
           begin
-            if (Atributo is EntityField) and (EntityField(Atributo).PrimaryKey)
+            if (Atributo is FieldTable) and (FieldTable(Atributo).PrimaryKey)
             then
             begin
-              Value := GetValueField(E, Field);
+              Value := GetValueField(E, lField);
               L.Add(Value);
               break;
             end;
@@ -842,9 +842,9 @@ begin
     TypObj := ctx.GetType(Obj.ClassInfo);
     for Atributo in TypObj.GetAttributes do
     begin
-      if (Atributo is EntityTable) then
+      if (Atributo is Table) then
       begin
-        strTables := EntityTable(Atributo).Name;
+        strTables := Table(Atributo).Name;
         break;
       end;
     end;
@@ -867,9 +867,9 @@ begin
     TypObj := ctx.GetType(ClassInfo);
     for Atributo in TypObj.GetAttributes do
     begin
-      if Atributo is EntityTable then
+      if Atributo is Table then
       begin
-        result := EntityTable(Atributo).Name;
+        result := Table(Atributo).Name;
         break;
       end;
     end;
@@ -1066,12 +1066,12 @@ begin
         for Atrib in Prop.GetAttributes do
         begin
           try
-            if Atrib is EntityField then
+            if Atrib is FieldTable then
             begin
               Found := true;
               TAutoMapper.SetAtribute(Entity, Prop.Name,
                 TAutoMapper.GetTableAttribute(Entity.ClassType) + '.' +
-                EntityField(Atrib).Name, InContext);
+                FieldTable(Atrib).Name, InContext);
               result := true;
               break;
             end;
@@ -1126,12 +1126,12 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is EntityField then
+          if Atrib is FieldTable then
           begin
-            if DataSet.FindField(EntityField(Atrib).Name) <> nil then
+            if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
             begin
               SetFieldValue(Entity, Prop,
-                            DataSet.Fieldbyname(EntityField(Atrib).Name).AsVariant);
+                            DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
               breaked:= true;
               break;
             end;

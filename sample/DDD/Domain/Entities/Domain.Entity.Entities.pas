@@ -6,19 +6,19 @@ uses
   System.Classes, Dialogs, SysUtils, EF.Mapping.Base, EF.Core.Types, EF.Mapping.Atributes, Domain.ValuesObject.CPF, Domain.Entity.Cliente;
 
 type
-  [EntityTable('Endereco')]
+  [Table('Endereco')]
   TEndereco = class( TEntityBase )
   private
     FLogradouro: TString;
     FPessoaId:TInteger;
   public
-    [EntityField('Logradouro','varchar(50)',true)]
+    [FieldTable('Logradouro','varchar(50)',true)]
     property Logradouro: TString read FLogradouro write FLogradouro;
-    [EntityField('PessoaId','integer',false)]
+    [FieldTable('PessoaId','integer',false)]
     property PessoaId: TInteger read FPessoaId write FPessoaId;
   end;
 
-  [EntityTable('Pessoa')]
+  [Table('Pessoa')]
   TPessoa = class( TEntityBase)
   private
     FNome: TString;
@@ -27,15 +27,15 @@ type
   public
     constructor Create;
   published
-    [EntityField('Nome','varchar(50)',true)]
+    [FieldTable('Nome','varchar(50)',true)]
     property Nome: TString read FNome write FNome;
-    [EntityRef('Pessoa.Id = Endereco.PessoaId')]
+    [FieldTable('Pessoa.Id = Endereco.PessoaId')]
     property Endereco:TEndereco read FEndereco write FEndereco;
-    [EntityField('Salario','float',true)]
+    [FieldTable('Salario','float',true)]
     property Salario: TFloat read FSalario write FSalario;
   end;
 
-  [EntityTable('PessoaFisica')]
+  [Table('PessoaFisica')]
   TPessoaFisica = class( TPessoa )
   private
     FCPFCNPJ: TCPF;
@@ -43,41 +43,39 @@ type
     FComissao: TFloat;
     FDataNascimento: TDate;
   published
-    [EntityField('CPF','varchar(11)',true)]
+    [FieldTable('CPF','varchar(11)',true)]
     property CPFCNPJ: TCPF read FCPFCNPJ write FCPFCNPJ;
-    [EntityField('Idade','integer',true)]
+    [FieldTable('Idade','integer',true)]
     property Idade: TInteger read FIdade write FIdade;
-    [EntityField('Comissao','float', true)]
+    [FieldTable('Comissao','float', true)]
     property Comissao: TFloat read FComissao write FComissao;
-    [EntityField('DataNascimento','Datetime',true)]
+    [FieldTable('DataNascimento','Datetime',true)]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
   end;
 
-  [EntityTable('PessoaJuridica')]
+  [Table('PessoaJuridica')]
   TPessoaJuridica = class( TPessoa )
   private
     FCNPJ: TString;
   published
-    [EntityField('CNPJ','varchar(15)',true)]
+    [FieldTable('CNPJ','varchar(15)',true)]
     property CNPJ: TString read FCNPJ write FCNPJ;
   end;
 
-
-
-  [EntityTable('Produto')]
+  [Table('Produto')]
   TProduto = class ( TEntityBase )
   private
     FDescricao: TString;
     FUNidade:TString;
     FPrecoVenda:TFloat;
   published
-    [EntityField('Descricao','varchar(50)',true)]
-    [EntityMaxLength(20)]
+    [FieldTable('Descricao','varchar(50)',true)]
+    [MaxLength(20)]
     property Descricao: TString read FDescricao write FDescricao;
-    [EntityField('Unidade','varchar(5)',true)]
-    [EntityDefault('UN')]
+    [FieldTable('Unidade','varchar(5)',true)]
+    [Default('UN')]
     property Unidade: TString read FUnidade write FUnidade;
-    [EntityField('PrecoVenda','float',true)]
+    [FieldTable('PrecoVenda','float',true)]
     //[EntityDefault('0')]
     property PrecoVenda: TFloat read FPrecoVenda write FPrecoVenda;
   end;
@@ -87,14 +85,14 @@ type
      FProduto: TProduto;
      FDescricao: TString;
   public
-     [EntityRef('IdProduto=Produto.Id')]
+     [Reference('IdProduto=Produto.Id')]
      property Produto: TProduto read FProduto write FProduto;
-     [EntityField('Descricao','', true)]
+     [FieldTable('Descricao','', true)]
      property Descricao: TString read FDescricao write FDescricao;
      constructor Create;
   end;
 
-  [EntityTable('ItensOrcamento')]
+  [Table('ItensOrcamento')]
   TItensOrcamento = class(TItens)
   private
     FIdProduto: TInteger;
@@ -114,14 +112,14 @@ type
     property IdProduto: TInteger read FIdProduto write FIdProduto;
   end;
 
-  [EntityTable('Orcamento')]
+  [Table('Orcamento')]
   TOrcamento = class ( TEntityBase )
   private
     FIdCliente: TInteger;
     FData: TDate;
     FCliente:TCliente;
   public
-    [EntityRef('IdCliente=Clientes.Id')]
+    [Reference('IdCliente=Clientes.Id')]
     property Cliente: TCliente read FCliente write FCliente;
     constructor Create;
   published
@@ -132,12 +130,12 @@ type
   end;
 
   //Classe mapeada!
-  [EntityTable('ClassificacaoPessoa')]
+  [Table('ClassificacaoPessoa')]
   TClassificacaoPessoa = class(TEntityBase)
   private
     FDescricao: TString;
   public
-    [EntityField('Descricao','varchar(20)',false)]
+    [FieldTable('Descricao','varchar(20)',false)]
     property Descricao:TString read FDescricao write FDescricao;
   end;
 

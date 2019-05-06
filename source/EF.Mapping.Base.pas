@@ -25,7 +25,7 @@ type
     procedure Validation; virtual;
     procedure Initialize; virtual;
   published
-    [EntityField('ID', 'integer', false, true, true)]
+    [FieldTable('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
     function ToJson(UsingRestJson:boolean = false): string;
     procedure FromJson{<T: class, constructor>}(const AJson: String);
@@ -40,7 +40,6 @@ type
   public
      function RegisterObject<T:TEntityBase>(O:T):T;overload;
      function RegisterObjectList<T:TEntityBase>(O: TEntityList<T>):TEntityList<T>;overload;
-
   end;
 
 implementation

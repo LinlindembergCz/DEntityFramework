@@ -7,12 +7,12 @@ uses
   EF.Mapping.Atributes;
 
 type
-  [EntityTable('Produto')]
+  [TableName('Produto')]
   TProduto = class( TEntityBase )
   private
     FDescricao: string;
   public
-    [EntityField('Descricao','varchar(50)',false)]
+    [FieldTable('Descricao','varchar(50)',false)]
     property Descricao: string read FDescricao write FDescricao;
   end;
 

@@ -7,16 +7,19 @@ uses
   EF.Mapping.Atributes, Domain.Entity.Produto;
 
 type
-  [EntityTable('ItensTabelaPreco')]
+  [Table('ItensTabelaPreco')]
   TItensTabelaPreco = class( TEntityBase )
   private
     FTabelaPrecoId: TInteger;
     FProdutoId: TInteger;
     FValor: TFloat;
-      FProduto: TProduto;
+    FProduto: TProduto;
   public
+    [FieldTable('ProdutoId','integer',false)]
     property ProdutoId:TInteger read FTabelaPrecoId write FTabelaPrecoId;
+    [FieldTable('TabelaPrecoId','integer',false)]
     property TabelaPrecoId:TInteger read FTabelaPrecoId write FTabelaPrecoId;
+    [FieldTable('TabelaPrecoId','float',false)]
     property Valor: TFloat read FValor write FValor;
     [NotMapper]
     property Produto: TProduto read  FProduto write FProduto;

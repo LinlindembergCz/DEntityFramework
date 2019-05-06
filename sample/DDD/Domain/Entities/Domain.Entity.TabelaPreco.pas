@@ -7,14 +7,14 @@ uses
   EF.Mapping.Atributes, Domain.Entity.ItensTabelaPreco;
 
 type
-  [EntityTable('TabelaPrecos')]
+  [Table('TabelaPrecos')]
   TTabelaPreco = class( TEntityBase )
   private
     FDescricao: TString;
     FItensTabelaPreco: TEntityList<TItensTabelaPreco>;
     procedure Initialize;
   public
-    [EntityField('Descricao','varchar(50)',false)]
+    [FieldTable('Descricao','varchar(50)',false)]
     property Descricao: TString read FDescricao write FDescricao;
     [NotMapper]
     property ItensTabelaPreco: TEntityList<TItensTabelaPreco> read FItensTabelaPreco write FItensTabelaPreco;

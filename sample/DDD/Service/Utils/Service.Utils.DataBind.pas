@@ -186,13 +186,13 @@ begin
   IndexOf := -1;
   for Atrib in Prop.GetAttributes do
   begin
-    if Atrib is EntityItems then
+    if Atrib is Items then
     begin
       if TCombobox(Component).Items.Count = 0 then
       begin
-        for i := 0 to EntityItems(Atrib).Items.Count - 1 do
+        for i := 0 to Items(Atrib).Items.Count - 1 do
         begin
-            ValueItem := EntityItems(Atrib).Items.Strings[i];
+            ValueItem := Items(Atrib).Items.Strings[i];
             lsText := copy(ValueItem, Pos('=', ValueItem) + 1,length(ValueItem));
             lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
             if (Component as TCombobox).Items.Values[lsText] = '' then
@@ -229,13 +229,13 @@ begin
   IndexOf := -1;
   for Atrib in Prop.GetAttributes do
   begin
-    if Atrib is EntityItems then
+    if Atrib is items then
     begin
       if TRadioGroup(Component).Items.Count = 0 then
       begin
-        for i := 0 to EntityItems(Atrib).Items.Count - 1 do
+        for i := 0 to items(Atrib).Items.Count - 1 do
         begin
-            ValueItem := EntityItems(Atrib).Items.Strings[i];
+            ValueItem := items(Atrib).Items.Strings[i];
             lsText := copy(ValueItem, Pos('=', ValueItem) + 1,
               length(ValueItem));
             lsValue := copy(ValueItem, 1, Pos('=', ValueItem) - 1);
@@ -244,8 +244,8 @@ begin
             if (Value = lsValue) then
               IndexOf := i;
         end;
-       // EntityItems(Atrib).Items.Free;
-       // EntityItems(Atrib).Items := nil;
+       // items(Atrib).Items.Free;
+       // items(Atrib).Items := nil;
       end;
     end;
   end;
@@ -309,12 +309,12 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is EntityField then
+          if Atrib is FieldTable then
           begin
-            if DataSet.FindField(EntityField(Atrib).Name) <> nil then
+            if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
             begin
               TAutoMapper.SetFieldValue(Entity, Prop,
-                            DataSet.Fieldbyname(EntityField(Atrib).Name).AsVariant);
+                            DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
               breaked:= true;
               break;
             end;

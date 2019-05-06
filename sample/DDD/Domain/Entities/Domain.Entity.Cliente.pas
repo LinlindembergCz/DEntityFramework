@@ -8,7 +8,7 @@ uses
   System.Generics.Collections;
 
 type
-  [EntityTable('Clientes')]
+  [Table('Clientes')]
   TCliente = class( TEntityBase )
   private
     FCPFCNPJ: TString;
@@ -36,33 +36,33 @@ type
     destructor Destroy;override;
     procedure Validation; override;
   published
-    [EntityField('Nome','varchar(50)',false)][LengthMin(10)][Edit]
+    [FieldTable('Nome','varchar(50)',false)][LengthMin(10)][Edit]
     property Nome: TString read FNome write FNome;
-    [EntityField('NomeFantasia','varchar(50)',false)][Edit]
+    [FieldTable('NomeFantasia','varchar(50)',false)][Edit]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;
-    [EntityField('CPFCNPJ','varchar(15)',true)][LengthMin(11)][NotNull][EntityNotSpecialChar][Edit]
+    [FieldTable('CPFCNPJ','varchar(15)',true)][LengthMin(11)][NotNull][NotSpecialChar][Edit]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
-    [EntityField('Renda','float',true)][Edit]
+    [FieldTable('Renda','float',true)][Edit]
     property Renda:TFloat read FRenda write FRenda;
-    [EntityField('Idade','integer',true)][Edit]
+    [FieldTable('Idade','integer',true)][Edit]
     property Idade: TInteger read FIdade write FIdade;
-    [EntityField('RG','varchar(10)',true)][LengthMin(6)][Edit]
+    [FieldTable('RG','varchar(10)',true)][LengthMin(6)][Edit]
     property RG: TString read FRG write FRG;
-    [EntityField('DataNascimento','Date',true)][DateTimePicker]
+    [FieldTable('DataNascimento','Date',true)][DateTimePicker]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
-    [EntityField('Ativo','varchar(1)',true)][CheckBox]
+    [FieldTable('Ativo','varchar(1)',true)][CheckBox]
     property Ativo: TString read FAtivo write FAtivo;
-    [EntityField('Situacao','varchar(20)',true)]
+    [FieldTable('Situacao','varchar(20)',true)]
     [EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')]
     [Default('L')] [Combobox]
     property Situacao:TString read FSituacao write FSituacao;
-    [EntityField('Tipo','varchar(20)',true)]
+    [FieldTable('Tipo','varchar(20)',true)]
     [EntityItems('F=Fisica;J=Juridica')]
     [Combobox]
     property Tipo: TString read FTipo write FTipo;
-    [EntityField('EstadoCivil','varchar(20)',true)][Combobox]
+    [FieldTable('EstadoCivil','varchar(20)',true)][Combobox]
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;
-    [EntityField('Observacao','varchar(500)',true)][Memo]
+    [FieldTable('Observacao','varchar(500)',true)][Memo]
     property Observacao:TString read FObservacao write FObservacao;
     [Edit]
     property Email:TEmail read FEmail write FEmail;
