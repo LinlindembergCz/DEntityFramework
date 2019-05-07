@@ -16,10 +16,10 @@ type
     FClienteId: TInteger;
   public
     [FieldTable('Nome','varchar(50)',false)]
-    [LengthMin(10)][Edit]
+    [LengthMin(10)]
     property Nome: TString read FNome write Fnome;
     [FieldTable('Telefone','varchar(15)',true)]
-    [LengthMin(10)][Edit]
+    [LengthMin(10)]
     property Telefone: TString read FTelefone write FTelefone;
     [FieldTable('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]

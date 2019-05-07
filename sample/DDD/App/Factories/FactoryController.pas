@@ -3,7 +3,7 @@ unit FactoryController;
 interface
 
 uses
-  Forms,  Sysutils, FactoryEntity, UI.Interfaces.ControllerBase, System.Classes, RTTI, Dialogs;
+  Forms,  Sysutils, FactoryEntity, App.Interfaces.ControllerBase, System.Classes, RTTI, Dialogs;
 
 type
   TFactoryController = class
@@ -18,14 +18,14 @@ implementation
 { TFactoryEntity }
 
 uses
-  FactoryService, UI.Controller.Base, EF.Mapping.AutoMapper;
+  FactoryService, App.Controller.Base, EF.Mapping.AutoMapper;
 
 class function TFactoryController.GetController( E: string ): IControllerBase;
 var
   Controller     : IControllerBase;
   Instance      : TObject;
 begin
-  Instance := TAutoMapper.GetInstance2( 'UI.Controller.'+E+'.TController'+ E );
+  Instance := TAutoMapper.GetInstance2( 'App.Controller.'+E+'.TController'+ E );
   if Instance <> nil then
   begin
     Controller :=  TControllerBase( Instance ).create( TFactoryService.GetService(E) );

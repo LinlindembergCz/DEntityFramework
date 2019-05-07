@@ -159,7 +159,6 @@ type
   private
     FValue: integer;
     FAs: string;
-
   public
     procedure SetAs(const Value: string);
     procedure SetValue(const Value: integer);
@@ -252,6 +251,9 @@ type
 implementation
 
 uses EF.Core.Consts;
+
+resourcestring
+  MaskFloat = '0.00;';
 
 class operator TString.Equal(const a, b: TString): TString;
 begin
@@ -430,7 +432,7 @@ end;
 
 class operator TFloat.Equal(const a: TFloat; b: Double): TString;
 begin
-  result := fEqual(a.FAs, FormatFloat('0.00;', b).Replace('.', '')
+  result := fEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 
@@ -441,7 +443,7 @@ end;
 
 class operator TFloat.GreaterThan(a: TFloat; b: Double): TString;
 begin
-  result := fGreaterThan(a.FAs, FormatFloat('0.00;', b).Replace('.', '')
+  result := fGreaterThan(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 
@@ -452,7 +454,7 @@ end;
 
 class operator TFloat.GreaterThanOrEqual(a: TFloat; b: Double): TString;
 begin
-  result := fGreaterThanOrEqual(a.FAs, FormatFloat('0.00;', b).Replace('.', '')
+  result := fGreaterThanOrEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 
@@ -473,7 +475,7 @@ end;
 
 class operator TFloat.LessThan(a: TFloat; b: Double): TString;
 begin
-  result := fLessThan(a.FAs, FormatFloat('0.00;', b).Replace('.', '')
+  result := fLessThan(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 
@@ -484,7 +486,7 @@ end;
 
 class operator TFloat.LessThanOrEqual(a: TFloat; b: Double): TString;
 begin
-  result := fLessThanOrEqual(a.FAs, FormatFloat('0.00;', b).Replace('.', '')
+  result := fLessThanOrEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 
@@ -505,7 +507,7 @@ end;
 
 class operator TFloat.NotEqual(const a: TFloat; b: Double): TString;
 begin
-  result := fNotEqual(a.FAs, FormatFloat('0.00;', b).Replace('.', '')
+  result := fNotEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 

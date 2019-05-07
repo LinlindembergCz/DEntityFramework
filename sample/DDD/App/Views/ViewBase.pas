@@ -8,7 +8,7 @@ uses
   Data.DB, Data.SqlExpr, Data.FMTBcd, Datasnap.Provider, Datasnap.DBClient,
   Data.DBXMSSQL, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, System.Bindings.Helper,
   strUtils, Vcl.Buttons, Vcl.ComCtrls, Vcl.ExtCtrls,
-  UI.Interfaces.ControllerBase,
+  App.Interfaces.ControllerBase,
   FactoryController, FactoryEntity, Data.Bind.ObjectScope;
 
 type

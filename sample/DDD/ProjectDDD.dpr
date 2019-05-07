@@ -10,29 +10,22 @@ uses
   Domain.Entity.TabelaPreco in 'Domain\Entities\Domain.Entity.TabelaPreco.pas',
   Domain.Entity.Produto in 'Domain\Entities\Domain.Entity.Produto.pas',
   Domain.Entity.ItensTabelaPreco in 'Domain\Entities\Domain.Entity.ItensTabelaPreco.pas',
-
   FactoryEntity in 'Domain\Factories\FactoryEntity.pas',
   Domain.Entity.Entities in 'Domain\Entities\Domain.Entity.Entities.pas',
-
   FactoryConnection in 'Repositorio\Factories\FactoryConnection.pas',
   Context in 'Repositorio\Contexto\Context.pas',
-
   Repositorio.Interfaces.Base in 'Repositorio\Interfaces\Repositorio.Interfaces.Base.pas',
   Repositorio.Interfaces.Cliente in 'Repositorio\Interfaces\Repositorio.Interfaces.Cliente.pas',
   Repositorio.GenericRepository in 'Repositorio\Repositorio.GenericRepository.pas',
   Repositorio.Base in 'Repositorio\Repositorio.Base.pas',
   Repositorio.Cliente in 'Repositorio\Repositorio.Cliente.pas',
   FactoryRepository in 'Repositorio\Factories\FactoryRepository.pas',
-
   Service.Interfaces.Servicebase in 'Service\Interfaces\Service.Interfaces.Servicebase.pas',
   Service.Interfaces.Cliente in 'Service\Interfaces\Service.Interfaces.Cliente.pas',
   Service.Cliente in 'Service\Service.Cliente.pas',
   Service.Base in 'Service\Service.Base.pas',
   FactoryService in 'Service\Factories\FactoryService.pas',
-  FactoryController in 'UI\Factories\FactoryController.pas',
-  FactoryView in 'UI\Factories\FactoryView.pas',
-  ViewBase in 'UI\Views\ViewBase.pas' {FormViewBase},
-  viewCliente in 'UI\Views\viewCliente.pas' {FormViewBase},
+
   Domain.ValuesObject.CPF in 'Domain\ValuesObjects\Domain.ValuesObject.CPF.pas',
   Domain.ValuesObject.Email in 'Domain\ValuesObjects\Domain.ValuesObject.Email.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
@@ -53,11 +46,16 @@ uses
   EF.Schema.Firebird in '..\..\source\EF.Schema.Firebird.pas',
   EF.Schema.MSSQL in '..\..\source\EF.Schema.MSSQL.pas',
   EF.Schema.MySQL in '..\..\source\EF.Schema.MySQL.pas',
-  UI.Model.Cliente in 'UI\Model\UI.Model.Cliente.pas',
-  UI.Controller.Base in 'UI\Controllers\UI.Controller.Base.pas',
-  UI.Controller.Cliente in 'UI\Controllers\UI.Controller.Cliente.pas',
-  UI.Interfaces.ControllerBase in 'UI\Controllers\UI.Interfaces.ControllerBase.pas',
-  Service.Utils.DataBind in 'Service\Utils\Service.Utils.DataBind.pas';
+  FactoryController in 'App\Factories\FactoryController.pas',
+  FactoryView in 'App\Factories\FactoryView.pas',
+  ViewBase in 'App\Views\ViewBase.pas' {FormViewBase},
+  viewCliente in 'App\Views\viewCliente.pas' {FormViewBase},
+  App.Model.Cliente in 'App\Model\App.Model.Cliente.pas',
+  App.Controller.Base in 'App\Controllers\App.Controller.Base.pas',
+  App.Controller.Cliente in 'App\Controllers\App.Controller.Cliente.pas',
+  App.Interfaces.ControllerBase in 'App\Controllers\App.Interfaces.ControllerBase.pas',
+  Service.Utils.DataBind in 'Service\Utils\Service.Utils.DataBind.pas',
+  Domain.Consts in 'Domain\Entities\Domain.Consts.pas';
 
 {$R *.res}
 
@@ -66,11 +64,11 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  ReportMemoryLeaksOnShutdown:= true;
+ // ReportMemoryLeaksOnShutdown:= true;
   try
     c:= TFactoryConnection.GetConnection;
     //A ordem de criação das tabelas que se relacionam é importante!!!!
-    c.UpdateDataBase([ TCliente,
+    c.MigrationDataBase([ TCliente,
                        TContato,
                        TVeiculo,
                        TTabelaPreco,

@@ -5,7 +5,7 @@ interface
 uses
   System.Classes,  Domain.ValuesObject.Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
   EF.Mapping.Atributes, Domain.Entity.Contato, Domain.Entity.Veiculo,Domain.Entity.ClienteTabelaPreco,
-  System.Generics.Collections;
+  System.Generics.Collections, Domain.Consts;
 
 type
   [Table('Clientes')]
@@ -36,35 +36,33 @@ type
     destructor Destroy;override;
     procedure Validation; override;
   published
-    [FieldTable('Nome','varchar(50)',false)][LengthMin(10)][Edit]
+    [FieldTable('Nome', varchar50,false)][LengthMin(10)]
     property Nome: TString read FNome write FNome;
-    [FieldTable('NomeFantasia','varchar(50)',false)][Edit]
+    [FieldTable('NomeFantasia',varchar50,false)]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;
-    [FieldTable('CPFCNPJ','varchar(15)',true)][LengthMin(11)][NotNull][NotSpecialChar][Edit]
+    [FieldTable('CPFCNPJ', varchar15,true)][LengthMin(11)][NotNull][NotSpecialChar]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
-    [FieldTable('Renda','float',true)][Edit]
+    [FieldTable('Renda','float',true)]
     property Renda:TFloat read FRenda write FRenda;
-    [FieldTable('Idade','integer',true)][Edit]
+    [FieldTable('Idade','integer',true)]
     property Idade: TInteger read FIdade write FIdade;
-    [FieldTable('RG','varchar(10)',true)][LengthMin(6)][Edit]
+    [FieldTable('RG','varchar(10)',true)][LengthMin(6)]
     property RG: TString read FRG write FRG;
-    [FieldTable('DataNascimento','Date',true)][DateTimePicker]
+    [FieldTable('DataNascimento','Date',true)]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
-    [FieldTable('Ativo','varchar(1)',true)][CheckBox]
+    [FieldTable('Ativo','varchar(1)',true)]
     property Ativo: TString read FAtivo write FAtivo;
-    [FieldTable('Situacao','varchar(20)',true)]
-    [EntityItems('D=Demitido;A=Afastado;F=Folga;I=Impedido;L=Livre')]
-    [Default('L')] [Combobox]
+    [FieldTable('Situacao',varchar20,true)]
+    [Items(ItemsSituacaoCliente)]
+    [Default('L')]
     property Situacao:TString read FSituacao write FSituacao;
-    [FieldTable('Tipo','varchar(20)',true)]
-    [EntityItems('F=Fisica;J=Juridica')]
-    [Combobox]
+    [FieldTable('Tipo',varchar20,true)]
+    [Items('F=Fisica;J=Juridica')]
     property Tipo: TString read FTipo write FTipo;
-    [FieldTable('EstadoCivil','varchar(20)',true)][Combobox]
+    [FieldTable('EstadoCivil',varchar20,true)]
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;
-    [FieldTable('Observacao','varchar(500)',true)][Memo]
+    [FieldTable('Observacao',varchar500,true)]
     property Observacao:TString read FObservacao write FObservacao;
-    [Edit]
     property Email:TEmail read FEmail write FEmail;
     [NotMapper]
     property Contatos: TEntityList<TContato> read FContados write FContados;

@@ -9,8 +9,7 @@ uses
 type
   IDataBind = interface
   ['{2388D1DF-FA78-4EAC-8C97-600A89B71526}']
-     function Map(Component: TComponent; Entity: TObject;
-      Valued: boolean= false): TObject;
+     function Map(Component: TComponent; Entity: TObject; Valued: boolean= false): TObject;
      procedure Read(Component: TComponent;Contexto:TdbContext;SetDefaultValue: boolean  );
   end;
 

@@ -44,7 +44,7 @@ type
     procedure AlterColumn(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
     function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; virtual; abstract;
     procedure LoadFromFile(IniFileName: string);virtual; abstract;
-    function UpdateDataBase(aClasses: array of TClass): boolean;
+    function MigrationDataBase(aClasses: array of TClass): boolean;
     property CustomConnection: TCustomConnection read FCustomConnection write FCustomConnection;
     property CustomTypeDataBase: TCustomDataBase read FCustomTypeDataBase write FCustomTypeDataBase;
     property Driver: string read FDriver write FDriver;
@@ -134,7 +134,7 @@ begin
   result:= (Driver = 'Firebird') or (Driver = 'FB');
 end;
 
-function TEntityConn.UpdateDataBase(aClasses: array of TClass): boolean;
+function TEntityConn.MigrationDataBase(aClasses: array of TClass): boolean;
 var
   i: integer;
   Created, Altered: boolean;

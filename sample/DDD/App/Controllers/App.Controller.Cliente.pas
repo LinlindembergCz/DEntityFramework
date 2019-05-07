@@ -1,9 +1,9 @@
-unit UI.Controller.Cliente;
+unit App.Controller.Cliente;
 
 interface
 
 uses
- DB, DBClient, System.Classes, UI.Controller.Base,  FactoryEntity, SysUtils, strUtils,
+ DB, DBClient, System.Classes, App.Controller.Base,  FactoryEntity, SysUtils, strUtils,
  Rest.Json, System.JSON, RTTI, System.TypInfo;
 
 type
@@ -17,7 +17,7 @@ implementation
 
 { TControllerCliente }
 
-uses Service.Cliente, UI.Model.Cliente,  Service.Utils.DataBind;
+uses Service.Cliente, App.Model.Cliente,  Service.Utils.DataBind;
 
 function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin
@@ -32,6 +32,8 @@ begin
   try
      try
         C := TClienteDetail.Create;
+        //O dataBind irá mapear todos os Componentes do "Form" e preencher o objeto TClienteDetail e
+        // depois converter o objeto em um TJsonObject.
         JsonObject:= TJson.ObjectToJsonObject( Service.DataBind.Map(FContener, C) );
         inherited Post( JsonObject );
      except
