@@ -3,7 +3,7 @@ unit Service.Cliente;
 interface
 
 uses
-System.Classes, Service.Base, Service.Interfaces.Services.Cliente, FactoryEntity, DB, Domain.Entity.Cliente;
+System.Classes, Service.Base, Service.Interfaces.Cliente, FactoryEntity, DB, Domain.Entity.Cliente;
 
 type
   TServiceCliente<T:TCliente> =class( TServiceBase<T> , IServiceCliente<T>)
@@ -18,7 +18,7 @@ implementation
 
 { TClienteService }
 
-uses infra.Interfaces.Repositorios.Cliente;
+uses Repositorio.Interfaces.Cliente;
 
 { TServiceCliente }
 

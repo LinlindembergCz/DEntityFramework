@@ -1,11 +1,11 @@
-unit Infra.Repository.Cliente;
+unit Repositorio.Cliente;
 
 interface
 
 uses
-DB, Classes, Infra.Repository.GenericRepository, Domain.Entity.Cliente, Infra.Repository.Base,
-Infra.Interfaces.Repositorios.Cliente,
-Infra.Interfaces.Repositorios.Repositorybase,  Context, EF.Core.Types, EF.Engine.DataContext;
+DB, Classes, Repositorio.GenericRepository, Domain.Entity.Cliente, Repositorio.Base,
+Repositorio.Interfaces.Cliente,
+Repositorio.Interfaces.base,  Context, EF.Core.Types, EF.Engine.DataContext;
 
 type
   TRepositoryCliente<T:TCliente> = class(TRepositoryBase<T> ,IRepositoryCliente<T>)
@@ -40,12 +40,12 @@ begin
    E := _RepositoryCliente.Entity;
 
    dbContext.Include( E.Veiculo ).
-                    Include( E.Contatos.list ).
-                    Include( E.ClienteTabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
-                    FirstOrDefault( E.Nome.Contains( value ) );
+              Include( E.Contatos.list ).
+              Include( E.ClienteTabelaPreco).
+              ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
+              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
+              FirstOrDefault( E.Nome.Contains( value ) );
    {
    showmessage( E.Nome.Value+' '+
                 inttostr(E.Contatos.Count)+'  '+

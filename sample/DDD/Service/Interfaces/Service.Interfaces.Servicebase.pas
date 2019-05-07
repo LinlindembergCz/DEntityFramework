@@ -1,9 +1,9 @@
-unit Service.Interfaces.Services.Servicebase;
+unit Service.Interfaces.Servicebase;
 
 interface
 
 uses
-System.Classes, DB, EF.Mapping.Base, Infra.Interfaces.Repositorios.Repositorybase, Context, System.JSON,
+System.Classes, DB, EF.Mapping.Base, Repositorio.Interfaces.Base, Context, System.JSON,
 Service.Utils.DataBind;
 
 type

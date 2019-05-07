@@ -1,9 +1,9 @@
-unit Infra.Interfaces.Repositorios.Cliente;
+unit Repositorio.Interfaces.Cliente;
 
 interface
 
 uses
-infra.Interfaces.Repositorios.Repositorybase, Domain.Entity.Cliente, DB;
+Repositorio.Interfaces.Base, Domain.Entity.Cliente, DB;
 
 type
   IRepositoryCliente<T:TCliente> = interface(IRepositoryBase<T>)

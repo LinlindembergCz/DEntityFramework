@@ -51,7 +51,7 @@ Type
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
     procedure CreateClientDataSet(proDataSetProvider: TDataSetProvider; SQL: string = '');
     procedure CreateProvider(var proSQLQuery: TFDQuery; prsNomeProvider: string);
-
+    property Connection: TEntityConn read FConnection write FConnection;
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
@@ -77,7 +77,7 @@ Type
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
-    property Connection: TEntityConn read FConnection write FConnection;
+
   published
     property DbSet: TClientDataSet read FDbSet write FDbSet;
     property ProviderName: string read FProviderName write FProviderName;

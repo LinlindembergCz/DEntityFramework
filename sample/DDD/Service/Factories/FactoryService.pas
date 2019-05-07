@@ -4,8 +4,8 @@ interface
 
 uses
     FactoryEntity,
-    Service.Interfaces.Services.Servicebase,
-    infra.Interfaces.Repositorios.RepositoryBase, VCL.Dialogs, Sysutils, EF.Mapping.Base, Domain.Entity.Cliente;
+    Service.Interfaces.Servicebase,
+    Repositorio.Interfaces.Base, VCL.Dialogs, Sysutils, EF.Mapping.Base, Domain.Entity.Cliente;
 
 type
    TFactoryService = class
@@ -37,7 +37,7 @@ var
   Service     : IServiceBase<T>;
 begin
   pRepository := TFactoryRepository.GetRepository<T>(E) as IRepositoryBase<T>;
-  Instance    := TAutoMapper.GetInstance<T>( 'Service.'+E+'.TService'+E);
+  Instance    := TAutoMapper.GetInstance<T>( 'Service.'+E+'.TService'+E );
   if Instance <> nil then
   begin
     Service :=  TServiceBase<T>( Instance ).create(pRepository );

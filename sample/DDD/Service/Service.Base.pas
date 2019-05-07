@@ -4,8 +4,8 @@ interface
 
 uses
 System.Classes, DB, EF.Mapping.Base,
-Service.Interfaces.Services.ServiceBase,
-infra.Interfaces.Repositorios.Repositorybase, Context,
+Service.Interfaces.ServiceBase,
+Repositorio.Interfaces.Base, Context,
 Winapi.Windows, System.JSON, Service.Utils.DataBind;
 
 type

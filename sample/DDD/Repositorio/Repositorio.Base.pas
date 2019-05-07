@@ -1,9 +1,9 @@
-unit Infra.Repository.Base;
+unit Repositorio.Base;
 
 interface
 
 uses
- Classes, Infra.Repository.GenericRepository, Infra.Interfaces.Repositorios.Repositorybase,
+ Classes, Repositorio.GenericRepository, Repositorio.Interfaces.Base,
  DB, Context, EF.Engine.DataContext, EF.Mapping.Base;
 
 type
