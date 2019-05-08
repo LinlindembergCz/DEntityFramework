@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
-  EF.Mapping.Atributes;
+  EF.Mapping.Atributes, Domain.Consts;
 
 type
   [Table('Veiculos')]
@@ -13,7 +13,7 @@ type
     FPlaca: TString;
     FClienteId: TInteger;
   public
-    [FieldTable('Placa','varchar(10)',false)]
+    [FieldTable('Placa',varchar10,false)]
      property Placa: TString read FPlaca write FPlaca;
     [FieldTable('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]

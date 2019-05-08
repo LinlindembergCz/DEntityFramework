@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
-  EF.Mapping.Atributes, Domain.Entity.ItensTabelaPreco;
+  EF.Mapping.Atributes, Domain.Entity.ItensTabelaPreco, Domain.Consts;
 
 type
   [Table('TabelaPrecos')]
@@ -14,7 +14,7 @@ type
     FItensTabelaPreco: TEntityList<TItensTabelaPreco>;
     procedure Initialize;
   public
-    [FieldTable('Descricao','varchar(50)',false)]
+    [FieldTable('Descricao',varchar50,false)]
     property Descricao: TString read FDescricao write FDescricao;
     [NotMapper]
     property ItensTabelaPreco: TEntityList<TItensTabelaPreco> read FItensTabelaPreco write FItensTabelaPreco;

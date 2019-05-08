@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes,   Dialogs, SysUtils,  EF.Mapping.Base,
-  EF.Core.Types, EF.Mapping.Atributes;
+  EF.Core.Types, EF.Mapping.Atributes, Domain.Consts;
 
 
 type
@@ -15,10 +15,10 @@ type
     FTelefone: TString;
     FClienteId: TInteger;
   public
-    [FieldTable('Nome','varchar(50)',false)]
+    [FieldTable('Nome',varchar50,false)]
     [LengthMin(10)]
     property Nome: TString read FNome write Fnome;
-    [FieldTable('Telefone','varchar(15)',true)]
+    [FieldTable('Telefone',varchar15,true)]
     [LengthMin(10)]
     property Telefone: TString read FTelefone write FTelefone;
     [FieldTable('ClienteId','Integer',true)]

@@ -4,15 +4,15 @@ interface
 
 uses
   System.Classes,  Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
-  EF.Mapping.Atributes;
+  EF.Mapping.Atributes, Domain.Consts;
 
 type
-  [TableName('Produto')]
+  [Table('Produto')]
   TProduto = class( TEntityBase )
   private
     FDescricao: string;
   public
-    [FieldTable('Descricao','varchar(50)',false)]
+    [FieldTable('Descricao',varchar50,false)]
     property Descricao: string read FDescricao write FDescricao;
   end;
 
