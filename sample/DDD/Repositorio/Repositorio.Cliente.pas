@@ -46,15 +46,15 @@ begin
               ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
               ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
               FirstOrDefault( E.Nome.Contains( value ) );
-   {
+
    showmessage( E.Nome.Value+' '+
                 inttostr(E.Contatos.Count)+'  '+
                 E.ClienteTabelaPreco.ClienteId.Value.ToString+'  '+
                 inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)+ ' ' +
                 E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto.Descricao);
-   }
 
-   result := dbContext.GetDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
+
+   result := dbContext.ToDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );
 
 end;
 

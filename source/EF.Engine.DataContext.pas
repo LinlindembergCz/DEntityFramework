@@ -67,11 +67,11 @@ Type
     function FirstOrDefault(Condicion: TString): TEntityBase;
     function Include( E: TEntityBase ):TDataContext;
     function ThenInclude(E: TEntityBase): TDataContext;
-    function GetData(QueryAble: IQueryAble): OleVariant;
-    function GetDataSet(QueryAble: IQueryAble): TClientDataSet;
-    function GetList(QueryAble: IQueryAble): TList;overload;
-    function GetList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
-    function GetJson(QueryAble: IQueryAble): string;
+    function ToData(QueryAble: IQueryAble): OleVariant;
+    function ToDataSet(QueryAble: IQueryAble): TClientDataSet;
+    function ToList(QueryAble: IQueryAble): TList;overload;
+    function ToList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
+    function ToJson(QueryAble: IQueryAble): string;
     function Where(Condicion: TString): TDataContext;
     //function UpdateDataBase(aClasses: array of TClass): boolean;
     procedure RefreshDataSet;
@@ -98,7 +98,7 @@ uses
   EF.Schema.MSSQL,
   EF.Mapping.AutoMapper;
 
-function TDataContext.GetData(QueryAble: IQueryAble): OleVariant;
+function TDataContext.ToData(QueryAble: IQueryAble): OleVariant;
 begin
   try
     FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble));
@@ -135,7 +135,7 @@ begin
   end;
 end;
 
-function TDataContext.GetDataSet(QueryAble: IQueryAble): TClientDataSet;
+function TDataContext.ToDataSet(QueryAble: IQueryAble): TClientDataSet;
 var
   Keys: TStringList;
 begin
@@ -169,7 +169,7 @@ begin
   end;
 end;
 
-function TDataContext.GetList<T>(QueryAble: IQueryAble): TList<T>;
+function TDataContext.ToList<T>(QueryAble: IQueryAble): TList<T>;
 var
   List: TList<T>;
   DataSet: TClientDataSet;
@@ -180,7 +180,7 @@ begin
 
     List := TList<T>.Create;
     DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := GetData(QueryAble);
+    DataSet.Data := ToData(QueryAble);
     while not DataSet.Eof do
     begin
       TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
@@ -194,7 +194,7 @@ begin
   end;
 end;
 
-function TDataContext.GetList(QueryAble: IQueryAble): TList;
+function TDataContext.ToList(QueryAble: IQueryAble): TList;
 var
   List: TList;
   DataSet: TClientDataSet;
@@ -205,7 +205,7 @@ begin
 
     List := TList.Create;
     DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := GetData(QueryAble);
+    DataSet.Data := ToData(QueryAble);
     while not DataSet.Eof do
     begin
       TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
@@ -229,7 +229,7 @@ begin
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := GetData(QueryAble);
+    DataSet.Data := ToData(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
     result := QueryAble.Entity;
   finally
@@ -245,7 +245,7 @@ begin
   try
     result := nil;
     DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := GetData(QueryAble);
+    DataSet.Data := ToData(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
     result := QueryAble.Entity as T;
   finally
@@ -391,7 +391,7 @@ begin
   result := DbSet.FieldList;
 end;
 
-function TDataContext.GetJson(QueryAble: IQueryAble): string;
+function TDataContext.ToJson(QueryAble: IQueryAble): string;
   var
   Keys: TStringList;
 begin

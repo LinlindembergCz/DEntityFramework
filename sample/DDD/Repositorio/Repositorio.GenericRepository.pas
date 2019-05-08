@@ -48,9 +48,9 @@ end;
 function TRepository<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
 begin
   if iId = 0 then
-     result := FDbContext.GetDataset( From(FEntity).Select( Fields) ) as TDataSet
+     result := FDbContext.ToDataSet( From(FEntity).Select( Fields) ) as TDataSet
   else
-     result := FDbContext.GetDataset( From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )} ).Select( Fields) ) as TDataSet;
+     result := FDbContext.ToDataSet( From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )} ).Select( Fields) ) as TDataSet;
 end;
 
 function TRepository<T>.Load(iId: Integer): T;
