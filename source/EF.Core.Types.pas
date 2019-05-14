@@ -242,10 +242,14 @@ type
     function &As(_as: string = ''): string;
   end;
 
-  TEntityList<T:Class> = class( TObjectList<T> )
+  TEntityList<T:Class> = class( TList<T> )
+  private
   public
     function List: T;
     constructor Create( instance:TObject = nil);
+  end;
+
+  TEntityList = class( TEntityList<TObject> )
   end;
 
 implementation

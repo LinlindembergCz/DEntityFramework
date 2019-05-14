@@ -22,7 +22,7 @@ type
 implementation
 
 uses
-  Vcl.Dialogs, System.SysUtils;
+  Vcl.Dialogs, System.SysUtils, Domain.Entity.ItensTabelaPreco;
 
 { TRepositoryCliente }
 
@@ -40,18 +40,37 @@ begin
    E := _RepositoryCliente.Entity;
 
    dbContext.Include( E.Veiculo ).
-              Include( E.Contatos.list ).
-              Include( E.ClienteTabelaPreco).
-              ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
-              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
-              FirstOrDefault( E.Nome.Contains( value ) );
+             Include( E.Contatos ).
+             Include( E.ClienteTabelaPreco).
+             ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+             ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
+             Where( E.Nome.Contains( value ) );
+   {
+   _db.Clientes.AsNoTracking().Include(cli => cli.Pessoa)
+                              .Include(cli => cli.Pessoa.Enderecos)
+                              .Include(cli => cli.Pessoa.Contatos)
+                              .Include(cli => cli.CartoesFidelidade)
+                              .Include(cli => cli.Segmento)
+                              .Include(cli => cli.MotoristasCliente)
+                              .Include(cli => cli.VeiculosCliente)
+                              .Include(cli => cli.ClienteEmpresas)
+                              .ThenInclude(cli => cli.Empresa)
+                              .ThenInclude(p => p.Pessoa)
+                              .Include(cli => cli.ClienteTabelasPreco)
+                              .ThenInclude(ct => ct.TabelaPreco)
+                              .ThenInclude(tp => tp.ItensTabelaPreco)
+                              .Include(cli => cli.ClienteTabelasPreco)
+                              .ThenInclude(ct => ct.FormaPagamento)
+                              .FirstOrDefault(cli => cli.Id == id);
+   }
 
-   showmessage( E.Nome.Value+' '+
-                inttostr(E.Contatos.Count)+'  '+
-                E.ClienteTabelaPreco.ClienteId.Value.ToString+'  '+
-                inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)+ ' ' +
-                E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto.Descricao);
+   showmessage( 'Cliente:'+ E.Nome.Value+' '+
+                '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
+                '  Veiculo  :'+E.Veiculo.Placa.Value+'  '+
+                '  ClienteTabelaPreco ID:'+E.ClienteTabelaPreco.Id.Value.ToString+'  '+
+                '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
+                '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
+                );
 
 
    result := dbContext.ToDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select );

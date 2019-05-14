@@ -17,7 +17,7 @@ type
   protected
     // FDataCadastro: TEntityDatetime;
   public
-    thenInclude:boolean;
+
     Collate: TCollate;
     constructor Create; overload; virtual;
     constructor Create(aCollateOn:boolean);overload;virtual;
@@ -53,6 +53,7 @@ begin
    CollateOn := aCollateOn;
    Create;
    inherited Create;
+
 end;
 
 destructor TEntityBase.Destroy;
@@ -202,6 +203,7 @@ begin
        Collate:= TCollate.Create;
   end;
   Mapped := TAutoMapper.ToMapping(self, true);
+
 end;
 
 

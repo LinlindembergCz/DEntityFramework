@@ -30,6 +30,7 @@ Type
   TDataContext = class(TQueryAble)
   private
     ListObjectsInclude:TList;
+    ListObjectsThenInclude:TList;
     //Classes: array of TClass;
     FFDQuery: TFDQuery;
     drpProvider: TDataSetProvider;
@@ -43,7 +44,7 @@ Type
     //function CreateTables: boolean; // (aClass: array of TClass);
     //function AlterTables: boolean;
     procedure FreeObjects;
-    //function CreateSingleTable(i: integer): boolean;
+   //function CreateSingleTable(i: integer): boolean;
     //function IsFireBird: boolean;
 
   protected
@@ -64,16 +65,15 @@ Type
     procedure RemoveDirect;
     function FindEntity(QueryAble: IQueryAble): TEntityBase; overload;
     function FindEntity<T: Class>(QueryAble: IQueryAble): T; overload;
-    function FirstOrDefault(Condicion: TString): TEntityBase;
-    function Include( E: TEntityBase ):TDataContext;
-    function ThenInclude(E: TEntityBase): TDataContext;
+    function Where(Condicion: TString): TEntityBase;
+    function Include( E: TObject ):TDataContext;
+    function ThenInclude(E: TObject ): TDataContext;
     function ToData(QueryAble: IQueryAble): OleVariant;
     function ToDataSet(QueryAble: IQueryAble): TClientDataSet;
     function ToList(QueryAble: IQueryAble): TList;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): TList<T>; overload;
     function ToJson(QueryAble: IQueryAble): string;
-    function Where(Condicion: TString): TDataContext;
-    //function UpdateDataBase(aClasses: array of TClass): boolean;
+  //function UpdateDataBase(aClasses: array of TClass): boolean;
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
@@ -425,6 +425,8 @@ begin
     ListField.Free;
   if ListObjectsInclude <> nil then
     ListObjectsInclude.Free;
+  if ListObjectsThenInclude <> nil then
+    ListObjectsThenInclude.Free;
   // if FConnection <> nil then    FConnection.Free;
 end;
 
@@ -498,12 +500,15 @@ begin
 end;
 
 
-function TDataContext.FirstOrDefault(Condicion: TString ): TEntityBase;
+function TDataContext.Where(Condicion: TString ): TEntityBase;
 var
   I:Integer;
   max:integer;
-  ReferenceEntidy, FirstEntity, PriorEntity, CurrentEntidy: TEntityBase;
+  ReferenceEntidy, FirstEntity, PriorEntity: TEntityBase;
+  CurrentEntidy: TObject;
   TableForeignKey: string;
+  List:TList;
+  j: Integer;
 begin
   try
     if ListObjectsInclude = nil then
@@ -514,40 +519,82 @@ begin
     max:= ListObjectsInclude.Count-1;
     for I := 0 to max do
     begin
-      CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
-      if i = 0 then
-      begin
-         FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
-         TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-         FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
-      end
-      else
-      begin
-         if not CurrentEntidy.thenInclude then
-            ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
-                                                       Where(TableForeignKey+'Id='+ FirstEntity.Id.Value.ToString ).
-                                                       Select )
-         else
-         begin
-            ReferenceEntidy := ListObjectsInclude.Items[i-1];
-            ListObjectsInclude.Items[i] := FindEntity( From(CurrentEntidy).
-                                                       Where( CurrentEntidy.Id = ReferenceEntidy.Id.Value ).
-                                                       Select )
-         end;
+      CurrentEntidy:= ListObjectsInclude.Items[i];
+      try
+        if i = 0 then
+        begin
+          FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
+          TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
+          FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
+        end
+        else
+        begin
+          if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+             CurrentEntidy := ToList( From(TEntityBase(TEntityList(CurrentEntidy).List)).
+                                                    Where( TableForeignKey+'Id='+ FirstEntity.Id.Value.ToString ).
+                                                    Select )
+          else
+             CurrentEntidy := FindEntity( From(TEntityBase(CurrentEntidy)).
+                                                        Where( TableForeignKey+'Id='+  FirstEntity.Id.Value.ToString ).
+                                                        Select );
+        end;
+      finally
+        FreeObjects;
       end;
-      FreeObjects;
+
     end;
+
+    ReferenceEntidy := TEntityBase(CurrentEntidy);
+    TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
+    max:= ListObjectsthenInclude.Count-1;
+    for I := 0 to max do
+    begin
+      try
+        CurrentEntidy:= ListObjectsthenInclude.Items[i];
+        if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+        begin
+           List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[i]).List)).
+                                                      Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
+                                                      Select );
+
+           while TEntityList(ListObjectsthenInclude.items[i]).Count > 1 do
+              TEntityList(ListObjectsthenInclude.items[i]).Delete( TEntityList(ListObjectsthenInclude.items[i]).Count - 1 );
+
+           for j := 0 to List.Count-1 do
+           begin
+              TEntityList(ListObjectsthenInclude.items[i]).Add( List[j]);
+           end;
+
+        end
+        else
+        begin
+          TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+          ListObjectsthenInclude.Items[i] := FindEntity( From(TEntityBase(ListObjectsthenInclude.Items[i])).
+                                                         Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
+                                                         Select );
+        end;
+        ReferenceEntidy := ListObjectsthenInclude.Items[i];
+        TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+      finally
+        FreeObjects;
+      end;
+    end;
+
     FEntity := FirstEntity;
     result  := FEntity;
   finally
     ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
+    ListObjectsthenInclude.Clear;
+    ListObjectsthenInclude.Free;
+    ListObjectsthenInclude:= nil;
   end;
 
 end;
 
-function TDataContext.Include( E: TEntityBase ):TDataContext;
+
+function TDataContext.Include( E: TObject ):TDataContext;
 begin
    if ListObjectsInclude = nil then
    begin
@@ -558,47 +605,15 @@ begin
    result:= self;
 end;
 
-function TDataContext.ThenInclude( E: TEntityBase ):TDataContext;
+function TDataContext.ThenInclude( E: TObject ):TDataContext;
 begin
-   if ListObjectsInclude = nil then
+   if ListObjectsThenInclude = nil then
    begin
-      raise Exception.Create('Nenhum entidade adicionada a consulta');
+      ListObjectsThenInclude:= TList.Create;
    end;
-   e.thenInclude:= true;
-   ListObjectsInclude.Add( E );
+   ListObjectsThenInclude.Add( E );
    result:= self;
 end;
-
-function TDataContext.Where(Condicion: TString): TDataContext;
-var
-  I:Integer;
-  max:integer;
-  FirstEntidy, PriorEntity, CurrentEntidy: TEntityBase;
-  TableForeignKey: string;
-begin
-  {
-  max:= ListObjectsInclude.Count-1;
-  for I := 0 to max do
-  begin
-    CurrentEntidy:= TEntityBase(ListObjectsInclude.Items[i]);
-    if i = 0 then
-    begin
-       FirstEntidy:= ListObjectsInclude.Items[0] as TEntityBase;
-       FirstEntidy := GetEntity( From(TEntityBase(FirstEntidy)).Where( Condicion ).Select );
-    end
-    else
-    begin
-       TableForeignKey := Copy(FirstEntidy.ClassName,2,length(FirstEntidy.ClassName) );
-       ListObjectsInclude.Items[i] := GetEntity( From(CurrentEntidy).
-                                                 Where(TableForeignKey+'Id='+ FirstEntidy.Id.Value.ToString ).
-                                                 Select );
-    end;
-  end;
-  result:= nil;
-  }
-
-end;
-
 
 
 { TLinq }
