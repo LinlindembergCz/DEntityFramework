@@ -1,7 +1,13 @@
 # DEntityFramework
 DEntityFramework
 
-This is EntityFramework for Delphi
+It's EntityFramework for Delphi
+
+Mapeamento de classes de entidade POCO 
+Controle de alterações automático
+Conversão das consultas fortemente tipadas usando LINQ
+Conectividade de banco de dados com base no FireDAC e vários 
+provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree
 
 ## Requirements
 
@@ -22,12 +28,13 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 
 begin
    dbContext.Include( E.Veiculo ).
-                    Include( E.Contatos.list ).
+                    Include( E.Contatos ).
                     Include( E.ClienteTabelaPreco).
                     ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
-                    FirstOrDefault( E.Nome.Contains( value ) );
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).
+                    Where( E.ID = 3 ).
+                    ToJson;
+
 end;                    
 
 ## Authors
