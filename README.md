@@ -26,13 +26,13 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
 
-begin
-   dbContext.Include( E.Veiculo ).
-                    Include( E.Contatos ).
-                    Include( E.ClienteTabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).
-                    Where( E.ID = 3 ).
+begin<br>
+   dbContext.Include( E.Veiculo ).<br>
+                    Include( E.Contatos ).<br>
+                    Include( E.ClienteTabelaPreco).<br>
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).<br>
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
+                    Where( E.ID = 3 ).<br>
                     ToJson;
 
 end;                    
