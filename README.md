@@ -3,10 +3,10 @@ DEntityFramework
 
 It's EntityFramework for Delphi
 
-Mapeamento de classes de entidade POCO 
-Controle de alterações automático
-Conversão das consultas fortemente tipadas usando LINQ
-Conectividade de banco de dados com base no FireDAC e vários 
+Mapeamento de classes de entidade POCO ;<p/>
+Controle de alterações automático ;
+Conversão das consultas fortemente tipadas usando LINQ ;
+Conectividade de banco de dados com base no FireDAC e vários ; 
 provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree
 
 ## Requirements
