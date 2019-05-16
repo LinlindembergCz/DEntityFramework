@@ -39,26 +39,54 @@ inherited FormViewCliente: TFormViewCliente
       end
       inherited Panel2: TPanel
         Height = 57
+        ExplicitTop = -6
         ExplicitHeight = 57
         object Label7: TLabel [0]
-          Left = 8
+          Left = 143
           Top = 4
           Width = 27
           Height = 13
           Caption = 'Nome'
         end
+        object Label8: TLabel [1]
+          Left = 7
+          Top = 4
+          Width = 11
+          Height = 13
+          Caption = 'ID'
+        end
         inherited Edit1: TEdit
+          Left = 143
           Top = 19
+          Width = 234
+          ExplicitLeft = 143
           ExplicitTop = 19
+          ExplicitWidth = 234
         end
         object Button4: TButton
-          Left = 276
-          Top = 16
+          Left = 383
+          Top = 17
           Width = 63
           Height = 25
           Caption = 'pesquisar'
           TabOrder = 1
           OnClick = Button4Click
+        end
+        object Edit2: TEdit
+          Left = 7
+          Top = 19
+          Width = 50
+          Height = 21
+          TabOrder = 2
+        end
+        object Button5: TButton
+          Left = 63
+          Top = 17
+          Width = 63
+          Height = 25
+          Caption = 'pesquisar'
+          TabOrder = 3
+          OnClick = Button5Click
         end
       end
     end

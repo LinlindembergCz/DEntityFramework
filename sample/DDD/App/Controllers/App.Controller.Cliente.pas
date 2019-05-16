@@ -10,6 +10,7 @@ type
   TControllerCliente = class(TControllerBase)
   public
      function LoadDataSetPorNome( Value: string ): TDataSet;
+     function LoadDataSetPorID( Value: string ): TDataSet;
      procedure Post;override;
   end;
 
@@ -18,6 +19,11 @@ implementation
 { TControllerCliente }
 
 uses Service.Cliente, App.Model.Cliente,  Service.Utils.DataBind;
+
+function TControllerCliente.LoadDataSetPorID(Value: string): TDataSet;
+begin
+  result := (Service as TServiceCliente).LoadDataSetPorID( Value );
+end;
 
 function TControllerCliente.LoadDataSetPorNome(Value: string): TDataSet;
 begin

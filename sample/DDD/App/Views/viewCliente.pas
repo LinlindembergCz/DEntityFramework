@@ -29,7 +29,11 @@ type
     Label1: TLabel;
     Button4: TButton;
     Label7: TLabel;
+    Edit2: TEdit;
+    Label8: TLabel;
+    Button5: TButton;
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -46,7 +50,13 @@ uses App.Controller.Cliente;
 procedure TFormViewCliente.Button4Click(Sender: TObject);
 begin
   inherited;
-  dsEntity.DataSet :=  (ControllerQuery as TControllerCliente).LoadDataSetPorNome( '%'+edit1.Text+'%' );
+   dsEntity.DataSet :=  (ControllerQuery as TControllerCliente).LoadDataSetPorNome( '%'+edit1.Text+'%' );
+end;
+
+procedure TFormViewCliente.Button5Click(Sender: TObject);
+begin
+  inherited;
+  dsEntity.DataSet :=  (ControllerQuery as TControllerCliente).LoadDataSetPorID( edit2.Text );
 end;
 
 initialization RegisterClass(TFormViewCliente);

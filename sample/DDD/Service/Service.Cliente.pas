@@ -9,6 +9,7 @@ type
   TServiceCliente<T:TCliente> =class( TServiceBase<T> , IServiceCliente<T>)
   public
      function LoadDataSetPorNome( Value: string ): TDataSet;
+     function LoadDataSetPorID(Value: string): TDataSet;
   end;
 
   TServiceCliente =  class sealed (TServiceCliente<TCliente>)
@@ -25,6 +26,11 @@ uses Repositorio.Interfaces.Cliente;
 function TServiceCliente<T>.LoadDataSetPorNome(Value: string): TDataSet;
 begin
   result := (Repository as IRepositoryCliente<T> ).LoadDataSetPorNome( Value  );
+end;
+
+function TServiceCliente<T>.LoadDataSetPorID(Value: string): TDataSet;
+begin
+  result := (Repository as IRepositoryCliente<T> ).LoadDataSetPorID( Value  );
 end;
 
 initialization RegisterClass(TServiceCliente);
