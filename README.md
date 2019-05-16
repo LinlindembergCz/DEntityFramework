@@ -1,7 +1,13 @@
 # DEntityFramework
 DEntityFramework
 
-This is EntityFramework for Delphi
+It's EntityFramework for Delphi
+
+Mapeamento de classes de entidade POCO ;<p/>
+Controle de alterações automático ;<p/>
+Conversão das consultas fortemente tipadas usando LINQ ;<p/>
+Conectividade de banco de dados com base no FireDAC e vários ; <p/>
+provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree
 
 ## Requirements
 
@@ -20,14 +26,15 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
 
-begin
-   dbContext.Include( E.Veiculo ).
-                    Include( E.Contatos.list ).
-                    Include( E.ClienteTabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List).
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto).
-                    FirstOrDefault( E.Nome.Contains( value ) );
+begin<br>
+   dbContext.Include( E.Veiculo ).<br>
+                    Include( E.Contatos ).<br>
+                    Include( E.ClienteTabelaPreco).<br>
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).<br>
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
+                    Where( E.ID = 3 ).<br>
+                    ToJson;
+
 end;                    
 
 ## Authors
