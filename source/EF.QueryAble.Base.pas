@@ -22,6 +22,8 @@ type
   TFrom = class;
   TSelect = class;
 
+
+
   IQueryAble = Interface(IInterface)
     ['{554062C0-0BD3-4378-BFA2-DFA85CCC5938}']
     function Inner(E: string; _On: string): IQueryAble; overload;
@@ -193,6 +195,8 @@ type
       : TString; overload;
   end;
 
+  
+
 implementation
 
 uses EF.Mapping.AutoMapper;
@@ -201,8 +205,8 @@ function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin
   with Q as TQueryAble do
   begin
-    result := Concat(FSSelect + FSCount, ifthen(Pos('Select', FSEntity) > 0,
-                     fStringReplace(FSEntity, 'From ', 'From (') + ')', FSEntity),
+    result := Concat(FSSelect + FSCount, ifthen(Pos(StrSelect, FSEntity) > 0,
+                     fStringReplace(FSEntity, StrFrom , StrFrom+' (') + ')', FSEntity),
 
                      FSJoin + ifthen((FSJoin <> '') and (Pos('(', FSSelect) > 0), ')', ''),
 
