@@ -30,10 +30,8 @@ begin<br>
    dbContext.Include( E.Veiculo ).<br>
                     Include( E.Contatos ).<br>
                     Include( E.ClienteTabelaPreco).<br>
-                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco).<br>
-                            ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
-                    Include( E.ClienteEmpresa).<br>
-                        ThenInclude(E.ClienteEmpresa.Empresa).<br>
+                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
+                    Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
                     Where( E.ID = 3 ).<br>
                     ToJson;
 
