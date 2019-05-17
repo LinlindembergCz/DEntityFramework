@@ -502,13 +502,13 @@ end;
 
 function TDataContext.Where(Condicion: TString ): TEntityBase;
 var
-  I:Integer;
-  max:integer;
+  maxthenInclude, maxInclude :integer;
   ReferenceEntidy, FirstEntity, PriorEntity: TEntityBase;
   CurrentEntidy: TObject;
-  TableForeignKey: string;
+  FirstTable, TableForeignKey: string;
   List:TList;
-  j: Integer;
+  I, j, k: Integer;
+  IndexInclude , IndexThenInclude:integer;
 begin
   try
     if ListObjectsInclude = nil then
@@ -516,72 +516,96 @@ begin
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(FEntity);
-    max:= ListObjectsInclude.Count-1;
-    for I := 0 to max do
+
+    I:=0;
+    j:=0;
+    k:=0;
+    maxInclude:= ListObjectsInclude.Count-1;
+    maxthenInclude:= ListObjectsthenInclude.Count-1;
+
+    //for I := 0 to max do
+    while I <= maxInclude do
     begin
-      CurrentEntidy:= ListObjectsInclude.Items[i];
-      try
-        if i = 0 then
-        begin
-          FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
-          TableForeignKey := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-          FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
-        end
-        else
-        begin
-          if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
-             CurrentEntidy := ToList( From(TEntityBase(TEntityList(CurrentEntidy).List)).
-                                                    Where( TableForeignKey+'Id='+ FirstEntity.Id.Value.ToString ).
-                                                    Select )
+      IndexInclude:= i;
+      if ListObjectsInclude.Items[IndexInclude] <> nil then
+      begin
+        CurrentEntidy:= ListObjectsInclude.Items[IndexInclude];
+        try
+          if i = 0 then
+          begin
+            FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
+            FirstTable := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
+            FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
+          end
           else
-             CurrentEntidy := FindEntity( From(TEntityBase(CurrentEntidy)).
-                                                        Where( TableForeignKey+'Id='+  FirstEntity.Id.Value.ToString ).
-                                                        Select );
+          begin
+            if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+               CurrentEntidy := ToList( From(TEntityBase(TEntityList(CurrentEntidy).List)).
+                                                      Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
+                                                      Select )
+            else
+               CurrentEntidy := FindEntity( From(TEntityBase(CurrentEntidy)).
+                                            Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                                            Select );
+          end;
+        finally
+          Inc(I);
+          FreeObjects;
         end;
-      finally
-        FreeObjects;
+      end
+      else
+      begin
+        ReferenceEntidy := TEntityBase(CurrentEntidy);
+        TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
+
+        for j := i-1 to maxthenInclude do
+        begin
+          try
+            if ListObjectsthenInclude.Items[j] <> nil then
+            begin
+              CurrentEntidy:= ListObjectsthenInclude.Items[j];
+              if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+              begin
+                 List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
+                                 Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
+                                 Select );
+
+                 while TEntityList(ListObjectsthenInclude.items[j]).Count > 1 do
+                    TEntityList(ListObjectsthenInclude.items[j]).Delete( TEntityList(ListObjectsthenInclude.items[j]).Count - 1 );
+
+                 for k := 0 to List.Count-1 do
+                 begin
+                    TEntityList(ListObjectsthenInclude.items[j]).Add( List[k]);
+                 end;
+              end
+              else
+              begin
+                TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+                ListObjectsthenInclude.Items[j] := FindEntity( From(TEntityBase(ListObjectsthenInclude.Items[j])).
+                                                               Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
+                                                               Select );
+              end;
+              ReferenceEntidy := ListObjectsthenInclude.Items[j];
+              TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+              Inc(I);
+            end
+            else
+            begin
+              break;
+            end;
+          finally
+            FreeObjects;
+          end;
+        end;
       end;
 
-    end;
-
-    ReferenceEntidy := TEntityBase(CurrentEntidy);
-    TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
-    max:= ListObjectsthenInclude.Count-1;
-    for I := 0 to max do
-    begin
-      try
-        CurrentEntidy:= ListObjectsthenInclude.Items[i];
-        if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
-        begin
-           List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[i]).List)).
-                                                      Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
-                                                      Select );
-
-           while TEntityList(ListObjectsthenInclude.items[i]).Count > 1 do
-              TEntityList(ListObjectsthenInclude.items[i]).Delete( TEntityList(ListObjectsthenInclude.items[i]).Count - 1 );
-
-           for j := 0 to List.Count-1 do
-           begin
-              TEntityList(ListObjectsthenInclude.items[i]).Add( List[j]);
-           end;
-
-        end
-        else
-        begin
-          TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-          ListObjectsthenInclude.Items[i] := FindEntity( From(TEntityBase(ListObjectsthenInclude.Items[i])).
-                                                         Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
-                                                         Select );
-        end;
-        ReferenceEntidy := ListObjectsthenInclude.Items[i];
-        TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-      finally
-        FreeObjects;
-      end;
+      if i > maxInclude then
+         break;
     end;
 
     FEntity := FirstEntity;
     result  := FEntity;
+
   finally
     ListObjectsInclude.clear;
     ListObjectsInclude.Free;
@@ -601,20 +625,21 @@ begin
       ListObjectsInclude:= TList.Create;
       ListObjectsInclude.Add(FEntity);
    end;
+   if ListObjectsThenInclude = nil then
+   begin
+      ListObjectsThenInclude:= TList.Create;
+   end;
    ListObjectsInclude.Add( E );
+   ListObjectsThenInclude.Add( nil );
    result:= self;
 end;
 
 function TDataContext.ThenInclude( E: TObject ):TDataContext;
 begin
-   if ListObjectsThenInclude = nil then
-   begin
-      ListObjectsThenInclude:= TList.Create;
-   end;
    ListObjectsThenInclude.Add( E );
+   ListObjectsInclude.Add( nil );
    result:= self;
 end;
-
 
 { TLinq }
 

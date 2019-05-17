@@ -25,7 +25,6 @@ uses
   Service.Cliente in 'Service\Service.Cliente.pas',
   Service.Base in 'Service\Service.Base.pas',
   FactoryService in 'Service\Factories\FactoryService.pas',
-
   Domain.ValuesObject.CPF in 'Domain\ValuesObjects\Domain.ValuesObject.CPF.pas',
   Domain.ValuesObject.Email in 'Domain\ValuesObjects\Domain.ValuesObject.Email.pas',
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
@@ -55,7 +54,9 @@ uses
   App.Controller.Cliente in 'App\Controllers\App.Controller.Cliente.pas',
   App.Interfaces.ControllerBase in 'App\Controllers\App.Interfaces.ControllerBase.pas',
   Service.Utils.DataBind in 'Service\Utils\Service.Utils.DataBind.pas',
-  Domain.Consts in 'Domain\Entities\Domain.Consts.pas';
+  Domain.Consts in 'Domain\Entities\Domain.Consts.pas',
+  Domain.Entity.Empresa in 'Domain\Entities\Domain.Entity.Empresa.pas',
+  Domain.Entity.ClienteEmpresa in 'Domain\Entities\Domain.Entity.ClienteEmpresa.pas';
 
 {$R *.res}
 
@@ -68,13 +69,15 @@ begin
   try
     c:= TFactoryConnection.GetConnection;
     //A ordem de criação das tabelas que se relacionam é importante!!!!
-    c.MigrationDataBase([ TCliente,
-                       TContato,
-                       TVeiculo,
-                       TTabelaPreco,
-                       TClienteTabelaPreco,
-                       TProduto,
-                       TItensTabelaPreco ]);
+    c.MigrationDataBase([ TEmpresa,
+                          TCliente,
+                          TClienteEmpresa,
+                          TContato,
+                          TVeiculo,
+                          TTabelaPreco,
+                          TClienteTabelaPreco,
+                          TProduto,
+                          TItensTabelaPreco ]);
     c.free;
     c:= nil;
   except

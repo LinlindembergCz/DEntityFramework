@@ -5,7 +5,7 @@ interface
 uses
   System.Classes,  Domain.ValuesObject.Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
   EF.Mapping.Atributes, Domain.Entity.Contato, Domain.Entity.Veiculo,Domain.Entity.ClienteTabelaPreco,
-  System.Generics.Collections, Domain.Consts;
+  System.Generics.Collections, Domain.Consts, Domain.Entity.ClienteEmpresa;
 
 type
   [Table('Clientes')]
@@ -29,6 +29,7 @@ type
     FContados: TEntityList<TContato>;
     FVeiculo: TVeiculo;
     FClienteTabelaPreco: TClienteTabelaPreco;
+    FClienteEmpresa: TClienteEmpresa;
 
     procedure Initialize;override;
   public
@@ -70,6 +71,8 @@ type
     property Veiculo: TVeiculo read  FVeiculo write FVeiculo;
     [NotMapper]
     property ClienteTabelaPreco: TClienteTabelaPreco  read  FClienteTabelaPreco write FClienteTabelaPreco;
+    [NotMapper]
+    property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
 
   end;
 
@@ -96,6 +99,9 @@ begin
 
   ClienteTabelaPreco:= Collate.RegisterObject<TClienteTabelaPreco>( TClienteTabelaPreco.Create(true) );
   ClienteTabelaPreco.Initialize;
+
+  ClienteEmpresa:= Collate.RegisterObject<TClienteEmpresa>( TClienteEmpresa.Create(true) );
+  ClienteEmpresa.Initialize;
 
   Contatos:= Collate.RegisterObjectList<TContato>(
                                      TEntityList<TContato>.create(
