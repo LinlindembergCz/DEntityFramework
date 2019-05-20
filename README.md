@@ -9,13 +9,13 @@ Conversão das consultas fortemente tipadas usando LINQ ;<br>
 Conectividade de banco de dados com base no FireDAC e vários ; <br>
 provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree<br>
 
-<br><br><br><br>
+<br><br>
 
 Mapping of POCO entity classes; <br>
 Automatic change control; <<br>
 Conversion of strongly typed queries using LINQ; <br>
 Database connectivity based on FireDAC and various; <br>
-providers available to connect to SQL Server, MySQL, FireBird, PostGree<br><br><br>
+providers available to connect to SQL Server, MySQL, FireBird, PostGree<br><br>
 
 ## Requirements
 
@@ -44,7 +44,7 @@ begin<br>
                     ToJson;
 
 end;                    
-<br><br><br><br>
+<br><br>
 var<br>
   Query: IQueryAble;<br>
 begin<br>
