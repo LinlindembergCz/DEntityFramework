@@ -3,19 +3,19 @@ DEntityFramework
 
 It's EntityFramework for Delphi
 
-Mapeamento de classes de entidade POCO ;<p/>
-Controle de alterações automático ;<p/>
-Conversão das consultas fortemente tipadas usando LINQ ;<p/>
-Conectividade de banco de dados com base no FireDAC e vários ; <p/>
-provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree
+Mapeamento de classes de entidade POCO ;<br>
+Controle de alterações automático ;<br>
+Conversão das consultas fortemente tipadas usando LINQ ;<br>
+Conectividade de banco de dados com base no FireDAC e vários ; <br>
+provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree<br>
 
-<p/><p/><p/><p/><p/><p/>
+<br><br><br><br>
 
-Mapping of POCO entity classes; <p />
-Automatic change control; <p />
-Conversion of strongly typed queries using LINQ; <p />
-Database connectivity based on FireDAC and various; <p />
-providers available to connect to SQL Server, MySQL, FireBird, PostGree
+Mapping of POCO entity classes; <br>
+Automatic change control; <<br>
+Conversion of strongly typed queries using LINQ; <br>
+Database connectivity based on FireDAC and various; <br>
+providers available to connect to SQL Server, MySQL, FireBird, PostGree<br><br><br>
 
 ## Requirements
 
@@ -44,6 +44,19 @@ begin<br>
                     ToJson;
 
 end;                    
+<br><br><br><br>
+var<br>
+  Query: IQueryAble;<br>
+begin<br>
+  Query := From(TPessoa).<br>
+                inner( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id ).<br>
+                innerLeft( PessoaFisica, PessoaFisica.Id=Pessoa.Id).<br>
+                Where(Pessoa.Id=1).<br>
+                OrderBy(Pessoa,[Pessoa.Nome]).<br>
+                Select([Pessoa.Nome]);<br>
+end;<br>
+
+
 
 ## Authors
 
