@@ -29,7 +29,7 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 
 ...\EntityFramework\source
 
-## Main examples
+## Demos
 
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
