@@ -41,7 +41,9 @@ begin<br>
                         ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
                     Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
                     Where( E.ID = 3 ).<br>
-                    ToJson;
+                    ToJson;<br>
+                    
+                    
 
 end;                    
 <br><br>
@@ -54,7 +56,17 @@ begin<br>
                 Where(Pessoa.Id=1).<br>
                 OrderBy(Pessoa,[Pessoa.Nome]).<br>
                 Select([Pessoa.Nome]);<br>
-end;<br>
+end;<br><br>
+
+Other:
+
+Add;<br>
+Update;<br>
+Remove;<br>
+SaveChanges;<br>
+FindEntity;<br>
+ToList;<br>
+ToJson;<br>
 
 
 
