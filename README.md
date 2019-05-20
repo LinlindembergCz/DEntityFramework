@@ -7,7 +7,7 @@ Mapeamento de classes de entidade POCO ;<p/>
 Controle de alterações automático ;<p/>
 Conversão das consultas fortemente tipadas usando LINQ ;<p/>
 Conectividade de banco de dados com base no FireDAC e vários ; <p/>
-provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree
+provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree<p/><p/>
 
 Mapping of POCO entity classes; <p />
 Automatic change control; <p />
