@@ -44,16 +44,17 @@ begin
 
    L:= dbContext.Include( E.Veiculo ).
                  Include( E.Contatos ).
-                { Include( E.ClienteTabelaPreco).
+                 Include( E.ClienteTabelaPreco).
                     ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                  Include( E.ClienteEmpresa).
-                    ThenInclude(E.ClienteEmpresa.Empresa).}
-                 ToList<TCliente>( E.Idade = 43 ) ;
+                    ThenInclude(E.ClienteEmpresa.Empresa).
+                 ToList<TCliente>( E.ID =  strtoint(value) ) ;
 
    for I := 0 to l.Count-1 do
    begin
-     showmessage( '  Nome'+L.Items[I].Nome.Value +
+     showmessage( ' Empresa:'+E.ClienteEmpresa.Empresa.Descricao.Value+
+                  '  Nome'+L.Items[I].Nome.Value +
                   '  Veiculo  :'+L.Items[I].Veiculo.Placa.Value+
                   '  Contato: '+ (L.Items[I].Contatos[0].Nome.Value) );
    end;
