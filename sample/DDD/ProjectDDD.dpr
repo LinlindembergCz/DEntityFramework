@@ -56,7 +56,8 @@ uses
   Service.Utils.DataBind in 'Service\Utils\Service.Utils.DataBind.pas',
   Domain.Consts in 'Domain\Entities\Domain.Consts.pas',
   Domain.Entity.Empresa in 'Domain\Entities\Domain.Entity.Empresa.pas',
-  Domain.Entity.ClienteEmpresa in 'Domain\Entities\Domain.Entity.ClienteEmpresa.pas';
+  Domain.Entity.ClienteEmpresa in 'Domain\Entities\Domain.Entity.ClienteEmpresa.pas',
+  GenericFactory in 'Domain\Factories\GenericFactory.pas';
 
 {$R *.res}
 

@@ -4,7 +4,7 @@ interface
 
 uses
 DB, Classes, Repositorio.GenericRepository, Domain.Entity.Cliente, Repositorio.Base,
-Repositorio.Interfaces.Cliente,
+Repositorio.Interfaces.Cliente,System.Generics.Collections,
 Repositorio.Interfaces.base,  Context, EF.Core.Types, EF.Engine.DataContext;
 
 type
@@ -37,9 +37,30 @@ end;
 function TRepositoryCliente<T>.LoadDataSetPorID(value: string): TDataSet;
 var
   E: T;
+  L: TEntityList<TCliente>;
+  I: Integer;
 begin
    E := _RepositoryCliente.Entity;
 
+   L:= dbContext.Include( E.Veiculo ).
+                 Include( E.Contatos ).
+                 Include( E.ClienteTabelaPreco).
+                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+                       ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
+                 Include( E.ClienteEmpresa).
+                    ThenInclude(E.ClienteEmpresa.Empresa).
+                 ToList<TCliente>( E.Idade = 43 ) ;
+
+   for I := 0 to l.Count-1 do
+   begin
+     showmessage( '  Nome'+L.Items[I].Nome.Value +
+                  '  Veiculo  :'+L.Items[I].Veiculo.Placa.Value+
+                  '  Contato: '+ (L.Items[I].Contatos[0].Nome.Value) );
+   end;
+
+
+
+   {
    dbContext.Include( E.Veiculo ).
              Include( E.Contatos ).
              Include( E.ClienteTabelaPreco).
@@ -47,7 +68,19 @@ begin
                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
              Include( E.ClienteEmpresa).
                 ThenInclude(E.ClienteEmpresa.Empresa).
-             Where( E.ID = strtoint(value));
+             Where( E.ID = strtoint('43'));
+
+    showmessage( 'ClienteEmpresa:'+ E.ClienteEmpresa.Id.Value.ToString + '  '+
+                ' Empresa:'+E.ClienteEmpresa.Empresa.Id.Value.ToString + '   '+
+                ' Cliente:'+ E.Nome.Value+' '+
+                '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
+                '  Veiculo  :'+E.Veiculo.Placa.Value+'  '+
+                '  ClienteTabelaPreco ID:'+E.ClienteTabelaPreco.Id.Value.ToString+'  '+
+                '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
+                '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
+              );
+    }
+
 
   (*
   public Cliente GetById(int id)
@@ -70,7 +103,7 @@ begin
                                          .FirstOrDefault(cli => cli.Id == id);
     return ret;
   }
-  *)
+
 
    showmessage( 'ClienteEmpresa:'+ E.ClienteEmpresa.Id.Value.ToString + '  '+
                 ' Empresa:'+E.ClienteEmpresa.Empresa.Id.Value.ToString + '   '+
@@ -81,7 +114,7 @@ begin
                 '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
                 '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
               );
-
+   *)
    result := dbContext.ToDataSet( From( E ).Where( E.ID = strtoint(value) ).Select );
 
 end;

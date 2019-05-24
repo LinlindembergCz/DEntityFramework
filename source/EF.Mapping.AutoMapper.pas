@@ -17,6 +17,7 @@ type
     class var TypObj: TRttiType;
     class function GetValueField(E: TEntityBase; Field: TRttiField)
       : string; static;
+
   public
     class function GetMaxLengthValue(E: TEntityBase; aProp: string): variant; static;
     class function PropIsInstance(Prop: TRttiProperty): boolean; static;
@@ -28,6 +29,8 @@ type
 
     class function CreateObject(AQualifiedClassName: string): TObject; overload;
     class function CreateObject(ARttiType: TRttiType): TObject;overload;
+    class procedure SetObject(Entity: TEntityBase; ClassName: string; Value: TObject); static;
+    class function GetObject(Entity: TEntityBase; ClassName: string): TObject; static;
 
     class function GetTableAttribute(Obj: TClass): String; overload;
     class function GetTableAttribute(ClassInfo: Pointer): String; overload;
@@ -1043,6 +1046,60 @@ begin
     dDatetime.Value := Valor;
   TValue.Make(@dDatetime, TypeInfo(TDate), Val);
     Campo.SetValue(Entity, Val);
+end;
+
+class procedure TAutoMapper.SetObject(Entity: TEntityBase; ClassName: string;
+  Value: TObject);
+var
+  J: integer;
+  Prop: TRttiProperty;
+  Prop2: TRttiInstanceProperty;
+  Atrib: TCustomAttribute;
+  ctx: TRttiContext;
+  breaked:boolean;
+  O:TObject;
+begin
+  try
+    ctx := TRttiContext.Create;
+    TypObj := ctx.GetType(Entity.ClassInfo);
+    for Prop in TypObj.GetProperties do
+    begin
+      if ( PropIsInstance(Prop) ) and ( prop.PropertyType.ToString = ClassName ) then
+      begin
+        Prop.SetValue( Entity ,  Value);
+        break;
+      end;
+    end;
+  finally
+    ctx.Free;
+  end;
+end;
+
+class function TAutoMapper.GetObject(Entity: TEntityBase; ClassName: string):TObject;
+var
+  J: integer;
+  Prop: TRttiProperty;
+  Prop2: TRttiInstanceProperty;
+  Atrib: TCustomAttribute;
+  ctx: TRttiContext;
+  breaked:boolean;
+  O:TObject;
+  Val: TValue;
+begin
+  try
+    ctx := TRttiContext.Create;
+    TypObj := ctx.GetType(Entity.ClassInfo);
+    for Prop in TypObj.GetProperties do
+    begin
+      if ( PropIsInstance(Prop) ) and ( prop.PropertyType.ToString = ClassName ) then
+      begin
+        result:= prop.GetValue(Entity).AsObject;
+        break;
+      end;
+    end;
+  finally
+    ctx.Free;
+  end;
 end;
 
 class function TAutoMapper.ToMapping(Entity: TEntityBase;

@@ -78,6 +78,8 @@ type
 
 implementation
 
+uses GenericFactory;
+
 
 constructor TCliente.Create;
 begin
@@ -94,8 +96,11 @@ end;
 procedure TCliente.Initialize;
 begin
   inherited;
-  Email    := Collate.RegisterObject<TEmail>(  TEmail.Create );
-  Veiculo  := Collate.RegisterObject<TVeiculo>(  TVeiculo.create );
+  Email:= TGenericFactory.CreateInstance<TEmail>;
+  Veiculo:= TGenericFactory.CreateInstance<TVeiculo>;
+
+ {Email    := Collate.RegisterObject<TEmail>(  TEmail.Create );
+  Veiculo  := Collate.RegisterObject<TVeiculo>(  TVeiculo.create );}
 
   ClienteTabelaPreco:= Collate.RegisterObject<TClienteTabelaPreco>( TClienteTabelaPreco.Create(true) );
   ClienteTabelaPreco.Initialize;
