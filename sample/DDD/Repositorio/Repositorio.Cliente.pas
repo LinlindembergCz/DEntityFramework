@@ -44,11 +44,11 @@ begin
 
    L:= dbContext.Include( E.Veiculo ).
                  Include( E.Contatos ).
-                 Include( E.ClienteTabelaPreco).
+                { Include( E.ClienteTabelaPreco).
                     ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                  Include( E.ClienteEmpresa).
-                    ThenInclude(E.ClienteEmpresa.Empresa).
+                    ThenInclude(E.ClienteEmpresa.Empresa).}
                  ToList<TCliente>( E.Idade = 43 ) ;
 
    for I := 0 to l.Count-1 do
@@ -115,6 +115,7 @@ begin
                 '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
               );
    *)
+   if value <> ''  then   
    result := dbContext.ToDataSet( From( E ).Where( E.ID = strtoint(value) ).Select );
 
 end;
