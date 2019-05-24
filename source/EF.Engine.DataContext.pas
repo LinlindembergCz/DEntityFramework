@@ -179,7 +179,7 @@ var
   ReferenceEntidy, FirstEntity, PriorEntity: TEntityBase;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey: string;
-  List:TEntityList;
+  List: TEntityList;
   ListEntity :TEntityList<T>;
   H, I, j, k : Integer;
   IndexInclude , IndexThenInclude:integer;
@@ -254,6 +254,12 @@ begin
                 CurrentEntidy:= ListObjectsthenInclude.Items[j];
                 if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
                 begin
+                   {CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
+
+                   ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
+                                       Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
+                                       Select , CurrentEntidy ); }
+
                   List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
                                   Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
                                   Select );
@@ -265,6 +271,7 @@ begin
                   begin
                      TEntityList(ListObjectsthenInclude.items[j]).Add( List[k]);
                   end;
+
                 end
                 else
                 begin
