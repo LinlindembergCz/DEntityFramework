@@ -3,11 +3,19 @@ DEntityFramework
 
 It's EntityFramework for Delphi
 
-Mapeamento de classes de entidade POCO ;<p/>
-Controle de alterações automático ;<p/>
-Conversão das consultas fortemente tipadas usando LINQ ;<p/>
-Conectividade de banco de dados com base no FireDAC e vários ; <p/>
-provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree
+Mapeamento de classes de entidade POCO ;<br>
+Controle de alterações automático ;<br>
+Conversão das consultas fortemente tipadas usando LINQ ;<br>
+Conectividade de banco de dados com base no FireDAC e vários ; <br>
+provedores disponíveis para se conectar ao SQL Server,  MySQL, FireBird, PostGree<br>
+
+<br><br>
+
+Mapping of POCO entity classes; <br>
+Automatic change control; <<br>
+Conversion of strongly typed queries using LINQ; <br>
+Database connectivity based on FireDAC and various; <br>
+providers available to connect to SQL Server, MySQL, FireBird, PostGree<br><br>
 
 ## Requirements
 
@@ -21,7 +29,7 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 
 ...\EntityFramework\source
 
-## Main examples
+## Demos
 
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
@@ -30,12 +38,37 @@ begin<br>
    dbContext.Include( E.Veiculo ).<br>
                     Include( E.Contatos ).<br>
                     Include( E.ClienteTabelaPreco).<br>
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco).<br>
-                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
+                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
+                    Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
                     Where( E.ID = 3 ).<br>
-                    ToJson;
+                    ToJson;<br>
+                    
+                    
 
 end;                    
+<br><br>
+var<br>
+  Query: IQueryAble;<br>
+begin<br>
+  Query := From(TPessoa).<br>
+                inner( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id ).<br>
+                innerLeft( PessoaFisica, PessoaFisica.Id=Pessoa.Id).<br>
+                Where(Pessoa.Id=1).<br>
+                OrderBy(Pessoa,[Pessoa.Nome]).<br>
+                Select([Pessoa.Nome]);<br>
+end;<br><br>
+
+Other:
+
+Add;<br>
+Update;<br>
+Remove;<br>
+SaveChanges;<br>
+FindEntity;<br>
+ToList;<br>
+ToJson;<br>
+
+
 
 ## Authors
 
