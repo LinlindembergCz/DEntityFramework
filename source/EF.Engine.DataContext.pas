@@ -176,15 +176,13 @@ end;
 function TDataContext.ToList<T>(Condicion: TString): TEntityList<T>;
 var
   maxthenInclude, maxInclude :integer;
-  ReferenceEntidy, FirstEntity, PriorEntity: TEntityBase;
+  ReferenceEntidy, FirstEntity: TEntityBase;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey, ValueId: string;
   List: TEntityList;
   ListEntity :TEntityList<T>;
   H, I, j, k : Integer;
   IndexInclude , IndexThenInclude:integer;
-  TypeClass:TClass;
-  Lista:TEntityList<TEntityBase>;
 begin
   try
     if ListObjectsInclude = nil then
@@ -193,18 +191,12 @@ begin
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(FEntity);
 
-    H:=0;
-    I:=0;
-    j:=0;
-    k:=0;
+    H:=0;   I:=0;    j:=0;    k:=0;
 
     maxInclude:= ListObjectsInclude.Count-1;
     maxthenInclude:= ListObjectsthenInclude.Count-1;
-
     FirstEntity:= TEntityBase(ListObjectsInclude.Items[0]);
-
-    ListEntity := ToList<T>( From( TEntityBase(FirstEntity) ).Where( Condicion ).Select ) ;
-
+    ListEntity := ToList<T>( From( TEntityBase(FirstEntity) ).Where( Condicion ).Select );
     for H := 0 to ListEntity.Count - 1 do
     begin
       I:= 0;
@@ -226,17 +218,17 @@ begin
               if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
               begin
                  CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-
                  ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
                          Where( FirstTable+'Id='+ ValueId ).
                          Select , CurrentEntidy );
               end
               else
-                CurrentEntidy:= TAutoMapper.SetObject( FirstEntity,
-                                        CurrentEntidy.ClassName,
-                                        FindEntity( From(CurrentEntidy.ClassType).
-                                                    Where( FirstTable+'Id='+  ValueId ).
-                                                    Select ) );
+              begin
+                CurrentEntidy:= FindEntity( From(CurrentEntidy.ClassType).
+                                            Where( FirstTable+'Id='+  ValueId ).Select );
+                TAutoMapper.SetObject( FirstEntity,
+                                       CurrentEntidy.ClassName,CurrentEntidy );
+              end;
             end;
           finally
             Inc(I);
@@ -255,42 +247,19 @@ begin
                 CurrentEntidy:= ListObjectsthenInclude.Items[j];
                 if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
                 begin
-                  { CurrentEntidy := TAutoMapper.GetObject(ReferenceEntidy, CurrentEntidy.ClassName );
-
-                   ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
-                                       Where( FirstTable+'Id='+ ReferenceEntidy.Id.Value.ToString ).
-                                       Select , CurrentEntidy );}
+                  CurrentEntidy := TAutoMapper.GetObject(ReferenceEntidy, CurrentEntidy.ClassName );
                   ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
-
                   List := ToList( From(TEntityBase(TEntityList(CurrentEntidy).List)).
                                   Where( TableForeignKey+'Id='+ ValueId ).
                                   Select , List );
-
-                {  while TEntityList(CurrentEntidy).Count > 1 do
-                     TEntityList(CurrentEntidy).Delete( TEntityList(CurrentEntidy).Count - 1 );
-
-                  for k := 0 to List.Count-1 do
-                  begin
-                     TEntityList(CurrentEntidy).Add( List[k]);
-                  end;}
-
                 end
                 else
                 begin
                   TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
                   ValueId:=     TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id');
-
                   CurrentEntidy:= FindEntity( From(CurrentEntidy.ClassType).
-                                              Where('Id='+ ValueId).
-                                              Select );
-
-                  TAutoMapper.SetObject( ReferenceEntidy,
-                                         CurrentEntidy.ClassName,
-                                         CurrentEntidy );
-
-                {  ListObjectsthenInclude.Items[j] := FindEntity( From(TEntityBase(ListObjectsthenInclude.Items[j])).
-                                                                 Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
-                                                                 Select );}
+                                              Where('Id='+ ValueId).Select );
+                  TAutoMapper.SetObject( ReferenceEntidy,CurrentEntidy.ClassName, CurrentEntidy );
                 end;
                 ReferenceEntidy := ListObjectsthenInclude.Items[j];
                 TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );

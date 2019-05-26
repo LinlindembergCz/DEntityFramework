@@ -37,27 +37,31 @@ end;
 function TRepositoryCliente<T>.LoadDataSetPorID(value: string): TDataSet;
 var
   E: T;
-  L: TEntityList<TCliente>;
+  ListaCliente: TEntityList<T>;
   I: Integer;
+  item: T;
 begin
    E := _RepositoryCliente.Entity;
-  {
-   L:= dbContext.Include( E.Veiculo ).
+
+   ListaCliente:= dbContext.Include( E.Veiculo ).
                  Include( E.Contatos ).
                  Include( E.ClienteTabelaPreco).
                     ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                  Include( E.ClienteEmpresa).
                     ThenInclude(E.ClienteEmpresa.Empresa).
-                 ToList<TCliente>( E.Idade =  43 ) ;
+                 ToList<T>( E.Idade =  43 );
 
-   for I := 0 to l.Count-1 do
+   for Item in ListaCliente do
    begin
-     showmessage( '  Empresa: '+ L.Items[I].ClienteEmpresa.Empresa.Descricao.Value +'  Nome:  '+L.Items[I].Nome.Value +
-                  '  Veiculo  :'+L.Items[I].Veiculo.Placa.Value+
-                  '  Contato: '+ (L.Items[I].Contatos[0].Nome.Value) );
+     showmessage( '  Empresa: '+Item.ClienteEmpresa.Empresa.Descricao.Value +
+                  '  Nome:  '+Item.Nome.Value +
+                  '  Veiculo  :'+Item.Veiculo.Placa.Value+
+                  '  Contato: '+ (Item.Contatos[0].Nome.Value) );
    end;
-   }
+
+   ListaCliente.Free;
+
 
 
    {
