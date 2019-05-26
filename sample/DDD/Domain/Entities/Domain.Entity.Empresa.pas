@@ -12,7 +12,7 @@ type
   private
     FDescricao: TString;
     FCNPJ: TString;
-  public
+  published
     [FieldTable('Descricao',varchar20,false)]
     property Descricao: TString read FDescricao write FDescricao;
     [FieldTable('CNPJ',varchar20,false)]

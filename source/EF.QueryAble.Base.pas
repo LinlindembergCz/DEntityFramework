@@ -532,7 +532,12 @@ begin
                                           ifthen( _Atribs <> '', _Atribs,'*')) + ' From (' + self.FSSelect ,
                                                 ifthen( Fields  <> '', Fields,
                                                       ifthen(_Atribs  <> '', _Atribs,'*')));
-  TSelect(self).FFields := Fields;
+  if Fields <> ''  then
+      TSelect(self).FFields := Fields
+  else
+      TSelect(self).FFields := _Atribs;
+
+
   result := TSelect(self);
 end;
 

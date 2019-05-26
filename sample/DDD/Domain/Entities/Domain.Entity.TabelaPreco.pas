@@ -14,12 +14,13 @@ type
     FItensTabelaPreco: TEntityList<TItensTabelaPreco>;
     procedure Initialize;
   public
+    constructor Create;override;
+    destructor Destroy;override;
+  published
     [FieldTable('Descricao',varchar50,false)]
     property Descricao: TString read FDescricao write FDescricao;
     [NotMapper]
     property ItensTabelaPreco: TEntityList<TItensTabelaPreco> read FItensTabelaPreco write FItensTabelaPreco;
-    constructor Create;override;
-    destructor Destroy;override;
   end;
 
 

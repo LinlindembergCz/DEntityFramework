@@ -14,7 +14,7 @@ type
     FNome: TString;
     FTelefone: TString;
     FClienteId: TInteger;
-  public
+  published
     [FieldTable('Nome',varchar50,false)]
     [LengthMin(10)]
     property Nome: TString read FNome write Fnome;

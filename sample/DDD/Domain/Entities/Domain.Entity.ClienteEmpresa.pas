@@ -15,6 +15,9 @@ type
     FEmpresa: TEmpresa;
     //FCliente: TCliente;
   public
+      constructor Create;override;
+    procedure Initialize;override;
+  published
     [FieldTable('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
@@ -27,23 +30,25 @@ type
     property Empresa: TEmpresa read  FEmpresa write FEmpresa;
     //[NotMapper]
     //property Cliente: TCliente read  FCliente write FCliente;
-    constructor Create;override;
-    procedure Initialize;override;
+
   end;
 
 implementation
 
 { TClienteTabelaPreco }
 
+uses  GenericFactory;
+
 constructor TClienteEmpresa.Create;
 begin
   inherited;
+  Initialize;
 end;
 
 procedure TClienteEmpresa.Initialize;
 begin
   inherited;
-  FEmpresa:= Collate.RegisterObject<TEmpresa>( TEmpresa.Create(true) );
+  FEmpresa:=  TGenericFactory.CreateInstance<TEmpresa>;//Collate.RegisterObject<TEmpresa>( TEmpresa.Create(true) );
   //Cliente:= TCliente.Create;
 end;
 

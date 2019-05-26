@@ -41,7 +41,7 @@ var
   I: Integer;
 begin
    E := _RepositoryCliente.Entity;
-
+  {
    L:= dbContext.Include( E.Veiculo ).
                  Include( E.Contatos ).
                  Include( E.ClienteTabelaPreco).
@@ -49,16 +49,15 @@ begin
                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                  Include( E.ClienteEmpresa).
                     ThenInclude(E.ClienteEmpresa.Empresa).
-                 ToList<TCliente>( E.ID =  strtoint(value) ) ;
+                 ToList<TCliente>( E.Idade =  43 ) ;
 
    for I := 0 to l.Count-1 do
    begin
-     showmessage( ' Empresa:'+E.ClienteEmpresa.Empresa.Descricao.Value+
-                  '  Nome'+L.Items[I].Nome.Value +
+     showmessage( '  Empresa: '+ L.Items[I].ClienteEmpresa.Empresa.Descricao.Value +'  Nome:  '+L.Items[I].Nome.Value +
                   '  Veiculo  :'+L.Items[I].Veiculo.Placa.Value+
                   '  Contato: '+ (L.Items[I].Contatos[0].Nome.Value) );
    end;
-
+   }
 
 
    {
@@ -69,18 +68,19 @@ begin
                    ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
              Include( E.ClienteEmpresa).
                 ThenInclude(E.ClienteEmpresa.Empresa).
-             Where( E.ID = strtoint('43'));
+             Where( E.ID =  strtoint(value) );
 
-    showmessage( 'ClienteEmpresa:'+ E.ClienteEmpresa.Id.Value.ToString + '  '+
-                ' Empresa:'+E.ClienteEmpresa.Empresa.Id.Value.ToString + '   '+
-                ' Cliente:'+ E.Nome.Value+' '+
-                '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
-                '  Veiculo  :'+E.Veiculo.Placa.Value+'  '+
-                '  ClienteTabelaPreco ID:'+E.ClienteTabelaPreco.Id.Value.ToString+'  '+
-                '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
-                '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
+    showmessage( 'ClienteEmpresa:  '+ E.ClienteEmpresa.Id.Value.ToString + '   '+
+                ' Empresa:  '+E.ClienteEmpresa.Empresa.Descricao.Value + '   '+
+                ' Cliente:  '+ E.Nome.Value+'   '+
+                ' Contatos Count :  '+inttostr(E.Contatos.Count)+'   '+
+                ' Veiculo  :  '+E.Veiculo.Placa.Value+'   '+
+                ' ClienteTabelaPreco ID:  '+E.ClienteTabelaPreco.Id.Value.ToString+'   '+
+                ' TabelaPreco ID:  '+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'   ' +
+                ' ItensTabelaPreco.Count:  '+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
               );
-    }
+   }
+
 
 
   (*
@@ -117,7 +117,7 @@ begin
               );
    *)
    if value <> ''  then   
-   result := dbContext.ToDataSet( From( E ).Where( E.ID = strtoint(value) ).Select );
+      result := dbContext.ToDataSet( From( E ).Where( E.ID = strtoint(value) ).Select );
 
 end;
 

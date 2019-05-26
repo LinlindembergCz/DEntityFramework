@@ -29,7 +29,7 @@ type
 
     class function CreateObject(AQualifiedClassName: string): TObject; overload;
     class function CreateObject(ARttiType: TRttiType): TObject;overload;
-    class procedure SetObject(Entity: TEntityBase; ClassName: string; Value: TObject); static;
+    class function SetObject(Entity: TEntityBase; ClassName: string; Value: TObject):TObject;
     class function GetObject(Entity: TEntityBase; ClassName: string): TObject; static;
 
     class function GetTableAttribute(Obj: TClass): String; overload;
@@ -1048,8 +1048,8 @@ begin
     Campo.SetValue(Entity, Val);
 end;
 
-class procedure TAutoMapper.SetObject(Entity: TEntityBase; ClassName: string;
-  Value: TObject);
+class function TAutoMapper.SetObject(Entity: TEntityBase; ClassName: string;
+  Value: TObject):TObject;
 var
   J: integer;
   Prop: TRttiProperty;
@@ -1067,6 +1067,7 @@ begin
       if ( PropIsInstance(Prop) ) and ( prop.PropertyType.ToString = ClassName ) then
       begin
         Prop.SetValue( Entity ,  Value);
+        result:= GetObject(Entity,ClassName);
         break;
       end;
     end;

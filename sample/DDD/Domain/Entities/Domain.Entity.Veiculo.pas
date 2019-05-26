@@ -12,7 +12,7 @@ type
   private
     FPlaca: TString;
     FClienteId: TInteger;
-  public
+  published
     [FieldTable('Placa',varchar10,false)]
      property Placa: TString read FPlaca write FPlaca;
     [FieldTable('ClienteId','Integer',true)]
