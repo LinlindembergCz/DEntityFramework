@@ -56,9 +56,9 @@ Type
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
-    function FindEntity(QueryAble: IQueryAble): TEntityBase; overload;
-    function FindEntity<T: Class>(QueryAble: IQueryAble): T; overload;
-    function Where(Condicion: TString): TEntityBase;
+    function FindEntity(QueryAble: IQueryAble): TEntityBase;overload;
+    function FindEntity<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
+    function Where<T:TEntityBase>(Condicion: TString): T;
 
     function Include( E: TObject ):TDataContext;
     function ThenInclude(E: TObject ): TDataContext;
@@ -353,10 +353,8 @@ var
   DataSet: TClientDataSet;
 begin
   try
-
-    FEntity := QueryAble.Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
-
+    //FEntity := QueryAble.Entity;
+    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.Entity.ClassType);
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := ToData(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
@@ -370,13 +368,15 @@ end;
 function TDataContext.FindEntity<T>(QueryAble: IQueryAble): T;
 var
   DataSet: TClientDataSet;
+  E: T;
 begin
   try
     result := nil;
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := ToData(QueryAble);
-    TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
-    result := QueryAble.Entity as T;
+    E:= T.Create;
+    TAutoMapper.DataToEntity(DataSet, E);
+    result := E;
   finally
      DataSet.Free;
      DataSet:= nil;
@@ -710,10 +710,11 @@ begin
 end;
 
 
-function TDataContext.Where(Condicion: TString ): TEntityBase;
+function TDataContext.Where<T>(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
-  ReferenceEntidy, FirstEntity, PriorEntity: TEntityBase;
+  ReferenceEntidy, PriorEntity: TEntityBase;
+  FirstEntity:T;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey: string;
   List:TEntityList;
@@ -743,20 +744,22 @@ begin
         try
           if i = 0 then
           begin
-            FirstEntity := TEntityBase(ListObjectsInclude.Items[0]);
+            FirstEntity := T(ListObjectsInclude.Items[0]);
             FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-            FirstEntity := FindEntity( From(TEntityBase(FirstEntity)).Where( Condicion ).Select );
+            FirstEntity := FindEntity<T>( From(T(FirstEntity)).Where( Condicion ).Select );
           end
           else
           begin
             if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
-               CurrentEntidy := ToList( From(TEntityBase(TEntityList(CurrentEntidy).List)).
+               CurrentEntidy := ToList( From( TEntityBase(TEntityList(CurrentEntidy).List)).
                                 Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
                                 Select )
             else
-               CurrentEntidy := FindEntity( From(TEntityBase(CurrentEntidy)).
+               CurrentEntidy := FindEntity( From( TEntityBase(CurrentEntidy)).
                                 Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
                                 Select );
+
+            TAutoMapper.SetObject( FirstEntity, CurrentEntidy.ClassName , CurrentEntidy );
           end;
         finally
           Inc(I);
@@ -814,7 +817,7 @@ begin
     end;
 
     FEntity := FirstEntity;
-    result  := FEntity;
+    result  := FirstEntity;
 
   finally
     ListObjectsInclude.clear;

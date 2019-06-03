@@ -40,9 +40,10 @@ var
   ListaCliente: TEntityList<T>;
   I: Integer;
   item: T;
+  Cliente:TCliente;
 begin
    E := _RepositoryCliente.Entity;
-
+   {
    ListaCliente:= dbContext.Include( E.Veiculo ).
                  Include( E.Contatos ).
                  Include( E.ClienteTabelaPreco).
@@ -61,67 +62,62 @@ begin
    end;
 
    ListaCliente.Free;
-
-
-
-   {
-   dbContext.Include( E.Veiculo ).
-             Include( E.Contatos ).
-             Include( E.ClienteTabelaPreco).
-                ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                   ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
-             Include( E.ClienteEmpresa).
-                ThenInclude(E.ClienteEmpresa.Empresa).
-             Where( E.ID =  strtoint(value) );
-
-    showmessage( 'ClienteEmpresa:  '+ E.ClienteEmpresa.Id.Value.ToString + '   '+
-                ' Empresa:  '+E.ClienteEmpresa.Empresa.Descricao.Value + '   '+
-                ' Cliente:  '+ E.Nome.Value+'   '+
-                ' Contatos Count :  '+inttostr(E.Contatos.Count)+'   '+
-                ' Veiculo  :  '+E.Veiculo.Placa.Value+'   '+
-                ' ClienteTabelaPreco ID:  '+E.ClienteTabelaPreco.Id.Value.ToString+'   '+
-                ' TabelaPreco ID:  '+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'   ' +
-                ' ItensTabelaPreco.Count:  '+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
-              );
    }
+   Cliente := dbContext.Include( E.Veiculo ).
+                        Include( E.Contatos ).
+                        Include( E.ClienteTabelaPreco ).
+                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco ).
+                              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco ).
+                             // ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto ).
+                        Include( E.ClienteEmpresa ).
+                           ThenInclude(E.ClienteEmpresa.Empresa ).
+                        Where<TCliente>( E.ID =  strtoint( value ) );
 
+    showmessage( 'ClienteEmpresa:  '+ Cliente.ClienteEmpresa.Id.Value.ToString + '   '+
+                 ' Empresa:  '+Cliente.ClienteEmpresa.Empresa.Descricao.Value + '   '+
+                 ' Cliente:  '+ Cliente.Nome.Value+'   '+
+                 ' Contatos Count :  '+inttostr(Cliente.Contatos.Count)+'   '+
+                 ' Veiculo  :  '+Cliente.Veiculo.Placa.Value+'   '+
+                 ' ClienteTabelaPreco ID:  '+Cliente.ClienteTabelaPreco.Id.Value.ToString+'   '+
+                 ' TabelaPreco ID:  '+Cliente.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'   ' +
+                 ' ItensTabelaPreco.Count:  '+inttostr(Cliente.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)+
+                 ' Id :  '+ Cliente.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco[1].Id.Value.ToString  );
 
+      (*
+      public Cliente GetById(int id)
+      {
+        var ret = _db.Clientes.AsNoTracking().Include(cli => cli.Pessoa)
+                                             .Include(cli => cli.Pessoa.Enderecos)
+                                             .Include(cli => cli.Pessoa.Contatos)
+                                             .Include(cli => cli.CartoesFidelidade)
+                                             .Include(cli => cli.Segmento)
+                                             .Include(cli => cli.MotoristasCliente)
+                                             .Include(cli => cli.VeiculosCliente)
+                                             .Include(cli => cli.ClienteEmpresas)
+                                                 .ThenInclude(cli => cli.Empresa)
+                                                 .ThenInclude(p => p.Pessoa)
+                                             .Include(cli => cli.ClienteTabelasPreco)
+                                                 .ThenInclude(ct => ct.TabelaPreco)
+                                                 .ThenInclude(tp => tp.ItensTabelaPreco)
+                                             .Include(cli => cli.ClienteTabelasPreco)
+                                                 .ThenInclude(ct => ct.FormaPagamento)
+                                             .FirstOrDefault(cli => cli.Id == id);
+        return ret;
+      }
 
-  (*
-  public Cliente GetById(int id)
-  {
-    var ret = _db.Clientes.AsNoTracking().Include(cli => cli.Pessoa)
-                                         .Include(cli => cli.Pessoa.Enderecos)
-                                         .Include(cli => cli.Pessoa.Contatos)
-                                         .Include(cli => cli.CartoesFidelidade)
-                                         .Include(cli => cli.Segmento)
-                                         .Include(cli => cli.MotoristasCliente)
-                                         .Include(cli => cli.VeiculosCliente)
-                                         .Include(cli => cli.ClienteEmpresas)
-                                             .ThenInclude(cli => cli.Empresa)
-                                             .ThenInclude(p => p.Pessoa)
-                                         .Include(cli => cli.ClienteTabelasPreco)
-                                             .ThenInclude(ct => ct.TabelaPreco)
-                                             .ThenInclude(tp => tp.ItensTabelaPreco)
-                                         .Include(cli => cli.ClienteTabelasPreco)
-                                             .ThenInclude(ct => ct.FormaPagamento)
-                                         .FirstOrDefault(cli => cli.Id == id);
-    return ret;
-  }
+      showmessage( 'ClienteEmpresa:'+ E.ClienteEmpresa.Id.Value.ToString + '  '+
+                    ' Empresa:'+E.ClienteEmpresa.Empresa.Id.Value.ToString + '   '+
+                    ' Cliente:'+ E.Nome.Value+' '+
+                    '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
+                    '  Veiculo  :'+E.Veiculo.Placa.Value+'  '+
+                    '  ClienteTabelaPreco ID:'+E.ClienteTabelaPreco.Id.Value.ToString+'  '+
+                    '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
+                    '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
+                  );
 
-
-   showmessage( 'ClienteEmpresa:'+ E.ClienteEmpresa.Id.Value.ToString + '  '+
-                ' Empresa:'+E.ClienteEmpresa.Empresa.Id.Value.ToString + '   '+
-                ' Cliente:'+ E.Nome.Value+' '+
-                '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
-                '  Veiculo  :'+E.Veiculo.Placa.Value+'  '+
-                '  ClienteTabelaPreco ID:'+E.ClienteTabelaPreco.Id.Value.ToString+'  '+
-                '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
-                '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
-              );
-   *)
-   if value <> ''  then   
-      result := dbContext.ToDataSet( From( E ).Where( E.ID = strtoint(value) ).Select );
+      *)
+   if value <> ''  then
+      result := dbContext.ToDataSet( From( T ).Where( E.ID = strtoint(value) ).Select );
 
 end;
 
@@ -136,7 +132,7 @@ begin
              Include( E.ClienteTabelaPreco).
              ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
-             Where( E.Nome.Contains( value ) );
+             Where<TCliente>( E.Nome.Contains( value ) );
 
    showmessage( 'Cliente:'+ E.Nome.Value+' '+
                 '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
