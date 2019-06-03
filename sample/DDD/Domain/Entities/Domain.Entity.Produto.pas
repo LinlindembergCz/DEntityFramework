@@ -10,10 +10,10 @@ type
   [Table('Produto')]
   TProduto = class( TEntityBase )
   private
-    FDescricao: string;
+    FDescricao: Tstring;
   public
     [FieldTable('Descricao',varchar50,false)]
-    property Descricao: string read FDescricao write FDescricao;
+    property Descricao: Tstring read FDescricao write FDescricao;
   end;
 
 implementation
