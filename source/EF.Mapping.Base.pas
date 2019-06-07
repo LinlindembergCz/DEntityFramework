@@ -79,8 +79,8 @@ begin
   begin
     try
       json := TJsonObject.Create;
-      ListField := TAutoMapper.GetFieldsList(self);
-      ListValues := TAutoMapper.GetValuesFieldsList(self);
+      ListField := TAutoMapper.GetFieldsList(self, false, true);
+      ListValues := TAutoMapper.GetValuesFieldsList(self, true);
       for I := 0 to ListField.Count - 1 do
       begin
         json.S[ListField.Strings[I]] := ListValues.Strings[I];
@@ -112,9 +112,15 @@ begin
     begin
       if PropRtti.IsWritable then
       begin
-        if joJSON.Contains(PropRtti.Name) then
+        if (joJSON.Contains(upperCase(PropRtti.Name))) then
         begin
-          TAutoMapper.SetAtribute( self, PropRtti.Name, joJSON.S[PropRtti.Name], false );
+          if (PropRtti.PropertyType.ToString = 'TDate') then
+          begin
+             if (joJSON.S[upperCase(PropRtti.Name)] <> '') then
+                TAutoMapper.SetAtribute( self, PropRtti.Name, joJSON.S[upperCase(PropRtti.Name)], false )
+          end
+          else
+             TAutoMapper.SetAtribute( self, PropRtti.Name, joJSON.S[upperCase(PropRtti.Name)], false );
         end;
       end;
     end;

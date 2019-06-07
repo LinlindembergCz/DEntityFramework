@@ -38,20 +38,21 @@ type
     class function GetListAtributesForeignKeys(Obj: TClass): TList; static;
     class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
 
-    class function GetFieldsList(E: TEntityBase;OnlyPublished: boolean = false): TStringList;overload;
+    class function GetFieldsList(E: TEntityBase;OnlyPublished: boolean = false; WithID:boolean =false): TStringList;overload;
     class function GetFieldsList(E: Pointer; OnlyPublished: boolean = false): TStringList;overload;
     class function GetFieldsPrimaryKeyList(E: TEntityBase): TStringList;
 
     class function GetListAtributes(Obj: TClass): TList;
     class function GetValuesFields(E: TEntityBase): String; static;
-    class function GetValuesFieldsList(E: TEntityBase): TStringList; static;
+    class function GetValuesFieldsList(E: TEntityBase; WithId:boolean = false): TStringList; static;
     class function GetValuesFieldsPrimaryKeyList(E: TEntityBase)
       : TStringList; static;
     class function GetDafaultValue(E: TEntityBase; aProp: string)
       : variant; static;
     class function GetValueProperty(E: TEntityBase; Propert: string)
       : string; static;
-    class procedure DataToEntity(DataSet: TDataSet; Entity: TEntityBase);
+    class procedure DataToEntity(DataSet: TDataSet; Entity: TEntityBase);overload;
+    class procedure DataToEntity(DataSet: TDataSet; Entity: TObject);overload;
     class function ToMapping(Entity: TEntityBase; InContext: boolean): boolean;
     class function GetReferenceAtribute(Obj: TEntityBase; E: TEntityBase)
       : string;overload; static;
@@ -405,7 +406,7 @@ begin
 end;
 
 class function TAutoMapper.GetFieldsList(E: TEntityBase;
-  OnlyPublished: boolean = false): TStringList;
+  OnlyPublished: boolean = false; WithID:boolean =false): TStringList;
 var
   Prop: TRttiProperty;
   ctx, ctx2: TRttiContext;
@@ -449,9 +450,9 @@ begin
         begin
           if Atributo is FieldTable then
           begin
-            if not FieldTable(Atributo).AutoInc then
+            if (not FieldTable(Atributo).AutoInc) or (WithID) then
             begin
-               L.Add(FieldTable(Atributo).Name);
+               L.Add(upperCase(FieldTable(Atributo).Name));
                FoundAttribute:= true;
             end;
           end;
@@ -462,7 +463,7 @@ begin
         end;
         ctx2.Free;
         if (not FoundAttribute) and (not FieldTable(Atributo).AutoInc) then
-           L.Add( Prop.Name );
+           L.Add( upperCase(Prop.Name) );
       end;
     end;
   finally
@@ -724,7 +725,7 @@ begin
   result := fStringReplace( values, '''', '' );
 end;
 
-class function TAutoMapper.GetValuesFieldsList(E: TEntityBase): TStringList;
+class function TAutoMapper.GetValuesFieldsList(E: TEntityBase; WithId:boolean = false): TStringList;
 var
   ctx: TRttiContext;
   Prop: TRttiProperty;
@@ -771,7 +772,7 @@ begin
             begin
               if Atrib is FieldTable then
               begin
-                if not FieldTable(Atrib).AutoInc then
+                if (not FieldTable(Atrib).AutoInc) or (WithId) then
                 begin
                   Value := GetValueField(E, lField);
                   L.Add(Value);
@@ -1051,21 +1052,20 @@ end;
 class function TAutoMapper.SetObject(Entity: TEntityBase; ClassName: string;
   Value: TObject):TObject;
 var
-  J: integer;
   Prop: TRttiProperty;
-  Prop2: TRttiInstanceProperty;
   Atrib: TCustomAttribute;
   ctx: TRttiContext;
-  breaked:boolean;
-  O:TObject;
 begin
   try
+
+
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Entity.ClassInfo);
     for Prop in TypObj.GetProperties do
     begin
-      if ( PropIsInstance(Prop) ) and ( prop.PropertyType.ToString = ClassName ) then
+      if ( PropIsInstance(Prop) ) and ( Pos(ClassName , prop.PropertyType.ToString )>0 ) then
       begin
+        //SetObjectProp( Entity,Prop.Name, Value )
         Prop.SetValue( Entity ,  Value);
         result:= GetObject(Entity,ClassName);
         break;
@@ -1078,14 +1078,9 @@ end;
 
 class function TAutoMapper.GetObject(Entity: TEntityBase; ClassName: string):TObject;
 var
-  J: integer;
   Prop: TRttiProperty;
-  Prop2: TRttiInstanceProperty;
   Atrib: TCustomAttribute;
   ctx: TRttiContext;
-  breaked:boolean;
-  O:TObject;
-  Val: TValue;
 begin
   try
     ctx := TRttiContext.Create;
@@ -1189,6 +1184,56 @@ begin
             if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
             begin
               SetFieldValue(Entity, Prop,
+                            DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
+              breaked:= true;
+              break;
+            end;
+          end;
+        end;
+      end;
+    end;
+  finally
+    ctx.Free;
+  end;
+end;
+
+class procedure TAutoMapper.DataToEntity(DataSet: TDataSet; Entity: TObject);
+var
+  J: integer;
+  Prop: TRttiProperty;
+  Atrib: TCustomAttribute;
+  ctx: TRttiContext;
+  breaked:boolean;
+begin
+  try
+    ctx := TRttiContext.Create;
+    breaked:= false;
+    TypObj := ctx.GetType(Entity.ClassInfo);
+    for Prop in TypObj.GetProperties do
+    begin
+      if PropIsInstance(Prop) then
+      begin
+         breaked:= false;
+         for Atrib in Prop.GetAttributes do
+         begin
+            if (Atrib is NotMapper) then
+            begin
+               breaked:= true;
+               break;
+            end
+         end;
+         if not breaked then
+            DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
+      end
+      else
+      begin
+        for Atrib in Prop.GetAttributes do
+        begin
+          if Atrib is FieldTable then
+          begin
+            if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
+            begin
+              SetFieldValue( Entity  as TEntityBase , Prop,
                             DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
               breaked:= true;
               break;
