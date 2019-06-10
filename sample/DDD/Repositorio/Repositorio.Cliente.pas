@@ -23,7 +23,8 @@ type
 implementation
 
 uses
-  Vcl.Dialogs, System.SysUtils, Domain.Entity.ItensTabelaPreco;
+  Vcl.Dialogs, System.SysUtils, Domain.Entity.ItensTabelaPreco,
+  Domain.Entity.Contato;
 
 { TRepositoryCliente }
 
@@ -42,6 +43,7 @@ var
   item: T;
   Cliente:TCliente;
   ItensTbp:TItensTabelaPreco;
+  Contato :TContato;
 
 begin
    E := _RepositoryCliente.Entity;
@@ -59,9 +61,13 @@ begin
    begin
      showmessage( '  Empresa: '+Item.ClienteEmpresa.Empresa.Descricao.Value +#13+
                   '  Nome:  '+Item.Nome.Value +#13+
-                  '  Veiculo  :'+Item.Veiculo.Placa.Value+#13+
-                  '  Contato: '+ Item.Contatos[0].Nome.Value+#13+
-                  '  TabelaPreco:'+ Item.ClienteTabelaPreco.TabelaPreco.ID.Value.ToString );
+                  '  Veiculo  :'+Item.Veiculo.Placa.Value );
+
+     for Contato in Item.Contatos do
+     begin
+       showmessage( 'Contato: '+ Contato.Nome.Value );
+     end;
+
      for ItensTbp in   Item.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco do
      begin
         showmessage( '  ItensTabelaPreco.Produto '+ ItensTbp.ProdutoId.value.Tostring );
