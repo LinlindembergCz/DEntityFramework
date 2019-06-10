@@ -14,13 +14,16 @@ type
     FProdutoId: TInteger;
     FValor: TFloat;
     FProduto: TProduto;
-  public
+  published
     [FieldTable('ProdutoId','integer',false)]
-    property ProdutoId:TInteger read FTabelaPrecoId write FTabelaPrecoId;
+    property ProdutoId:TInteger read FProdutoId write FProdutoId;
+
     [FieldTable('TabelaPrecoId','integer',false)]
     property TabelaPrecoId:TInteger read FTabelaPrecoId write FTabelaPrecoId;
+
     [FieldTable('Valor','float',false)]
     property Valor: TFloat read FValor write FValor;
+
     [NotMapper]
     property Produto: TProduto read  FProduto write FProduto;
     constructor Create;override;
@@ -33,7 +36,7 @@ implementation
 constructor TItensTabelaPreco.Create;
 begin
  inherited;
- Produto := Collate.RegisterObject<TProduto>( TProduto.Create );
+ //Produto := Collate.RegisterObject<TProduto>( TProduto.Create );
 end;
 
 initialization RegisterClass(TItensTabelaPreco);

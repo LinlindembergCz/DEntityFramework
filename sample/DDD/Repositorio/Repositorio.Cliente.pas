@@ -41,28 +41,32 @@ var
   I: Integer;
   item: T;
   Cliente:TCliente;
+  ItensTbp:TItensTabelaPreco;
 
 begin
    E := _RepositoryCliente.Entity;
 
-   ListaCliente:= dbContext.//Include( E.Veiculo ).
-                            //Include( E.Contatos ).
+   ListaCliente:= dbContext.Include( E.Veiculo ).
+                            Include( E.Contatos ).
                             Include( E.ClienteTabelaPreco).
                               ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
                                 ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
-                            //Include( E.ClienteEmpresa).
-                            //ThenInclude(E.ClienteEmpresa.Empresa).
+                            Include( E.ClienteEmpresa).
+                              ThenInclude(E.ClienteEmpresa.Empresa).
                  ToList<T>( E.IDADE =  43 );
 
    for Item in ListaCliente do
    begin
-     showmessage( '  Empresa: '+Item.ClienteEmpresa.Empresa.Descricao.Value +
-                  '  Nome:  '+Item.Nome.Value +
-                  '  Veiculo  :'+Item.Veiculo.Placa.Value+
-                  '  Contato: '+ (Item.Contatos[0].Nome.Value)+
-                  '  TabelaPreco:'+ Item.ClienteTabelaPreco.TabelaPreco.ID.Value.ToString  +
-                  '  ItensTabelaPreco.Produto '+ E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco[0].ProdutoId.value.tostring
-                   );
+     showmessage( '  Empresa: '+Item.ClienteEmpresa.Empresa.Descricao.Value +#13+
+                  '  Nome:  '+Item.Nome.Value +#13+
+                  '  Veiculo  :'+Item.Veiculo.Placa.Value+#13+
+                  '  Contato: '+ Item.Contatos[0].Nome.Value+#13+
+                  '  TabelaPreco:'+ Item.ClienteTabelaPreco.TabelaPreco.ID.Value.ToString );
+     for ItensTbp in   Item.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco do
+     begin
+        showmessage( '  ItensTabelaPreco.Produto '+ ItensTbp.ProdutoId.value.Tostring );
+     end;
+
    end;
 
    ListaCliente.Free;
