@@ -6,11 +6,11 @@ uses
   Sysutils,  EF.Mapping.Base;
 
 type
-  TFactoryEntity = class
+  TFactoryEntity<T:TEntityBase> = class
   private
 
   public
-    class function GetEntity(E: string): TEntityBase;
+    class function GetEntity: T;
   end;
 
 implementation
@@ -19,9 +19,9 @@ implementation
 
 uses  EF.Mapping.AutoMapper;
 
-class function TFactoryEntity.GetEntity(E: string ):TEntityBase;
+class function TFactoryEntity<T>.GetEntity:T;
 begin
-  result := TEntityBase( TAutoMapper.GetInstance2( 'Domain.Entity.'+E+'.T'+E ) ).Create;
+  result := T.Create;//TEntityBase( TAutoMapper.GetInstance2( 'Domain.Entity.'+E+'.T'+E ) ).Create;
 end;
 
 end.

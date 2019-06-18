@@ -82,13 +82,13 @@ end;
 procedure TServiceBase<T>.InitEntity(Contener: TComponent);
 begin
   Repository.Entity.Id := 0;
-  DataBind.Read(Contener, Repository.dbContext, true);
+  DataBind.Read(Contener, Repository.dbContext.DbSet,Repository.dbContext.Entity , true);
 end;
 
 procedure TServiceBase<T>.Read(Contener: TComponent);
 begin
   //Refatorar! Passar apenas o contexto
-  DataBind.Read(Contener, Repository.dbContext, false);
+  DataBind.Read(Contener, Repository.dbContext.DbSet,Repository.dbContext.Entity, false);
 end;
 
 procedure TServiceBase<T>.Add(JSOnObject: TJSOnObject);

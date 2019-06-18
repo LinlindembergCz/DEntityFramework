@@ -3,17 +3,16 @@ unit Context;
 interface
 
 uses
-  EF.Engine.DataContext, FactoryEntity;
+  EF.Engine.DataContext, FactoryEntity, EF.Mapping.Base;
 
 
 type
   TEntityState = (esInsert, esEdit, esBrowser);
 
-  TdbContext = class(TDataContext)
+  TdbContext<T:TEntityBase> = class(TDataContext)
   public
-    constructor Create(E: string);reintroduce;
+    constructor Create;reintroduce;
   end;
-
 
 implementation
 
@@ -21,10 +20,10 @@ implementation
 
 uses  FactoryConnection;
 
-constructor TdbContext.Create(E: string);
+constructor TdbContext<T>.Create;
 begin
   Connection:= TFactoryConnection.GetConnection;
-  inherited Create( TFactoryEntity.GetEntity(E) );
+  inherited Create( TFactoryEntity<T>.GetEntity );
 end;
 
 end.

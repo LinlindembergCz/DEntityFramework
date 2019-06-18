@@ -4,17 +4,17 @@ interface
 
 uses
  System.Classes, RTTI, System.TypInfo,Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ExtCtrls, SysUtils, DB,
-  EF.Mapping.Base, Context;
+  EF.Mapping.Base, Datasnap.DBClient;
 
 type
   IDataBind = interface
   ['{2388D1DF-FA78-4EAC-8C97-600A89B71526}']
      function Map(Component: TComponent; Entity: TObject; Valued: boolean= false): TObject;
-     procedure Read(Component: TComponent;Contexto:TdbContext;SetDefaultValue: boolean  );
+     procedure Read(Component: TComponent; dbSet:TClientDataSet; Entity:TEntityBase; SetDefaultValue: boolean  );
   end;
 
 
-  TVLCDataBind = class(TInterfacedObject, IDataBind )
+  TVLCDataBind = class(TInterfacedObject,IDataBind )
   strict private
     procedure SetValueCheckBox(Component: TComponent; Value: variant);
     procedure SetValueCombobox(Component: TComponent; Value: variant;Prop: TRttiProperty);
@@ -40,7 +40,7 @@ type
   public
     function Map(Component: TComponent; Entity: TObject;
       Valued: boolean= false): TObject;
-    procedure Read(Component: TComponent; Contexto:TdbContext; SetDefaultValue: boolean );
+    procedure Read(Component: TComponent; dbSet:TClientDataSet; Entity:TEntityBase;  SetDefaultValue: boolean );
   end;
 
 implementation
@@ -397,7 +397,7 @@ begin
   end;
 end;
 
-procedure TVLCDataBind.Read(Component: TComponent; Contexto:TdbContext;  SetDefaultValue: boolean);
+procedure TVLCDataBind.Read(Component: TComponent; dbSet:TClientDataSet; Entity:TEntityBase;  SetDefaultValue: boolean);
 
 var
   J: integer;
@@ -410,8 +410,8 @@ var
   TypObj: TRttiType;
 begin
   try
-    if (Contexto.dbSet <> nil) and (not Contexto.dbSet.IsEmpty ) then
-       DataToEntity(Contexto.dbSet, Contexto.Entity);
+    if (dbSet <> nil) and (not dbSet.IsEmpty ) then
+       DataToEntity( dbSet, Entity);
 
     ctx := TRttiContext.Create;
     for J := 0 to Component.componentcount - 1 do
@@ -419,7 +419,7 @@ begin
       Componente := Component.components[J];
       if ValidComponent(Componente) then
       begin
-        TypObj := ctx.GetType(Contexto.Entity.ClassInfo);
+        TypObj := ctx.GetType( Entity.ClassInfo);
         for Prop in TypObj.GetProperties do
         begin
           if PropNameEqualComponentName(Prop,Componente ) then
@@ -436,15 +436,15 @@ begin
                   end
                end;
                if not breaked then
-                  Value := TAutoMapper.GetValueProperty( GetObjectProp( Contexto.Entity ,Prop.Name) as TEntityBase , 'value' )
+                  Value := TAutoMapper.GetValueProperty( GetObjectProp(Entity ,Prop.Name) as TEntityBase , 'value' )
             end
             else
             if SetDefaultValue then
-              Value := TAutoMapper.GetDafaultValue(Contexto.Entity, Prop.Name)
+              Value := TAutoMapper.GetDafaultValue(Entity, Prop.Name)
             else
-              Value := TAutoMapper.GetValueProperty(Contexto.Entity, Prop.Name);
+              Value := TAutoMapper.GetValueProperty(Entity, Prop.Name);
 
-            SetValueComponent(Componente, Contexto.Entity,Value, Prop);
+            SetValueComponent(Componente, Entity,Value, Prop);
             break;
           end;
         end;
