@@ -20,7 +20,14 @@ implementation
 
 class function TFactoryConnection.GetConnection( Conn : TFDConnection = nil ): TEntityConn;
 begin
-   result:= TEntityFDConnection.Create( fdPG , Conn );
+  //if Conn <> nil then
+   //   result:= TEntityFDConnection.Create( fdPG , Conn )
+   //else
+      result := TEntityFDConnection.Create(fdPG ,
+                                     'postgres',
+                                     '',
+                                     '35.198.39.52',
+                                     'postgres');
             {
             TEntityFDConnection.Create(fdFB ,
                                      'SYSDBA',
@@ -28,13 +35,9 @@ begin
                                      'LocalHost',
                                      extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
            }
-           {
-           TEntityFDConnection.Create(fdPG ,
-                                     'postgres',
-                                     'master982666',
-                                     '35.198.39.52',
-                                     'postgres');
-           }
+
+
+
 
 end;
 

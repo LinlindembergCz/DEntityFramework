@@ -90,7 +90,6 @@ object FormPrincipal: TFormPrincipal
     Params.Strings = (
       'Database=postgres'
       'User_Name=postgres'
-      'Password=master982666'
       'Server=35.198.39.52'
       'DriverID=PG')
     LoginPrompt = False
