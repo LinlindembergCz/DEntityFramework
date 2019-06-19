@@ -35,9 +35,12 @@ type
 
 implementation
 
+uses
+  GenericFactory;
+
 { TClienteTabelaPreco }
 
-uses  GenericFactory;
+
 
 constructor TClienteEmpresa.Create;
 begin

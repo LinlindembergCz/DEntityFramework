@@ -43,7 +43,7 @@ type
     { Private declarations }
   public
     Cliente: TCliente;
-    Context: TDataContext;
+    Context: TDataContext<TCliente>;
     QueryAble: IQueryAble;
     { Public declarations }
   end;
@@ -81,7 +81,7 @@ begin
  QueryAble := From   ( Cliente )
               .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
               .OrderBy ( Cliente.Nome );
- DataSource1.DataSet := Context.GetDataSet( QueryAble );
+ DataSource1.DataSet := Context.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
@@ -89,7 +89,7 @@ begin
  QueryAble := From   ( Cliente )
               .Select
               .Where ( Cliente.Id = 2 );
- Cliente := Context.FindEntity( QueryAble ) as TCliente;
+ Cliente := Context.Find( QueryAble ) as TCliente;
  mlog.Lines.Text := 'Nome: ' + Cliente.Nome.Value;
 end;
 
@@ -125,7 +125,7 @@ begin
               .Select([ Cliente.Id, Cliente.Nome, Cliente.Observacao ])
               .OrderBy ( Cliente.Nome );
  DataSource1.DataSet := ClientDataSet1;
- ClientDataSet1.Data := Context.GetData( QueryAble );
+ ClientDataSet1.Data := Context.ToData( QueryAble );
 end;
 
 procedure TForm1.buttonUpdateClick(Sender: TObject);
@@ -133,7 +133,7 @@ begin
  QueryAble := From   ( Cliente )
               .Select
               .Where ( Cliente.Id = 2 );
- Cliente := Context.FindEntity( QueryAble ) as TCliente;
+ Cliente := Context.Find( QueryAble ) as TCliente;
  Cliente.Observacao := 'Alterado em: ' + datetimeToStr( Now() );
  Context.Entity := Cliente;
  Context.UpdateDirect;
@@ -142,7 +142,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Cliente := TCliente.Create;
-  Context := TDataContext.Create(Cliente);
+  Context := TDataContext<TCliente>.Create(Cliente);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);

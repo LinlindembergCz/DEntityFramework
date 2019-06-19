@@ -27,7 +27,7 @@ uses
   Data.DB.Helper;
 
 Type
-  TDataContext = class(TQueryAble)
+  TDataContext<T:TEntityBase> = class(TQueryAble)
   private
     ListObjectsInclude:TList;
     ListObjectsThenInclude:TList;
@@ -60,8 +60,8 @@ Type
     function Find<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
     function Where<T:TEntityBase>(Condicion: TString): T;
 
-    function Include( E: TObject ):TDataContext;
-    function ThenInclude(E: TObject ): TDataContext;
+    function Include( E: TObject ):TDataContext<T>;
+    function ThenInclude(E: TObject ): TDataContext<T>;
     function ToData(QueryAble: IQueryAble): OleVariant;
     function ToDataSet(QueryAble: IQueryAble): TClientDataSet;
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): TEntityList;overload;
@@ -105,7 +105,7 @@ uses
   EF.Schema.MSSQL,
   EF.Mapping.AutoMapper;
 
-function TDataContext.ToData(QueryAble: IQueryAble): OleVariant;
+function TDataContext<T>.ToData(QueryAble: IQueryAble): OleVariant;
 begin
   try
     FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble));
@@ -118,7 +118,7 @@ begin
   end;
 end;
 
-procedure TDataContext.FreeObjects;
+procedure TDataContext<T>.FreeObjects;
 begin
   if DbSet <> nil then
   begin
@@ -139,7 +139,7 @@ begin
   end;
 end;
 
-function TDataContext.ToDataSet(QueryAble: IQueryAble): TClientDataSet;
+function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TClientDataSet;
 var
   Keys: TStringList;
 begin
@@ -173,7 +173,7 @@ begin
   end;
 end;
 
-function TDataContext.ToList<T>(Condicion: TString): TEntityList<T>;
+function TDataContext<T>.ToList<T>(Condicion: TString): TEntityList<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, FirstEntity,  ConcretEntity : TEntityBase;
@@ -305,7 +305,7 @@ begin
   end;
 end;
 
-function TDataContext.ToList<T>(QueryAble: IQueryAble): TEntityList<T>;
+function TDataContext<T>.ToList<T>(QueryAble: IQueryAble): TEntityList<T>;
 var
   List: TEntityList<T>;
   DataSet: TClientDataSet;
@@ -331,7 +331,7 @@ begin
   end;
 end;
 
-function TDataContext.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): TEntityList;
+function TDataContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): TEntityList;
 var
   List: TEntityList;
   DataSet: TClientDataSet;
@@ -365,7 +365,7 @@ begin
   end;
 end;
 
-function TDataContext.Find(QueryAble: IQueryAble): TEntityBase;
+function TDataContext<T>.Find(QueryAble: IQueryAble): TEntityBase;
 var
   DataSet: TClientDataSet;
 begin
@@ -382,7 +382,7 @@ begin
   end;
 end;
 
-function TDataContext.Find<T>(QueryAble: IQueryAble): T;
+function TDataContext<T>.Find<T>(QueryAble: IQueryAble): T;
 var
   DataSet: TClientDataSet;
   E: T;
@@ -400,7 +400,7 @@ begin
   end;
 end;
 
-procedure TDataContext.Add<T>(aEntity: T);
+procedure TDataContext<T>.Add<T>(aEntity: T);
 var
   ListValues: TStringList;
   i: integer;
@@ -434,7 +434,7 @@ begin
 end;
 
 
-procedure TDataContext.AddDirect;
+procedure TDataContext<T>.AddDirect;
 var
   SQLInsert: string;
 begin
@@ -445,7 +445,7 @@ begin
   FConnection.ExecutarSQL(SQLInsert);
 end;
 
-procedure TDataContext.Add(aEntity:TEntityBase = nil);
+procedure TDataContext<T>.Add(aEntity:TEntityBase = nil);
 var
   ListValues: TStringList;
   i: integer;
@@ -478,7 +478,7 @@ begin
     AddDirect;
 end;
 
-procedure TDataContext.Update(aEntity:TEntityBase = nil);
+procedure TDataContext<T>.Update(aEntity:TEntityBase = nil);
 var
    ListValues: TStringList;
   i: integer;
@@ -514,7 +514,7 @@ begin
     UpdateDirect;
 end;
 
-procedure TDataContext.Update<T>(aEntity: T);
+procedure TDataContext<T>.Update<T>(aEntity: T);
 var
    ListValues: TStringList;
   i: integer;
@@ -550,7 +550,7 @@ begin
 
 end;
 
-procedure TDataContext.UpdateDirect;
+procedure TDataContext<T>.UpdateDirect;
 var
   SQL: string;
   ListPrimaryKey, FieldsPrimaryKey: TStringList;
@@ -577,7 +577,7 @@ begin
   end;
 end;
 
-procedure TDataContext.RemoveDirect;
+procedure TDataContext<T>.RemoveDirect;
 var
   SQL: string;
   ListPrimaryKey, FieldsPrimaryKey: TStringList;
@@ -601,18 +601,18 @@ begin
   end;
 end;
 
-procedure TDataContext.ReconcileError(DataSet: TCustomClientDataSet;
+procedure TDataContext<T>.ReconcileError(DataSet: TCustomClientDataSet;
     E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction);
 begin
   showmessage(E.message);
 end;
 
-function TDataContext.GetFieldList: Data.DB.TFieldList;
+function TDataContext<T>.GetFieldList: Data.DB.TFieldList;
 begin
   result := DbSet.FieldList;
 end;
 
-function TDataContext.ToJson(QueryAble: IQueryAble): string;
+function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
   var
   Keys: TStringList;
 begin
@@ -630,7 +630,7 @@ begin
   end;
 end;
 
-destructor TDataContext.Destroy;
+destructor TDataContext<T>.Destroy;
 begin
   if drpProvider <> nil then
     drpProvider.Free;
@@ -651,42 +651,42 @@ begin
   // if FConnection <> nil then    FConnection.Free;
 end;
 
-procedure TDataContext.DataSetProviderGetTableName(Sender: TObject;
+procedure TDataContext<T>.DataSetProviderGetTableName(Sender: TObject;
     DataSet: TDataSet; var TableName: string);
 begin
   TableName := uppercase(FSEntity);
 end;
 
-procedure TDataContext.Remove(aEntity:TEntityBase = nil);
+procedure TDataContext<T>.Remove(aEntity:TEntityBase = nil);
 begin
   //Refatorar
   if (DbSet.Active) and (not DbSet.IsEmpty) then
     DbSet.Delete;
 end;
 
-procedure TDataContext.Remove<T>(aEntity: T);
+procedure TDataContext<T>.Remove<T>(aEntity: T);
 begin
 
 end;
 
-procedure TDataContext.SaveChanges;
+procedure TDataContext<T>.SaveChanges;
 begin
   if ChangeCount > 0 then
     DbSet.ApplyUpdates(0);
 end;
 
-procedure TDataContext.RefreshDataSet;
+procedure TDataContext<T>.RefreshDataSet;
 begin
   if (DbSet.Active) then
     DbSet.Refresh;
 end;
 
-function TDataContext.ChangeCount: integer;
+function TDataContext<T>.ChangeCount: integer;
 begin
   result := FDbSet.ChangeCount;
 end;
 
-procedure TDataContext.CreateProvider(var proSQLQuery: TFDQuery;
+procedure TDataContext<T>.CreateProvider(var proSQLQuery: TFDQuery;
     prsNomeProvider: string);
 begin
   drpProvider := TDataSetProvider.Create(Application);
@@ -699,12 +699,12 @@ begin
   // drpProvider.ResolveToDataSet:= true;
 end;
 
-constructor TDataContext.Create(proEntity: TEntityBase = nil);
+constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
 begin
   FEntity := proEntity;
 end;
 
-procedure TDataContext.CreateClientDataSet(proDataSetProvider: TDataSetProvider;
+procedure TDataContext<T>.CreateClientDataSet(proDataSetProvider: TDataSetProvider;
     SQL: string = '');
 begin
   if proDataSetProvider <> nil then
@@ -727,7 +727,7 @@ begin
 end;
 
 
-function TDataContext.Where<T>(Condicion: TString ): T;
+function TDataContext<T>.Where<T>(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, PriorEntity: TEntityBase;
@@ -848,7 +848,7 @@ begin
 end;
 
 
-function TDataContext.Include( E: TObject ):TDataContext;
+function TDataContext<T>.Include( E: TObject ):TDataContext<T>;
 begin
    if ListObjectsInclude = nil then
    begin
@@ -864,7 +864,7 @@ begin
    result:= self;
 end;
 
-function TDataContext.ThenInclude( E: TObject ):TDataContext;
+function TDataContext<T>.ThenInclude( E: TObject ):TDataContext<T>;
 begin
    ListObjectsThenInclude.Add( E );
    ListObjectsInclude.Add( nil );
