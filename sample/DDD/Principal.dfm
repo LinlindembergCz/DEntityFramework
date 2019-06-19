@@ -26,8 +26,8 @@ object FormPrincipal: TFormPrincipal
       end>
   end
   object Button1: TButton
-    Left = 136
-    Top = 104
+    Left = 144
+    Top = 80
     Width = 75
     Height = 25
     Action = Cliente
@@ -69,8 +69,8 @@ object FormPrincipal: TFormPrincipal
       item
         AutoSize = False
       end>
-    Left = 152
-    Top = 48
+    Left = 160
+    Top = 24
     StyleName = 'Platform Default'
     object Cliente: TAction
       Caption = 'Clientes'
@@ -85,5 +85,21 @@ object FormPrincipal: TFormPrincipal
       Caption = 'Fabricantes'
       ImageIndex = 2
     end
+  end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'Database=postgres'
+      'User_Name=postgres'
+      'Password=master982666'
+      'Server=35.198.39.52'
+      'DriverID=PG')
+    LoginPrompt = False
+    Left = 160
+    Top = 120
+  end
+  object FDPhysPgDriverLink1: TFDPhysPgDriverLink
+    VendorLib = 'D:\Lindemberg\DEntityFramework\sample\DDD\bin\libpq.dll'
+    Left = 160
+    Top = 168
   end
 end

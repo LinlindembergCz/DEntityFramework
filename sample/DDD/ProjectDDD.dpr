@@ -57,7 +57,8 @@ uses
   Domain.Consts in 'Domain\Entities\Domain.Consts.pas',
   Domain.Entity.Empresa in 'Domain\Entities\Domain.Entity.Empresa.pas',
   Domain.Entity.ClienteEmpresa in 'Domain\Entities\Domain.Entity.ClienteEmpresa.pas',
-  GenericFactory in 'Domain\Factories\GenericFactory.pas';
+  GenericFactory in 'Domain\Factories\GenericFactory.pas',
+  EF.Schema.PostGres in '..\..\source\EF.Schema.PostGres.pas';
 
 {$R *.res}
 
@@ -66,26 +67,25 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
- // ReportMemoryLeaksOnShutdown:= true;
+  ReportMemoryLeaksOnShutdown:= true;
+  Application.CreateForm(TFormPrincipal, FormPrincipal);
   try
-    c:= TFactoryConnection.GetConnection;
+    c:= TFactoryConnection.GetConnection(FormPrincipal.FDConnection1);
     //A ordem de criação das tabelas que se relacionam é importante!!!!
-    c.MigrationDataBase([ TEmpresa,
-                          TCliente,
-                          TClienteEmpresa,
-                          TContato,
-                          TVeiculo,
-                          TTabelaPreco,
-                          TClienteTabelaPreco,
-                          TProduto,
-                          TItensTabelaPreco ]);
+    c.MigrationDataBase( [ TEmpresa,
+                           TCliente,
+                           TClienteEmpresa,
+                           TContato,
+                           TVeiculo,
+                           TTabelaPreco,
+                           TClienteTabelaPreco,
+                           TProduto,
+                           TItensTabelaPreco ] );
     c.free;
     c:= nil;
   except
     application.Terminate;
     exit;
   end;
-
-  Application.CreateForm(TFormPrincipal, FormPrincipal);
   Application.Run;
 end.
