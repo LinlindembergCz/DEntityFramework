@@ -5,7 +5,7 @@ interface
 uses
     FactoryEntity,
     Service.Interfaces.Servicebase,
-    Repositorio.Interfaces.Base, VCL.Dialogs, Sysutils, EF.Mapping.Base, Domain.Entity.Cliente;
+    Repositorio.Interfaces.Base, VCL.Dialogs, Sysutils, EF.Mapping.Base;
 
 type
    TFactoryService = class
@@ -17,7 +17,7 @@ type
 
 implementation
 
-uses  Service.Base, FactoryRepository,  EF.Mapping.AutoMapper;
+uses Domain.Entity.Cliente, Service.Base, FactoryRepository,  EF.Mapping.AutoMapper;
 
 { TFactoryService }
 

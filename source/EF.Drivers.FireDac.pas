@@ -15,7 +15,7 @@ uses
   FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Phys.MSSQLDef,FireDAC.Phys.MSSQL,
   FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
   FireDAC.DApt, FireDAC.Comp.DataSet, DBClient, classes, Data.DB, SysUtils,
-  EF.Drivers.Connection;
+  EF.Drivers.Connection, FireDAC.Phys.PGDef, FireDAC.Phys.PG;
 
 type
 
@@ -29,7 +29,8 @@ type
     procedure ExecutarSQL(prsSQL: string); override;
     function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; override;
     procedure LoadFromFile(IniFileName: string);override;
-    constructor Create(aDriver: FDConn; aUser,aPassword,aServer,aDataBase: string);override;
+    constructor Create(aDriver: FDConn; aUser,aPassword,aServer,aDataBase: string);overload;override;
+    constructor Create(aDriver: FDConn; Conn : TFDConnection);overload;override;
   end;
 
 
@@ -39,13 +40,16 @@ implementation
 uses
  EF.Core.Functions,
  EF.Schema.MSSQL,
- EF.Schema.Firebird, EF.Schema.MySQL;
+ EF.Schema.Firebird,
+ EF.Schema.MySQL,
+ EF.Schema.PostGres;
 
 resourcestring
   StrMyQL = 'MySQL';
   StrMSSQL = 'MSSQL';
   StrFirebird = 'Firebird';
   StrFB = 'FB';
+  StrPG = 'PG';
 
 { TLinqFDConnection }
 
@@ -139,7 +143,46 @@ begin
         CustomTypeDataBase := TFirebird.create;
         FDriver   := StrFB;
      end;
+     fdPG:
+     begin
+        CustomTypeDataBase := TPostgres.create;
+        FDriver   := StrPG;
+     end;
   end;
+end;
+
+constructor TEntityFDConnection.Create(aDriver: FDConn; Conn: TFDConnection);
+begin
+  CustomConnection:= Conn;
+  CustomConnection.LoginPrompt:= false;
+  case aDriver of
+     fdMyQL:
+     begin
+        CustomTypeDataBase := TMySQL.create;
+        FDriver   := StrMyQL;
+     end;
+     fdMSSQL:
+     begin
+        CustomTypeDataBase := TMSSQL.create;
+        FDriver   := StrMSSQL;
+     end;
+     fdFirebird:
+     begin
+        CustomTypeDataBase := TFirebird.create;
+        FDriver   := StrFirebird;
+     end;
+     fdFB:
+     begin
+        CustomTypeDataBase := TFirebird.create;
+        FDriver   := StrFB;
+     end;
+     fdPG:
+     begin
+        CustomTypeDataBase := TPostgres.create;
+        FDriver   := StrPG;
+     end;
+  end;
+
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);

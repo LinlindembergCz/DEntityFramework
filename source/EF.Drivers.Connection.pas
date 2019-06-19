@@ -14,7 +14,7 @@ uses
 
 type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
-  FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB );
+  FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB, fdPG );
   TEntityConn = class
   private
     FCustomTypeDataBase: TCustomDataBase;
@@ -35,7 +35,8 @@ type
     procedure InsereFields(ADataSet: TFDQuery);
     procedure BeforeConnect(Sender: TObject);virtual;abstract;
   public
-    constructor Create(aDriver:FDConn; aUser,aPassword,aServer,aDataBase: string);virtual; abstract;
+    constructor Create(aDriver:FDConn; aUser,aPassword,aServer,aDataBase: string);overload;virtual; abstract;
+    constructor Create(aDriver: FDConn; Conn : TFDConnection);overload;virtual; abstract;
     destructor Destroy;virtual;
     procedure GetTableNames(var List: TStringList); virtual; abstract;
     procedure GetFieldNames(var List: TStringList; Table: string); virtual;abstract;
@@ -57,7 +58,8 @@ type
 implementation
 
 uses
-  EF.Mapping.AutoMapper,EF.Mapping.Atributes, EF.Schema.Firebird;
+  EF.Mapping.AutoMapper,EF.Mapping.Atributes, EF.Schema.Firebird,
+  EF.Schema.PostGres;
 
 procedure TEntityConn.InsereFields(ADataSet: TFDQuery);
 var
@@ -211,9 +213,16 @@ begin
         end;
       end;
 
-      for index := 0 to ListForeignKeys.Count -1  do
+      if CustomTypeDataBase is TPostGres then
       begin
-        ExecutarSQL( CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
+        ExecutarSQL( 'ALTER TABLE public."'+upperCase(Table)+'" OWNER TO postgres');
+      end
+      else //Refatorar Criar ForenKeys para PostGres
+      begin
+        for index := 0 to ListForeignKeys.Count -1  do
+        begin
+          ExecutarSQL( CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
+        end;
       end;
 
       result := true;
