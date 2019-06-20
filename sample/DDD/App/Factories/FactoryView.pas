@@ -39,7 +39,7 @@ var
     ControllerQuery : IControllerBase;
   ControllerCommand : IControllerBase;
 begin
-  result:= nil;
+{  result:= nil;
   ControllerQuery   := TFactoryController.GetController( E );
   ControllerCommand := TFactoryController.GetController( E );
   Form := TFormViewBase.create( ControllerQuery, ControllerCommand );
@@ -53,7 +53,7 @@ begin
       showmessage('Formulário não implementado!');
   end
   else
-    showmessage('Formulário não implementado!');
+    showmessage('Formulário não implementado!'); }
 end;
 
 class function TFactoryForm.GetForm(E: string; modal:boolean = true ):TFormViewBase;
