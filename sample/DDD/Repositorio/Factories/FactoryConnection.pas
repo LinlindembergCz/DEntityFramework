@@ -23,18 +23,21 @@ begin
   //if Conn <> nil then
    //   result:= TEntityFDConnection.Create( fdPG , Conn )
    //else
-      result := TEntityFDConnection.Create(fdPG ,
+   result := TEntityFDConnection.Create(fdFB ,
+                             'SYSDBA',
+                             'masterkey',
+                             'LocalHost',
+                             extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+
+  {
+    TEntityFDConnection.Create(fdPG ,
                                      'postgres',
                                      '',
                                      '35.198.39.52',
                                      'postgres');
-            {
-            TEntityFDConnection.Create(fdFB ,
-                                     'SYSDBA',
-                                     'masterkey',
-                                     'LocalHost',
-                                     extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
-           }
+
+
+   }
 
 
 
