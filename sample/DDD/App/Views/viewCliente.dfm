@@ -19,27 +19,26 @@ inherited FormViewCliente: TFormViewCliente
           item
             Expanded = False
             FieldName = 'ID'
-            ImeName = 'Clientes.ID'
+            ImeName = 'ID'
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'Nome'
-            ImeName = 'Clientes.Nome'
+            ImeName = 'Nome'
             Width = 364
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'RG'
-            ImeName = 'Clientes.RG'
+            ImeName = 'RG'
             Width = 105
             Visible = True
           end>
       end
       inherited Panel2: TPanel
         Height = 57
-        ExplicitTop = -6
         ExplicitHeight = 57
         object Label7: TLabel [0]
           Left = 143

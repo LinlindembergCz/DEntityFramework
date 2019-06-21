@@ -53,7 +53,7 @@ type
       : string; static;
     class procedure DataToEntity(DataSet: TDataSet; Entity: TEntityBase);overload;
     class procedure DataToEntity(DataSet: TDataSet; Entity: TObject);overload;
-    class function ToMapping(Entity: TEntityBase; InContext: boolean): boolean;
+    class function ToMapping(Entity: TEntityBase; InContext: boolean; Quoted :boolean ): boolean;
     class function GetReferenceAtribute(Obj: TEntityBase; E: TEntityBase)
       : string;overload; static;
     class function GetReferenceAtribute(Obj: TEntityBase; E: TClass)
@@ -1057,8 +1057,6 @@ var
   ctx: TRttiContext;
 begin
   try
-
-
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Entity.ClassInfo);
     for Prop in TypObj.GetProperties do
@@ -1099,18 +1097,22 @@ begin
 end;
 
 class function TAutoMapper.ToMapping(Entity: TEntityBase;
-  InContext: boolean): boolean;
+  InContext: boolean; Quoted :boolean ): boolean;
 var
   ctx: TRttiContext;
   RTTI: TRttiType;
   Prop: TRttiProperty;
   Atrib: TCustomAttribute;
   Found:boolean;
+  CharQuoted: string;
 begin
   try
     result := false;
     ctx := TRttiContext.Create;
     RTTI := ctx.GetType(Entity.ClassInfo);
+    if Quoted then
+      CharQuoted:= '"';
+
     for Prop in RTTI.GetProperties do
     begin
       Found:= false;
@@ -1122,9 +1124,10 @@ begin
             if Atrib is FieldTable then
             begin
               Found := true;
+
               TAutoMapper.SetAtribute(Entity, Prop.Name,
-                TAutoMapper.GetTableAttribute(Entity.ClassType) + '.' +
-                FieldTable(Atrib).Name, InContext);
+               CharQuoted+ UpperCase( TAutoMapper.GetTableAttribute(Entity.ClassType) ) + CharQuoted + '.' +
+               CharQuoted+ FieldTable(Atrib).Name + CharQuoted, InContext);
               result := true;
               break;
             end;
@@ -1136,8 +1139,8 @@ begin
         if not Found then
         begin
           TAutoMapper.SetAtribute(Entity, Prop.Name,
-                TAutoMapper.GetTableAttribute(Entity.ClassType) + '.' +
-                Prop.Name, InContext);
+                 CharQuoted+ UpperCase(TAutoMapper.GetTableAttribute(Entity.ClassType))+CharQuoted + '.' +
+                 CharQuoted+ Prop.Name+CharQuoted, InContext);
           result := true;
         end;
       end;

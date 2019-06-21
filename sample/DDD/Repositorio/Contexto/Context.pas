@@ -18,12 +18,18 @@ implementation
 
 { TContext }
 
-uses  FactoryConnection;
+uses  FactoryConnection, EF.Schema.PostGres, EF.Mapping.AutoMapper;
 
 constructor TdbContext<T>.Create;
+var
+  E:T;
 begin
   Connection:= TFactoryConnection.GetConnection;
-  inherited Create( TFactoryEntity<T>.GetEntity );
+  E:= TFactoryEntity<T>.GetEntity( Connection.CustomTypeDataBase is TPostGres );
+
+  E.Mapped := TAutoMapper.ToMapping(E, true, true);
+
+  inherited Create( E );
 end;
 
 end.

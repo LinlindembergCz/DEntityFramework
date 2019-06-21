@@ -12,12 +12,12 @@ type
   TEntityBase = class(TPersistent)
   private
     FId: TInteger;
-    Mapped: boolean;
+
     FCollateOn: boolean;
   protected
     // FDataCadastro: TEntityDatetime;
   public
-
+    Mapped: boolean;
     Collate: TCollate;
     constructor Create; overload; virtual;
     constructor Create(aCollateOn:boolean);overload;virtual;
@@ -208,8 +208,7 @@ begin
     if Collate = nil then
        Collate:= TCollate.Create;
   end;
-  Mapped := TAutoMapper.ToMapping(self, true);
-
+  //Mapped := TAutoMapper.ToMapping(self, true);
 end;
 
 
