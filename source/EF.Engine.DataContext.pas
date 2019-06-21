@@ -690,7 +690,7 @@ procedure TDataContext<T>.CreateProvider(var proSQLQuery: TFDQuery;
     prsNomeProvider: string);
 begin
   drpProvider := TDataSetProvider.Create(Application);
-  drpProvider.Name := prsNomeProvider + formatdatetime('SSMS', now);
+  drpProvider.Name := stringreplace(prsNomeProvider,'"','',[rfReplaceAll]) + formatdatetime('SSMS', now);
   drpProvider.DataSet := proSQLQuery;
   drpProvider.UpdateMode := upWhereKeyOnly;
   // drpProvider.UpdateMode     := upWhereAll;
