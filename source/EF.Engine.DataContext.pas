@@ -46,6 +46,8 @@ Type
     procedure FreeObjects;
    //function CreateSingleTable(i: integer): boolean;
     //function IsFireBird: boolean;
+    function PutQuoted(Fields: string):string;
+    procedure Prepare(QueryAble: IQueryAble);
 
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
@@ -103,7 +105,7 @@ uses
   Vcl.ExtCtrls,
   EF.Schema.Firebird,
   EF.Schema.MSSQL,
-  EF.Mapping.AutoMapper;
+  EF.Mapping.AutoMapper, System.Types, EF.Schema.PostGres;
 
 function TDataContext<T>.ToData(QueryAble: IQueryAble): OleVariant;
 begin
@@ -139,6 +141,42 @@ begin
   end;
 end;
 
+
+function TDataContext<T>.PutQuoted(Fields: string):string;
+//De modo a contemplar consultas às tabelas do Postgres,
+//faz-se necessário colocar aspas duplas
+var
+   A: TStringDynArray;
+   I: Integer;
+   text: string;
+begin
+   Fields:= trim(stringreplace(Fields,'Select','', [] ));
+   A:= strUtils.SplitString(Fields, ',');
+   for I := 0 to length(A)-1 do
+   begin
+      if pos('.',A[I] ) > 0 then
+         A[I] :=  '"'+ upperCase( copy( A[I],0, pos('.',A[I] )-1 ) )+'.'+ copy( A[I], pos('.',A[I] )+1, length(A[I]) )  +'"'
+      else
+         A[I] :=  '"'+ trim(A[I]) +'"';
+
+      if I < length(A)-1 then
+         text:= text + A[I] +' , '
+      else
+         text:= text + A[I];
+   end;
+   text:= stringreplace(text,'.','"."', [rfReplaceAll] );
+   result:= text;
+end;
+
+procedure TDataContext<T>.Prepare(QueryAble: IQueryAble);
+begin
+  if FConnection.CustomTypeDataBase is TPostGres then
+  begin
+     QueryAble.SSelect := 'Select '+ PutQuoted( QueryAble.SSelect );
+     QueryAble.SEntity := ' From "'+ upperCase( trim( stringreplace( QueryAble.SEntity ,'From ','', [] ) ) ) +'"';
+  end;
+end;
+
 function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TClientDataSet;
 var
   Keys: TStringList;
@@ -146,21 +184,17 @@ begin
   try
     try
       FreeObjects;
-      if FProviderName = '' then
-      begin
-        Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
-        FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
+      Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
+      FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
-        FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
+      Prepare(QueryAble);
 
-        CreateProvider(FFDQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')));
+      FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
 
-        CreateClientDataSet(drpProvider);
-      end
-      else
-      begin
-        CreateClientDataSet(nil, GetQuery(QueryAble));
-      end;
+      CreateProvider( FFDQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')) );
+
+      CreateClientDataSet( drpProvider );
+
       result := DbSet;
     except
       on E: Exception do
