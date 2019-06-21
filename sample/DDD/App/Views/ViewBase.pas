@@ -93,6 +93,7 @@ var
 begin
    ViewModelList := TStringList.Create;
    ViewModelList.Delimiter := ',';
+   ViewModelList.QuoteChar:= ' ';
    if grdEntity.Columns.Count > 1 then
    begin
      for I := 0 to grdEntity.Columns.Count - 1 do
