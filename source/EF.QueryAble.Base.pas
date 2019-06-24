@@ -44,9 +44,6 @@ type
     function OrderByDesc(Fields: array of string): IQueryAble; overload;
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
-    //não estou achando seguro manter essa referencia aqui nessa classe!
-    procedure SetEntity(value: TEntityBase);
-    function GetEntity: TEntityBase;
     procedure SetSEntity(value: string);
     function GetSEntity: string;
     procedure SetSJoin(value: string);
@@ -70,7 +67,6 @@ type
     procedure SetSCount(value: string);
     function GetSCount: string;
 
-    property Entity : TEntityBase read GetEntity write SetEntity;
     property SEntity: string read GetSEntity write SetSEntity;
     property SJoin: string read GetSJoin write SetSJoin;
     property SWhere: string read GetSWhere write SetSWhere;
@@ -86,8 +82,6 @@ type
 
   TQueryAble = class(TInterfacedPersistent, IQueryAble)
   private
-    procedure SetEntity(value: TEntityBase);
-    function GetEntity: TEntityBase;
     procedure SetSEntity(value: string);
     function GetSEntity: string;
     procedure SetSJoin(value: string);
@@ -147,7 +141,7 @@ type
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     function GetQuery(Q: IQueryAble): string;
-    property Entity : TEntityBase read GetEntity write SetEntity;
+
 
   end;
 
@@ -224,11 +218,6 @@ begin
                      ifthen(FSConcat <> '', StrUnionAll + FSConcat, ''));
     //oFrom.Free;
   end;
-end;
-
-function TQueryAble.GetEntity: TEntityBase;
-begin
-  result:= FEntity;
 end;
 
 function TQueryAble.GetSConcat: string;
@@ -556,11 +545,6 @@ begin
   TSelect(self).FFields:= _Fields;
   self.FSSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
   result := TSelect(self);
-end;
-
-procedure TQueryAble.SetEntity(value: TEntityBase);
-begin
-  FEntity := Value;
 end;
 
 procedure TQueryAble.SetSConcat(value: string);
