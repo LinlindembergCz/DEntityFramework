@@ -53,7 +53,7 @@ begin
                                 ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                             Include( E.ClienteEmpresa).
                               ThenInclude(E.ClienteEmpresa.Empresa).
-                  ToList<T>( E.IDADE =  43 );
+                  ToList( E.IDADE =  43 );
 
    for Item in ListaCliente do
    begin

@@ -68,15 +68,12 @@ Type
     function ToDataSet(QueryAble: IQueryAble): TClientDataSet;
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): TEntityList;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): TEntityList<T>; overload;
-    function ToList<T: TEntityBase>(Condicion: TString): TEntityList<T>;overload;
+    function ToList(Condicion: TString): TEntityList<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
-    procedure Add(aEntity:TEntityBase = nil);overload;
-    procedure Add<T:TEntityBase>(aEntity:T);overload;
-    procedure Update(aEntity:TEntityBase = nil);overload;
-    procedure Update<T:TEntityBase>(aEntity:T );overload;
-    procedure Remove(aEntity:TEntityBase = nil);overload;
-    procedure Remove<T:TEntityBase>(aEntity:T );overload;
+    procedure Add;
+    procedure Update;
+    procedure Remove;overload;
     procedure SaveChanges;
     procedure AddDirect;
     procedure UpdateDirect;
@@ -207,7 +204,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList<T>(Condicion: TString): TEntityList<T>;
+function TDataContext<T>.ToList(Condicion: TString): TEntityList<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, FirstEntity,  ConcretEntity : TEntityBase;
@@ -434,39 +431,6 @@ begin
   end;
 end;
 
-procedure TDataContext<T>.Add<T>(aEntity: T);
-var
-  ListValues: TStringList;
-  i: integer;
-begin
-  if aEntity <> nil then
-    FEntity:= aEntity as T;
-  FEntity.Validation;
-  if DbSet <> nil then
-  begin
-    try
-      try
-        if ListField = nil then
-           ListField := TAutoMapper.GetFieldsList(FEntity);
-        ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
-        DbSet.append;
-        pParserDataSet(ListField, ListValues, DbSet);
-        DbSet.Post;
-      except
-        on E: Exception do
-        begin
-          raise Exception.Create(E.message);
-        end;
-      end;
-    finally
-      //ListField.Free;
-      ListValues.Free;
-    end;
-  end
-  else
-    AddDirect;
-end;
-
 
 procedure TDataContext<T>.AddDirect;
 var
@@ -479,13 +443,11 @@ begin
   FConnection.ExecutarSQL(SQLInsert);
 end;
 
-procedure TDataContext<T>.Add(aEntity:TEntityBase = nil);
+procedure TDataContext<T>.Add;
 var
   ListValues: TStringList;
   i: integer;
 begin
-  if aEntity <> nil then
-    FEntity:= aEntity;
   FEntity.Validation;
   if DbSet <> nil then
   begin
@@ -512,14 +474,11 @@ begin
     AddDirect;
 end;
 
-procedure TDataContext<T>.Update(aEntity:TEntityBase = nil);
+procedure TDataContext<T>.Update;
 var
    ListValues: TStringList;
   i: integer;
 begin
-  if aEntity <> nil then
-    FEntity:= aEntity;
-
   FEntity.Validation;
   if DbSet <> nil then
   begin
@@ -546,42 +505,6 @@ begin
   end
   else
     UpdateDirect;
-end;
-
-procedure TDataContext<T>.Update<T>(aEntity: T);
-var
-   ListValues: TStringList;
-  i: integer;
-begin
-  if aEntity <> nil then
-    FEntity:= aEntity  as TEntityBase;
-  FEntity.Validation;
-  if DbSet <> nil then
-  begin
-    try
-      try
-        if ListField = nil then
-           ListField := TAutoMapper.GetFieldsList(FEntity);
-        ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
-        DbSet.Edit;
-        pParserDataSet(ListField, ListValues, DbSet);
-        DbSet.Post;
-      except
-        on E: Exception do
-        begin
-          raise Exception.Create(E.message);
-        end;
-      end;
-    finally
-      //ListField.Free;
-      //ListField := nil;
-      ListValues.Free;
-      ListValues := nil;
-    end;
-  end
-  else
-    UpdateDirect;
-
 end;
 
 procedure TDataContext<T>.UpdateDirect;
@@ -691,16 +614,11 @@ begin
   TableName := uppercase(FSEntity);
 end;
 
-procedure TDataContext<T>.Remove(aEntity:TEntityBase = nil);
+procedure TDataContext<T>.Remove;
 begin
   //Refatorar
   if (DbSet.Active) and (not DbSet.IsEmpty) then
     DbSet.Delete;
-end;
-
-procedure TDataContext<T>.Remove<T>(aEntity: T);
-begin
-
 end;
 
 procedure TDataContext<T>.SaveChanges;
