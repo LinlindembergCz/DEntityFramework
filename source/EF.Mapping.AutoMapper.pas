@@ -680,7 +680,8 @@ begin
     begin
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
-        if uppercase(Field.Name) = uppercase('F' + Prop.Name) then
+        if (uppercase(Field.Name) = uppercase('F' + Prop.Name)) and
+           (Prop.Name <> 'CollateOn')  then
         begin
           Value := GetValueField(E, Field);
           if values = '' then
@@ -710,7 +711,8 @@ begin
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
         if (uppercase(Field.Name) = uppercase('F' + Propert)) and
-            (uppercase(Propert) = uppercase(Prop.Name)) then
+            (uppercase(Propert) = uppercase(Prop.Name)) and
+            (Prop.Name <> 'CollateOn')  then
         begin
           Value := GetValueField(E, Field);
           if values = '' then
