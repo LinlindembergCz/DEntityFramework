@@ -31,6 +31,7 @@ Type
   private
     ListObjectsInclude:TList;
     ListObjectsThenInclude:TList;
+    //Classes: array of TClass;
     FFDQuery: TFDQuery;
     drpProvider: TDataSetProvider;
     FDbSet: TClientDataSet;
@@ -40,11 +41,14 @@ Type
     FTypeConnetion: TTypeConnection;
 
     ListField: TStringList;
-    FEntity: T;
+    //function CreateTables: boolean; // (aClass: array of TClass);
+    //function AlterTables: boolean;
     procedure FreeObjects;
+   //function CreateSingleTable(i: integer): boolean;
+    //function IsFireBird: boolean;
     function PutQuoted(Fields: string):string;
     procedure Prepare(QueryAble: IQueryAble);
-    procedure SetEntity(const Value: T);
+
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
@@ -53,7 +57,7 @@ Type
     property Connection: TEntityConn read FConnection write FConnection;
   public
     destructor Destroy; override;
-    constructor Create(proEntity: T ); overload; virtual;
+    constructor Create(proEntity: TEntityBase = nil); overload; virtual;
     function Find(QueryAble: IQueryAble): TEntityBase;overload;
     function Find<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
     function Where<T:TEntityBase>(Condicion: TString): T;
@@ -67,18 +71,22 @@ Type
     function ToList<T: TEntityBase>(Condicion: TString): TEntityList<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
-    procedure Add;overload;
-    procedure Update;overload;
-    procedure Remove;overload;
+    procedure Add(aEntity:TEntityBase = nil);overload;
+    procedure Add<T:TEntityBase>(aEntity:T);overload;
+    procedure Update(aEntity:TEntityBase = nil);overload;
+    procedure Update<T:TEntityBase>(aEntity:T );overload;
+    procedure Remove(aEntity:TEntityBase = nil);overload;
+    procedure Remove<T:TEntityBase>(aEntity:T );overload;
     procedure SaveChanges;
     procedure AddDirect;
     procedure UpdateDirect;
     procedure RemoveDirect;
+
+  //function UpdateDataBase(aClasses: array of TClass): boolean;
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
 
-    property Entity : T read FEntity write SetEntity;
   published
     property DbSet: TClientDataSet read FDbSet write FDbSet;
     property ProviderName: string read FProviderName write FProviderName;
@@ -176,7 +184,7 @@ begin
   try
     try
       FreeObjects;
-      Keys := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
+      Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
       FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
       Prepare(QueryAble);
@@ -338,7 +346,7 @@ var
   E: T;
 begin
   try
-    FEntity := Entity;
+    FEntity := QueryAble.Entity;
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
     List := TEntityList<T>.Create;
     DataSet := TClientDataSet.Create(Application);
@@ -365,7 +373,7 @@ var
   Json: string;
 begin
   try
-    FEntity := Entity;
+    FEntity := QueryAble.Entity;
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
 
     if EntityList = nil then
@@ -397,11 +405,11 @@ var
 begin
   try
     //FEntity := QueryAble.Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.Entity.ClassType);
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := ToData(QueryAble);
-    TAutoMapper.DataToEntity(DataSet, Entity);
-    result := Entity;
+    TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
+    result := QueryAble.Entity;
   finally
      DataSet.Free;
      DataSet:= nil;
@@ -426,24 +434,13 @@ begin
   end;
 end;
 
-procedure TDataContext<T>.AddDirect;
-var
-  SQLInsert: string;
-begin
-  SQLInsert := Format('Insert into %s ( %s ) values ( %s ) ',
-                      [TAutoMapper.GetTableAttribute(FEntity.ClassType),
-                      TAutoMapper.GetAttributies(FEntity),
-                      TAutoMapper.GetValuesFields(FEntity)]);
-  FConnection.ExecutarSQL(SQLInsert);
-end;
-
-procedure TDataContext<T>.Add;
+procedure TDataContext<T>.Add<T>(aEntity: T);
 var
   ListValues: TStringList;
   i: integer;
 begin
-  {if aEntity <> nil then
-    FEntity:= aEntity; }
+  if aEntity <> nil then
+    FEntity:= aEntity as T;
   FEntity.Validation;
   if DbSet <> nil then
   begin
@@ -470,13 +467,58 @@ begin
     AddDirect;
 end;
 
-procedure TDataContext<T>.Update;
+
+procedure TDataContext<T>.AddDirect;
+var
+  SQLInsert: string;
+begin
+  SQLInsert := Format('Insert into %s ( %s ) ) values ( %s ) ',
+                      [TAutoMapper.GetTableAttribute(FEntity.ClassType),
+                      TAutoMapper.GetAttributies(FEntity),
+                      TAutoMapper.GetValuesFields(FEntity)]);
+  FConnection.ExecutarSQL(SQLInsert);
+end;
+
+procedure TDataContext<T>.Add(aEntity:TEntityBase = nil);
+var
+  ListValues: TStringList;
+  i: integer;
+begin
+  if aEntity <> nil then
+    FEntity:= aEntity;
+  FEntity.Validation;
+  if DbSet <> nil then
+  begin
+    try
+      try
+        if ListField = nil then
+           ListField := TAutoMapper.GetFieldsList(FEntity);
+        ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
+        DbSet.append;
+        pParserDataSet(ListField, ListValues, DbSet);
+        DbSet.Post;
+      except
+        on E: Exception do
+        begin
+          raise Exception.Create(E.message);
+        end;
+      end;
+    finally
+      //ListField.Free;
+      ListValues.Free;
+    end;
+  end
+  else
+    AddDirect;
+end;
+
+procedure TDataContext<T>.Update(aEntity:TEntityBase = nil);
 var
    ListValues: TStringList;
   i: integer;
 begin
-  {if aEntity <> nil then
-    FEntity:= aEntity;}
+  if aEntity <> nil then
+    FEntity:= aEntity;
 
   FEntity.Validation;
   if DbSet <> nil then
@@ -504,6 +546,42 @@ begin
   end
   else
     UpdateDirect;
+end;
+
+procedure TDataContext<T>.Update<T>(aEntity: T);
+var
+   ListValues: TStringList;
+  i: integer;
+begin
+  if aEntity <> nil then
+    FEntity:= aEntity  as TEntityBase;
+  FEntity.Validation;
+  if DbSet <> nil then
+  begin
+    try
+      try
+        if ListField = nil then
+           ListField := TAutoMapper.GetFieldsList(FEntity);
+        ListValues := TAutoMapper.GetValuesFieldsList(FEntity);
+        DbSet.Edit;
+        pParserDataSet(ListField, ListValues, DbSet);
+        DbSet.Post;
+      except
+        on E: Exception do
+        begin
+          raise Exception.Create(E.message);
+        end;
+      end;
+    finally
+      //ListField.Free;
+      //ListField := nil;
+      ListValues.Free;
+      ListValues := nil;
+    end;
+  end
+  else
+    UpdateDirect;
+
 end;
 
 procedure TDataContext<T>.UpdateDirect;
@@ -573,7 +651,7 @@ function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
   Keys: TStringList;
 begin
   try
-    Keys     := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
+    Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
     FSEntity := TAutoMapper.GetTableAttribute(FEntity.ClassType);
     FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
     if not FFDQuery.Active then
@@ -613,22 +691,22 @@ begin
   TableName := uppercase(FSEntity);
 end;
 
-procedure TDataContext<T>.Remove;
+procedure TDataContext<T>.Remove(aEntity:TEntityBase = nil);
 begin
   //Refatorar
   if (DbSet.Active) and (not DbSet.IsEmpty) then
     DbSet.Delete;
 end;
 
+procedure TDataContext<T>.Remove<T>(aEntity: T);
+begin
+
+end;
+
 procedure TDataContext<T>.SaveChanges;
 begin
   if ChangeCount > 0 then
     DbSet.ApplyUpdates(0);
-end;
-
-procedure TDataContext<T>.SetEntity(const Value: T);
-begin
-  FEntity := Value;
 end;
 
 procedure TDataContext<T>.RefreshDataSet;
@@ -655,7 +733,7 @@ begin
   // drpProvider.ResolveToDataSet:= true;
 end;
 
-constructor TDataContext<T>.Create(proEntity: T );
+constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
 begin
   FEntity := proEntity;
 end;
@@ -699,7 +777,7 @@ begin
        ListObjectsInclude:= TList.Create;
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
-       ListObjectsInclude.Add(FEntity.classInfo);
+       ListObjectsInclude.Add(FEntity);
 
     I:=0;
     j:=0;
@@ -789,7 +867,7 @@ begin
          break;
     end;
 
-    FEntity := FirstEntity.ClassInfo;
+    FEntity := FirstEntity;
     result  := FirstEntity;
 
   finally
@@ -809,7 +887,7 @@ begin
    if ListObjectsInclude = nil then
    begin
       ListObjectsInclude:= TList.Create;
-      ListObjectsInclude.Add(FEntity.classInfo);
+      ListObjectsInclude.Add(FEntity);
    end;
    if ListObjectsThenInclude = nil then
    begin
