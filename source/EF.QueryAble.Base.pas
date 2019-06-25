@@ -22,8 +22,6 @@ type
   TFrom = class;
   TSelect = class;
 
-
-
   IQueryAble = Interface(IInterface)
     ['{554062C0-0BD3-4378-BFA2-DFA85CCC5938}']
     function Inner(E: string; _On: string): IQueryAble; overload;
@@ -86,6 +84,7 @@ type
 
   TQueryAble = class(TInterfacedPersistent, IQueryAble)
   private
+    FEntity: TEntityBase;
     procedure SetEntity(value: TEntityBase);
     function GetEntity: TEntityBase;
     procedure SetSEntity(value: string);
@@ -113,7 +112,6 @@ type
     function GetSExcept: string;
   protected
     oFrom: TFrom;
-    FEntity: TEntityBase;
     FSWhere: String;
     FSOrder: string;
     FSSelect: string;
