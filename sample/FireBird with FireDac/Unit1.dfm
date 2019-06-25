@@ -98,6 +98,15 @@ object Form1: TForm1
       TabOrder = 6
       OnClick = Button4Click
     end
+    object Button5: TButton
+      Left = 14
+      Top = 224
+      Width = 147
+      Height = 25
+      Caption = 'ThenInclude'
+      TabOrder = 7
+      OnClick = Button5Click
+    end
   end
   object Panel2: TPanel
     Left = 185
