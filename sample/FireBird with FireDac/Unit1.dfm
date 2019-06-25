@@ -32,22 +32,13 @@ object Form1: TForm1
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    object buttonInsert: TButton
-      Left = 14
-      Top = 143
-      Width = 147
-      Height = 25
-      Caption = 'Insert'
-      TabOrder = 0
-      OnClick = buttonInsertClick
-    end
     object buttonLoadData: TButton
       Left = 14
       Top = 7
       Width = 147
       Height = 25
       Caption = 'Load Data'
-      TabOrder = 1
+      TabOrder = 0
       OnClick = buttonLoadDataClick
     end
     object buttonGetDataSet: TButton
@@ -56,7 +47,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Get DataSet'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = buttonGetDataSetClick
     end
     object buttonGetSQL: TButton
@@ -65,7 +56,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Get SQL'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = buttonGetSQLClick
     end
     object buttonGetEntity: TButton
@@ -74,43 +65,25 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Get Entity'
-      TabOrder = 4
+      TabOrder = 3
       OnClick = buttonGetEntityClick
-    end
-    object buttonUpdate: TButton
-      Left = 14
-      Top = 174
-      Width = 147
-      Height = 25
-      Caption = 'Update'
-      TabOrder = 5
-      OnClick = buttonUpdateClick
-    end
-    object buttonDelete: TButton
-      Left = 14
-      Top = 205
-      Width = 147
-      Height = 25
-      Caption = 'Delete'
-      TabOrder = 6
-      OnClick = buttonDeleteClick
     end
     object Button2: TButton
       Left = 14
-      Top = 236
+      Top = 131
       Width = 147
       Height = 25
       Caption = 'TOJSON'
-      TabOrder = 7
+      TabOrder = 4
       OnClick = Button2Click
     end
     object Button3: TButton
       Left = 14
-      Top = 267
+      Top = 162
       Width = 147
       Height = 25
       Caption = 'FromJSON'
-      TabOrder = 8
+      TabOrder = 5
       OnClick = Button3Click
     end
   end

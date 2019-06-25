@@ -31,13 +31,13 @@ type
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
-    procedure buttonUpdateClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
+     E: TCliente;
     Context: TDataContext<TCliente>;
     QueryAble: IQueryAble;
     { Public declarations }
@@ -53,8 +53,7 @@ implementation
 uses UDataModule, EF.Mapping.AutoMapper;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var
-  E: TCliente;
+
 begin
   E:= TCliente.Create;
   E.Mapped := TAutoMapper.ToMapping(E, true, false );
@@ -84,46 +83,38 @@ end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
- QueryAble := From   ( Context.Entity )
-              .Select([ Context.Entity.Id, Context.Entity.Nome, Context.Entity.Observacao ])
-              .OrderBy ( Context.Entity.Nome );
+ QueryAble := From   ( E )
+              .Select([ E.Id, E.Nome, E.Observacao ])
+              .OrderBy ( E.Nome );
  DataSource1.DataSet := Context.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
 begin
- QueryAble := From   ( Context.Entity )
+ QueryAble := From   ( E )
               .Select
-              .Where ( Context.Entity.Id = 2 );
- Context.Entity := Context.Find( QueryAble ) as TCliente;
- mlog.Lines.Text := 'Nome: ' + Context.Entity.Nome.Value;
+              .Where ( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+ Context.Entity := Context.Find( QueryAble );
+
+ mlog.Lines.Add('ID: ' + E.ID.Value.ToString );
+ mlog.Lines.Add('Nome: ' + E.Nome.Value);
 end;
 
 procedure TForm1.buttonGetSQLClick(Sender: TObject);
 begin
- QueryAble := From   ( Context.Entity )
-              .Select([ Context.Entity.Id, Context.Entity.Nome, Context.Entity.Observacao ])
-              .OrderBy ( Context.Entity.Nome );
+ QueryAble := From   ( E )
+              .Select([ E.Id, E.Nome, E.Observacao ])
+              .OrderBy ( E.Nome );
  mlog.Lines.Text := Context.GetQuery( QueryAble );
 end;
 
 procedure TForm1.buttonLoadDataClick(Sender: TObject);
 begin
- QueryAble := From   ( Context.Entity )
-              .Select([ Context.Entity.Id, Context.Entity.Nome, Context.Entity.Observacao ])
-              .OrderBy ( Context.Entity.Nome );
+ QueryAble := From   ( E )
+              .Select([ E.Id, E.Nome, E.Observacao ])
+              .OrderBy ( E.Nome );
  DataSource1.DataSet := ClientDataSet1;
  ClientDataSet1.Data := Context.ToData( QueryAble );
-end;
-
-procedure TForm1.buttonUpdateClick(Sender: TObject);
-begin
- QueryAble := From   ( Context.Entity )
-              .Select
-              .Where ( Context.Entity.Id = 2 );
- Context.Entity := Context.Find( QueryAble ) as TCliente;
- Context.Entity.Observacao := 'Alterado em: ' + datetimeToStr( Now() );
- Context.UpdateDirect;
 end;
 
 end.
