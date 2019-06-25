@@ -27,17 +27,20 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 185
-    Height = 399
+    Height = 344
     Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = -4
+    ExplicitTop = -6
+    ExplicitHeight = 399
     object buttonLoadData: TButton
       Left = 14
       Top = 7
       Width = 147
       Height = 25
-      Caption = 'Load Data'
+      Caption = 'ToData'
       TabOrder = 0
       OnClick = buttonLoadDataClick
     end
@@ -46,7 +49,7 @@ object Form1: TForm1
       Top = 38
       Width = 147
       Height = 25
-      Caption = 'Get DataSet'
+      Caption = 'ToDataSet'
       TabOrder = 1
       OnClick = buttonGetDataSetClick
     end
@@ -55,7 +58,7 @@ object Form1: TForm1
       Top = 69
       Width = 147
       Height = 25
-      Caption = 'Get SQL'
+      Caption = 'GetQuery'
       TabOrder = 2
       OnClick = buttonGetSQLClick
     end
@@ -64,7 +67,7 @@ object Form1: TForm1
       Top = 100
       Width = 147
       Height = 25
-      Caption = 'Get Entity'
+      Caption = 'Find'
       TabOrder = 3
       OnClick = buttonGetEntityClick
     end
@@ -73,7 +76,7 @@ object Form1: TForm1
       Top = 131
       Width = 147
       Height = 25
-      Caption = 'TOJSON'
+      Caption = 'ToJson'
       TabOrder = 4
       OnClick = Button2Click
     end
@@ -82,26 +85,36 @@ object Form1: TForm1
       Top = 162
       Width = 147
       Height = 25
-      Caption = 'FromJSON'
+      Caption = 'FromJson'
       TabOrder = 5
       OnClick = Button3Click
+    end
+    object Button4: TButton
+      Left = 14
+      Top = 193
+      Width = 147
+      Height = 25
+      Caption = 'Include'
+      TabOrder = 6
+      OnClick = Button4Click
     end
   end
   object Panel2: TPanel
     Left = 185
     Top = 0
     Width = 561
-    Height = 399
+    Height = 344
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
+    ExplicitHeight = 399
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
       Width = 557
-      Height = 255
+      Height = 200
       Align = alClient
       DataSource = DataSource1
       TabOrder = 0
@@ -113,7 +126,7 @@ object Form1: TForm1
     end
     object panelEdits: TPanel
       Left = 0
-      Top = 255
+      Top = 200
       Width = 557
       Height = 140
       Align = alBottom
@@ -121,13 +134,14 @@ object Form1: TForm1
       BevelOuter = bvNone
       Caption = 'panelEdits'
       TabOrder = 1
+      ExplicitTop = 255
     end
   end
   object mLog: TMemo
     Left = 0
-    Top = 399
+    Top = 344
     Width = 746
-    Height = 89
+    Height = 144
     Align = alBottom
     TabOrder = 3
   end

@@ -25,15 +25,16 @@ type
     buttonGetEntity: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure buttonLoadDataClick(Sender: TObject);
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
-    procedure buttonDeleteClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -75,10 +76,17 @@ begin
   Context.Entity.FromJson(mLog.Text);
 end;
 
-procedure TForm1.buttonDeleteClick(Sender: TObject);
+procedure TForm1.Button4Click(Sender: TObject);
+var
+  C:TCliente;
 begin
- Context.Entity.Id := 5;
- Context.RemoveDirect;
+    C:= Context.Include(E.Veiculo).Where<TCliente>( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
+
+    mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
+    mlog.Lines.Add('Nome: ' + C.Nome.Value);
+    mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+
+    FreeAndNIL(C);
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
