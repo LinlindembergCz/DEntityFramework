@@ -67,7 +67,7 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  ReportMemoryLeaksOnShutdown:= true;
+  //ReportMemoryLeaksOnShutdown:= true;
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   try
     c:= TFactoryConnection.GetConnection(FormPrincipal.FDConnection1);

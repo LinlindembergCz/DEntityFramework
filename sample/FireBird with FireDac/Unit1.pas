@@ -27,8 +27,10 @@ type
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
+    Button6: TButton;
+    Button7: TButton;
+    Button8: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure buttonLoadDataClick(Sender: TObject);
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
@@ -37,6 +39,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -61,11 +64,7 @@ begin
   E:= TCliente.Create;
   E.Mapped := TAutoMapper.ToMapping(E, true, false );
   Context := TDataContext<TCliente>.Create( E );
-end;
-
-procedure TForm1.FormShow(Sender: TObject);
-begin
- Context.Connection := DataModule1.FConnection;
+  Context.Connection := DataModule1.FConnection;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -107,11 +106,38 @@ begin
 
 end;
 
+procedure TForm1.Button6Click(Sender: TObject);
+var
+  //C:  TDataContext<TCliente>;
+  E: TCliente;
+begin
+  //E.Mapped := TAutoMapper.ToMapping(E, true, false );
+  //C:= TDataContext<TCliente>.Create( E );
+  //C.Connection := DataModule1.FConnection;
+
+  E:= TCliente.Create;
+
+  E.Nome:= 'jesus Cristo de nazare';
+  E.NomeFantasia:= 'jesus Cristo de nazare';
+  E.CPFCNPJ:= '02316937454';
+  E.RG:= '1552666';
+  E.Ativo:= '1';
+  E.DataNascimento := strtodate('19/04/1976');
+  E.Email.value := 'lindemberg.desenvolvimento@gmail.com';
+
+  Context.Entity:= E;
+
+  Context.Add;
+
+  Context.SaveChanges;
+
+  buttonGetDataSet.Click;
+
+end;
+
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
- QueryAble := From   ( E )
-              .Select([ E.Id, E.Nome, E.Observacao ])
-              .OrderBy ( E.Nome );
+ QueryAble := From( E ).Select.OrderBy ( E.Nome );
  DataSource1.DataSet := Context.ToDataSet( QueryAble );
 end;
 
@@ -136,8 +162,8 @@ end;
 
 procedure TForm1.buttonLoadDataClick(Sender: TObject);
 begin
- QueryAble := From   ( E )
-              .Select([ E.Id, E.Nome, E.Observacao ])
+ QueryAble := From( E )
+              .Select
               .OrderBy ( E.Nome );
  DataSource1.DataSet := ClientDataSet1;
  ClientDataSet1.Data := Context.ToData( QueryAble );

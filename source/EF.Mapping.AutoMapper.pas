@@ -34,7 +34,7 @@ type
 
     class function GetTableAttribute(Obj: TClass): String; overload;
     class function GetTableAttribute(ClassInfo: Pointer): String; overload;
-    class function GetAttributies(E: TEntityBase;OnlyPublished:boolean = false): String; static;
+    class function GetAttributies(E: TEntityBase;OnlyPublished:boolean = false; WithID:boolean =true): String; static;
     class function GetListAtributesForeignKeys(Obj: TClass): TList; static;
     class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
 
@@ -43,7 +43,7 @@ type
     class function GetFieldsPrimaryKeyList(E: TEntityBase): TStringList;
 
     class function GetListAtributes(Obj: TClass): TList;
-    class function GetValuesFields(E: TEntityBase): String; static;
+    class function GetValuesFields(E: TEntityBase; WithID :boolean = true): String; static;
     class function GetValuesFieldsList(E: TEntityBase; WithId:boolean = false): TStringList; static;
     class function GetValuesFieldsPrimaryKeyList(E: TEntityBase)
       : TStringList; static;
@@ -309,7 +309,7 @@ begin
   end;
 end;
 
-class function TAutoMapper.GetAttributies(E: TEntityBase;OnlyPublished: boolean = false): String;
+class function TAutoMapper.GetAttributies(E: TEntityBase;OnlyPublished: boolean = false; WithID:boolean = true): String;
 var
   Prop: TRttiProperty;
   Attributies: string;
@@ -338,7 +338,7 @@ begin
            end;
            if not FoundAttribute then
            begin
-              FieldName := GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true );
+              FieldName := GetAttributies( GetObjectProp(E ,Prop.Name) as TEntityBase , true, WithID );
               if FieldName <> '' then
                  Attributies := Attributies + ', ' + FieldName;
            end;
@@ -348,8 +348,11 @@ begin
            ctx2 := TRttiContext.Create;
            for Atributo in Prop.GetAttributes do
            begin
-             if (PropIsVisible(Prop) and (OnlyPublished)) or (not OnlyPublished) then
+             if ( (PropIsVisible(Prop) and (OnlyPublished)) or (not OnlyPublished) )  then
              begin
+               if ( (uppercase(Prop.Name) = 'ID' ) and (not WithID ) ) then
+                 break;
+
                FoundAttribute:= false;
                if Atributo is FieldTable then
                begin
@@ -662,12 +665,12 @@ begin
   begin
     dDatetime := Val.AsType<TDate>;
     if not fEmpty(dDatetime.Value) then
-      Value := datetostr(dDatetime.Value);
+      Value := datetostr(dDatetime.Value); //quotedstr( FormatDateTime('YYYY-MM-DD',dDatetime.Value) );
   end;
   result := Value;
 end;
 
-class function TAutoMapper.GetValuesFields(E: TEntityBase): String;
+class function TAutoMapper.GetValuesFields(E: TEntityBase; WithID :boolean = true): String;
 var
   ctx: TRttiContext;
   Prop: TRttiProperty;
@@ -680,8 +683,8 @@ begin
     begin
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
-        if (uppercase(Field.Name) = uppercase('F' + Prop.Name)) and
-           (Prop.Name <> 'CollateOn')  then
+        if ( (uppercase(Field.Name) = uppercase('F' + Prop.Name)) and
+           (Prop.Name <> 'CollateOn') ) or  ( (uppercase(Prop.Name) = 'ID' ) and (WithID ) )  then
         begin
           Value := GetValueField(E, Field);
           if values = '' then
@@ -723,6 +726,8 @@ begin
         end;
       end;
     end;
+    if (uppercase(Propert) = uppercase(Prop.Name)) then
+       break;
   end;
   result := fStringReplace( values, '''', '' );
 end;

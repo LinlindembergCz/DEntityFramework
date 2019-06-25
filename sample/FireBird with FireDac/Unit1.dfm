@@ -12,7 +12,6 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
@@ -27,14 +26,11 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 185
-    Height = 344
+    Height = 350
     Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = -4
-    ExplicitTop = -6
-    ExplicitHeight = 399
     object buttonLoadData: TButton
       Left = 14
       Top = 7
@@ -107,23 +103,49 @@ object Form1: TForm1
       TabOrder = 7
       OnClick = Button5Click
     end
+    object Button6: TButton
+      Left = 14
+      Top = 255
+      Width = 147
+      Height = 25
+      Caption = 'Add'
+      TabOrder = 8
+      OnClick = Button6Click
+    end
+    object Button7: TButton
+      Left = 14
+      Top = 286
+      Width = 147
+      Height = 25
+      Caption = 'Update'
+      Enabled = False
+      TabOrder = 9
+    end
+    object Button8: TButton
+      Left = 15
+      Top = 314
+      Width = 147
+      Height = 25
+      Caption = 'Remove'
+      Enabled = False
+      TabOrder = 10
+    end
   end
   object Panel2: TPanel
     Left = 185
     Top = 0
     Width = 561
-    Height = 344
+    Height = 350
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitHeight = 399
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
       Width = 557
-      Height = 200
+      Height = 206
       Align = alClient
       DataSource = DataSource1
       TabOrder = 0
@@ -135,7 +157,7 @@ object Form1: TForm1
     end
     object panelEdits: TPanel
       Left = 0
-      Top = 200
+      Top = 206
       Width = 557
       Height = 140
       Align = alBottom
@@ -143,14 +165,13 @@ object Form1: TForm1
       BevelOuter = bvNone
       Caption = 'panelEdits'
       TabOrder = 1
-      ExplicitTop = 255
     end
   end
   object mLog: TMemo
     Left = 0
-    Top = 344
+    Top = 350
     Width = 746
-    Height = 144
+    Height = 138
     Align = alBottom
     TabOrder = 3
   end

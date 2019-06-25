@@ -2,7 +2,6 @@ program Project1;
 
 uses
   Vcl.Forms,
-  Unit1 in 'Unit1.pas' {Form1},
   UDataModule in 'UDataModule.pas' {DataModule1: TDataModule},
   Data.DB.Helper in '..\..\source\Data.DB.Helper.pas',
   System.uJson in '..\..\source\System.uJson.pas',
@@ -19,14 +18,15 @@ uses
   Domain.Entity.Produto in '..\DDD\Domain\Entities\Domain.Entity.Produto.pas',
   Domain.Entity.TabelaPreco in '..\DDD\Domain\Entities\Domain.Entity.TabelaPreco.pas',
   Domain.Entity.Veiculo in '..\DDD\Domain\Entities\Domain.Entity.Veiculo.pas',
-  GenericFactory in '..\DDD\Domain\Factories\GenericFactory.pas';
+  GenericFactory in '..\DDD\Domain\Factories\GenericFactory.pas',
+  Unit1 in 'Unit1.pas' {Form1};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

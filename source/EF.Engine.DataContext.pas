@@ -436,12 +436,18 @@ end;
 
 procedure TDataContext<T>.AddDirect;
 var
+  ListValues: TstringList;
   SQLInsert: string;
 begin
-  SQLInsert := Format('Insert into %s ( %s ) values ( %s ) ',
+   if ListField = nil then
+      ListField := TAutoMapper.GetFieldsList(Entity);
+   ListValues := TAutoMapper.GetValuesFieldsList(Entity, False);
+   //Cuidado com o formato do tipo TDate em alguns bancos o formato ANO/MES/DIA  e em alguns DIA/MES/ANO
+   SQLInsert := Format('Insert into %s ( %s ) values ( %s ) ',
                       [TAutoMapper.GetTableAttribute(Entity.ClassType),
-                      TAutoMapper.GetAttributies(Entity),
-                      TAutoMapper.GetValuesFields(Entity)]);
+                       TAutoMapper.GetAttributies(Entity, false, false),
+                       TAutoMapper.GetValuesFields(Entity, false )]);
+
   FConnection.ExecutarSQL(SQLInsert);
 end;
 
