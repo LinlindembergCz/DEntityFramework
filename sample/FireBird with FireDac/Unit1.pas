@@ -29,6 +29,7 @@ type
     Button6: TButton;
     Button7: TButton;
     Button8: TButton;
+    Button9: TButton;
     procedure FormCreate(Sender: TObject);
     procedure buttonLoadDataClick(Sender: TObject);
     procedure buttonGetDataSetClick(Sender: TObject);
@@ -40,6 +41,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -56,7 +58,7 @@ implementation
 
 {$R *.dfm}
 
-uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Contato;
+uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Contato, EF.Core.Types;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -158,20 +160,29 @@ begin
   DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
 end;
 
+procedure TForm1.Button9Click(Sender: TObject);
+var
+  L:TEntityList<TCliente>;
+  C:TCliente;
+begin
+   L := Context.ToList( E.Ativo = '1' );
+   for C in L do
+   begin
+      mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value);
+   end;
+end;
+
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
- QueryAble := From( E ).Select.OrderBy ( E.Nome );
- DataSource1.DataSet := Context.ToDataSet( QueryAble );
+   QueryAble := From( E ).Select.OrderBy ( E.Nome );
+   DataSource1.DataSet := Context.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
 begin
- QueryAble := From( E ).Select.Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
-
- E := Context.Find<TCliente>( QueryAble );
-
- mlog.Lines.Add('ID: ' + E.ID.Value.ToString );
- mlog.Lines.Add('Nome: ' + E.Nome.Value);
+   QueryAble := From( E ).Select.Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+   E := Context.Find<TCliente>( QueryAble );
+   mlog.Lines.Add('ID: ' + E.ID.Value.ToString+'      Nome: ' + E.Nome.Value);
 end;
 
 procedure TForm1.buttonGetSQLClick(Sender: TObject);

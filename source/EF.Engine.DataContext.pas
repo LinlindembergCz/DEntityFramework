@@ -225,104 +225,108 @@ begin
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
     ListEntity := ToList<T>( From( T ).Where( Condicion ).Select );
-    for H := 0 to ListEntity.Count - 1 do
+
+    if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
     begin
-      I:= 0;
-      while I <= maxInclude do
+      for H := 0 to ListEntity.Count - 1 do
       begin
-        IndexInclude:= i;
-        if ListObjectsInclude.Items[IndexInclude] <> nil then
+        I:= 0;
+        while I <= maxInclude do
         begin
-          try
-            if i = 0 then
-            begin
-              Json:= (ListEntity.Items[H] as T).ToJson;
-              FirstEntity := T.Create;
-              FirstEntity.FromJson( Json );
-              FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-            end
-            else
-            begin
-              CurrentEntidy := ListObjectsInclude.Items[IndexInclude];
-              ValueId:= FirstEntity.Id.Value.ToString;
-              if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+          IndexInclude:= i;
+          if ListObjectsInclude.Items[IndexInclude] <> nil then
+          begin
+            try
+              if i = 0 then
               begin
-                 CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-                 ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
-                                 Where( FirstTable+'Id='+ ValueId ).Select, CurrentEntidy  );
+                Json:= (ListEntity.Items[H] as T).ToJson;
+                FirstEntity := T.Create;
+                FirstEntity.FromJson( Json );
+                FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
               end
               else
               begin
-                 TAutoMapper.SetObject( FirstEntity,
-                                        CurrentEntidy.ClassName,
-                                        Find( From(CurrentEntidy.ClassType).
-                                                    Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                                    Select ) );
-              end;
-            end;
-          finally
-            Inc(I);
-            FreeObjects;
-          end;
-        end
-        else
-        begin
-          ReferenceEntidy  := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName ) as TEntityBase;
-          json := (TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase).ToJson;
-          ReferenceEntidy.FromJson( json );
-
-          TAutoMapper.SetObject( FirstEntity,
-                                 ReferenceEntidy.ClassName,
-                                 ReferenceEntidy );
-
-          TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
-          for j := i-1 to maxthenInclude do
-          begin
-            try
-              if ListObjectsthenInclude.Items[j] <> nil then
-              begin
-                CurrentEntidy:= ListObjectsthenInclude.Items[j];
+                CurrentEntidy := ListObjectsInclude.Items[IndexInclude];
+                ValueId:= FirstEntity.Id.Value.ToString;
                 if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
                 begin
-                  CurrentList := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName );
-                  ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
-                  ToList( From( TEntityList(CurrentEntidy).List.ClassType).
-                          Where( TableForeignKey+'Id='+ ValueId ).Select, CurrentList );
-                  TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
-                  ReferenceEntidy := nil;
-                  ReferenceEntidyList:=  CurrentList;
+                   CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
+                   ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
+                                   Where( FirstTable+'Id='+ ValueId ).Select, CurrentEntidy  );
                 end
                 else
                 begin
-                  TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-                  ValueId:=     TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id');
-                  if ValueId <> '' then
-                  begin
-                     Json:= Find( From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select ).ToJson;
-                     ConcretEntity := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName) as TEntityBase;
-                     ConcretEntity.FromJson( Json );
-                     TAutoMapper.SetObject( ReferenceEntidy, ConcretEntity.ClassName, ConcretEntity );
-                  end;
-                  ReferenceEntidy :=  ConcretEntity  as TEntityBase;
-                  TableForeignKey := Copy(ConcretEntity.ClassName,2,length(ConcretEntity.ClassName) );
-
-                  ReferenceEntidyList:= nil;
+                   TAutoMapper.SetObject( FirstEntity,
+                                          CurrentEntidy.ClassName,
+                                          Find( From(CurrentEntidy.ClassType).
+                                                      Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                                                      Select ) );
                 end;
-                Inc(I);
-              end
-              else
-              begin
-                break;
               end;
             finally
+              Inc(I);
               FreeObjects;
             end;
+          end
+          else
+          begin
+            ReferenceEntidy  := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName ) as TEntityBase;
+            json := (TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase).ToJson;
+            ReferenceEntidy.FromJson( json );
+
+            TAutoMapper.SetObject( FirstEntity,
+                                   ReferenceEntidy.ClassName,
+                                   ReferenceEntidy );
+
+            TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
+            for j := i-1 to maxthenInclude do
+            begin
+              try
+                if ListObjectsthenInclude.Items[j] <> nil then
+                begin
+                  CurrentEntidy:= ListObjectsthenInclude.Items[j];
+                  if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+                  begin
+                    CurrentList := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName );
+                    ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
+                    ToList( From( TEntityList(CurrentEntidy).List.ClassType).
+                            Where( TableForeignKey+'Id='+ ValueId ).Select, CurrentList );
+                    TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
+                    ReferenceEntidy := nil;
+                    ReferenceEntidyList:=  CurrentList;
+                  end
+                  else
+                  begin
+                    TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+                    ValueId:=     TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id');
+                    if ValueId <> '' then
+                    begin
+                       Json:= Find( From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select ).ToJson;
+                       ConcretEntity := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName) as TEntityBase;
+                       ConcretEntity.FromJson( Json );
+                       TAutoMapper.SetObject( ReferenceEntidy, ConcretEntity.ClassName, ConcretEntity );
+                    end;
+                    ReferenceEntidy :=  ConcretEntity  as TEntityBase;
+                    TableForeignKey := Copy(ConcretEntity.ClassName,2,length(ConcretEntity.ClassName) );
+
+                    ReferenceEntidyList:= nil;
+                  end;
+                  Inc(I);
+                end
+                else
+                begin
+                  break;
+                end;
+              finally
+                FreeObjects;
+              end;
+            end;
           end;
+          if i > maxInclude then
+             break;
         end;
-        if i > maxInclude then
-           break;
+        ListEntity.Items[H]:= FirstEntity as T;
       end;
-      ListEntity.Items[H]:= FirstEntity as T;
     end;
     result  := ListEntity;
   finally
