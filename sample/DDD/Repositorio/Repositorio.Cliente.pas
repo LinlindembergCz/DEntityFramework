@@ -75,27 +75,6 @@ begin
 
    ListaCliente.Free;
     (*
-   Cliente := dbContext.Include( E.Veiculo ).
-                        Include( E.Contatos ).
-                        Include( E.ClienteTabelaPreco ).
-                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco ).
-                              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco ).
-                             // ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.List.Produto ).
-                        Include( E.ClienteEmpresa ).
-                           ThenInclude(E.ClienteEmpresa.Empresa ).
-                        Where<TCliente>( E.ID =  strtoint( value ) );
-
-    showmessage( 'ClienteEmpresa:  '+ Cliente.ClienteEmpresa.Id.Value.ToString + '   '+
-                 ' Empresa:  '+Cliente.ClienteEmpresa.Empresa.Descricao.Value + '   '+
-                 ' Cliente:  '+ Cliente.Nome.Value+'   '+
-                 ' Contatos Count :  '+inttostr(Cliente.Contatos.Count)+'   '+
-                 ' Veiculo  :  '+Cliente.Veiculo.Placa.Value+'   '+
-                 ' ClienteTabelaPreco ID:  '+Cliente.ClienteTabelaPreco.Id.Value.ToString+'   '+
-                 ' TabelaPreco ID:  '+Cliente.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'   ' +
-                 ' ItensTabelaPreco.Count:  '+inttostr(Cliente.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)+
-                 ' Id :  '+ Cliente.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco[1].Id.Value.ToString  );
-
-      (*
       public Cliente GetById(int id)
       {
         var ret = _db.Clientes.AsNoTracking().Include(cli => cli.Pessoa)
@@ -115,19 +94,8 @@ begin
                                                  .ThenInclude(ct => ct.FormaPagamento)
                                              .FirstOrDefault(cli => cli.Id == id);
         return ret;
-      }
-
-      showmessage( 'ClienteEmpresa:'+ E.ClienteEmpresa.Id.Value.ToString + '  '+
-                    ' Empresa:'+E.ClienteEmpresa.Empresa.Id.Value.ToString + '   '+
-                    ' Cliente:'+ E.Nome.Value+' '+
-                    '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+
-                    '  Veiculo  :'+E.Veiculo.Placa.Value+'  '+
-                    '  ClienteTabelaPreco ID:'+E.ClienteTabelaPreco.Id.Value.ToString+'  '+
-                    '  TabelaPreco ID:'+E.ClienteTabelaPreco.TabelaPrecoId.Value.ToString+'  ' +
-                    '  ItensTabelaPreco.Count:'+inttostr(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.Count)
-                  );
-
       *)
+
    if value <> ''  then
       result := dbContext.ToDataSet( From( T ).Where( E.ID = strtoint(value) ).Select );
 

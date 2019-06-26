@@ -17,7 +17,6 @@ type
     panelButtons: TPanel;
     Panel2: TPanel;
     DBGrid1: TDBGrid;
-    panelEdits: TPanel;
     buttonLoadData: TButton;
     buttonGetDataSet: TButton;
     mLog: TMemo;
@@ -40,10 +39,11 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
   private
     { Private declarations }
   public
-     E: TCliente;
+    E: TCliente;
     Context: TDataContext<TCliente>;
     QueryAble: IQueryAble;
     { Public declarations }
@@ -56,20 +56,24 @@ implementation
 
 {$R *.dfm}
 
-uses UDataModule, EF.Mapping.AutoMapper;
+uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Contato;
 
 procedure TForm1.FormCreate(Sender: TObject);
-
 begin
   E:= TCliente.Create;
-  E.Mapped := TAutoMapper.ToMapping(E, true, false );
   Context := TDataContext<TCliente>.Create( E );
   Context.Connection := DataModule1.FConnection;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-    mLog.Text:=  Context.Entity.ToJson;
+   QueryAble := From( E )
+                .Select
+                .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+
+   E := Context.Find<TCliente>( QueryAble );
+
+   mLog.Text:= E.ToJson;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
@@ -79,60 +83,79 @@ end;
 
 procedure TForm1.Button4Click(Sender: TObject);
 var
-  C:TCliente;
+   C:TCliente;
 begin
-    C:= Context.Include(E.Veiculo).Where<TCliente>( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
+   C:= Context.Include(E.Veiculo).
+               Include(E.Contatos).
+               Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
 
-    mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
-    mlog.Lines.Add('Nome: ' + C.Nome.Value);
-    mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+   mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
+   mlog.Lines.Add('Nome: ' + C.Nome.Value);
+   mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
 
-    FreeAndNIL(C);
+   FreeAndNIL(C);
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
 var
-  C:TCliente;
+  cliente:TCliente;
+  contato:TContato;
 begin
-    C:= Context.Include(E.ClienteEmpresa).
-                ThenInclude(E.ClienteEmpresa.Empresa).
-                Where<TCliente>( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
+   cliente := Context.Include(E.Contatos).
+                      Include(E.ClienteEmpresa).
+                      //ThenInclude(E.ClienteEmpresa.Empresa).
+                      Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
 
-    mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
-    mlog.Lines.Add('Nome: ' + C.Nome.Value);
-    mlog.Lines.Add('Empresa: ' + C.ClienteEmpresa.Empresa.Descricao.Value);
+   mlog.Lines.Add('Empresa : ' + cliente.ClienteEmpresa.Empresa.Descricao.Value);
+   mlog.Lines.Add('ID : ' + cliente.ID.Value.ToString );
+   mlog.Lines.Add('Cliente : ' +cliente.Nome.Value);
+   mlog.Lines.Add('Contatos :');
+   for contato in cliente.Contatos do
+   begin
 
-    FreeAndNIL(C);
+      mlog.Lines.Add('    ' + contato.Nome.Value);
+   end;
 
+   FreeAndNIL(cliente);
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
 var
   //C:  TDataContext<TCliente>;
-  E: TCliente;
+  cliente: TCliente;
 begin
-  //E.Mapped := TAutoMapper.ToMapping(E, true, false );
-  //C:= TDataContext<TCliente>.Create( E );
-  //C.Connection := DataModule1.FConnection;
+  cliente:= TCliente.Create;
 
-  E:= TCliente.Create;
+  cliente.Nome:= 'jesus Cristo de nazare';
+  cliente.NomeFantasia:= 'jesus Cristo de nazare';
+  cliente.CPFCNPJ:= '02316937454';
+  cliente.RG:= '1552666';
+  cliente.Ativo:= '1';
+  cliente.DataNascimento := strtodate('19/04/1976');
+  cliente.Email.value := 'lindemberg.desenvolvimento@gmail.com';
 
-  E.Nome:= 'jesus Cristo de nazare';
-  E.NomeFantasia:= 'jesus Cristo de nazare';
-  E.CPFCNPJ:= '02316937454';
-  E.RG:= '1552666';
-  E.Ativo:= '1';
-  E.DataNascimento := strtodate('19/04/1976');
-  E.Email.value := 'lindemberg.desenvolvimento@gmail.com';
-
-  Context.Entity:= E;
+  Context.Entity:= cliente;
 
   Context.Add;
 
   Context.SaveChanges;
 
-  buttonGetDataSet.Click;
+  DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
 
+end;
+
+procedure TForm1.Button7Click(Sender: TObject);
+begin
+  TAutoMapper.DataToEntity( DataSource1.DataSet, Context.Entity );
+
+  with Context.Entity as TCliente do
+  begin
+    Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
+  end;
+  Context.Update;
+  Context.SaveChanges;
+
+  DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
@@ -143,10 +166,9 @@ end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
 begin
- QueryAble := From   ( E )
-              .Select
-              .Where ( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
- Context.Entity := Context.Find( QueryAble );
+ QueryAble := From( E ).Select.Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+
+ E := Context.Find<TCliente>( QueryAble );
 
  mlog.Lines.Add('ID: ' + E.ID.Value.ToString );
  mlog.Lines.Add('Nome: ' + E.Nome.Value);

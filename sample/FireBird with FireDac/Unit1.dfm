@@ -118,8 +118,8 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Update'
-      Enabled = False
       TabOrder = 9
+      OnClick = Button7Click
     end
     object Button8: TButton
       Left = 15
@@ -145,7 +145,7 @@ object Form1: TForm1
       Left = 0
       Top = 0
       Width = 557
-      Height = 206
+      Height = 346
       Align = alClient
       DataSource = DataSource1
       TabOrder = 0
@@ -155,17 +155,6 @@ object Form1: TForm1
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
     end
-    object panelEdits: TPanel
-      Left = 0
-      Top = 206
-      Width = 557
-      Height = 140
-      Align = alBottom
-      BevelKind = bkTile
-      BevelOuter = bvNone
-      Caption = 'panelEdits'
-      TabOrder = 1
-    end
   end
   object mLog: TMemo
     Left = 0
@@ -173,6 +162,7 @@ object Form1: TForm1
     Width = 746
     Height = 138
     Align = alBottom
+    ScrollBars = ssVertical
     TabOrder = 3
   end
   object ClientDataSet1: TClientDataSet

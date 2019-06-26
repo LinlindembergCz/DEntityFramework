@@ -52,7 +52,7 @@ Type
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
     function Find(QueryAble: IQueryAble): TEntityBase;overload;
     function Find<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
-    function Where<T:TEntityBase>(Condicion: TString): T;
+    function Where(Condicion: TString): T;
 
     function Include( E: TObject ):TDataContext<T>;
     function ThenInclude(E: TObject ): TDataContext<T>;
@@ -403,7 +403,7 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    //FEntity := QueryAble.Entity;
+    Entity := QueryAble.Entity;
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.Entity.ClassType);
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := ToData(QueryAble);
@@ -519,16 +519,21 @@ procedure TDataContext<T>.UpdateDirect;
 var
   SQL: string;
   ListPrimaryKey, FieldsPrimaryKey: TStringList;
+  Table , Values, Where: string;
 begin
   try
     try
       ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
       FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity);
 
-      SQL := Format( 'Update %s Set %s where %s',[ TAutoMapper.GetTableAttribute(Entity.ClassType),
-                                                   fParserUpdate(TAutoMapper.GetFieldsList(Entity),
-                                                                TAutoMapper.GetValuesFieldsList(Entity)),
-                                                   fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
+      Table  := TAutoMapper.GetTableAttribute(Entity.ClassType);
+      Values:= fParserUpdate( TAutoMapper.GetFieldsList(Entity, False, false),
+                              TAutoMapper.GetValuesFieldsList(Entity, False) );
+
+      Where := 'ID ='+Entity.Id.Value.ToString;//fParserWhere(ListPrimaryKey, FieldsPrimaryKey);
+
+      SQL := Format( 'Update %s Set %s where %s',[Table,Values,Where ]);
+
       FConnection.ExecutarSQL(SQL);
     except
       on E: Exception do
@@ -687,7 +692,7 @@ begin
 end;
 
 
-function TDataContext<T>.Where<T>(Condicion: TString ): T;
+function TDataContext<T>.Where(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, PriorEntity: TEntityBase;
@@ -729,15 +734,18 @@ begin
           else
           begin
             if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
-               CurrentEntidy := ToList( From( TEntityBase(TEntityList(CurrentEntidy).List)).
-                                Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
-                                Select )
+            begin
+              CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
+              ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
+                               Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).Select, CurrentEntidy  );
+            end
             else
+            begin
                CurrentEntidy := Find( From( TEntityBase(CurrentEntidy)).
                                 Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
                                 Select );
-
-            TAutoMapper.SetObject( FirstEntity, CurrentEntidy.ClassName , CurrentEntidy );
+               TAutoMapper.SetObject( FirstEntity, CurrentEntidy.ClassName , CurrentEntidy );
+            end;
           end;
         finally
           Inc(I);

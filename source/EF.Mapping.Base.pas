@@ -208,7 +208,8 @@ begin
     if Collate = nil then
        Collate:= TCollate.Create;
   end;
-  //Mapped := TAutoMapper.ToMapping(self, true);
+  if not Mapped then
+     Mapped := TAutoMapper.ToMapping(self, true, false);
 end;
 
 

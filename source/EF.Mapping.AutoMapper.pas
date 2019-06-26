@@ -665,7 +665,7 @@ begin
   begin
     dDatetime := Val.AsType<TDate>;
     if not fEmpty(dDatetime.Value) then
-      Value := datetostr(dDatetime.Value); //quotedstr( FormatDateTime('YYYY-MM-DD',dDatetime.Value) );
+      Value :=  quotedstr(datetostr(dDatetime.Value)); //quotedstr( FormatDateTime('YYYY-MM-DD',dDatetime.Value) );//
   end;
   result := Value;
 end;
