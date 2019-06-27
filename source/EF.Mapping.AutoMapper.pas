@@ -15,8 +15,7 @@ type
   private
     class var ctx: TRttiContext;
     class var TypObj: TRttiType;
-    class function GetValueField(E: TEntityBase; Field: TRttiField)
-      : string; static;
+    class function GetValueField(E: TEntityBase; Field: TRttiField): string; static;
 
   public
     class function GetMaxLengthValue(E: TEntityBase; aProp: string): variant; static;
@@ -665,7 +664,7 @@ begin
   begin
     dDatetime := Val.AsType<TDate>;
     if not fEmpty(dDatetime.Value) then
-      Value :=  quotedstr(datetostr(dDatetime.Value)); //quotedstr( FormatDateTime('YYYY-MM-DD',dDatetime.Value) );//
+      Value := datetostr(dDatetime.Value);// quotedstr( datetostr() ); // FormatDateTime('DD/MM/YYYY',)  quotedstr( FormatDateTime('YYYY-MM-DD',dDatetime.Value) );//
   end;
   result := Value;
 end;

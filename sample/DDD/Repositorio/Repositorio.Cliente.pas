@@ -112,7 +112,7 @@ begin
              Include( E.ClienteTabelaPreco).
              ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
              ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
-             Where<TCliente>( E.Nome.Contains( value ) );
+             Where( E.Nome.Contains( value ) );
 
    showmessage( 'Cliente:'+ E.Nome.Value+' '+
                 '  Contatos Count :'+inttostr(E.Contatos.Count)+'  '+

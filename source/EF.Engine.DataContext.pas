@@ -29,8 +29,8 @@ uses
 Type
   TDataContext<T:TEntityBase> = class(TQueryAble)
   private
-    ListObjectsInclude:TList;
-    ListObjectsThenInclude:TList;
+    ListObjectsInclude:TObjectList;
+    ListObjectsThenInclude:TObjectList;
     FFDQuery: TFDQuery;
     drpProvider: TDataSetProvider;
     FDbSet: TClientDataSet;
@@ -38,6 +38,7 @@ Type
     FProviderName: string;
     FTypeConnetion: TTypeConnection;
     ListField: TStringList;
+    FEntity : T;
     procedure FreeObjects;
     function PutQuoted(Fields: string):string;
     procedure Prepare(QueryAble: IQueryAble);
@@ -77,6 +78,7 @@ Type
     property DbSet: TClientDataSet read FDbSet write FDbSet;
     property ProviderName: string read FProviderName write FProviderName;
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
+    property Entity : T read FEntity write FEntity;
   end;
 
   function From(E: String): TFrom; overload;
@@ -215,7 +217,7 @@ begin
     H:=0;   I:=0;    j:=0;
 
     if ListObjectsInclude = nil then
-       ListObjectsInclude:= TList.Create;
+       ListObjectsInclude:= TObjectList.Create;
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(Entity);
@@ -330,12 +332,12 @@ begin
     end;
     result  := ListEntity;
   finally
-    ListObjectsInclude.clear;
+   //ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
-      ListObjectsthenInclude.Clear;
+     // ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
@@ -349,8 +351,8 @@ var
   E: T;
 begin
   try
-    Entity := QueryAble.Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    //Entity := T(QueryAble.ConcretEntity);
+    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     List := TEntityList<T>.Create;
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := ToData(QueryAble);
@@ -376,8 +378,7 @@ var
   Json: string;
 begin
   try
-    Entity := QueryAble.Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
 
     if EntityList = nil then
        List := TEntityList.Create
@@ -390,7 +391,7 @@ begin
     DataSet.Data := ToData(QueryAble);
     while not DataSet.Eof do
     begin
-      E:= Entity.NewInstance;
+      E:= QueryAble.ConcretEntity.NewInstance;
       TAutoMapper.DataToEntity(DataSet, E  );
       List.Add( E );
       DataSet.Next;
@@ -407,12 +408,13 @@ var
   DataSet: TClientDataSet;
 begin
   try
-    Entity := QueryAble.Entity;
-    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.Entity.ClassType);
+    //Entity := QueryAble.ConcretEntity as T;//???????????????????
+
+    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     DataSet := TClientDataSet.Create(Application);
     DataSet.Data := ToData(QueryAble);
-    TAutoMapper.DataToEntity(DataSet, QueryAble.Entity);
-    result := QueryAble.Entity;
+    TAutoMapper.DataToEntity(DataSet, QueryAble.ConcretEntity);
+    result := QueryAble.ConcretEntity;
   finally
      DataSet.Free;
      DataSet:= nil;
@@ -591,8 +593,8 @@ function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
   Keys: TStringList;
 begin
   try
-    Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.Entity);
-    FSEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+    Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
+    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
     if not FFDQuery.Active then
        FFDQuery.Open;
@@ -634,19 +636,19 @@ end;
 procedure TDataContext<T>.Remove;
 begin
   //Refatorar
-  if (DbSet.Active) and (not DbSet.IsEmpty) then
+  if (DbSet <> nil ) and (DbSet.Active) and (not DbSet.IsEmpty) then
     DbSet.Delete;
 end;
 
 procedure TDataContext<T>.SaveChanges;
 begin
-  if ChangeCount > 0 then
-    DbSet.ApplyUpdates(0);
+  if (DbSet <> nil ) and (ChangeCount > 0) then
+      DbSet.ApplyUpdates(0);
 end;
 
 procedure TDataContext<T>.RefreshDataSet;
 begin
-  if (DbSet.Active) then
+  if (DbSet <> nil ) and (DbSet.Active) then
     DbSet.Refresh;
 end;
 
@@ -670,7 +672,10 @@ end;
 
 constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
 begin
-  Entity := proEntity;
+  if proEntity = nil then
+     Entity := T.Create// proEntity;
+  else
+     Entity := proEntity as T;
 end;
 
 procedure TDataContext<T>.CreateClientDataSet(proDataSetProvider: TDataSetProvider;
@@ -695,12 +700,11 @@ begin
   DbSet.open;
 end;
 
-
 function TDataContext<T>.Where(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, PriorEntity: TEntityBase;
-  FirstEntity:T;
+  FirstEntity: T;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey: string;
   List:TEntityList;
@@ -709,7 +713,7 @@ var
 begin
   try
     if ListObjectsInclude = nil then
-       ListObjectsInclude:= TList.Create;
+       ListObjectsInclude:= TObjectList.Create(false);
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(Entity);
@@ -745,10 +749,14 @@ begin
             end
             else
             begin
-               CurrentEntidy := Find( From( TEntityBase(CurrentEntidy)).
+               {CurrentEntidy := Find( From( TEntityBase(CurrentEntidy)).
                                 Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                Select );
-               TAutoMapper.SetObject( FirstEntity, CurrentEntidy.ClassName , CurrentEntidy );
+                                Select ); }
+               TAutoMapper.SetObject( FirstEntity,
+                                      CurrentEntidy.ClassName ,
+                                      Find( From( TEntityBase(CurrentEntidy)).
+                                            Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                                            Select ) );
             end;
           end;
         finally
@@ -788,7 +796,7 @@ begin
                                                                Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
                                                                Select );
               end;
-              ReferenceEntidy := ListObjectsthenInclude.Items[j];
+              ReferenceEntidy := ListObjectsthenInclude.Items[j] as TEntityBase;
               TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
               Inc(I);
             end
@@ -810,30 +818,28 @@ begin
     result  := FirstEntity;
 
   finally
-    ListObjectsInclude.clear;
+   // ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
-      ListObjectsthenInclude.Clear;
+      //ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
   end;
-
 end;
-
 
 function TDataContext<T>.Include( E: TObject ):TDataContext<T>;
 begin
    if ListObjectsInclude = nil then
    begin
-      ListObjectsInclude:= TList.Create;
+      ListObjectsInclude:= TObjectList.Create(false);
       ListObjectsInclude.Add(Entity);
    end;
    if ListObjectsThenInclude = nil then
    begin
-      ListObjectsThenInclude:= TList.Create;
+      ListObjectsThenInclude:= TObjectList.Create(false);
    end;
    ListObjectsInclude.Add( E );
    ListObjectsThenInclude.Add( nil );

@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 517
+  ClientHeight = 532
   ClientWidth = 799
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -144,21 +144,17 @@ object Form1: TForm1
     Left = 0
     Top = 105
     Width = 799
-    Height = 207
+    Height = 222
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitLeft = 185
-    ExplicitTop = 0
-    ExplicitWidth = 561
-    ExplicitHeight = 350
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
       Width = 795
-      Height = 203
+      Height = 218
       Align = alClient
       DataSource = DataSource1
       TabOrder = 0
@@ -171,7 +167,7 @@ object Form1: TForm1
   end
   object mLog: TMemo
     Left = 0
-    Top = 312
+    Top = 327
     Width = 799
     Height = 205
     Align = alBottom

@@ -3,11 +3,10 @@ unit Unit1;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient,
-  Domain.Entity.Cliente,
-  EF.Engine.DataContext,
-  EF.QueryAble.base, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, Domain.Entity.Cliente,
+  EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -62,16 +61,16 @@ uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Contato, EF.Core.Types;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  E:= TCliente.Create;
-  Context := TDataContext<TCliente>.Create( E );
+  Context := TDataContext<TCliente>.Create;
   Context.Connection := DataModule1.FConnection;
+  E:= Context.Entity;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
    QueryAble := From( E )
-                .Select
-                .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+               .Select
+               .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
    E := Context.Find<TCliente>( QueryAble );
 
@@ -86,63 +85,70 @@ end;
 procedure TForm1.Button4Click(Sender: TObject);
 var
    C:TCliente;
+   contato: TContato;
 begin
    C:= Context.Include(E.Veiculo).
                Include(E.Contatos).
-               Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
+               Where( E.ID = 3 //DataSource1.DataSet.FieldByName('ID').AsInteger
+                     );
 
    mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
    mlog.Lines.Add('Nome: ' + C.Nome.Value);
    mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+
+   mlog.Lines.Add('Contatos :');
+   for contato in C.Contatos do
+   begin
+      mlog.Lines.Add('    ' + contato.Nome.Value);
+   end;
 
    FreeAndNIL(C);
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
 var
-  cliente:TCliente;
+  C:TCliente;
   contato:TContato;
 begin
-   cliente := Context.Include(E.Contatos).
-                      Include(E.ClienteEmpresa).
-                      //ThenInclude(E.ClienteEmpresa.Empresa).
-                      Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger );
+   C := Context.Include(E.Contatos).
+                    Include(E.ClienteEmpresa).
+                         ThenInclude(E.ClienteEmpresa.Empresa).
+                             Where( E.ID =  3 //DataSource1.DataSet.FieldByName('ID').AsInteger
+                              );
 
-   mlog.Lines.Add('Empresa : ' + cliente.ClienteEmpresa.Empresa.Descricao.Value);
-   mlog.Lines.Add('ID : ' + cliente.ID.Value.ToString );
-   mlog.Lines.Add('Cliente : ' +cliente.Nome.Value);
+   mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
+   mlog.Lines.Add('ID : ' + C.ID.Value.ToString );
+   mlog.Lines.Add('Cliente : ' +C.Nome.Value);
    mlog.Lines.Add('Contatos :');
-   for contato in cliente.Contatos do
+   for contato in C.Contatos do
    begin
-
       mlog.Lines.Add('    ' + contato.Nome.Value);
    end;
 
-   FreeAndNIL(cliente);
+   FreeAndNIL(C);
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
 var
-  //C:  TDataContext<TCliente>;
-  cliente: TCliente;
+  C: TCliente;
 begin
-  cliente:= TCliente.Create;
+  C:= TCliente.Create;
 
-  cliente.Nome:= 'jesus Cristo de nazare';
-  cliente.NomeFantasia:= 'jesus Cristo de nazare';
-  cliente.CPFCNPJ:= '02316937454';
-  cliente.RG:= '1552666';
-  cliente.Ativo:= '1';
-  cliente.DataNascimento := strtodate('19/04/1976');
-  cliente.Email.value := 'lindemberg.desenvolvimento@gmail.com';
+  C.Nome:= 'JOAO Cristo de nazare';
+  C.NomeFantasia:= 'jesus Cristo de nazare';
+  C.CPFCNPJ:= '02316937454';
+  C.RG:= '1552666';
+  C.Ativo:= '1';
+  C.DataNascimento := strtodate('19/04/1976');
+  C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
 
-  Context.Entity:= cliente;
+  Context.Entity:= C;
 
   Context.Add;
 
   Context.SaveChanges;
 
-  DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
+  DataSource1.DataSet := Context.ToDataSet( From( Context.Entity ).Select.OrderBy(Context.Entity.Nome) );
 
 end;
 
@@ -187,19 +193,19 @@ end;
 
 procedure TForm1.buttonGetSQLClick(Sender: TObject);
 begin
- QueryAble := From   ( E )
-              .Select([ E.Id, E.Nome, E.Observacao ])
-              .OrderBy ( E.Nome );
- mlog.Lines.Text := Context.GetQuery( QueryAble );
+   QueryAble := From   ( E )
+                .Select([ E.Id, E.Nome, E.Observacao ])
+                .OrderBy ( E.Nome );
+   mlog.Lines.Text := Context.GetQuery( QueryAble );
 end;
 
 procedure TForm1.buttonLoadDataClick(Sender: TObject);
 begin
- QueryAble := From( E )
-              .Select
-              .OrderBy ( E.Nome );
- DataSource1.DataSet := ClientDataSet1;
- ClientDataSet1.Data := Context.ToData( QueryAble );
+   QueryAble := From( E )
+                .Select
+                .OrderBy ( E.Nome );
+   DataSource1.DataSet := ClientDataSet1;
+   ClientDataSet1.Data := Context.ToData( QueryAble );
 end;
 
 end.

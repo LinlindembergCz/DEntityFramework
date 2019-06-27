@@ -43,8 +43,8 @@ type
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     //não estou achando seguro manter essa referencia aqui nessa classe!
-    procedure SetEntity(value: TEntityBase);
-    function GetEntity: TEntityBase;
+    procedure SetConcretEntity(value: TEntityBase);
+    function GetConcretEntity: TEntityBase;
     procedure SetSEntity(value: string);
     function GetSEntity: string;
     procedure SetSJoin(value: string);
@@ -68,7 +68,7 @@ type
     procedure SetSCount(value: string);
     function GetSCount: string;
 
-    property Entity : TEntityBase read GetEntity write SetEntity;
+    property ConcretEntity : TEntityBase read GetConcretEntity write SetConcretEntity;
     property SEntity: string read GetSEntity write SetSEntity;
     property SJoin: string read GetSJoin write SetSJoin;
     property SWhere: string read GetSWhere write SetSWhere;
@@ -84,9 +84,9 @@ type
 
   TQueryAble = class(TInterfacedPersistent, IQueryAble)
   private
-    FEntity: TEntityBase;
-    procedure SetEntity(value: TEntityBase);
-    function GetEntity: TEntityBase;
+    FConcretEntity: TEntityBase;
+    procedure SetConcretEntity(value: TEntityBase);
+    function GetConcretEntity: TEntityBase;
     procedure SetSEntity(value: string);
     function GetSEntity: string;
     procedure SetSJoin(value: string);
@@ -123,6 +123,7 @@ type
     FSIntersect: string;
     FSConcat: string;
     FSCount: string;
+    property ConcretEntity : TEntityBase read GetConcretEntity write SetConcretEntity;
   public
     function Inner(E, _On: string): IQueryAble; overload;
     function Inner(E: TEntityBase; _On: TString): IQueryAble; overload;
@@ -145,7 +146,7 @@ type
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     function GetQuery(Q: IQueryAble): string;
-    property Entity : TEntityBase read GetEntity write SetEntity;
+
 
   end;
 
@@ -224,9 +225,9 @@ begin
   end;
 end;
 
-function TQueryAble.GetEntity: TEntityBase;
+function TQueryAble.GetConcretEntity: TEntityBase;
 begin
-  result:= FEntity;
+  result:= FConcretEntity;
 end;
 
 function TQueryAble.GetSConcat: string;
@@ -295,7 +296,7 @@ class function Linq.From(E: TEntityBase): TFrom;
 begin
   oFrom := GetFromSigleton;
   oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
-  oFrom.FEntity := E;
+  oFrom.FConcretEntity := E;
   result := oFrom;
 end;
 
@@ -310,7 +311,7 @@ begin
     sFrom := sFrom + ifthen(sFrom <> '', ',', '') + TAutoMapper.GetTableAttribute
       (E.ClassType);
   oFrom.FSEntity := StrFrom + sFrom;
-  oFrom.FEntity := Entities[0];
+  oFrom.FConcretEntity := Entities[0];
   result := oFrom;
 end;
 
@@ -318,7 +319,7 @@ class function Linq.From(E: TClass): TFrom;
 begin
   oFrom := GetFromSigleton;
   oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
-  oFrom.FEntity := (E.Create as TEntityBase);
+  oFrom.FConcretEntity := (E.Create as TEntityBase);
   result := oFrom;
 end;
 
@@ -406,14 +407,14 @@ end;
 function TQueryAble.Inner(E: TEntityBase): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
-    (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
+    (E.ClassType) + StrOn + TAutoMapper.GetReferenceAtribute(self.FConcretEntity, E);
   result := self;
 end;
 
 function TQueryAble.Inner(E: TClass): IQueryAble;
 begin
   self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
-    (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.FEntity, E);
+    (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.FConcretEntity, E);
   result := self;
 end;
 
@@ -521,7 +522,7 @@ function TQueryAble.Select(Fields: string = ''): TSelect;
 var
   _Atribs:string;
 begin
-  _Atribs:= TAutoMapper.GetAttributies(FEntity, true);
+  _Atribs:= TAutoMapper.GetAttributies(FConcretEntity, true);
   if Pos('Select', Fields) > 0 then
     Fields := '(' + Fields + ')';
 
@@ -546,7 +547,7 @@ var
   _Atribs:string;
 begin
   _Fields := '';
-  _Atribs:= TAutoMapper.GetAttributies(FEntity, true);
+  _Atribs:= TAutoMapper.GetAttributies(FConcretEntity, true);
   for Field in Fields do
   begin
     _Fields := _Fields + ifthen(_Fields <> '', ', ', '') + Field;
@@ -556,9 +557,9 @@ begin
   result := TSelect(self);
 end;
 
-procedure TQueryAble.SetEntity(value: TEntityBase);
+procedure TQueryAble.SetConcretEntity(value: TEntityBase);
 begin
-  FEntity := Value;
+  FConcretEntity := Value;
 end;
 
 procedure TQueryAble.SetSConcat(value: string);
