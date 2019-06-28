@@ -132,7 +132,7 @@ procedure TForm1.Button6Click(Sender: TObject);
 var
   C: TCliente;
 begin
-  C:= TCliente.Create;
+  C := TCliente.Create;
 
   C.Nome:= 'JOAO Cristo de nazare';
   C.NomeFantasia:= 'jesus Cristo de nazare';
@@ -142,13 +142,11 @@ begin
   C.DataNascimento := strtodate('19/04/1976');
   C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
 
-  Context.Entity:= C;
-
-  Context.Add;
+  Context.Add(C);
 
   Context.SaveChanges;
 
-  DataSource1.DataSet := Context.ToDataSet( From( Context.Entity ).Select.OrderBy(Context.Entity.Nome) );
+  DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy(E.Nome) );
 
 end;
 
@@ -156,7 +154,7 @@ procedure TForm1.Button7Click(Sender: TObject);
 begin
   TAutoMapper.DataToEntity( DataSource1.DataSet, Context.Entity );
 
-  with Context.Entity as TCliente do
+  with Context.Entity do
   begin
     Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
   end;

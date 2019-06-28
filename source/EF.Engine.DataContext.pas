@@ -27,6 +27,8 @@ uses
   Data.DB.Helper;
 
 Type
+   TTypeSQL       = (  tsInsert, tsUpdate );
+
   TDataContext<T:TEntityBase> = class(TQueryAble)
   private
     ListObjectsInclude:TObjectList;
@@ -42,10 +44,11 @@ Type
     procedure FreeObjects;
     function PutQuoted(Fields: string):string;
     procedure Prepare(QueryAble: IQueryAble);
+  //function BuilderSQL(fTypeSQL: TTypeSQL; fsTable, fsCampos, fsRestricao: String): String;
   protected
     procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
     procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
-    procedure CreateClientDataSet(proDataSetProvider: TDataSetProvider; SQL: string = '');
+    procedure CreateClientDataSet(proDataSetProvider: TDataSetProvider);
     procedure CreateProvider(var proSQLQuery: TFDQuery; prsNomeProvider: string);
     property Connection: TEntityConn read FConnection write FConnection;
   public
@@ -64,12 +67,10 @@ Type
     function ToList(Condicion: TString): TEntityList<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
-    procedure Add;
+    procedure Add(E: T);
     procedure Update;
     procedure Remove;overload;
     procedure SaveChanges;
-    procedure AddDirect;
-    procedure UpdateDirect;
     procedure RemoveDirect;
     procedure RefreshDataSet;
     function ChangeCount: integer;
@@ -439,32 +440,15 @@ begin
   end;
 end;
 
-
-procedure TDataContext<T>.AddDirect;
-var
-  ListValues: TstringList;
-  SQLInsert: string;
-begin
-   if ListField = nil then
-      ListField := TAutoMapper.GetFieldsList(Entity);
-   ListValues := TAutoMapper.GetValuesFieldsList(Entity, False);
-   //Cuidado com o formato do tipo TDate em alguns bancos o formato ANO/MES/DIA  e em alguns DIA/MES/ANO
-   SQLInsert := Format('Insert into %s ( %s ) values ( %s ) ',
-                      [TAutoMapper.GetTableAttribute(Entity.ClassType),
-                       TAutoMapper.GetAttributies(Entity, false, false),
-                       TAutoMapper.GetValuesFields(Entity, false )]);
-
-  FConnection.ExecutarSQL(SQLInsert);
-end;
-
-procedure TDataContext<T>.Add;
+procedure TDataContext<T>.Add(E: T);
 var
   ListValues: TStringList;
   i: integer;
 begin
-  Entity.Validation;
   if DbSet <> nil then
   begin
+    E.Validation;
+    FEntity := E;
     try
       try
         if ListField = nil then
@@ -480,12 +464,15 @@ begin
         end;
       end;
     finally
-      //ListField.Free;
       ListValues.Free;
+      ListValues := nil;
     end;
   end
   else
-    AddDirect;
+  begin
+    ToDataSet( from(E).Select.Where(E.Id = 0) );
+    Add(E);
+  end;
 end;
 
 procedure TDataContext<T>.Update;
@@ -493,9 +480,9 @@ var
    ListValues: TStringList;
   i: integer;
 begin
-  Entity.Validation;
   if DbSet <> nil then
   begin
+    Entity.Validation;
     try
       try
         if ListField = nil then
@@ -511,45 +498,14 @@ begin
         end;
       end;
     finally
-      //ListField.Free;
-      //ListField := nil;
       ListValues.Free;
       ListValues := nil;
     end;
   end
   else
-    UpdateDirect;
-end;
-
-procedure TDataContext<T>.UpdateDirect;
-var
-  SQL: string;
-  ListPrimaryKey, FieldsPrimaryKey: TStringList;
-  Table , Values, Where: string;
-begin
-  try
-    try
-      ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
-      FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity);
-
-      Table  := TAutoMapper.GetTableAttribute(Entity.ClassType);
-      Values:= fParserUpdate( TAutoMapper.GetFieldsList(Entity, False, false),
-                              TAutoMapper.GetValuesFieldsList(Entity, False) );
-
-      Where := 'ID ='+Entity.Id.Value.ToString;//fParserWhere(ListPrimaryKey, FieldsPrimaryKey);
-
-      SQL := Format( 'Update %s Set %s where %s',[Table,Values,Where ]);
-
-      FConnection.ExecutarSQL(SQL);
-    except
-      on E: Exception do
-      begin
-        raise Exception.Create(E.message);
-      end;
-    end;
-  finally
-    ListPrimaryKey.Free;
-    FieldsPrimaryKey.Free;
+  begin
+    ToDataSet( from(Entity).Select.Where(Entity.Id = 0) );
+    Update;
   end;
 end;
 
@@ -624,7 +580,6 @@ begin
     ListObjectsInclude.Free;
   if ListObjectsThenInclude <> nil then
     ListObjectsThenInclude.Free;
-  // if FConnection <> nil then    FConnection.Free;
 end;
 
 procedure TDataContext<T>.DataSetProviderGetTableName(Sender: TObject;
@@ -654,7 +609,11 @@ end;
 
 function TDataContext<T>.ChangeCount: integer;
 begin
-  result := FDbSet.ChangeCount;
+   if (DbSet <> nil ) then
+    result := FDbSet.ChangeCount
+    else
+    result := 0;
+
 end;
 
 procedure TDataContext<T>.CreateProvider(var proSQLQuery: TFDQuery;
@@ -678,26 +637,12 @@ begin
      Entity := proEntity as T;
 end;
 
-procedure TDataContext<T>.CreateClientDataSet(proDataSetProvider: TDataSetProvider;
-    SQL: string = '');
+procedure TDataContext<T>.CreateClientDataSet(proDataSetProvider: TDataSetProvider);
 begin
-  if proDataSetProvider <> nil then
-  begin
-    DbSet := TClientDataSet.Create(Application);
-    DbSet.OnReconcileError := ReconcileError;
-    DbSet.ProviderName := proDataSetProvider.Name;
-  end
-  else if FProviderName <> '' then
-  begin
-    DbSet.ProviderName := FProviderName + formatdatetime('SSMS', now);
-    DbSet.DataRequest(SQL);
-  end
-  else
-  begin
-    showmessage('DataSetProvider não foi definido!');
-    abort;
-  end;
-  DbSet.open;
+   DbSet := TClientDataSet.Create(Application);
+   DbSet.OnReconcileError := ReconcileError;
+   DbSet.ProviderName := proDataSetProvider.Name;
+   DbSet.open;
 end;
 
 function TDataContext<T>.Where(Condicion: TString ): T;
