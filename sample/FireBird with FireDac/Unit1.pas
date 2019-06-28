@@ -5,18 +5,16 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
-  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, Domain.Entity.Cliente,
-  EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls;
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente,
+  EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient;
 
 type
   TForm1 = class(TForm)
-    ClientDataSet1: TClientDataSet;
     DataSource1: TDataSource;
     Button1: TButton;
     panelButtons: TPanel;
     Panel2: TPanel;
     DBGrid1: TDBGrid;
-    buttonLoadData: TButton;
     buttonGetDataSet: TButton;
     mLog: TMemo;
     buttonGetSQL: TButton;
@@ -30,7 +28,6 @@ type
     Button8: TButton;
     Button9: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure buttonLoadDataClick(Sender: TObject);
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
@@ -152,16 +149,18 @@ end;
 
 procedure TForm1.Button7Click(Sender: TObject);
 begin
-  TAutoMapper.DataToEntity( DataSource1.DataSet, Context.Entity );
+   if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
+   begin
+      TAutoMapper.DataToEntity( DataSource1.DataSet, Context.Entity );
 
-  with Context.Entity do
-  begin
-    Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
-  end;
-  Context.Update;
-  Context.SaveChanges;
-
-  DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
+      with Context.Entity do
+      begin
+        Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
+      end;
+      Context.Update;
+      Context.SaveChanges;
+   end;
+   DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
 end;
 
 procedure TForm1.Button9Click(Sender: TObject);
@@ -195,15 +194,6 @@ begin
                 .Select([ E.Id, E.Nome, E.Observacao ])
                 .OrderBy ( E.Nome );
    mlog.Lines.Text := Context.GetQuery( QueryAble );
-end;
-
-procedure TForm1.buttonLoadDataClick(Sender: TObject);
-begin
-   QueryAble := From( E )
-                .Select
-                .OrderBy ( E.Nome );
-   DataSource1.DataSet := ClientDataSet1;
-   ClientDataSet1.Data := Context.ToData( QueryAble );
 end;
 
 end.

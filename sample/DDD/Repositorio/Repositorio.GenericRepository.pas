@@ -35,7 +35,7 @@ type
 
 implementation
 
-uses Winapi.Windows, System.SysUtils;
+uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client;
 { TRepository }
 
 constructor TRepository<T>.Create(dbContext: TdbContext<T>);
@@ -46,11 +46,17 @@ begin
 end;
 
 function TRepository<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
+var
+  DataSet:TDataSet;
 begin
   if iId = 0 then
-     result := FDbContext.ToDataSet( From(FEntity).Select( Fields) ) as TDataSet
+     DataSet := FDbContext.ToDataSet( From(FEntity).Select( Fields) ) as TDataSet
   else
-     result := FDbContext.ToDataSet( From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )} ).Select( Fields) ) as TDataSet;
+     DataSet := FDbContext.ToDataSet( From(FEntity).where( FEntity.Id = iId ).Select( Fields) ) as TDataSet;
+
+   FDbContext.DBSet:= DataSet as TFDQuery;
+
+   result:= FDbContext.DBSet;
 end;
 
 function TRepository<T>.Load(iId: Integer): T;
@@ -58,7 +64,7 @@ begin
   if iId = 0 then
      result := FDbContext.Find<TEntityBase>(From(FEntity).Select) as T
   else
-     result := FDbContext.Find<TEntityBase>(From(FEntity).where( FEntity.Id = iId {Format('ID = %s ', [inttostr(iId)] )}  ).Select) as T;
+     result := FDbContext.Find<TEntityBase>(From(FEntity).where( FEntity.Id = iId  ).Select) as T;
 end;
 
 procedure TRepository<T>.Delete;
@@ -88,7 +94,6 @@ end;
 
 procedure TRepository<T>.AddOrUpdate(State:TEntityState);
 begin
-//FDbContext.SaveChanges(State);
   case State of
     esInsert: FDbContext.Add(FEntity);
     esEdit  : FDbContext.Update;

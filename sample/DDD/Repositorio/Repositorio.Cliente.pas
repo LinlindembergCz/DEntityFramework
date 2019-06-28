@@ -53,7 +53,7 @@ begin
                                 ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                             Include( E.ClienteEmpresa).
                               ThenInclude(E.ClienteEmpresa.Empresa).
-                  ToList( E.Ativo =  '1' );
+                  ToList( E.ID =  3 );
 
    for Item in ListaCliente do
    begin
@@ -74,27 +74,6 @@ begin
    end;
 
    ListaCliente.Free;
-    (*
-      public Cliente GetById(int id)
-      {
-        var ret = _db.Clientes.AsNoTracking().Include(cli => cli.Pessoa)
-                                             .Include(cli => cli.Pessoa.Enderecos)
-                                             .Include(cli => cli.Pessoa.Contatos)
-                                             .Include(cli => cli.CartoesFidelidade)
-                                             .Include(cli => cli.Segmento)
-                                             .Include(cli => cli.MotoristasCliente)
-                                             .Include(cli => cli.VeiculosCliente)
-                                             .Include(cli => cli.ClienteEmpresas)
-                                                 .ThenInclude(cli => cli.Empresa)
-                                                 .ThenInclude(p => p.Pessoa)
-                                             .Include(cli => cli.ClienteTabelasPreco)
-                                                 .ThenInclude(ct => ct.TabelaPreco)
-                                                 .ThenInclude(tp => tp.ItensTabelaPreco)
-                                             .Include(cli => cli.ClienteTabelasPreco)
-                                                 .ThenInclude(ct => ct.FormaPagamento)
-                                             .FirstOrDefault(cli => cli.Id == id);
-        return ret;
-      *)
 
    if value <> ''  then
       result := dbContext.ToDataSet( From( T ).Where( E.ID = strtoint(value) ).Select );

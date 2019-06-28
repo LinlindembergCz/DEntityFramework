@@ -31,58 +31,49 @@ object Form1: TForm1
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    object buttonLoadData: TButton
-      Left = 14
-      Top = 7
-      Width = 147
-      Height = 25
-      Caption = 'ToData'
-      TabOrder = 0
-      OnClick = buttonLoadDataClick
-    end
     object buttonGetDataSet: TButton
       Left = 14
-      Top = 38
+      Top = 4
       Width = 147
       Height = 25
       Caption = 'ToDataSet'
-      TabOrder = 1
+      TabOrder = 0
       OnClick = buttonGetDataSetClick
     end
     object buttonGetSQL: TButton
       Left = 14
-      Top = 69
+      Top = 35
       Width = 147
       Height = 25
       Caption = 'GetQuery'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = buttonGetSQLClick
     end
     object buttonGetEntity: TButton
-      Left = 216
-      Top = 4
+      Left = 14
+      Top = 66
       Width = 147
       Height = 25
       Caption = 'Find'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = buttonGetEntityClick
     end
     object Button2: TButton
       Left = 216
-      Top = 35
+      Top = 4
       Width = 147
       Height = 25
       Caption = 'ToJson'
-      TabOrder = 4
+      TabOrder = 3
       OnClick = Button2Click
     end
     object Button3: TButton
       Left = 216
-      Top = 66
+      Top = 35
       Width = 147
       Height = 25
       Caption = 'FromJson'
-      TabOrder = 5
+      TabOrder = 4
       OnClick = Button3Click
     end
     object Button4: TButton
@@ -91,7 +82,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Include'
-      TabOrder = 6
+      TabOrder = 5
       OnClick = Button4Click
     end
     object Button5: TButton
@@ -100,7 +91,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'ThenInclude'
-      TabOrder = 7
+      TabOrder = 6
       OnClick = Button5Click
     end
     object Button6: TButton
@@ -109,7 +100,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Add'
-      TabOrder = 8
+      TabOrder = 7
       OnClick = Button6Click
     end
     object Button7: TButton
@@ -118,7 +109,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'Update'
-      TabOrder = 9
+      TabOrder = 8
       OnClick = Button7Click
     end
     object Button8: TButton
@@ -128,7 +119,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Remove'
       Enabled = False
-      TabOrder = 10
+      TabOrder = 9
     end
     object Button9: TButton
       Left = 414
@@ -136,7 +127,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'ToList'
-      TabOrder = 11
+      TabOrder = 10
       OnClick = Button9Click
     end
   end
@@ -174,14 +165,7 @@ object Form1: TForm1
     ScrollBars = ssVertical
     TabOrder = 3
   end
-  object ClientDataSet1: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    Left = 720
-    Top = 128
-  end
   object DataSource1: TDataSource
-    DataSet = ClientDataSet1
     Left = 640
     Top = 128
   end

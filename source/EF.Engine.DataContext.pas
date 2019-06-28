@@ -11,7 +11,7 @@ interface
 uses
   MidasLib, System.Classes, strUtils, SysUtils, Variants, Dialogs,
   DateUtils, RTTI,
-  Datasnap.Provider, Forms, Datasnap.DBClient, System.Contnrs, Data.DB,
+  Datasnap.Provider, Forms, System.Contnrs, Data.DB,
   System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls, System.TypInfo,
   System.threading,
   // Essas units darão suporte ao nosso framework
@@ -33,9 +33,7 @@ Type
   private
     ListObjectsInclude:TObjectList;
     ListObjectsThenInclude:TObjectList;
-    FFDQuery: TFDQuery;
-    drpProvider: TDataSetProvider;
-    FDbSet: TClientDataSet;
+    FDbSet: TFDQuery;
     FConnection: TEntityConn;
     FProviderName: string;
     FTypeConnetion: TTypeConnection;
@@ -44,12 +42,7 @@ Type
     procedure FreeObjects;
     function PutQuoted(Fields: string):string;
     procedure Prepare(QueryAble: IQueryAble);
-  //function BuilderSQL(fTypeSQL: TTypeSQL; fsTable, fsCampos, fsRestricao: String): String;
   protected
-    procedure DataSetProviderGetTableName(Sender: TObject; DataSet: TDataSet; var TableName: string); virtual;
-    procedure ReconcileError(DataSet: TCustomClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction); virtual;
-    procedure CreateClientDataSet(proDataSetProvider: TDataSetProvider);
-    procedure CreateProvider(var proSQLQuery: TFDQuery; prsNomeProvider: string);
     property Connection: TEntityConn read FConnection write FConnection;
   public
     destructor Destroy; override;
@@ -60,8 +53,7 @@ Type
 
     function Include( E: TObject ):TDataContext<T>;
     function ThenInclude(E: TObject ): TDataContext<T>;
-    function ToData(QueryAble: IQueryAble): OleVariant;
-    function ToDataSet(QueryAble: IQueryAble): TClientDataSet;
+    function ToDataSet(QueryAble: IQueryAble): TFDQuery;
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): TEntityList;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): TEntityList<T>; overload;
     function ToList(Condicion: TString): TEntityList<T>;overload;
@@ -76,7 +68,7 @@ Type
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
   published
-    property DbSet: TClientDataSet read FDbSet write FDbSet;
+    property DbSet: TFDQuery read FDbSet write FDbSet;
     property ProviderName: string read FProviderName write FProviderName;
     property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
     property Entity : T read FEntity write FEntity;
@@ -94,20 +86,7 @@ uses
   Vcl.ExtCtrls,
   EF.Schema.Firebird,
   EF.Schema.MSSQL,
-  EF.Mapping.AutoMapper, System.Types, EF.Schema.PostGres;
-
-function TDataContext<T>.ToData(QueryAble: IQueryAble): OleVariant;
-begin
-  try
-    FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble));
-    CreateProvider(FFDQuery, trim(fStringReplace(QueryAble.SEntity,
-         trim(StrFrom), '')));
-    CreateClientDataSet(drpProvider);
-    result := DbSet.Data;
-  finally
-    FreeObjects;
-  end;
-end;
+  EF.Mapping.AutoMapper, System.Types, EF.Schema.PostGres, Datasnap.DBClient;
 
 procedure TDataContext<T>.FreeObjects;
 begin
@@ -117,19 +96,7 @@ begin
     DbSet.Free;
     DbSet:= nil;
   end;
-  if drpProvider <> nil then
-  begin
-    drpProvider.Free;
-    drpProvider:= nil;
-  end;
-  if FFDQuery <> nil then
-  begin
-    FFDQuery.close;
-    FFDQuery.Free;
-    FFDQuery:= nil;
-  end;
 end;
-
 
 function TDataContext<T>.PutQuoted(Fields: string):string;
 var
@@ -166,9 +133,10 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TClientDataSet;
+function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
   Keys: TStringList;
+  DataSet:TFDQuery;
 begin
   try
     try
@@ -178,13 +146,9 @@ begin
 
       Prepare(QueryAble);
 
-      FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
-
-      CreateProvider( FFDQuery, trim(fStringReplace(QueryAble.SEntity,  trim(StrFrom), '')) );
-
-      CreateClientDataSet( drpProvider );
-
-      result := DbSet;
+      DataSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
+      DataSet.Open;
+      result := DataSet;
     except
       on E: Exception do
       begin
@@ -348,15 +312,14 @@ end;
 function TDataContext<T>.ToList<T>(QueryAble: IQueryAble): TEntityList<T>;
 var
   List: TEntityList<T>;
-  DataSet: TClientDataSet;
+  DataSet: TFDQuery;
   E: T;
 begin
   try
     //Entity := T(QueryAble.ConcretEntity);
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     List := TEntityList<T>.Create;
-    DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := ToData(QueryAble);
+    DataSet := ToDataSet(QueryAble);
     while not DataSet.Eof do
     begin
       E:= T.Create;
@@ -374,7 +337,7 @@ end;
 function TDataContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): TEntityList;
 var
   List: TEntityList;
-  DataSet: TClientDataSet;
+  DataSet: TFDQuery;
   E:TObject;
   Json: string;
 begin
@@ -388,8 +351,7 @@ begin
 
     List.Clear;
 
-    DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := ToData(QueryAble);
+    DataSet := ToDataSet(QueryAble);
     while not DataSet.Eof do
     begin
       E:= QueryAble.ConcretEntity.NewInstance;
@@ -406,14 +368,11 @@ end;
 
 function TDataContext<T>.Find(QueryAble: IQueryAble): TEntityBase;
 var
-  DataSet: TClientDataSet;
+  DataSet: TFDQuery;
 begin
   try
-    //Entity := QueryAble.ConcretEntity as T;//???????????????????
-
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
-    DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := ToData(QueryAble);
+    DataSet := ToDataSet(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.ConcretEntity);
     result := QueryAble.ConcretEntity;
   finally
@@ -424,13 +383,12 @@ end;
 
 function TDataContext<T>.Find<T>(QueryAble: IQueryAble): T;
 var
-  DataSet: TClientDataSet;
+  DataSet: TFDQuery;
   E: T;
 begin
   try
     result := nil;
-    DataSet := TClientDataSet.Create(Application);
-    DataSet.Data := ToData(QueryAble);
+    DataSet := ToDataSet(QueryAble);
     E:= T.Create;
     TAutoMapper.DataToEntity(DataSet, E);
     result := E;
@@ -470,15 +428,14 @@ begin
   end
   else
   begin
-    ToDataSet( from(E).Select.Where(E.Id = 0) );
+    DbSet:= ToDataSet( from(E).Select.Where(E.Id = 0) );
     Add(E);
   end;
 end;
 
 procedure TDataContext<T>.Update;
 var
-   ListValues: TStringList;
-  i: integer;
+  ListValues: TStringList;
 begin
   if DbSet <> nil then
   begin
@@ -504,7 +461,7 @@ begin
   end
   else
   begin
-    ToDataSet( from(Entity).Select.Where(Entity.Id = 0) );
+    DbSet:= ToDataSet( from(Entity).Select.Where(Entity.Id = Entity.Id.Value) );
     Update;
   end;
 end;
@@ -533,11 +490,6 @@ begin
   end;
 end;
 
-procedure TDataContext<T>.ReconcileError(DataSet: TCustomClientDataSet;
-    E: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction);
-begin
-  showmessage(E.message);
-end;
 
 function TDataContext<T>.GetFieldList: Data.DB.TFieldList;
 begin
@@ -551,23 +503,19 @@ begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
-    FFDQuery := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
-    if not FFDQuery.Active then
-       FFDQuery.Open;
-    result:= FFDQuery.ToJson();
+    DBSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
+    if not DBSet.Active then
+       DBSet.Open;
+    result:= DBSet.ToJson();
   finally
-    FFDQuery.Free;
-    FFDQuery:= nil;
+    DBSet.Free;
+    DBSet:= nil;
     Keys.Free;
   end;
 end;
 
 destructor TDataContext<T>.Destroy;
 begin
-  if drpProvider <> nil then
-    drpProvider.Free;
-  if FFDQuery <> nil then
-    FFDQuery.Free;
   if DbSet <> nil then
     DbSet.Free;
   if oFrom <> nil then
@@ -582,11 +530,6 @@ begin
     ListObjectsThenInclude.Free;
 end;
 
-procedure TDataContext<T>.DataSetProviderGetTableName(Sender: TObject;
-    DataSet: TDataSet; var TableName: string);
-begin
-  TableName := uppercase(FSEntity);
-end;
 
 procedure TDataContext<T>.Remove;
 begin
@@ -616,18 +559,6 @@ begin
 
 end;
 
-procedure TDataContext<T>.CreateProvider(var proSQLQuery: TFDQuery;
-    prsNomeProvider: string);
-begin
-  drpProvider := TDataSetProvider.Create(Application);
-  drpProvider.Name := stringreplace(prsNomeProvider,'"','',[rfReplaceAll]) + formatdatetime('SSMS', now);
-  drpProvider.DataSet := proSQLQuery;
-  drpProvider.UpdateMode := upWhereKeyOnly;
-  // drpProvider.UpdateMode     := upWhereAll;
-  drpProvider.Options := [poAutoRefresh, poUseQuoteChar];
-  drpProvider.OnGetTableName := DataSetProviderGetTableName;
-  // drpProvider.ResolveToDataSet:= true;
-end;
 
 constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
 begin
@@ -637,13 +568,6 @@ begin
      Entity := proEntity as T;
 end;
 
-procedure TDataContext<T>.CreateClientDataSet(proDataSetProvider: TDataSetProvider);
-begin
-   DbSet := TClientDataSet.Create(Application);
-   DbSet.OnReconcileError := ReconcileError;
-   DbSet.ProviderName := proDataSetProvider.Name;
-   DbSet.open;
-end;
 
 function TDataContext<T>.Where(Condicion: TString ): T;
 var

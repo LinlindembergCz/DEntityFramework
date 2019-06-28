@@ -4,13 +4,13 @@ interface
 
 uses
  System.Classes, RTTI, System.TypInfo,Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ExtCtrls, SysUtils, DB,
-  EF.Mapping.Base, Datasnap.DBClient;
+  EF.Mapping.Base, FireDAC.Comp.Client;
 
 type
   IDataBind = interface
   ['{2388D1DF-FA78-4EAC-8C97-600A89B71526}']
      function Map(Component: TComponent; Entity: TObject; Valued: boolean= false): TObject;
-     procedure Read(Component: TComponent; dbSet:TClientDataSet; Entity:TEntityBase; SetDefaultValue: boolean  );
+     procedure Read(Component: TComponent; dbSet:TFDQuery; Entity:TEntityBase; SetDefaultValue: boolean  );
   end;
 
 
@@ -40,7 +40,7 @@ type
   public
     function Map(Component: TComponent; Entity: TObject;
       Valued: boolean= false): TObject;
-    procedure Read(Component: TComponent; dbSet:TClientDataSet; Entity:TEntityBase;  SetDefaultValue: boolean );
+    procedure Read(Component: TComponent; dbSet:TFDQuery; Entity:TEntityBase;  SetDefaultValue: boolean );
   end;
 
 implementation
@@ -397,7 +397,7 @@ begin
   end;
 end;
 
-procedure TVLCDataBind.Read(Component: TComponent; dbSet:TClientDataSet; Entity:TEntityBase;  SetDefaultValue: boolean);
+procedure TVLCDataBind.Read(Component: TComponent; dbSet:TFDQuery; Entity:TEntityBase;  SetDefaultValue: boolean);
 
 var
   J: integer;
