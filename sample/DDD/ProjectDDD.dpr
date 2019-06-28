@@ -70,7 +70,7 @@ begin
   //ReportMemoryLeaksOnShutdown:= true;
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   try
-    c:= TFactoryConnection.GetConnection(FormPrincipal.FDConnection1);
+    c:= TFactoryConnection.GetConnection;//(FormPrincipal.FDConnection1);
     //A ordem de criação das tabelas que se relacionam é importante!!!!
     c.MigrationDataBase( [ TEmpresa,
                            TCliente,

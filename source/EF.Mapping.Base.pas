@@ -12,7 +12,6 @@ type
   TEntityBase = class(TPersistent)
   private
     FId: TInteger;
-
     FCollateOn: boolean;
   protected
     // FDataCadastro: TEntityDatetime;
@@ -20,7 +19,7 @@ type
     Mapped: boolean;
     Collate: TCollate;
     constructor Create; overload; virtual;
-    constructor Create(aCollateOn:boolean);overload;virtual;
+    constructor Create(aCollateOn: boolean  );overload;virtual;
     destructor Destroy; override;
     procedure Validation; virtual;
     procedure Initialize; virtual;
@@ -48,12 +47,22 @@ implementation
 
 uses EF.Mapping.AutoMapper;
 
-constructor TEntityBase.Create(aCollateOn: boolean);
+constructor TEntityBase.Create(aCollateOn: boolean );
 begin
    CollateOn := aCollateOn;
    Create;
    inherited Create;
+end;
 
+constructor TEntityBase.Create;
+begin
+  if CollateOn then
+  begin
+    if Collate = nil then
+       Collate:= TCollate.Create;
+  end;
+  if not Mapped then
+     Mapped := TAutoMapper.ToMapping(self, true, false);
 end;
 
 destructor TEntityBase.Destroy;
@@ -200,18 +209,6 @@ begin
   end;
   ctx.Free;
 end;
-
-constructor TEntityBase.Create;
-begin
-  if CollateOn then
-  begin
-    if Collate = nil then
-       Collate:= TCollate.Create;
-  end;
-  if not Mapped then
-     Mapped := TAutoMapper.ToMapping(self, true, false);
-end;
-
 
 
 end.
