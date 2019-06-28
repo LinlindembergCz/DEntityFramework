@@ -9,22 +9,18 @@ unit EF.Engine.DataContext;
 interface
 
 uses
-  MidasLib, System.Classes, strUtils, SysUtils, Variants, Dialogs,
-  DateUtils, RTTI,
-  Datasnap.Provider, Forms, System.Contnrs, Data.DB,
-  System.Generics.Collections, Vcl.DBCtrls, StdCtrls, Controls, System.TypInfo,
-  System.threading,
+  System.Classes, strUtils, SysUtils, Variants, Dialogs,
+  DateUtils, System.Types, Forms, System.Contnrs, Data.DB,
+  System.Generics.Collections, Vcl.DBCtrls,
+  FireDAC.Comp.Client, Data.DB.Helper,
   // Essas units darão suporte ao nosso framework
-  EF.Core.Consts,
   EF.Drivers.Connection,
   EF.Core.Types,
   EF.Mapping.Atributes,
   EF.Mapping.Base,
   EF.Core.Functions,
   EF.QueryAble.Base,
-  EF.QueryAble.Interfaces,
-  FireDAC.Comp.Client,
-  Data.DB.Helper;
+  EF.QueryAble.Interfaces;
 
 Type
    TTypeSQL       = (  tsInsert, tsUpdate );
@@ -86,7 +82,7 @@ uses
   Vcl.ExtCtrls,
   EF.Schema.Firebird,
   EF.Schema.MSSQL,
-  EF.Mapping.AutoMapper, System.Types, EF.Schema.PostGres, Datasnap.DBClient;
+  EF.Mapping.AutoMapper,  EF.Schema.PostGres;
 
 procedure TDataContext<T>.FreeObjects;
 begin
@@ -126,8 +122,8 @@ procedure TDataContext<T>.Prepare(QueryAble: IQueryAble);
 begin
   if FConnection.CustomTypeDataBase is TPostGres then
   begin
-  //De modo a contemplar consultas às tabelas do Postgres,
-  //faz-se necessário colocar aspas duplas
+    //De modo a contemplar consultas às tabelas do Postgres,
+    //faz-se necessário colocar aspas duplas
      QueryAble.SSelect := 'Select '+ PutQuoted( QueryAble.SSelect );
      QueryAble.SEntity := ' From "'+ upperCase( trim( stringreplace( QueryAble.SEntity ,'From ','', [] ) ) ) +'"';
   end;
@@ -143,9 +139,7 @@ begin
       FreeObjects;
       Keys := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
       FSEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
-
       Prepare(QueryAble);
-
       DataSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
       DataSet.Open;
       result := DataSet;
@@ -164,22 +158,18 @@ function TDataContext<T>.ToList(Condicion: TString): TEntityList<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, ConcretEntity : TEntityBase;
-
   FirstEntity: T;
-
   CurrentEntidy ,ReferenceEntidyList, CurrentList : TObject;
-
   FirstTable, TableForeignKey, ValueId: string;
-
   ListEntity :TEntityList<T>;
-
   H, I, j : Integer;
   IndexInclude , IndexThenInclude:integer;
-
   Json: string;
 begin
   try
-    H:=0;   I:=0;    j:=0;
+    H:=0;
+    I:=0;
+    j:=0;
 
     if ListObjectsInclude = nil then
        ListObjectsInclude:= TObjectList.Create;
@@ -297,12 +287,10 @@ begin
     end;
     result  := ListEntity;
   finally
-   //ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
-     // ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
@@ -316,7 +304,6 @@ var
   E: T;
 begin
   try
-    //Entity := T(QueryAble.ConcretEntity);
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     List := TEntityList<T>.Create;
     DataSet := ToDataSet(QueryAble);
@@ -350,12 +337,11 @@ begin
        List :=  TEntityList(EntityList);
 
     List.Clear;
-
     DataSet := ToDataSet(QueryAble);
     while not DataSet.Eof do
     begin
       E:= QueryAble.ConcretEntity.NewInstance;
-      TAutoMapper.DataToEntity(DataSet, E  );
+      TAutoMapper.DataToEntity(DataSet, E );
       List.Add( E );
       DataSet.Next;
     end;
@@ -490,7 +476,6 @@ begin
   end;
 end;
 
-
 function TDataContext<T>.GetFieldList: Data.DB.TFieldList;
 begin
   result := DbSet.FieldList;
@@ -530,7 +515,6 @@ begin
     ListObjectsThenInclude.Free;
 end;
 
-
 procedure TDataContext<T>.Remove;
 begin
   //Refatorar
@@ -553,26 +537,23 @@ end;
 function TDataContext<T>.ChangeCount: integer;
 begin
    if (DbSet <> nil ) then
-    result := FDbSet.ChangeCount
-    else
-    result := 0;
-
+      result := FDbSet.ChangeCount
+   else
+      result := 0;
 end;
-
 
 constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
 begin
   if proEntity = nil then
-     Entity := T.Create// proEntity;
+     Entity := T.Create
   else
      Entity := proEntity as T;
 end;
 
-
 function TDataContext<T>.Where(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
-  ReferenceEntidy, PriorEntity: TEntityBase;
+  ReferenceEntidy: TEntityBase;
   FirstEntity: T;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey: string;
@@ -618,9 +599,6 @@ begin
             end
             else
             begin
-               {CurrentEntidy := Find( From( TEntityBase(CurrentEntidy)).
-                                Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                Select ); }
                TAutoMapper.SetObject( FirstEntity,
                                       CurrentEntidy.ClassName ,
                                       Find( From( TEntityBase(CurrentEntidy)).
@@ -685,14 +663,11 @@ begin
 
     Entity := FirstEntity;
     result  := FirstEntity;
-
   finally
-   // ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
-      //ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
@@ -748,7 +723,5 @@ function From(E: IQueryAble): TFrom;
 begin
   result := TFrom(Linq.From(E));
 end;
-
-
 
 end.
