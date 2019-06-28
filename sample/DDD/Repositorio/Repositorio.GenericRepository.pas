@@ -90,7 +90,7 @@ procedure TRepository<T>.AddOrUpdate(State:TEntityState);
 begin
 //FDbContext.SaveChanges(State);
   case State of
-    esInsert: FDbContext.Add;
+    esInsert: FDbContext.Add(FEntity);
     esEdit  : FDbContext.Update;
   else
     FDbContext.RefreshDataSet;
