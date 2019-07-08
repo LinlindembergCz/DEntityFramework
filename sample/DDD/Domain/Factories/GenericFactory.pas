@@ -22,20 +22,24 @@ var
   AMethCreate: TRttiMethod;
   instanceType: TRttiInstanceType;
 begin
-  ctx := TRttiContext.Create;
-  rType := ctx.GetType(TypeInfo(T));
-  for AMethCreate in rType.GetMethods do
-  begin
-    if (AMethCreate.IsConstructor) and (Length(AMethCreate.GetParameters) = 0) then
+  try
+    ctx := TRttiContext.Create;
+    rType := ctx.GetType(TypeInfo(T));
+    for AMethCreate in rType.GetMethods do
     begin
-      instanceType := rType.AsInstance;
+      if (AMethCreate.IsConstructor) and (Length(AMethCreate.GetParameters) = 0) then
+      begin
+        instanceType := rType.AsInstance;
 
-      AValue := AMethCreate.Invoke(instanceType.MetaclassType, []);
+        AValue := AMethCreate.Invoke(instanceType.MetaclassType, []);
 
-      Result := AValue.AsType<T>;
+        Result := AValue.AsType<T>;
 
-      Exit;
+        Exit;
+      end;
     end;
+  finally
+    ctx.Free;
   end;
 end;
 

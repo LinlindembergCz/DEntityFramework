@@ -5,7 +5,7 @@ interface
 uses
   System.Classes,  Domain.ValuesObject.Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
   EF.Mapping.Atributes, Domain.Entity.Contato, Domain.Entity.Veiculo,Domain.Entity.ClienteTabelaPreco,
-  System.Generics.Collections, Domain.Consts, Domain.Entity.ClienteEmpresa;
+  System.Generics.Collections, Domain.Consts, Domain.Entity.ClienteEmpresa, EF.Core.List;
 
 type
   [Table('Clientes')]
@@ -30,8 +30,6 @@ type
     FVeiculo: TVeiculo;
     FClienteTabelaPreco: TClienteTabelaPreco;
     FClienteEmpresa: TClienteEmpresa;
-
-    procedure Initialize;override;
   public
     constructor Create;override;
     destructor Destroy;override;
@@ -80,12 +78,14 @@ implementation
 
 uses GenericFactory;
 
-
 constructor TCliente.Create;
 begin
-  CollateOn:= true;
-  inherited Create;
-  Initialize;
+  inherited;
+  FEmail              := TGenericFactory.CreateInstance<TEmail>;
+  FVeiculo            := TGenericFactory.CreateInstance<TVeiculo>;
+  FClienteTabelaPreco := TGenericFactory.CreateInstance<TClienteTabelaPreco>;
+  FClienteEmpresa     := TGenericFactory.CreateInstance<TClienteEmpresa>;
+  FContados           := TEntityList<TContato>.create;
 end;
 
 destructor TCliente.Destroy;
@@ -93,33 +93,10 @@ begin
   inherited;
 end;
 
-procedure TCliente.Initialize;
-begin
-  inherited;
-  Email:= TGenericFactory.CreateInstance<TEmail>;
-  Veiculo:= TGenericFactory.CreateInstance<TVeiculo>;
-
- {Email    := Collate.RegisterObject<TEmail>(  TEmail.Create );
-  Veiculo  := Collate.RegisterObject<TVeiculo>(  TVeiculo.create );}
-
-  ClienteTabelaPreco:= Collate.RegisterObject<TClienteTabelaPreco>( TClienteTabelaPreco.Create(true) );
-  ClienteTabelaPreco.Initialize;
-
-  ClienteEmpresa:= Collate.RegisterObject<TClienteEmpresa>( TClienteEmpresa.Create(true) );
-  ClienteEmpresa.Initialize;
-
-  Contatos:= Collate.RegisterObjectList<TContato>(
-                                     TEntityList<TContato>.create(
-                                             TContato.create ) );
-
-  //TEntityList<TContato>.create(TContato.create);
-
-end;
-
 procedure TCliente.Validation;
 begin
   inherited;
-  Email.validar;
+  //Email.validar;
 end;
 
 { TContatos }

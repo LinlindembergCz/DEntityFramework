@@ -12,7 +12,7 @@ uses
   System.Classes, strUtils, SysUtils, Variants, Dialogs,
   DateUtils, System.Types, Forms, System.Contnrs, Data.DB,
   System.Generics.Collections, Vcl.DBCtrls,
-  FireDAC.Comp.Client, Data.DB.Helper,
+  FireDAC.Comp.Client, Data.DB.Helper,EF.Core.List,
   // Essas units darão suporte ao nosso framework
   EF.Drivers.Connection,
   EF.Core.Types,
@@ -137,8 +137,8 @@ begin
   try
     try
       FreeObjects;
-      Keys := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
-      FSEntity := TAutoMapper.GetTableAttribute(Entity.ClassType);
+      Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
+      FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
       Prepare(QueryAble);
       DataSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
       DataSet.Open;
@@ -172,7 +172,7 @@ begin
     j:=0;
 
     if ListObjectsInclude = nil then
-       ListObjectsInclude:= TObjectList.Create;
+       ListObjectsInclude:= TObjectList.Create(false);
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(Entity);
@@ -325,7 +325,7 @@ function TDataContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil
 var
   List: TEntityList;
   DataSet: TFDQuery;
-  E:TObject;
+  E: TEntityBase;
   Json: string;
 begin
   try
@@ -340,9 +340,9 @@ begin
     DataSet := ToDataSet(QueryAble);
     while not DataSet.Eof do
     begin
-      E:= QueryAble.ConcretEntity.NewInstance;
+      E:= QueryAble.ConcretEntity.NewInstance as TEntityBase;
       TAutoMapper.DataToEntity(DataSet, E );
-      List.Add( E );
+      List.Add( E  );
       DataSet.Next;
     end;
     result := List;
@@ -357,6 +357,8 @@ var
   DataSet: TFDQuery;
 begin
   try
+  //Está alterando os objetos  de entity quando na verdade deveria manter inalterada
+  //e manipular o objeto de QueryAble.ConcretEntity da Entidade
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     DataSet := ToDataSet(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.ConcretEntity);
@@ -375,9 +377,9 @@ begin
   try
     result := nil;
     DataSet := ToDataSet(QueryAble);
-    E:= T.Create;
-    TAutoMapper.DataToEntity(DataSet, E);
-    result := E;
+    //E:= T.Create;
+    TAutoMapper.DataToEntity(DataSet,QueryAble.ConcretEntity );
+    result := QueryAble.ConcretEntity as T;
   finally
      DataSet.Free;
      DataSet:= nil;
@@ -501,18 +503,20 @@ end;
 
 destructor TDataContext<T>.Destroy;
 begin
-  if DbSet <> nil then
-    DbSet.Free;
+  if FDbSet <> nil then
+    FreeAndNil(FDbSet);
   if oFrom <> nil then
-    oFrom.Free;
-  if Entity <> nil then
-    Entity.Free;
+    FreeAndNil(oFrom);
+  if FEntity <> nil then
+    FreeAndNil(FEntity);
   if ListField <> nil then
-    ListField.Free;
+    FreeAndNil(ListField);
   if ListObjectsInclude <> nil then
-    ListObjectsInclude.Free;
+    FreeAndNil(ListObjectsInclude);
   if ListObjectsThenInclude <> nil then
-    ListObjectsThenInclude.Free;
+    FreeAndNil(ListObjectsThenInclude);
+  if Connection <> nil then
+     Connection.Free;
 end;
 
 procedure TDataContext<T>.Remove;
@@ -544,29 +548,31 @@ end;
 
 constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
 begin
-  if proEntity = nil then
-     Entity := T.Create
-  else
-     Entity := proEntity as T;
+  Entity := T.Create
 end;
 
 function TDataContext<T>.Where(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
-  ReferenceEntidy: TEntityBase;
+  ReferenceEntidy, EntidyInclude: TEntityBase;
   FirstEntity: T;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey: string;
   List:TEntityList;
   I, j, k: Integer;
   IndexInclude , IndexThenInclude:integer;
+
+  Json:string;
 begin
   try
     if ListObjectsInclude = nil then
+    begin
        ListObjectsInclude:= TObjectList.Create(false);
-    //Adicionar primeira a entidade principal do contexto
+    end;
     if ListObjectsInclude.Count = 0 then
-       ListObjectsInclude.Add(Entity);
+    begin
+       ListObjectsInclude.Add(T.Create);
+    end;
 
     I:=0;
     j:=0;
@@ -587,7 +593,7 @@ begin
           begin
             FirstEntity := T(ListObjectsInclude.Items[0]);
             FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-            FirstEntity := Find<T>( From(T(FirstEntity)).Where( Condicion ).Select );
+            FirstEntity := Find<T>( From(FirstEntity).Where( Condicion ).Select );
           end
           else
           begin
@@ -595,64 +601,75 @@ begin
             begin
               CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
               ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
-                               Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).Select, CurrentEntidy  );
+                      Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
+                      Select,
+                      CurrentEntidy  );
             end
             else
             begin
-               TAutoMapper.SetObject( FirstEntity,
-                                      CurrentEntidy.ClassName ,
-                                      Find( From( TEntityBase(CurrentEntidy)).
-                                            Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                            Select ) );
+               EntidyInclude := Find( From( CurrentEntidy.ClassType).
+                                        Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                                        Select );
+               Json:= EntidyInclude.ToJson;
+               EntidyInclude.Free;
+               EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
+               EntidyInclude.FromJson( Json );
             end;
           end;
         finally
-          Inc(I);
+          Inc(i);
           FreeObjects;
         end;
       end
       else
       begin
-        ReferenceEntidy := TEntityBase(CurrentEntidy);
-        TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
-
-        for j := i-1 to maxthenInclude do
+        if ListObjectsthenInclude <> nil then
         begin
-          try
-            if ListObjectsthenInclude.Items[j] <> nil then
-            begin
-              CurrentEntidy:= ListObjectsthenInclude.Items[j];
-              if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+          ReferenceEntidy := TEntityBase(CurrentEntidy);
+          TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
+
+          for j := i-1 to maxthenInclude do
+          begin
+            try
+              if ListObjectsthenInclude.Items[j] <> nil then
               begin
-                 List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
-                                 Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
-                                 Select );
+                CurrentEntidy:= ListObjectsthenInclude.Items[j];
+                if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+                begin
+                   //Refatorar
+                   List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
+                                   Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
+                                   Select );
 
-                 while TEntityList(ListObjectsthenInclude.items[j]).Count > 1 do
-                    TEntityList(ListObjectsthenInclude.items[j]).Delete( TEntityList(ListObjectsthenInclude.items[j]).Count - 1 );
+                   while TEntityList(ListObjectsthenInclude.items[j]).Count > 1 do
+                      TEntityList(ListObjectsthenInclude.items[j]).Delete( TEntityList(ListObjectsthenInclude.items[j]).Count - 1 );
 
-                 for k := 0 to List.Count-1 do
-                 begin
-                    TEntityList(ListObjectsthenInclude.items[j]).Add( List[k]);
-                 end;
+                   for k := 0 to List.Count-1 do
+                   begin
+                      TEntityList(ListObjectsthenInclude.items[j]).Add( List[k]);
+                   end;
+                end
+                else
+                begin
+                  TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+                  ListObjectsthenInclude.Items[j] := Find( From(CurrentEntidy.ClassType).
+                                                                 Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
+                                                                 Select );
+                                                                 {Find( From(TEntityBase(ListObjectsthenInclude.Items[j])).
+                                                                 Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
+                                                                 Select );}
+                end;
+                ReferenceEntidy := ListObjectsthenInclude.Items[j] as TEntityBase;
+                TableForeignKey := Copy( CurrentEntidy.ClassName, 2, length(CurrentEntidy.ClassName) );
+                Inc(I);
               end
               else
               begin
-                TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-                ListObjectsthenInclude.Items[j] := Find( From(TEntityBase(ListObjectsthenInclude.Items[j])).
-                                                               Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
-                                                               Select );
+                break;
               end;
-              ReferenceEntidy := ListObjectsthenInclude.Items[j] as TEntityBase;
-              TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-              Inc(I);
-            end
-            else
-            begin
-              break;
+            finally
+              FreeObjects;
             end;
-          finally
-            FreeObjects;
           end;
         end;
       end;
@@ -661,13 +678,15 @@ begin
          break;
     end;
 
-    Entity := FirstEntity;
-    result  := FirstEntity;
+    //Entity := FirstEntity;
+    result := FirstEntity;
   finally
+    ListObjectsInclude.Clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
+      ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
@@ -679,11 +698,9 @@ begin
    if ListObjectsInclude = nil then
    begin
       ListObjectsInclude:= TObjectList.Create(false);
-      ListObjectsInclude.Add(Entity);
-   end;
-   if ListObjectsThenInclude = nil then
-   begin
+      ListObjectsInclude.Add(T.Create);
       ListObjectsThenInclude:= TObjectList.Create(false);
+      //ListObjectsThenInclude.Add( nil );
    end;
    ListObjectsInclude.Add( E );
    ListObjectsThenInclude.Add( nil );

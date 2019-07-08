@@ -123,6 +123,7 @@ var
   List: TList;
   Found:Boolean;
   tempList:TList;
+  Instance: TObject;
 
   procedure AddFieldByDefault;
   begin
@@ -152,21 +153,24 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-         Found:= false;
-         for Atributo in Prop.GetAttributes do
+         if Prop.Propertytype.AsInstance <> nil then
          begin
-            if (Atributo is NotMapper) then
-            begin
-               Found:= true;
-               break;
-            end
-         end;
-         if not Found then
-         begin
-           tempList := GetListAtributes( Prop.Propertytype.AsInstance.MetaclassType);
-           if tempList.Count > 0 then
-              List.Add( tempList[0] );
-         end;
+           Found:= false;
+           for Atributo in Prop.GetAttributes do
+           begin
+              if (Atributo is NotMapper) then
+              begin
+                 Found:= true;
+                 break;
+              end
+           end;
+           if not Found then
+           begin
+             tempList := GetListAtributes( Prop.Propertytype.AsInstance.MetaclassType);
+             if tempList.Count > 0 then
+                List.Add( tempList[0] );
+           end;
+         end
          //tempList.Clear;
       end
       else
@@ -682,8 +686,8 @@ begin
     begin
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
-        if ( (uppercase(Field.Name) = uppercase('F' + Prop.Name)) and
-           (Prop.Name <> 'CollateOn') ) or  ( (uppercase(Prop.Name) = 'ID' ) and (WithID ) )  then
+        if (uppercase(Field.Name) = uppercase('F' + Prop.Name))  or
+           ( (uppercase(Prop.Name) = 'ID' ) and (WithID ) )  then
         begin
           Value := GetValueField(E, Field);
           if values = '' then
@@ -713,8 +717,7 @@ begin
       for Field in ctx.GetType(E.ClassType).GetFields do
       begin
         if (uppercase(Field.Name) = uppercase('F' + Propert)) and
-            (uppercase(Propert) = uppercase(Prop.Name)) and
-            (Prop.Name <> 'CollateOn')  then
+            (uppercase(Propert) = uppercase(Prop.Name)) then
         begin
           Value := GetValueField(E, Field);
           if values = '' then
@@ -742,6 +745,7 @@ var
   typ: TRttiType;
   tempStrings:TStrings;
   FoundAttribute:boolean;
+  Instance: TObject;
 begin
   try
     L := TStringList.Create(true);
@@ -750,22 +754,26 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-         FoundAttribute:= false;
-         for Atrib in Prop.GetAttributes do
+         Instance := GetObjectProp(E ,Prop.Name);
+         if Instance <> nil then
          begin
-            if (Atrib is NotMapper) then
-            begin
-               FoundAttribute:= true;
-               break;
-            end
-         end;
-         if not FoundAttribute then
-         begin
-           tempStrings:= GetValuesFieldsList( GetObjectProp(E ,Prop.Name) as TEntityBase );
-           if tempStrings.Count > 0 then
-              L.AddStrings( tempStrings );
-           tempStrings.Clear;
-           tempStrings.Free;
+           FoundAttribute:= false;
+           for Atrib in Prop.GetAttributes do
+           begin
+              if (Atrib is NotMapper) then
+              begin
+                 FoundAttribute:= true;
+                 break;
+              end
+           end;
+           if not FoundAttribute then
+           begin
+             tempStrings:= GetValuesFieldsList( instance as TEntityBase );
+             if tempStrings.Count > 0 then
+                L.AddStrings( tempStrings );
+             tempStrings.Clear;
+             tempStrings.Free;
+           end;
          end;
       end
       else
@@ -1041,12 +1049,7 @@ class procedure TAutoMapper.SetFieldValue(Entity: TEntityBase;
   var
   ctx: TRttiContext;
   Val: TValue;
-  iInteger: TInteger;
-  fFloat: TFloat;
-  sString: TString;
-  vInstance:Variant;
   dDatetime: TDate;
-  TypeClassName: string;
 begin
   dDatetime := Val.AsType<TDate>;
   if not fEmpty(Valor) then
@@ -1163,6 +1166,7 @@ var
   Atrib: TCustomAttribute;
   ctx: TRttiContext;
   breaked:boolean;
+  Instance:TObject;
 begin
   try
     ctx := TRttiContext.Create;
@@ -1172,17 +1176,21 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-         breaked:= false;
-         for Atrib in Prop.GetAttributes do
+         Instance := GetObjectProp( Entity ,Prop.Name);
+         if Instance <> nil then
          begin
-            if (Atrib is NotMapper) then
-            begin
-               breaked:= true;
-               break;
-            end
+           breaked:= false;
+           for Atrib in Prop.GetAttributes do
+           begin
+              if (Atrib is NotMapper) then
+              begin
+                 breaked:= true;
+                 break;
+              end
+           end;
+           if not breaked then
+              DataToEntity( DataSet, Instance as TEntityBase );
          end;
-         if not breaked then
-            DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
       end
       else
       begin
@@ -1213,6 +1221,7 @@ var
   Atrib: TCustomAttribute;
   ctx: TRttiContext;
   breaked:boolean;
+  Instance: TObject;
 begin
   try
     ctx := TRttiContext.Create;
@@ -1222,17 +1231,21 @@ begin
     begin
       if PropIsInstance(Prop) then
       begin
-         breaked:= false;
-         for Atrib in Prop.GetAttributes do
+         Instance:= GetObjectProp( Entity ,Prop.Name);
+         if instance <> nil then
          begin
-            if (Atrib is NotMapper) then
-            begin
-               breaked:= true;
-               break;
-            end
+           breaked:= false;
+           for Atrib in Prop.GetAttributes do
+           begin
+              if (Atrib is NotMapper) then
+              begin
+                 breaked:= true;
+                 break;
+              end
+           end;
+           if not breaked then
+              DataToEntity( DataSet, instance as TEntityBase );
          end;
-         if not breaked then
-            DataToEntity( DataSet, GetObjectProp( Entity ,Prop.Name) as TEntityBase );
       end
       else
       begin

@@ -3,7 +3,7 @@ unit Domain.Entity.TabelaPreco;
 interface
 
 uses
-  System.Classes, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
+  System.Classes, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,EF.Core.List,
   EF.Mapping.Atributes, Domain.Entity.ItensTabelaPreco, Domain.Consts;
 
 type
@@ -12,10 +12,8 @@ type
   private
     FDescricao: TString;
     FItensTabelaPreco: TEntityList<TItensTabelaPreco>;
-    procedure Initialize;
   public
     constructor Create;override;
-    destructor Destroy;override;
   published
     [FieldTable('Descricao',varchar50,false)]
     property Descricao: TString read FDescricao write FDescricao;
@@ -30,25 +28,8 @@ implementation
 
 constructor TTabelaPreco.Create;
 begin
-   CollateOn:= true;
-   inherited Create;
-   Initialize;
-end;
-
-destructor TTabelaPreco.Destroy;
-begin
-   //ItensTabelaPreco.Free;
    inherited;
-end;
-
-procedure TTabelaPreco.Initialize;
-begin
-  inherited;
-  ItensTabelaPreco:= Collate.RegisterObjectList<TItensTabelaPreco>(
-                                     TEntityList<TItensTabelaPreco>.create(
-                                             TItensTabelaPreco.create(true) ) );
- { TabelaPreco:= Collate.RegisterObject<TTabelaPreco>( TTabelaPreco.Create(true) );
-  TabelaPreco.Initialize;}
+   ItensTabelaPreco:= TEntityList<TItensTabelaPreco>.create;
 end;
 
 

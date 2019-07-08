@@ -84,7 +84,7 @@ type
 
   TQueryAble = class(TInterfacedPersistent, IQueryAble)
   private
-    FConcretEntity: TEntityBase;
+
     procedure SetConcretEntity(value: TEntityBase);
     function GetConcretEntity: TEntityBase;
     procedure SetSEntity(value: string);
@@ -112,6 +112,7 @@ type
     function GetSExcept: string;
   protected
     oFrom: TFrom;
+    FConcretEntity: TEntityBase;
     FSWhere: String;
     FSOrder: string;
     FSSelect: string;
@@ -153,7 +154,7 @@ type
   TFrom = class(TQueryAble)
   protected
     constructor Create;
-    destructor Destroy;
+    destructor Destroy;override;
     procedure InitializeString;
   end;
 
@@ -317,9 +318,10 @@ end;
 
 class function Linq.From(E: TClass): TFrom;
 begin
+ ///ESTRANHO
   oFrom := GetFromSigleton;
   oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
-  oFrom.FConcretEntity := (E.Create as TEntityBase);
+  oFrom.FConcretEntity := TAutoMapper.CreateObject(E.UnitName+'.'+E.ClassName) as TEntityBase;
   result := oFrom;
 end;
 
@@ -371,7 +373,7 @@ end;
 
 destructor TFrom.Destroy;
 begin
-
+  FConcretEntity.Free;
 end;
 
 procedure TFrom.InitializeString;

@@ -7,39 +7,26 @@ uses
   EF.Mapping.Atributes, EF.Core.Types,REST.JSON, JsonDataObjects;
 
 type
-  TCollate = Class;
+  //TCollate = Class;
 
   TEntityBase = class(TPersistent)
   private
     FId: TInteger;
-    FCollateOn: boolean;
   protected
     // FDataCadastro: TEntityDatetime;
   public
     Mapped: boolean;
-    Collate: TCollate;
     constructor Create; overload; virtual;
-    constructor Create(aCollateOn: boolean  );overload;virtual;
-    destructor Destroy; override;
+    destructor Destroy;override;
     procedure Validation; virtual;
-    procedure Initialize; virtual;
   published
     [FieldTable('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
     function ToJson(UsingRestJson:boolean = false): string;
     procedure FromJson{<T: class, constructor>}(const AJson: String);
-    [NotMapper]
-    property CollateOn: boolean read FCollateOn write FCollateOn;
     // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
 
-  TCollate= class(TPersistent)
-  private
-     ObjectList:TObjectList;
-  public
-     function RegisterObject<T:TEntityBase>(O:T):T;overload;
-     function RegisterObjectList<T:TEntityBase>(O: TEntityList<T>):TEntityList<T>;overload;
-  end;
 
 implementation
 
@@ -47,33 +34,17 @@ implementation
 
 uses EF.Mapping.AutoMapper;
 
-constructor TEntityBase.Create(aCollateOn: boolean );
-begin
-   CollateOn := aCollateOn;
-   Create;
-   inherited Create;
-end;
-
 constructor TEntityBase.Create;
 begin
-  if CollateOn then
-  begin
-    if Collate = nil then
-       Collate:= TCollate.Create;
-  end;
-  if not Mapped then
+   if not Mapped then
      Mapped := TAutoMapper.ToMapping(self, true, false);
+   inherited Create;
 end;
 
 destructor TEntityBase.Destroy;
 begin
- if Collate <> nil then
-  begin
-    Collate.ObjectList.Free;
-    Collate.free;
-  end;
-  if not CollateON then
-     FreeAndNilProperties(self);
+  inherited;
+  FreeAndNilProperties(self);
 end;
 
 function TEntityBase.ToJson(UsingRestJson:boolean = false): string;
@@ -138,27 +109,6 @@ begin
     FreeAndNil(joJSON);
   end;
 
-end;
-
-procedure TEntityBase.Initialize;
-begin
-
-end;
-
-function TCollate.RegisterObject<T>( O:T):T;
-begin
-  if ObjectList = nil then
-     ObjectList := TObjectList.Create;
-  ObjectList.Add( O );
-  result:= O;
-end;
-
-function TCollate.RegisterObjectList<T>(O: TEntityList<T>): TEntityList<T>;
-begin
-  if ObjectList = nil then
-     ObjectList := TObjectList.Create;
-  ObjectList.Add( O );
-  result:= O;
 end;
 
 procedure TEntityBase.Validation;

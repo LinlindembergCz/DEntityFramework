@@ -38,6 +38,7 @@ type
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -54,7 +55,13 @@ implementation
 
 {$R *.dfm}
 
-uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Contato, EF.Core.Types;
+uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Contato, EF.Core.Types,
+  EF.Core.List;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Context.free;
+end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -84,22 +91,24 @@ var
    C:TCliente;
    contato: TContato;
 begin
-   C:= Context.Include(E.Veiculo).
-               Include(E.Contatos).
-               Where( E.ID = 3 //DataSource1.DataSet.FieldByName('ID').AsInteger
-                     );
+   try
+     C := Context.Include(E.Veiculo)
+                 .Include(E.Contatos).
+                  Where( E.ID = 3// DataSource1.DataSet.FieldByName('ID').AsInteger
+                       );
 
-   mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
-   mlog.Lines.Add('Nome: ' + C.Nome.Value);
-   mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
-
-   mlog.Lines.Add('Contatos :');
-   for contato in C.Contatos do
-   begin
-      mlog.Lines.Add('    ' + contato.Nome.Value);
+     mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
+     mlog.Lines.Add('Nome: ' + C.Nome.Value);
+     mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+     mlog.Lines.Add('Contatos :');
+     for contato in C.Contatos do
+     begin
+        mlog.Lines.Add('    ' + contato.Nome.Value);
+     end;
+   finally
+      FreeAndNIL(C);
    end;
 
-   FreeAndNIL(C);
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
@@ -183,9 +192,12 @@ end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
 begin
-   QueryAble := From( E ).Select.Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
-   E := Context.Find<TCliente>( QueryAble );
-   mlog.Lines.Add('ID: ' + E.ID.Value.ToString+'      Nome: ' + E.Nome.Value);
+   if DataSource1.DataSet <> nil then
+   begin
+     QueryAble := From( E ).Select.Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+     E := Context.Find<TCliente>( QueryAble );
+     mlog.Lines.Add('ID: ' + E.ID.Value.ToString+'      Nome: ' + E.Nome.Value);
+   end;
 end;
 
 procedure TForm1.buttonGetSQLClick(Sender: TObject);

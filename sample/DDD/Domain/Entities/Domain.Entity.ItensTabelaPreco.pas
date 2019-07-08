@@ -31,13 +31,18 @@ type
 
 implementation
 
+uses
+  GenericFactory;
+
 { TItensTabelaPreco }
 
 constructor TItensTabelaPreco.Create;
 begin
- inherited;
- //Produto := Collate.RegisterObject<TProduto>( TProduto.Create );
+  inherited;
+  Produto := TGenericFactory.CreateInstance<TProduto>;
 end;
+
+
 
 initialization RegisterClass(TItensTabelaPreco);
 finalization UnRegisterClass(TItensTabelaPreco);

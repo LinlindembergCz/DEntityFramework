@@ -16,7 +16,6 @@ type
     //FCliente: TCliente;
   public
       constructor Create;override;
-    procedure Initialize;override;
   published
     [FieldTable('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
@@ -35,25 +34,16 @@ type
 
 implementation
 
-uses
-  GenericFactory;
+uses  GenericFactory;
 
 { TClienteTabelaPreco }
-
-
 
 constructor TClienteEmpresa.Create;
 begin
   inherited;
-  Initialize;
+  FEmpresa:=  TGenericFactory.CreateInstance<TEmpresa>;
 end;
 
-procedure TClienteEmpresa.Initialize;
-begin
-  inherited;
-  FEmpresa:=  TGenericFactory.CreateInstance<TEmpresa>;//Collate.RegisterObject<TEmpresa>( TEmpresa.Create(true) );
-  //Cliente:= TCliente.Create;
-end;
 
 initialization RegisterClass(TClienteEmpresa);
 finalization UnRegisterClass(TClienteEmpresa);

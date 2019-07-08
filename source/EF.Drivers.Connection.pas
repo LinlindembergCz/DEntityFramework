@@ -15,6 +15,7 @@ uses
 type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
   FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB, fdPG );
+
   TEntityConn = class
   private
     FCustomTypeDataBase: TCustomDataBase;
@@ -37,7 +38,7 @@ type
   public
     constructor Create(aDriver:FDConn; aUser,aPassword,aServer,aDataBase: string);overload;virtual; abstract;
     constructor Create(aDriver: FDConn; Conn : TFDConnection);overload;virtual; abstract;
-    destructor Destroy;virtual;
+    destructor Destroy;override;
     procedure GetTableNames(var List: TStringList); virtual; abstract;
     procedure GetFieldNames(var List: TStringList; Table: string); virtual;abstract;
     procedure ExecutarSQL(prsSQL: string); virtual; abstract;
@@ -179,6 +180,10 @@ destructor TEntityConn.Destroy;
 begin
   if FTableList <> nil then
      FTableList.Free;
+  if FCustomTypeDataBase <> nil then
+     FCustomTypeDataBase.Free;
+  if FCustomConnection <> nil then
+     FCustomConnection.Free;
 end;
 
 function TEntityConn.CreateSingleTable(i: integer): boolean;

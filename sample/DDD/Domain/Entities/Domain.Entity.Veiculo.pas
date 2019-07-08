@@ -12,17 +12,19 @@ type
   private
     FPlaca: TString;
     FClienteId: TInteger;
+  public
   published
     [FieldTable('Placa',varchar10,false)]
      property Placa: TString read FPlaca write FPlaca;
     [FieldTable('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
+
   end;
 
 implementation
 
-
+{ TVeiculo }
 
 initialization RegisterClass(TVeiculo);
 finalization UnRegisterClass(TVeiculo);
