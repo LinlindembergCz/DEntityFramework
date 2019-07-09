@@ -167,21 +167,23 @@ var
   Json: string;
 begin
   try
-    H:=0;
-    I:=0;
-    j:=0;
-
     if ListObjectsInclude = nil then
        ListObjectsInclude:= TObjectList.Create(false);
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(Entity);
 
+    FirstEntity:= Entity;
+
+    H:=0;
+    I:=0;
+    j:=0;
+
     maxInclude:= ListObjectsInclude.Count-1;
     if ListObjectsthenInclude <> nil then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
-    ListEntity := ToList<T>( From( T ).Where( Condicion ).Select );
+    ListEntity := ToList<T>( From( FirstEntity ).Where( Condicion ).Select );
 
     if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
     begin
@@ -294,10 +296,12 @@ begin
     end;
     result  := ListEntity;
   finally
+    ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
+      ListObjectsInclude.clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
@@ -708,7 +712,6 @@ begin
       ListObjectsInclude:= TObjectList.Create(false);
       ListObjectsInclude.Add(T.Create);
       ListObjectsThenInclude:= TObjectList.Create(false);
-      //ListObjectsThenInclude.Add( nil );
    end;
    ListObjectsInclude.Add( E );
    ListObjectsThenInclude.Add( nil );
