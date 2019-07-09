@@ -182,6 +182,7 @@ begin
    begin
       mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value);
    end;
+   FreeAndNil( L );
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);

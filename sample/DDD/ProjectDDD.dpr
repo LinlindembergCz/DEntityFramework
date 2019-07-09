@@ -58,7 +58,8 @@ uses
   Domain.Entity.Empresa in 'Domain\Entities\Domain.Entity.Empresa.pas',
   Domain.Entity.ClienteEmpresa in 'Domain\Entities\Domain.Entity.ClienteEmpresa.pas',
   GenericFactory in 'Domain\Factories\GenericFactory.pas',
-  EF.Schema.PostGres in '..\..\source\EF.Schema.PostGres.pas';
+  EF.Schema.PostGres in '..\..\source\EF.Schema.PostGres.pas',
+  EF.Core.List in '..\..\source\EF.Core.List.pas';
 
 {$R *.res}
 

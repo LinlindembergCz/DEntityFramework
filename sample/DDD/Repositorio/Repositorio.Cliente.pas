@@ -24,7 +24,7 @@ implementation
 
 uses
   Vcl.Dialogs, System.SysUtils, Domain.Entity.ItensTabelaPreco,
-  Domain.Entity.Contato;
+  Domain.Entity.Contato, EF.Core.List;
 
 { TRepositoryCliente }
 
