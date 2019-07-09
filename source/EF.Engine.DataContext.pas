@@ -157,7 +157,7 @@ end;
 function TDataContext<T>.ToList(Condicion: TString): TEntityList<T>;
 var
   maxthenInclude, maxInclude :integer;
-  ReferenceEntidy, ConcretEntity : TEntityBase;
+  ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
   FirstEntity: T;
   CurrentEntidy ,ReferenceEntidyList, CurrentList : TObject;
   FirstTable, TableForeignKey, ValueId: string;
@@ -213,11 +213,18 @@ begin
                 end
                 else
                 begin
-                   TAutoMapper.SetObject( FirstEntity,
+                  { TAutoMapper.SetObject( FirstEntity,
                                           CurrentEntidy.ClassName,
                                           Find( From(CurrentEntidy.ClassType).
                                                       Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                                      Select ) );
+                                                      Select ) ); }
+                   EntidyInclude := Find( From( CurrentEntidy.ClassType).
+                          Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                          Select );
+                   Json:= EntidyInclude.ToJson;
+                   EntidyInclude.Free;
+                   EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
+                   EntidyInclude.FromJson( Json );
                 end;
               end;
             finally
@@ -625,7 +632,7 @@ begin
       begin
         if ListObjectsthenInclude <> nil then
         begin
-          ReferenceEntidy := TEntityBase(CurrentEntidy);
+          ReferenceEntidy := EntidyInclude;
           TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
 
           for j := i-1 to maxthenInclude do
@@ -652,12 +659,13 @@ begin
                 else
                 begin
                   TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-                  ListObjectsthenInclude.Items[j] := Find( From(CurrentEntidy.ClassType).
-                                                                 Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
-                                                                 Select );
-                                                                 {Find( From(TEntityBase(ListObjectsthenInclude.Items[j])).
-                                                                 Where( 'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
-                                                                 Select );}
+                   EntidyInclude := Find( From( CurrentEntidy.ClassType).
+                                          Where( 'Id='+  TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
+                                          Select );
+                   Json:= EntidyInclude.ToJson;
+                   EntidyInclude.Free;
+                   EntidyInclude:= TAutoMapper.GetObject(ReferenceEntidy, CurrentEntidy.ClassName ) as TEntityBase;
+                   EntidyInclude.FromJson( Json );
                 end;
                 ReferenceEntidy := ListObjectsthenInclude.Items[j] as TEntityBase;
                 TableForeignKey := Copy( CurrentEntidy.ClassName, 2, length(CurrentEntidy.ClassName) );
