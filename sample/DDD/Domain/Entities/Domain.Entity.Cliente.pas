@@ -24,15 +24,17 @@ type
     FTipo: TString;
     FEstadoCivil: TString;
     FObservacao: TString;
-    FEmail:TEmail;
     FCalcRenda: TFloat;
+
+    FEmail:TEmail;
     FContados: TEntityList<TContato>;
     FVeiculo: TVeiculo;
     FClienteTabelaPreco: TClienteTabelaPreco;
     FClienteEmpresa: TClienteEmpresa;
+
   public
     constructor Create;override;
-    destructor Destroy;override;
+    //destructor Destroy;override;
     procedure Validation; override;
   published
     [FieldTable('Nome', varchar50,false)][LengthMin(10)]
@@ -62,6 +64,7 @@ type
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;
     [FieldTable('Observacao',varchar500,true)]
     property Observacao:TString read FObservacao write FObservacao;
+
     property Email:TEmail read FEmail write FEmail;
     [NotMapper]
     property Contatos: TEntityList<TContato> read FContados write FContados;
@@ -72,6 +75,7 @@ type
     [NotMapper]
     property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
 
+
   end;
 
 implementation
@@ -81,17 +85,16 @@ uses GenericFactory;
 constructor TCliente.Create;
 begin
   inherited;
+
   FEmail              := TGenericFactory.CreateInstance<TEmail>;
   FVeiculo            := TGenericFactory.CreateInstance<TVeiculo>;
   FClienteTabelaPreco := TGenericFactory.CreateInstance<TClienteTabelaPreco>;
   FClienteEmpresa     := TGenericFactory.CreateInstance<TClienteEmpresa>;
   FContados           := TEntityList<TContato>.create;
+
 end;
 
-destructor TCliente.Destroy;
-begin
-  inherited;
-end;
+
 
 procedure TCliente.Validation;
 begin
