@@ -185,6 +185,7 @@ begin
 
     ListEntity := ToList<T>( From( FirstEntity ).Where( Condicion ).Select );
 
+
     if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
     begin
       for H := 0 to ListEntity.Count - 1 do
@@ -294,6 +295,7 @@ begin
         ListEntity.Items[H]:= FirstEntity as T;
       end;
     end;
+
     result  := ListEntity;
   finally
     ListObjectsInclude.clear;
@@ -317,6 +319,7 @@ begin
   try
     FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     List := TEntityList<T>.Create;
+    List.Clear;
     DataSet := ToDataSet(QueryAble);
     while not DataSet.Eof do
     begin
@@ -358,6 +361,7 @@ begin
     end;
     result := List;
   finally
+     QueryAble.ConcretEntity.Free;
      DataSet.Free;
      DataSet:= nil;
   end;
@@ -506,6 +510,7 @@ begin
        DBSet.Open;
     result:= DBSet.ToJson();
   finally
+    QueryAble.ConcretEntity.Free;
     DBSet.Free;
     DBSet:= nil;
     Keys.Free;

@@ -11,10 +11,10 @@ type
   public
     function List: T;
     constructor Create;
-    Destructor Destroy;
   end;
 
   TEntityList = class( TEntityList<TEntityBase> )
+  public
   end;
 
 implementation
@@ -27,11 +27,6 @@ begin
   inherited Create(true);
   if (count = 0 ) then
      Add( T.Create );
-end;
-
-destructor TEntityList<T>.Destroy;
-begin
-
 end;
 
 function TEntityList<T>.List: T;
