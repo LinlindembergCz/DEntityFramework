@@ -13,7 +13,6 @@ type
   private
     FRefCount: integer;
   protected
-    FEntity: T;
     FDbContext: TdbContext<T>;
   private
     function GetEntity: T;
@@ -40,9 +39,8 @@ uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client;
 
 constructor TRepository<T>.Create(dbContext: TdbContext<T>);
 begin
-    Inherited Create;
+  Inherited Create;
   FDbContext := dbContext;
-  FEntity    := dbContext.Entity as T;
 end;
 
 function TRepository<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
@@ -50,9 +48,9 @@ var
   DataSet:TDataSet;
 begin
   if iId = 0 then
-     DataSet := FDbContext.ToDataSet( From(FEntity).Select( Fields) ) as TDataSet
+     DataSet := FDbContext.ToDataSet( From(GetEntity).Select( Fields) ) as TDataSet
   else
-     DataSet := FDbContext.ToDataSet( From(FEntity).where( FEntity.Id = iId ).Select( Fields) ) as TDataSet;
+     DataSet := FDbContext.ToDataSet( From(GetEntity).where( GetEntity.Id = iId ).Select( Fields) ) as TDataSet;
 
    FDbContext.DBSet:= DataSet as TFDQuery;
 
@@ -62,9 +60,9 @@ end;
 function TRepository<T>.Load(iId: Integer): T;
 begin
   if iId = 0 then
-     result := FDbContext.Find<TEntityBase>(From(FEntity).Select) as T
+     result := FDbContext.Find<TEntityBase>(From(GetEntity).Select) as T
   else
-     result := FDbContext.Find<TEntityBase>(From(FEntity).where( FEntity.Id = iId  ).Select) as T;
+     result := FDbContext.Find<TEntityBase>(From(GetEntity).where( GetEntity.Id = iId  ).Select) as T;
 end;
 
 procedure TRepository<T>.Delete;
@@ -75,10 +73,9 @@ end;
 destructor TRepository<T>.Destroy;
 begin
   inherited;
- if FDbContext <> nil then
+  if FDbContext <> nil then
   begin
-    FDbContext.Free;
-    FDbContext:= nil;
+     FreeAndNil(FDbContext);
   end;
 end;
 
@@ -89,14 +86,14 @@ end;
 
 function TRepository<T>.GetEntity: T;
 begin
-  result:= FEntity;
+  result:= FDbContext.Entity;
 end;
 
 procedure TRepository<T>.AddOrUpdate(State:TEntityState);
 begin
   case State of
-    esInsert: FDbContext.Add(FEntity);
-    esEdit  : FDbContext.Update;
+    esInsert: FDbContext.Add(GetEntity , true);
+    esEdit  : FDbContext.Update(true);
   else
     FDbContext.RefreshDataSet;
   end;
