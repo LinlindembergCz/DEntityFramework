@@ -43,6 +43,8 @@ Type
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
+    constructor Create; overload; virtual;
+
     function Find(QueryAble: IQueryAble): TEntityBase;overload;
     function Find<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
     function Where(Condicion: TString): T;
@@ -55,8 +57,8 @@ Type
     function ToList(Condicion: TString): TEntityList<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
-    procedure Add(E: T);
-    procedure Update;
+    procedure Add(E: T;AutoSaveChange:boolean = false);
+    procedure Update(AutoSaveChange:boolean = false);
     procedure Remove;overload;
     procedure SaveChanges;
     procedure RemoveDirect;
@@ -185,7 +187,6 @@ begin
 
     ListEntity := ToList<T>( From( FirstEntity ).Where( Condicion ).Select );
 
-
     if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
     begin
       for H := 0 to ListEntity.Count - 1 do
@@ -296,6 +297,7 @@ begin
       end;
     end;
 
+
     result  := ListEntity;
   finally
     ListObjectsInclude.clear;
@@ -392,6 +394,7 @@ begin
   try
     result := nil;
     DataSet := ToDataSet(QueryAble);
+
     //E:= T.Create;
     TAutoMapper.DataToEntity(DataSet,QueryAble.ConcretEntity );
     result := QueryAble.ConcretEntity as T;
@@ -401,7 +404,7 @@ begin
   end;
 end;
 
-procedure TDataContext<T>.Add(E: T);
+procedure TDataContext<T>.Add(E: T; AutoSaveChange:boolean = false);
 var
   ListValues: TStringList;
   i: integer;
@@ -409,15 +412,17 @@ begin
   if DbSet <> nil then
   begin
     E.Validation;
-    FEntity := E;
+    //FEntity := E;
     try
       try
         if ListField = nil then
-           ListField := TAutoMapper.GetFieldsList(Entity);
-        ListValues := TAutoMapper.GetValuesFieldsList(Entity);
+           ListField := TAutoMapper.GetFieldsList(E);
+        ListValues := TAutoMapper.GetValuesFieldsList(E);
         DbSet.append;
         pParserDataSet(ListField, ListValues, DbSet);
         DbSet.Post;
+        if AutoSaveChange then
+           SaveChanges;
       except
         on E: Exception do
         begin
@@ -436,7 +441,7 @@ begin
   end;
 end;
 
-procedure TDataContext<T>.Update;
+procedure TDataContext<T>.Update( AutoSaveChange:boolean = false);
 var
   ListValues: TStringList;
 begin
@@ -451,6 +456,8 @@ begin
         DbSet.Edit;
         pParserDataSet(ListField, ListValues, DbSet);
         DbSet.Post;
+        if AutoSaveChange then
+           SaveChanges;
       except
         on E: Exception do
         begin
@@ -521,8 +528,6 @@ destructor TDataContext<T>.Destroy;
 begin
   if FDbSet <> nil then
     FreeAndNil(FDbSet);
-  if oFrom <> nil then
-    FreeAndNil(oFrom);
   if FEntity <> nil then
     FreeAndNil(FEntity);
   if ListField <> nil then
@@ -562,7 +567,15 @@ begin
       result := 0;
 end;
 
-constructor TDataContext<T>.Create(proEntity: TEntityBase = nil);
+constructor TDataContext<T>.Create(proEntity: TEntityBase = nil  );
+begin
+  if proEntity = nil then
+    Entity := T.Create
+  else
+    Entity := proEntity as T;
+end;
+
+constructor TDataContext<T>.Create;
 begin
   Entity := T.Create
 end;
@@ -755,6 +768,7 @@ end;
 function From(E: IQueryAble): TFrom;
 begin
   result := TFrom(Linq.From(E));
+
 end;
 
 end.
