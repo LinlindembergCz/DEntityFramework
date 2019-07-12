@@ -84,6 +84,8 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 begin
   Context.Entity.FromJson(mLog.Text);
+
+  mLog.Text:= Context.Entity.ToJson;
 end;
 
 procedure TForm1.Button4Click(Sender: TObject);
@@ -92,19 +94,21 @@ var
    contato: TContato;
 begin
    try
-     C := Context.Include(E.Veiculo)
-                 .Include(E.Contatos).
+     C := Context.Include(E.Veiculo).
+                  Include(E.Contatos).
                   Where( E.ID = 3// DataSource1.DataSet.FieldByName('ID').AsInteger
                        );
 
      mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
      mlog.Lines.Add('Nome: ' + C.Nome.Value);
-     mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+
+    mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
      mlog.Lines.Add('Contatos :');
      for contato in C.Contatos do
      begin
         mlog.Lines.Add('    ' + contato.Nome.Value);
      end;
+
    finally
       FreeAndNIL(C);
    end;
@@ -138,21 +142,22 @@ procedure TForm1.Button6Click(Sender: TObject);
 var
   C: TCliente;
 begin
-  C := TCliente.Create;
+  try
+    C := TCliente.Create;
+    C.Nome:= 'JOAO Cristo de nazare';
+    C.NomeFantasia:= 'jesus Cristo de nazare';
+    C.CPFCNPJ:= '02316937454';
+    C.RG:= '1552666';
+    C.Ativo:= '1';
+    C.DataNascimento := strtodate('19/04/1976');
+    C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
 
-  C.Nome:= 'JOAO Cristo de nazare';
-  C.NomeFantasia:= 'jesus Cristo de nazare';
-  C.CPFCNPJ:= '02316937454';
-  C.RG:= '1552666';
-  C.Ativo:= '1';
-  C.DataNascimento := strtodate('19/04/1976');
-  C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
+    Context.Add(C, true);
 
-  Context.Add(C);
-
-  Context.SaveChanges;
-
-  DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy(E.Nome) );
+  finally
+    C.Free;
+    DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy(E.Nome) );
+  end;
 
 end;
 
@@ -160,14 +165,11 @@ procedure TForm1.Button7Click(Sender: TObject);
 begin
    if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
    begin
-      TAutoMapper.DataToEntity( DataSource1.DataSet, Context.Entity );
+      TAutoMapper.DataToEntity( DataSource1.DataSet, E );
 
-      with Context.Entity do
-      begin
-        Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
-      end;
-      Context.Update;
-      Context.SaveChanges;
+      E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
+
+      Context.Update(true);
    end;
    DataSource1.DataSet := Context.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
 end;
@@ -177,6 +179,7 @@ var
   L:TEntityList<TCliente>;
   C:TCliente;
 begin
+   mlog.Lines.clear;
    L := Context.ToList( E.Ativo = '1' );
    for C in L do
    begin
