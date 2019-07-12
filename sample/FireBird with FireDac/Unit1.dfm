@@ -74,6 +74,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'FromJson'
+      Enabled = False
       TabOrder = 4
       OnClick = Button3Click
     end
@@ -96,7 +97,7 @@ object Form1: TForm1
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 615
+      Left = 616
       Top = 7
       Width = 147
       Height = 25
@@ -105,7 +106,7 @@ object Form1: TForm1
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 615
+      Left = 616
       Top = 38
       Width = 147
       Height = 25
@@ -165,6 +166,7 @@ object Form1: TForm1
     Align = alBottom
     ScrollBars = ssVertical
     TabOrder = 3
+    ExplicitTop = 331
   end
   object DataSource1: TDataSource
     Left = 640
