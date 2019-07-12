@@ -84,7 +84,6 @@ type
 
   TQueryAble = class(TInterfacedPersistent, IQueryAble)
   private
-
     procedure SetConcretEntity(value: TEntityBase);
     function GetConcretEntity: TEntityBase;
     procedure SetSEntity(value: string);
@@ -111,7 +110,6 @@ type
     function GetSCount: string;
     function GetSExcept: string;
   protected
-    oFrom: TFrom;
     FConcretEntity: TEntityBase;
     FSWhere: String;
     FSOrder: string;
@@ -147,14 +145,11 @@ type
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     function GetQuery(Q: IQueryAble): string;
-
-
   end;
 
   TFrom = class(TQueryAble)
   protected
     constructor Create;
-    destructor Destroy;override;
     procedure InitializeString;
   end;
 
@@ -193,6 +188,7 @@ type
       : TString; overload;
     class function Caseof(Expression: TInteger; _When, _then: array of variant)
       : TString; overload;
+
   end;
 
   
@@ -200,6 +196,22 @@ type
 implementation
 
 uses EF.Mapping.AutoMapper;
+
+{
+function TQueryAble._AddRef: Integer;
+begin
+  Result := inherited _AddRef;
+  InterlockedIncrement(FRefCount);
+end;
+
+function TQueryAble._Release: Integer;
+begin
+  Result := inherited _Release;
+  InterlockedDecrement(FRefCount);
+  if FRefCount <=0 then
+    Free;
+end;
+}
 
 function TQueryAble.GetQuery(Q: IQueryAble): string;
 begin
@@ -222,7 +234,6 @@ begin
 
                      FSGroupBy, FSOrder, ifthen(FSUnion <> '', StrUnion + FSUnion, ''),
                      ifthen(FSConcat <> '', StrUnionAll + FSConcat, ''));
-    //oFrom.Free;
   end;
 end;
 
@@ -371,10 +382,6 @@ begin
 
 end;
 
-destructor TFrom.Destroy;
-begin
-  FConcretEntity.Free;
-end;
 
 procedure TFrom.InitializeString;
 begin
@@ -678,6 +685,8 @@ begin
   FSUnion := GetQuery(Q);
   result := self;
 end;
+
+
 
 
 
