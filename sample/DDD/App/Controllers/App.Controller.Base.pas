@@ -130,7 +130,7 @@ end;
 
 procedure TControllerBase.Post(JSOnObject: TJSOnObject);
 begin
-  Service.Add(JSOnObject);
+  Service.JsonToObject(JSOnObject);
   Service.Post( State );
   UpdateState(esBrowser);
   if FAutoApply then

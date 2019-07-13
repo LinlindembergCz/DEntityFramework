@@ -27,7 +27,7 @@ type
     procedure Post( State: TEntityState);virtual;
     procedure Persist;virtual;
     function GetEntity: T;virtual;
-    procedure Add(JSOnObject: TJSOnObject);overload; virtual;
+    procedure JsonToObject(JSOnObject: TJSOnObject);overload; virtual;
     procedure Read(Contener: TComponent);virtual;
     function FieldList:TFieldList;virtual;
 
@@ -91,9 +91,9 @@ begin
   DataBind.Read(Contener, Repository.dbContext.DbSet,Repository.dbContext.Entity, false);
 end;
 
-procedure TServiceBase<T>.Add(JSOnObject: TJSOnObject);
+procedure TServiceBase<T>.JsonToObject(JSOnObject: TJSOnObject);
 begin
-  TAutoMapper.JsonObjectToObject<T>( JSOnObject, Repository.Entity );
+  TAutoMapper.JsonToObject<T>( JSOnObject, Repository.Entity );
 end;
 
 function TServiceBase<T>.ChangeCount: Integer;

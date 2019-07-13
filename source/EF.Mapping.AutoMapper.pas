@@ -67,7 +67,7 @@ type
     class function GetInstance<T:TEntityBase>(const Str_Class: TValue): T; static;
     class function GetInstance2(const Str_Class: TValue): TObject;
     class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
-    class procedure JsonObjectToObject<T:TEntityBase>(Json: TJSOnObject; O: T);
+    class procedure JsonToObject<T:TEntityBase>(Json: TJSOnObject; O: T);
   end;
 
   Const
@@ -773,6 +773,7 @@ begin
                 L.AddStrings( tempStrings );
              tempStrings.Clear;
              tempStrings.Free;
+             tempStrings:= nil;
            end;
          end;
       end
@@ -805,6 +806,7 @@ begin
       end;
     end;
   finally
+    ctx.free;
     result := L;
   end;
 end;
@@ -1578,7 +1580,7 @@ begin
 end;
 
 
-class procedure  TAutoMapper.JsonObjectToObject<T>(Json:TJSOnObject; O:T);
+class procedure  TAutoMapper.JsonToObject<T>(Json:TJSOnObject; O:T);
 var
   L:TStringList;
   I:integer;
@@ -1586,28 +1588,32 @@ var
   jsonName: string;
   value:Variant;
 begin
-   L := TAutoMapper.GetFieldsList(O.ClassInfo);
-   for I := 0 to L.Count - 1 do
-   begin
+  try
+    L := TAutoMapper.GetFieldsList(O.ClassInfo);
+    for I := 0 to L.Count - 1 do
+    begin
       try
-          Name := L.Strings[I];
-          TAutoMapper.SetFieldValue( O, Name , json.Values[lowercase(Name)].Value );
+        Name := L.Strings[I];
+        TAutoMapper.SetFieldValue( O, Name , json.Values[lowercase(Name)].Value );
       except
-          try
-              jsonName:= lowercase(copy(Name,1,1))+Copy(Name,2,20);
-              TAutoMapper.SetFieldValue( O, Name , json.Values[ jsonName ].Value );
-          except
-              on E:Exception do
-              begin
-                  if pos('Could not convert variant of type (UnicodeString) into type (Double)',e.Message) > 0 then
-                  begin
-                     value:= json.Values[ jsonName ].Value;
-                     TAutoMapper.SetFieldValue( O, Name , strtodatetime(fFormatDateJson(value)) );
-                  end;
-              end;
+        try
+          jsonName:= lowercase(copy(Name,1,1))+Copy(Name,2,20);
+          TAutoMapper.SetFieldValue( O, Name , json.Values[ jsonName ].Value );
+        except
+          on E:Exception do
+          begin
+            if pos('Could not convert variant of type (UnicodeString) into type (Double)',e.Message) > 0 then
+            begin
+              value:= json.Values[ jsonName ].Value;
+              TAutoMapper.SetFieldValue( O, Name , strtodatetime(fFormatDateJson(value)) );
+            end;
           end;
+        end;
       end;
-   end;
+    end;
+  finally
+    L.Free;
+  end;
 end;
 
 

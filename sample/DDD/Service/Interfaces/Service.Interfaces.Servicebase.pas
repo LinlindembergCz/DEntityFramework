@@ -17,7 +17,7 @@ type
     procedure Persist;
     function GetEntity: T;
     //procedure InputEntity(Contener: TComponent);overload;
-    procedure Add(JSOnObject: TJSOnObject);overload;
+    procedure JsonToObject(JSOnObject: TJSOnObject);overload;
     procedure InitEntity(Contener: TComponent);
     procedure Read(Contener: TComponent);
     function FieldList:TFieldList;
