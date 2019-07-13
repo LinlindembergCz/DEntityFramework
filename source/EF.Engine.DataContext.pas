@@ -61,7 +61,6 @@ Type
     procedure Update(AutoSaveChange:boolean = false);
     procedure Remove;overload;
     procedure SaveChanges;
-    procedure RemoveDirect;
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
@@ -161,7 +160,7 @@ var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
   FirstEntity: T;
-  CurrentEntidy ,ReferenceEntidyList, CurrentList : TObject;
+  CurrentEntidy , CurrentList : TObject;
   FirstTable, TableForeignKey, ValueId: string;
   ListEntity :TEntityList<T>;
   H, I, j : Integer;
@@ -217,11 +216,6 @@ begin
                 end
                 else
                 begin
-                  { TAutoMapper.SetObject( FirstEntity,
-                                          CurrentEntidy.ClassName,
-                                          Find( From(CurrentEntidy.ClassType).
-                                                      Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                                      Select ) ); }
                    EntidyInclude := Find( From( CurrentEntidy.ClassType).
                           Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
                           Select );
@@ -261,7 +255,6 @@ begin
                             Where( TableForeignKey+'Id='+ ValueId ).Select, CurrentList );
                     TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
                     ReferenceEntidy := nil;
-                    ReferenceEntidyList:=  CurrentList;
                   end
                   else
                   begin
@@ -277,7 +270,6 @@ begin
                     ReferenceEntidy :=  ConcretEntity  as TEntityBase;
                     TableForeignKey := Copy(ConcretEntity.ClassName,2,length(ConcretEntity.ClassName) );
 
-                    ReferenceEntidyList:= nil;
                   end;
                   Inc(I);
                 end
@@ -297,7 +289,6 @@ begin
       end;
     end;
 
-
     result  := ListEntity;
   finally
     ListObjectsInclude.clear;
@@ -305,7 +296,7 @@ begin
     ListObjectsInclude:= nil;
     if ListObjectsthenInclude <> nil then
     begin
-      ListObjectsInclude.clear;
+      ListObjectsthenInclude.clear;
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
@@ -450,10 +441,10 @@ begin
     Entity.Validation;
     try
       try
-        if ListField = nil then
+         if ListField = nil then
            ListField := TAutoMapper.GetFieldsList(Entity);
         ListValues := TAutoMapper.GetValuesFieldsList(Entity);
-        DbSet.Edit;
+       DbSet.Edit;
         pParserDataSet(ListField, ListValues, DbSet);
         DbSet.Post;
         if AutoSaveChange then
@@ -473,30 +464,6 @@ begin
   begin
     DbSet:= ToDataSet( from(Entity).Select.Where(Entity.Id = Entity.Id.Value) );
     Update;
-  end;
-end;
-
-procedure TDataContext<T>.RemoveDirect;
-var
-  SQL: string;
-  ListPrimaryKey, FieldsPrimaryKey: TStringList;
-begin
-  try
-    try
-      ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
-      FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity);
-      SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(Entity.ClassType),
-                                                fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
-      FConnection.ExecutarSQL(SQL);
-    except
-      on E: Exception do
-      begin
-        raise Exception.Create(E.message);
-      end;
-    end;
-  finally
-    ListPrimaryKey.Free;
-    FieldsPrimaryKey.Free;
   end;
 end;
 
@@ -541,6 +508,31 @@ begin
 end;
 
 procedure TDataContext<T>.Remove;
+    {
+    procedure RemoveDirect;
+    var
+      SQL: string;
+      ListPrimaryKey, FieldsPrimaryKey: TStringList;
+    begin
+      try
+        try
+          ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
+          FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity);
+          SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(Entity.ClassType),
+                                                    fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
+          FConnection.ExecutarSQL(SQL);
+        except
+          on E: Exception do
+          begin
+            raise Exception.Create(E.message);
+          end;
+        end;
+      finally
+        ListPrimaryKey.Free;
+        FieldsPrimaryKey.Free;
+      end;
+    end;
+    }
 begin
   //Refatorar
   if (DbSet <> nil ) and (DbSet.Active) and (not DbSet.IsEmpty) then
