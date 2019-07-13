@@ -48,7 +48,7 @@ uses
   FactoryController in 'App\Factories\FactoryController.pas',
   FactoryView in 'App\Factories\FactoryView.pas',
   ViewBase in 'App\Views\ViewBase.pas' {FormViewBase},
-  viewCliente in 'App\Views\viewCliente.pas' {FormViewBase},
+  viewCliente in 'App\Views\viewCliente.pas' {FormviewCliente},
   App.Model.Cliente in 'App\Model\App.Model.Cliente.pas',
   App.Controller.Base in 'App\Controllers\App.Controller.Base.pas',
   App.Controller.Cliente in 'App\Controllers\App.Controller.Cliente.pas',
