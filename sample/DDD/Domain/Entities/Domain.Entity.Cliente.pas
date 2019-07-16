@@ -34,31 +34,34 @@ type
 
   public
     constructor Create;override;
-    //destructor Destroy;override;
-    procedure Validation; override;
+    procedure Verify; override;
   published
-    [FieldTable('Nome', varchar50,false)][LengthMin(10)]
+    [FieldTable('Nome', varchar50,false)]
+    [LengthMin(10)]
     property Nome: TString read FNome write FNome;
     [FieldTable('NomeFantasia',varchar50,false)]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;
-    [FieldTable('CPFCNPJ', varchar15,true)][LengthMin(11)][NotNull][NotSpecialChar]
+    [FieldTable('CPFCNPJ', varchar15,true)]
+    [LengthMin(11)]
+    [NoSpecialChar]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
     [FieldTable('Renda','float',true)]
     property Renda:TFloat read FRenda write FRenda;
     [FieldTable('Idade','integer',true)]
     property Idade: TInteger read FIdade write FIdade;
-    [FieldTable('RG','varchar(10)',true)][LengthMin(6)]
+    [FieldTable('RG',varchar10,true)]
+    [LengthMin(6)]
     property RG: TString read FRG write FRG;
     [FieldTable('DataNascimento','Date',true)]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
-    [FieldTable('Ativo','varchar(1)',true)]
+    [FieldTable('Ativo',Char1 ,true)]
     property Ativo: TString read FAtivo write FAtivo;
     [FieldTable('Situacao',varchar20,true)]
     [Items(ItemsSituacaoCliente)]
     [Default('L')]
     property Situacao:TString read FSituacao write FSituacao;
     [FieldTable('Tipo',varchar20,true)]
-    [Items('F=Fisica;J=Juridica')]
+    [Items( ItemsTipoPessoa )]
     property Tipo: TString read FTipo write FTipo;
     [FieldTable('EstadoCivil',varchar20,true)]
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;
@@ -74,8 +77,6 @@ type
     property ClienteTabelaPreco: TClienteTabelaPreco  read  FClienteTabelaPreco write FClienteTabelaPreco;
     [NotMapper]
     property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
-
-
   end;
 
 implementation
@@ -96,7 +97,7 @@ end;
 
 
 
-procedure TCliente.Validation;
+procedure TCliente.Verify;
 begin
   inherited;
   //Email.validar;

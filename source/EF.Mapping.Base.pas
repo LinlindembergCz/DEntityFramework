@@ -12,13 +12,16 @@ type
   TEntityBase = class(TPersistent)
   private
     FId: TInteger;
+    procedure VerifyCampoNotNull(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+    procedure VerifyRange(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+    procedure VerifyLengthMin(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
   protected
     // FDataCadastro: TEntityDatetime;
   public
     Mapped: boolean;
     constructor Create; overload; virtual;
     destructor Destroy;override;
-    procedure Validation; virtual;
+    procedure Verify; virtual;
   published
     [FieldTable('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
@@ -111,53 +114,70 @@ begin
 
 end;
 
-procedure TEntityBase.Validation;
+procedure TEntityBase.VerifyLengthMin(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+var
+  mensagem: string;
+begin
+  mensagem := 'Valor "' + PropRtti.Name + '" é inválido para o mínimo requerido !';
+  if not (atrbRtti as Validator).IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem) then
+  begin
+    abort;
+  end;
+end;
+
+procedure TEntityBase.VerifyRange(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+var
+  mensagem: string;
+begin
+  mensagem := 'Valor "' + PropRtti.Name + '" inválido para o intervalor!';
+  if not (atrbRtti as Validator).IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name).ToInteger, mensagem) then
+  begin
+    abort;
+  end;
+end;
+
+procedure TEntityBase.VerifyCampoNotNull(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+var
+  mensagem: string;
+begin
+  mensagem := 'Campo "' + PropRtti.Name + '" Requerido!';
+  if not (atrbRtti as Validator).IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem) then
+  begin
+    abort;
+  end;
+end;
+
+procedure TEntityBase.Verify;
 var
   ctx: TRttiContext;
   typeRtti: TRttiType;
   PropRtti: TRttiProperty;
   atrbRtti: TCustomAttribute;
-  mensagem: string;
 begin
-  ctx := TRttiContext.Create;
-  typeRtti := ctx.GetType(self.ClassType);
-  for PropRtti in typeRtti.GetProperties do
-  begin
-    for atrbRtti in PropRtti.GetAttributes do
+  try
+    ctx := TRttiContext.Create;
+    typeRtti := ctx.GetType(self.ClassType);
+    for PropRtti in typeRtti.GetProperties do
     begin
-      if atrbRtti is NotNull then
+      for atrbRtti in PropRtti.GetAttributes do
       begin
-        mensagem := 'Campo "' + PropRtti.Name + '" Requerido!';
-        if not(atrbRtti as Validator).IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
-        then
+        if atrbRtti is NotNull then
         begin
-          abort;
-        end;
-      end
-      else if atrbRtti is Range then
-      begin
-        mensagem := 'Valor "' + PropRtti.Name + '" inválido para o intervalor!';
-        if not(atrbRtti as Validator)
-            .IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name)
-            .ToInteger, mensagem) then
+          VerifyCampoNotNull(PropRtti, atrbRtti);
+        end
+        else if atrbRtti is Range then
         begin
-          abort;
-        end;
-      end
-      else if atrbRtti is LengthMin then
-      begin
-        mensagem := 'Valor "' + PropRtti.Name +
-            '" é inválido para o mínimo requerido !';
-        if not(atrbRtti as Validator)
-            .IsValid(TAutoMapper.GetValueProperty(self, PropRtti.Name), mensagem)
-        then
+          VerifyRange(PropRtti, atrbRtti);
+        end
+        else if atrbRtti is LengthMin then
         begin
-          abort;
+          VerifyLengthMin(PropRtti, atrbRtti);
         end;
       end;
     end;
+  finally
+    ctx.Free;
   end;
-  ctx.Free;
 end;
 
 

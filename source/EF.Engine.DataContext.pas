@@ -94,43 +94,6 @@ begin
   end;
 end;
 
-{
-function TDataContext<T>.PutQuoted(Fields: string):string;
-var
-   A: TStringDynArray;
-   I: Integer;
-   text: string;
-begin
-   Fields:= trim(stringreplace(Fields,'Select','', [] ));
-   A:= strUtils.SplitString(Fields, ',');
-   for I := 0 to length(A)-1 do
-   begin
-      if pos('.',A[I] ) > 0 then
-         A[I] :=  '"'+ upperCase( copy( A[I],0, pos('.',A[I] )-1 ) )+'.'+ copy( A[I], pos('.',A[I] )+1, length(A[I]) )  +'"'
-      else
-         A[I] :=  '"'+ trim(A[I]) +'"';
-
-      if I < length(A)-1 then
-         text:= text + A[I] +' , '
-      else
-         text:= text + A[I];
-   end;
-   text:= stringreplace(text,'.','"."', [rfReplaceAll] );
-   result:= text;
-end;
-
-procedure TDataContext<T>.Prepare(QueryAble: IQueryAble);
-begin
-  if FConnection.CustomTypeDataBase is TPostGres then
-  begin
-    //De modo a contemplar consultas às tabelas do Postgres,
-    //faz-se necessário colocar aspas duplas
-     QueryAble.SSelect := 'Select '+ PutQuoted( QueryAble.SSelect );
-     QueryAble.SEntity := ' From "'+ upperCase( trim( stringreplace( QueryAble.SEntity ,'From ','', [] ) ) ) +'"';
-  end;
-end;
-}
-
 function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
   Keys: TStringList;
@@ -404,8 +367,6 @@ var
 begin
   if DbSet <> nil then
   begin
-    E.Validation;
-    //FEntity := E;
     try
       try
         if ListField = nil then
@@ -440,7 +401,7 @@ var
 begin
   if DbSet <> nil then
   begin
-    Entity.Validation;
+    Entity.Verify;
     try
       try
          if ListField = nil then

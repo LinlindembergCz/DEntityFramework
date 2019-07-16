@@ -143,7 +143,7 @@ type
     constructor Create(pMensagem: String = '');
   end;
 
-  NotSpecialChar = class(TCustomAttribute)
+  NoSpecialChar = class(TCustomAttribute)
   end;
 
   //Nao permitir valor nulo
