@@ -36,14 +36,13 @@ Type
     ListField: TStringList;
     FEntity : T;
     procedure FreeObjects;
-    function PutQuoted(Fields: string):string;
-    procedure Prepare(QueryAble: IQueryAble);
+    //function PutQuoted(Fields: string):string;
+    //procedure Prepare(QueryAble: IQueryAble);
   protected
     property Connection: TEntityConn read FConnection write FConnection;
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
-    constructor Create; overload; virtual;
 
     function Find(QueryAble: IQueryAble): TEntityBase;overload;
     function Find<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
@@ -95,6 +94,7 @@ begin
   end;
 end;
 
+{
 function TDataContext<T>.PutQuoted(Fields: string):string;
 var
    A: TStringDynArray;
@@ -129,6 +129,7 @@ begin
      QueryAble.SEntity := ' From "'+ upperCase( trim( stringreplace( QueryAble.SEntity ,'From ','', [] ) ) ) +'"';
   end;
 end;
+}
 
 function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
@@ -140,7 +141,8 @@ begin
       FreeObjects;
       Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
       FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
-      Prepare(QueryAble);
+      if FConnection.CustomTypeDataBase is TPostGres then
+         QueryAble.Prepare;
       DataSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
       DataSet.Open;
       result := DataSet;
@@ -565,11 +567,6 @@ begin
     Entity := T.Create
   else
     Entity := proEntity as T;
-end;
-
-constructor TDataContext<T>.Create;
-begin
-  Entity := T.Create
 end;
 
 function TDataContext<T>.Where(Condicion: TString ): T;

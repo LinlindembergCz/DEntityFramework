@@ -68,6 +68,8 @@ type
     procedure SetSCount(value: string);
     function GetSCount: string;
 
+    procedure Prepare;
+
     property ConcretEntity : TEntityBase read GetConcretEntity write SetConcretEntity;
     property SEntity: string read GetSEntity write SetSEntity;
     property SJoin: string read GetSJoin write SetSJoin;
@@ -145,6 +147,7 @@ type
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
     function GetQuery(Q: IQueryAble): string;
+    procedure Prepare;
   end;
 
   TFrom = class(TQueryAble)
@@ -195,7 +198,7 @@ type
 
 implementation
 
-uses EF.Mapping.AutoMapper;
+uses EF.Mapping.AutoMapper, System.Types;
 
 {
 function TQueryAble._AddRef: Integer;
@@ -525,6 +528,37 @@ begin
   end;
   self.FSOrder := StrOrderBy + values + StrDesc;
   result := self;
+end;
+
+procedure TQueryAble.Prepare;
+
+  function PutQuoted(Fields: string):string;
+  var
+     A: TStringDynArray;
+     I: Integer;
+     text: string;
+  begin
+     Fields:= trim(stringreplace(Fields,'Select','', [] ));
+     A:= strUtils.SplitString(Fields, ',');
+     for I := 0 to length(A)-1 do
+     begin
+        if pos('.',A[I] ) > 0 then
+           A[I] :=  '"'+ upperCase( copy( A[I],0, pos('.',A[I] )-1 ) )+'.'+ copy( A[I], pos('.',A[I] )+1, length(A[I]) )  +'"'
+        else
+           A[I] :=  '"'+ trim(A[I]) +'"';
+
+        if I < length(A)-1 then
+           text:= text + A[I] +' , '
+        else
+           text:= text + A[I];
+     end;
+     text:= stringreplace(text,'.','"."', [rfReplaceAll] );
+     result:= text;
+  end;
+
+begin
+   Self.FSSelect := 'Select '+ PutQuoted( Self.FSSelect );
+   Self.FSEntity := ' From "'+ upperCase( trim( stringreplace( Self.FSEntity ,'From ','', [] ) ) ) +'"';
 end;
 
 function TQueryAble.Select(Fields: string = ''): TSelect;
