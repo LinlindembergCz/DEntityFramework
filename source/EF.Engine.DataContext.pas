@@ -102,7 +102,6 @@ begin
     try
       FreeObjects;
       Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-      //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
       if FConnection.CustomTypeDataBase is TPostGres then
          QueryAble.Prepare;
       DataSet := FConnection.CreateDataSet(QueryAble.GetQuery(QueryAble), Keys);
@@ -280,7 +279,6 @@ var
   E: T;
 begin
   try
-    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     List := TEntityList<T>.Create;
     List.Clear;
     DataSet := ToDataSet(QueryAble);
@@ -306,7 +304,6 @@ var
   Json: string;
 begin
   try
-    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     if EntityList = nil then
        List := TEntityList.Create
     else
@@ -334,9 +331,6 @@ var
   DataSet: TFDQuery;
 begin
   try
-  //Está alterando os objetos  de entity quando na verdade deveria manter inalterada
-  //e manipular o objeto de QueryAble.ConcretEntity da Entidade
-    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     DataSet := ToDataSet(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.ConcretEntity);
     result := QueryAble.ConcretEntity;
@@ -450,7 +444,6 @@ function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
 begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     DBSet := FConnection.CreateDataSet(QueryAble.GetQuery(QueryAble), Keys);
     if not DBSet.Active then
        DBSet.Open;
@@ -569,7 +562,6 @@ begin
     if ListObjectsthenInclude <> nil then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
-    //for I := 0 to max do
     while I <= maxInclude do
     begin
       IndexInclude:= i;
@@ -671,7 +663,6 @@ begin
          break;
     end;
 
-    //Entity := FirstEntity;
     result := FirstEntity;
   finally
     ListObjectsInclude.Clear;
