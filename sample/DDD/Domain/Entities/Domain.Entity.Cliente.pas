@@ -34,7 +34,7 @@ type
 
   public
     constructor Create;override;
-    procedure Verify; override;
+    procedure Validate; override;
   published
     [FieldTable('Nome', varchar50,false)]
     [LengthMin(10)]
@@ -97,7 +97,7 @@ end;
 
 
 
-procedure TCliente.Verify;
+procedure TCliente.Validate;
 begin
   inherited;
   //Email.validar;

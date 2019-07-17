@@ -51,6 +51,7 @@ end;
 
 procedure TServiceBase<T>.Post(State: TEntityState);
 begin
+   GetEntity.Validate;
    Repository.AddOrUpdate(State);
 end;
 

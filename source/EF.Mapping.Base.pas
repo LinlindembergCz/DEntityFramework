@@ -12,16 +12,16 @@ type
   TEntityBase = class(TPersistent)
   private
     FId: TInteger;
-    procedure VerifyCampoNotNull(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
-    procedure VerifyRange(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
-    procedure VerifyLengthMin(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+    procedure ValidateFieldNotNull(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+    procedure ValidateRange(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+    procedure ValidateLengthMin(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
   protected
     // FDataCadastro: TEntityDatetime;
   public
     Mapped: boolean;
     constructor Create; overload; virtual;
     destructor Destroy;override;
-    procedure Verify; virtual;
+    procedure Validate; virtual;
   published
     [FieldTable('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
@@ -114,7 +114,7 @@ begin
 
 end;
 
-procedure TEntityBase.VerifyLengthMin(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+procedure TEntityBase.ValidateLengthMin(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
 var
   mensagem: string;
 begin
@@ -125,7 +125,7 @@ begin
   end;
 end;
 
-procedure TEntityBase.VerifyRange(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+procedure TEntityBase.ValidateRange(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
 var
   mensagem: string;
 begin
@@ -136,7 +136,7 @@ begin
   end;
 end;
 
-procedure TEntityBase.VerifyCampoNotNull(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
+procedure TEntityBase.ValidateFieldNotNull(PropRtti: TRttiProperty; atrbRtti: TCustomAttribute);
 var
   mensagem: string;
 begin
@@ -147,7 +147,7 @@ begin
   end;
 end;
 
-procedure TEntityBase.Verify;
+procedure TEntityBase.Validate;
 var
   ctx: TRttiContext;
   typeRtti: TRttiType;
@@ -163,15 +163,15 @@ begin
       begin
         if atrbRtti is NotNull then
         begin
-          VerifyCampoNotNull(PropRtti, atrbRtti);
+          ValidateFieldNotNull(PropRtti, atrbRtti);
         end
         else if atrbRtti is Range then
         begin
-          VerifyRange(PropRtti, atrbRtti);
+          ValidateRange(PropRtti, atrbRtti);
         end
         else if atrbRtti is LengthMin then
         begin
-          VerifyLengthMin(PropRtti, atrbRtti);
+          ValidateLengthMin(PropRtti, atrbRtti);
         end;
       end;
     end;
