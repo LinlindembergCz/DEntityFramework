@@ -51,7 +51,7 @@ Type
     function ToDataSet(QueryAble: IQueryAble): TFDQuery;
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): TEntityList;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): TEntityList<T>; overload;
-    function GetQuery(QueryAble: IQueryAble): string;
+    function BuildQuery(QueryAble: IQueryAble): string;
     function ToList(Condicion: TString): TEntityList<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
@@ -104,7 +104,7 @@ begin
       Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
       if FConnection.CustomTypeDataBase is TPostGres then
          QueryAble.Prepare;
-      DataSet := FConnection.CreateDataSet(QueryAble.GetQuery(QueryAble), Keys);
+      DataSet := FConnection.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
       DataSet.Open;
       result := DataSet;
     except
@@ -433,9 +433,9 @@ begin
   result := DbSet.FieldList;
 end;
 
-function TDataContext<T>.GetQuery(QueryAble: IQueryAble): string;
+function TDataContext<T>.BuildQuery(QueryAble: IQueryAble): string;
 begin
-   result:= QueryAble.GetQuery(QueryAble);
+   result:= QueryAble.BuildQuery(QueryAble);
 end;
 
 function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
@@ -444,7 +444,7 @@ function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
 begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-    DBSet := FConnection.CreateDataSet(QueryAble.GetQuery(QueryAble), Keys);
+    DBSet := FConnection.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
     if not DBSet.Active then
        DBSet.Open;
     result:= DBSet.ToJson();

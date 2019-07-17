@@ -67,7 +67,7 @@ type
     function GetSExcept: string;
     procedure SetSCount(value: string);
     function GetSCount: string;
-    function GetQuery(Q: IQueryAble): string;
+    function BuildQuery(Q: IQueryAble): string;
 
     procedure Prepare;
 
@@ -147,7 +147,7 @@ type
     function OrderByDesc(Fields: array of string): IQueryAble;overload;
     function Select(Fields: string = ''): TSelect; overload;
     function Select(Fields: array of string): TSelect; overload;
-    function GetQuery(Q: IQueryAble): string;
+    function BuildQuery(Q: IQueryAble): string;
     procedure Prepare;
   end;
 
@@ -217,7 +217,7 @@ begin
 end;
 }
 
-function TQueryAble.GetQuery(Q: IQueryAble): string;
+function TQueryAble.BuildQuery(Q: IQueryAble): string;
 begin
   with Q as TQueryAble do
   begin
@@ -665,19 +665,19 @@ end;
 
 function TSelect.&Except(Q: IQueryAble): IQueryAble;
 begin
-  FSExcept := GetQuery(Q);
+  FSExcept := BuildQuery(Q);
   result := self;
 end;
 
 function TSelect.Intersect(Q: IQueryAble): IQueryAble;
 begin
-  FSIntersect := GetQuery(Q);
+  FSIntersect := BuildQuery(Q);
   result := self;
 end;
 
 function TSelect.Concat(Q: IQueryAble): IQueryAble;
 begin
-  FSConcat := GetQuery(Q);
+  FSConcat := BuildQuery(Q);
   result := self;
 end;
 
@@ -717,7 +717,7 @@ end;}
 
 function TSelect.Union(Q: IQueryAble): IQueryAble;
 begin
-  FSUnion := GetQuery(Q);
+  FSUnion := BuildQuery(Q);
   result := self;
 end;
 

@@ -224,7 +224,7 @@ begin
    QueryAble := From   ( E )
                 .Select([ E.Id, E.Nome, E.Observacao ])
                 .OrderBy ( E.Nome );
-   mlog.Lines.Text := Context.GetQuery( QueryAble );
+   mlog.Lines.Text := Context.BuildQuery( QueryAble );
 end;
 
 end.
