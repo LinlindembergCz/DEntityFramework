@@ -67,6 +67,7 @@ type
     function GetSExcept: string;
     procedure SetSCount(value: string);
     function GetSCount: string;
+    function GetQuery(Q: IQueryAble): string;
 
     procedure Prepare;
 
@@ -84,7 +85,7 @@ type
     property SCount: string read GetSCount write SetSCount;
   end;
 
-  TQueryAble = class(TInterfacedPersistent, IQueryAble)
+  TQueryAble = class (TInterfacedPersistent, IQueryAble)
   private
     procedure SetConcretEntity(value: TEntityBase);
     function GetConcretEntity: TEntityBase;
