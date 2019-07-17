@@ -25,7 +25,7 @@ uses
 Type
    TTypeSQL       = (  tsInsert, tsUpdate );
 
-  TDataContext<T:TEntityBase> = class(TQueryAble)
+  TDataContext<T:TEntityBase> = class
   private
     ListObjectsInclude:TObjectList;
     ListObjectsThenInclude:TObjectList;
@@ -36,8 +36,6 @@ Type
     ListField: TStringList;
     FEntity : T;
     procedure FreeObjects;
-    //function PutQuoted(Fields: string):string;
-    //procedure Prepare(QueryAble: IQueryAble);
   protected
     property Connection: TEntityConn read FConnection write FConnection;
   public
@@ -53,6 +51,7 @@ Type
     function ToDataSet(QueryAble: IQueryAble): TFDQuery;
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): TEntityList;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): TEntityList<T>; overload;
+    function GetQuery(QueryAble: IQueryAble): string;
     function ToList(Condicion: TString): TEntityList<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
@@ -103,10 +102,10 @@ begin
     try
       FreeObjects;
       Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-      FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
+      //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
       if FConnection.CustomTypeDataBase is TPostGres then
          QueryAble.Prepare;
-      DataSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
+      DataSet := FConnection.CreateDataSet(QueryAble.GetQuery(QueryAble), Keys);
       DataSet.Open;
       result := DataSet;
     except
@@ -131,6 +130,7 @@ var
   H, I, j : Integer;
   IndexInclude , IndexThenInclude:integer;
   Json: string;
+  QueryAble:IQueryAble;
 begin
   try
     if ListObjectsInclude = nil then
@@ -149,7 +149,8 @@ begin
     if ListObjectsthenInclude <> nil then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
-    ListEntity := ToList<T>( From( FirstEntity ).Where( Condicion ).Select );
+    QueryAble:= From( FirstEntity ).Where( Condicion ).Select;
+    ListEntity := ToList<T>( QueryAble );
 
     if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
     begin
@@ -176,14 +177,16 @@ begin
                 if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
                 begin
                    CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-                   ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
-                                   Where( FirstTable+'Id='+ ValueId ).Select, CurrentEntidy  );
+                   QueryAble:= From( TEntityList(CurrentEntidy).List.ClassType ).
+                                   Where( FirstTable+'Id='+ ValueId ).Select;
+                   ToList(QueryAble , CurrentEntidy  );
                 end
                 else
                 begin
-                   EntidyInclude := Find( From( CurrentEntidy.ClassType).
+                   QueryAble:= From( CurrentEntidy.ClassType).
                           Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                          Select );
+                          Select;
+                   EntidyInclude := Find( QueryAble );
                    Json:= EntidyInclude.ToJson;
                    EntidyInclude.Free;
                    EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
@@ -216,8 +219,9 @@ begin
                   begin
                     CurrentList := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName );
                     ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
-                    ToList( From( TEntityList(CurrentEntidy).List.ClassType).
-                            Where( TableForeignKey+'Id='+ ValueId ).Select, CurrentList );
+                    QueryAble:= From( TEntityList(CurrentEntidy).List.ClassType).
+                                Where( TableForeignKey+'Id='+ ValueId ).Select;
+                    ToList( QueryAble , CurrentList );
                     TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
                     ReferenceEntidy := nil;
                   end
@@ -227,7 +231,8 @@ begin
                     ValueId:=     TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id');
                     if ValueId <> '' then
                     begin
-                       Json:= Find( From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select ).ToJson;
+                       QueryAble:= From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select;
+                       Json:= Find( QueryAble ).ToJson;
                        ConcretEntity := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName) as TEntityBase;
                        ConcretEntity.FromJson( Json );
                        TAutoMapper.SetObject( ReferenceEntidy, ConcretEntity.ClassName, ConcretEntity );
@@ -275,7 +280,7 @@ var
   E: T;
 begin
   try
-    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
+    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     List := TEntityList<T>.Create;
     List.Clear;
     DataSet := ToDataSet(QueryAble);
@@ -301,8 +306,7 @@ var
   Json: string;
 begin
   try
-    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
-
+    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     if EntityList = nil then
        List := TEntityList.Create
     else
@@ -332,7 +336,7 @@ begin
   try
   //Está alterando os objetos  de entity quando na verdade deveria manter inalterada
   //e manipular o objeto de QueryAble.ConcretEntity da Entidade
-    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
+    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
     DataSet := ToDataSet(QueryAble);
     TAutoMapper.DataToEntity(DataSet, QueryAble.ConcretEntity);
     result := QueryAble.ConcretEntity;
@@ -401,7 +405,7 @@ var
 begin
   if DbSet <> nil then
   begin
-    Entity.Verify;
+    Entity.Validate;
     try
       try
          if ListField = nil then
@@ -435,14 +439,19 @@ begin
   result := DbSet.FieldList;
 end;
 
+function TDataContext<T>.GetQuery(QueryAble: IQueryAble): string;
+begin
+   result:= QueryAble.GetQuery(QueryAble);
+end;
+
 function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
   var
   Keys: TStringList;
 begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-    FSEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
-    DBSet := FConnection.CreateDataSet(GetQuery(QueryAble), Keys);
+    //QueryAble.SEntity := TAutoMapper.GetTableAttribute(QueryAble.ConcretEntity.ClassType);
+    DBSet := FConnection.CreateDataSet(QueryAble.GetQuery(QueryAble), Keys);
     if not DBSet.Active then
        DBSet.Open;
     result:= DBSet.ToJson();
@@ -540,7 +549,7 @@ var
   List:TEntityList;
   I, j, k: Integer;
   IndexInclude , IndexThenInclude:integer;
-
+  QueryAble: IQueryAble;
   Json:string;
 begin
   try
@@ -572,23 +581,25 @@ begin
           begin
             FirstEntity := T(ListObjectsInclude.Items[0]);
             FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-            FirstEntity := Find<T>( From(FirstEntity).Where( Condicion ).Select );
+            QueryAble   := From(FirstEntity).Where( Condicion ).Select;
+            FirstEntity := Find<T>( QueryAble );
           end
           else
           begin
             if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
             begin
               CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-              ToList( From( TEntityList(CurrentEntidy).List.ClassType ).
-                      Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
-                      Select,
-                      CurrentEntidy  );
+              QueryAble:= From( TEntityList(CurrentEntidy).List.ClassType ).
+                          Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
+                          Select;
+              ToList( QueryAble , CurrentEntidy  );
             end
             else
             begin
-               EntidyInclude := Find( From( CurrentEntidy.ClassType).
-                                        Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                                        Select );
+               QueryAble:= From( CurrentEntidy.ClassType).
+                           Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                           Select;
+               EntidyInclude := Find( QueryAble );
                Json:= EntidyInclude.ToJson;
                EntidyInclude.Free;
                EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
@@ -616,9 +627,10 @@ begin
                 if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
                 begin
                    //Refatorar
-                   List := ToList( From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
-                                   Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
-                                   Select );
+                   QueryAble:= From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
+                               Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
+                               Select;
+                   List := ToList( QueryAble );
 
                    while TEntityList(ListObjectsthenInclude.items[j]).Count > 1 do
                       TEntityList(ListObjectsthenInclude.items[j]).Delete( TEntityList(ListObjectsthenInclude.items[j]).Count - 1 );
@@ -631,9 +643,10 @@ begin
                 else
                 begin
                   TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-                   EntidyInclude := Find( From( CurrentEntidy.ClassType).
+                  QueryAble:= From( CurrentEntidy.ClassType).
                                           Where( 'Id='+  TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
-                                          Select );
+                                          Select;
+                   EntidyInclude := Find( QueryAble );
                    Json:= EntidyInclude.ToJson;
                    EntidyInclude.Free;
                    EntidyInclude:= TAutoMapper.GetObject(ReferenceEntidy, CurrentEntidy.ClassName ) as TEntityBase;
