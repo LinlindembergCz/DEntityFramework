@@ -78,7 +78,7 @@ begin
                .Select
                .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
-   E := Context.Find<TCliente>( QueryAble );
+   E := Context.Find( QueryAble );
 
    mLog.Text:= E.ToJson;
 end;
@@ -99,8 +99,8 @@ begin
   begin
      try
        C := Context.Include(E.Veiculo).
-                      Include(E.Contatos).
-                      Where( E.ID = DataSource1.DataSet.FieldByName('ID').AsInteger );
+                    Include(E.Contatos).
+                    Where( E.ID = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
        mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
        mlog.Lines.Add('Nome: ' + C.Nome.Value);
@@ -161,7 +161,7 @@ begin
 
     Context.Add(C, true);
 
-    //Context.SaveChanges;
+    Context.SaveChanges;
 
   finally
     C.Free;
@@ -181,7 +181,7 @@ begin
 
       Context.Update(true);
 
-      //Context.SaveChanges;
+      Context.SaveChanges;
    end;
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
    DataSource1.DataSet := Context.ToDataSet( QueryAble );
@@ -214,7 +214,8 @@ begin
      QueryAble := From( E ).
                   Select.
                   Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
-     E := Context.Find<TCliente>( QueryAble );
+
+     E := Context.Find( QueryAble  );
      mlog.Lines.Add('ID: ' + E.ID.Value.ToString+'      Nome: ' + E.Nome.Value);
    end;
 end;

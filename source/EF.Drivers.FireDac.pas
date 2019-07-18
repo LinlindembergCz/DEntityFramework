@@ -61,6 +61,8 @@ begin
   qryVariavel := TFDQuery.Create(Application);
   with TFDQuery(qryVariavel) do
   begin
+    CachedUpdates:= true;
+
     Connection := CustomConnection as TFDConnection;
     SQL.Text := prsSQL;
     Prepared := true;

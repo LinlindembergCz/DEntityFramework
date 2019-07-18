@@ -38,12 +38,14 @@ Type
     procedure FreeObjects;
   protected
     property Connection: TEntityConn read FConnection write FConnection;
+    function FindEntity(QueryAble: IQueryAble): TEntityBase;
   public
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
 
-    function Find(QueryAble: IQueryAble): TEntityBase;overload;
-    function Find<T: TEntityBase>(QueryAble: IQueryAble): T;overload;
+    function Find(QueryAble: IQueryAble): T; overload;
+    function Find(Condicion: TString): T;overload;
+
     function Where(Condicion: TString): T;
 
     function Include( E: TObject ):TDataContext<T>;
@@ -185,7 +187,7 @@ begin
                    QueryAble:= From( CurrentEntidy.ClassType).
                           Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
                           Select;
-                   EntidyInclude := Find( QueryAble );
+                   EntidyInclude := FindEntity( QueryAble );
                    Json:= EntidyInclude.ToJson;
                    EntidyInclude.Free;
                    EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
@@ -231,7 +233,7 @@ begin
                     if ValueId <> '' then
                     begin
                        QueryAble:= From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select;
-                       Json:= Find( QueryAble ).ToJson;
+                       Json:= FindEntity( QueryAble ).ToJson;
                        ConcretEntity := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName) as TEntityBase;
                        ConcretEntity.FromJson( Json );
                        TAutoMapper.SetObject( ReferenceEntidy, ConcretEntity.ClassName, ConcretEntity );
@@ -326,7 +328,9 @@ begin
   end;
 end;
 
-function TDataContext<T>.Find(QueryAble: IQueryAble): TEntityBase;
+
+
+function TDataContext<T>.FindEntity(QueryAble: IQueryAble): TEntityBase;
 var
   DataSet: TFDQuery;
 begin
@@ -340,7 +344,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.Find<T>(QueryAble: IQueryAble): T;
+function TDataContext<T>.Find(QueryAble: IQueryAble): T;
 var
   DataSet: TFDQuery;
   E: T;
@@ -350,6 +354,26 @@ begin
     DataSet := ToDataSet(QueryAble);
 
     //E:= T.Create;
+    TAutoMapper.DataToEntity(DataSet,QueryAble.ConcretEntity );
+    result := QueryAble.ConcretEntity as T;
+  finally
+     DataSet.Free;
+     DataSet:= nil;
+  end;
+end;
+
+function TDataContext<T>.Find(Condicion: TString): T;
+var
+  DataSet: TFDQuery;
+  E: T;
+  QueryAble:IQueryAble;
+begin
+  try
+    result := nil;
+    QueryAble:= From(FEntity).Where(Condicion).Select;
+
+    DataSet := ToDataSet( QueryAble );
+
     TAutoMapper.DataToEntity(DataSet,QueryAble.ConcretEntity );
     result := QueryAble.ConcretEntity as T;
   finally
@@ -574,7 +598,7 @@ begin
             FirstEntity := T(ListObjectsInclude.Items[0]);
             FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
             QueryAble   := From(FirstEntity).Where( Condicion ).Select;
-            FirstEntity := Find<T>( QueryAble );
+            FirstEntity := Find( QueryAble );
           end
           else
           begin
@@ -591,7 +615,7 @@ begin
                QueryAble:= From( CurrentEntidy.ClassType).
                            Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
                            Select;
-               EntidyInclude := Find( QueryAble );
+               EntidyInclude := FindEntity( QueryAble );
                Json:= EntidyInclude.ToJson;
                EntidyInclude.Free;
                EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
@@ -638,7 +662,7 @@ begin
                   QueryAble:= From( CurrentEntidy.ClassType).
                                           Where( 'Id='+  TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
                                           Select;
-                   EntidyInclude := Find( QueryAble );
+                   EntidyInclude := FindEntity( QueryAble );
                    Json:= EntidyInclude.ToJson;
                    EntidyInclude.Free;
                    EntidyInclude:= TAutoMapper.GetObject(ReferenceEntidy, CurrentEntidy.ClassName ) as TEntityBase;
