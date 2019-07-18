@@ -22,12 +22,12 @@ type
     constructor Create; overload; virtual;
     destructor Destroy;override;
     procedure Validate; virtual;
+    function ToJson(UsingRestJson:boolean = false): string;
+    procedure FromJson{<T: class, constructor>}(const AJson: String);
   published
     [Column('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
-    function ToJson(UsingRestJson:boolean = false): string;
-    procedure FromJson{<T: class, constructor>}(const AJson: String);
-    // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
+ // property DataCadastro: TEntityDatetime read FDataCadastro write FDataCadastro;
   end;
 
 
