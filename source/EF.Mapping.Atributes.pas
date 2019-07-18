@@ -200,15 +200,17 @@ type
   end;
 
   const
-  varchar50  = 'varchar(50)';
-  varchar20  = 'varchar(20)';
-  varchar10  = 'varchar(10)';
-  varchar15  = 'varchar(15)';
-  Char1      = 'varchar(1)';
-  varchar500 = 'varchar(500)';
+    Char1      = 'varchar(1)';
+    varchar10  = 'varchar(10)';
+    varchar15  = 'varchar(15)';
+    varchar20  = 'varchar(20)';
+    varchar50  = 'varchar(50)';
+    varchar100 = 'varchar(100)';
+    varchar200 = 'varchar(200)';
+    varchar300 = 'varchar(200)';
+    varchar500 = 'varchar(500)';
 
 implementation
-
 
 { EntityTable }
 constructor Table.Create(aName: String);
