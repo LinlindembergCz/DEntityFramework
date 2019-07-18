@@ -81,18 +81,14 @@ type
 
 implementation
 
-uses GenericFactory;
-
 constructor TCliente.Create;
 begin
   inherited;
-
-  FEmail              := TGenericFactory.CreateInstance<TEmail>;
-  FVeiculo            := TGenericFactory.CreateInstance<TVeiculo>;
-  FClienteTabelaPreco := TGenericFactory.CreateInstance<TClienteTabelaPreco>;
-  FClienteEmpresa     := TGenericFactory.CreateInstance<TClienteEmpresa>;
+  FEmail              := TEmail.Create;
+  FVeiculo            := TVeiculo.Create;
+  FClienteTabelaPreco := TClienteTabelaPreco.Create;
+  FClienteEmpresa     := TClienteEmpresa.Create;
   FContados           := TEntityList<TContato>.create;
-
 end;
 
 
@@ -100,10 +96,9 @@ end;
 procedure TCliente.Validate;
 begin
   inherited;
-  //Email.validar;
+ //Email.Validate;
 end;
 
-{ TContatos }
 
 initialization RegisterClass(TCliente);
 finalization UnRegisterClass(TCliente);
