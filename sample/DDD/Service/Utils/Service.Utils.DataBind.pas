@@ -295,7 +295,7 @@ begin
          breaked:= false;
          for Atrib in Prop.GetAttributes do
          begin
-            if (Atrib is NotMapper) then
+            if (Atrib is NotMapped) then
             begin
                breaked:= true;
                break;
@@ -308,12 +308,12 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is FieldTable then
+          if Atrib is Column then
           begin
-            if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
+            if DataSet.FindField(Column(Atrib).Name) <> nil then
             begin
               TAutoMapper.SetFieldValue(Entity, Prop,
-                            DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
+                            DataSet.Fieldbyname(Column(Atrib).Name).AsVariant);
               breaked:= true;
               break;
             end;
@@ -429,7 +429,7 @@ begin
                breaked:= false;
                for Atributo in Prop.GetAttributes do
                begin
-                  if (Atributo is NotMapper) then
+                  if (Atributo is NotMapped) then
                   begin
                      breaked:= true;
                      break;

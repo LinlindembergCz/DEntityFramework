@@ -60,9 +60,9 @@ end;
 function TRepository<T>.Load(iId: Integer): T;
 begin
   if iId = 0 then
-     result := FDbContext.Find<TEntityBase>(From(GetEntity).Select) as T
+     result := FDbContext.Find(From(GetEntity).Select) as T
   else
-     result := FDbContext.Find<TEntityBase>(From(GetEntity).where( GetEntity.Id = iId  ).Select) as T;
+     result := FDbContext.Find(From(GetEntity).where( GetEntity.Id = iId  ).Select) as T;
 end;
 
 procedure TRepository<T>.Delete;
