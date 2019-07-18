@@ -165,13 +165,13 @@ begin
         begin
           ValidateFieldNotNull(PropRtti, atrbRtti);
         end
-        else if atrbRtti is Range then
-        begin
-          ValidateRange(PropRtti, atrbRtti);
-        end
         else if atrbRtti is LengthMin then
         begin
           ValidateLengthMin(PropRtti, atrbRtti);
+        end
+        else if atrbRtti is Range then
+        begin
+          ValidateRange(PropRtti, atrbRtti);
         end;
       end;
     end;
@@ -179,6 +179,5 @@ begin
     ctx.Free;
   end;
 end;
-
 
 end.

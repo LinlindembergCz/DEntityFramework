@@ -39,7 +39,7 @@ uses
 constructor TItensTabelaPreco.Create;
 begin
   inherited;
-  Produto := TGenericFactory.CreateInstance<TProduto>;
+  Produto :=  TProduto.Create;
 end;
 
 
