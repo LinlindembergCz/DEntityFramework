@@ -36,46 +36,46 @@ type
     constructor Create;override;
     procedure Validate; override;
   published
-    [FieldTable('Nome', varchar50,false)]
+    [Column('Nome', varchar50,false)]
     [LengthMin(10)]
     property Nome: TString read FNome write FNome;
-    [FieldTable('NomeFantasia',varchar50,false)]
+    [Column('NomeFantasia',varchar50,false)]
     property NomeFantasia: TString read FNomeFantasia write FNomeFantasia;
-    [FieldTable('CPFCNPJ', varchar15,true)]
+    [Column('CPFCNPJ', varchar15,true)]
     [LengthMin(11)]
     [NoSpecialChar]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
-    [FieldTable('Renda','float',true)]
+    [Column('Renda','float',true)]
     property Renda:TFloat read FRenda write FRenda;
-    [FieldTable('Idade','integer',true)]
+    [Column('Idade','integer',true)]
     property Idade: TInteger read FIdade write FIdade;
-    [FieldTable('RG',varchar10,true)]
+    [Column('RG',varchar10,true)]
     [LengthMin(6)]
     property RG: TString read FRG write FRG;
-    [FieldTable('DataNascimento','Date',true)]
+    [Column('DataNascimento','Date',true)]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
-    [FieldTable('Ativo',Char1 ,true)]
+    [Column('Ativo',Char1 ,true)]
     property Ativo: TString read FAtivo write FAtivo;
-    [FieldTable('Situacao',varchar20,true)]
+    [Column('Situacao',varchar20,true)]
     [Items(ItemsSituacaoCliente)]
     [Default('L')]
     property Situacao:TString read FSituacao write FSituacao;
-    [FieldTable('Tipo',varchar20,true)]
+    [Column('Tipo',varchar20,true)]
     [Items( ItemsTipoPessoa )]
     property Tipo: TString read FTipo write FTipo;
-    [FieldTable('EstadoCivil',varchar20,true)]
+    [Column('EstadoCivil',varchar20,true)]
     property EstadoCivil: TString read FEstadoCivil write FEstadoCivil;
-    [FieldTable('Observacao',varchar500,true)]
+    [Column('Observacao',varchar500,true)]
     property Observacao:TString read FObservacao write FObservacao;
 
     property Email:TEmail read FEmail write FEmail;
-    [NotMapper]
+    [NotMapped]
     property Contatos: TEntityList<TContato> read FContados write FContados;
-    [NotMapper]
+    [NotMapped]
     property Veiculo: TVeiculo read  FVeiculo write FVeiculo;
-    [NotMapper]
+    [NotMapped]
     property ClienteTabelaPreco: TClienteTabelaPreco  read  FClienteTabelaPreco write FClienteTabelaPreco;
-    [NotMapper]
+    [NotMapped]
     property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
   end;
 

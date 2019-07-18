@@ -17,15 +17,15 @@ type
   public
       constructor Create;override;
   published
-    [FieldTable('ClienteId','Integer',true)]
+    [Column('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
 
-    [FieldTable('EmpresaId','Integer',true)]
+    [Column('EmpresaId','Integer',true)]
     [ForeignKey('EmpresaId','Empresas', rlCascade, rlCascade )]
     property EmpresaId: TInteger read FEmpresaId write FEmpresaId;
 
-    [NotMapper]
+    [NotMapped]
     property Empresa: TEmpresa read  FEmpresa write FEmpresa;
     //[NotMapper]
     //property Cliente: TCliente read  FCliente write FCliente;

@@ -23,7 +23,7 @@ type
     destructor Destroy;override;
     procedure Validate; virtual;
   published
-    [FieldTable('ID', 'integer', false, true, true)]
+    [Column('ID', 'integer', false, true, true)]
     property Id: TInteger read FId write FId;
     function ToJson(UsingRestJson:boolean = false): string;
     procedure FromJson{<T: class, constructor>}(const AJson: String);

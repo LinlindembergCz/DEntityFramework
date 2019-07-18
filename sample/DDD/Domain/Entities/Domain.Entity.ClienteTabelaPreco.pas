@@ -14,15 +14,15 @@ type
     FTabelaPrecoId: TInteger;
     FTabelaPreco: TTabelaPreco;
   published
-    [FieldTable('ClienteId','Integer',true)]
+    [Column('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
 
-    [FieldTable('TabelaPrecoId','Integer',true)]
+    [Column('TabelaPrecoId','Integer',true)]
     [ForeignKey('TabelaPrecoId','TabelaPrecos', rlCascade, rlCascade )]
     property TabelaPrecoId: TInteger read FTabelaPrecoId write FTabelaPrecoId;
 
-    [NotMapper]
+    [NotMapped]
     property TabelaPreco: TTabelaPreco read  FTabelaPreco write FTabelaPreco;
 
     constructor Create;override;

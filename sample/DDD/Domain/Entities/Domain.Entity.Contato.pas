@@ -15,13 +15,13 @@ type
     FTelefone: TString;
     FClienteId: TInteger;
   published
-    [FieldTable('Nome',varchar50,false)]
+    [Column('Nome',varchar50,false)]
     [LengthMin(10)]
     property Nome: TString read FNome write Fnome;
-    [FieldTable('Telefone',varchar15,true)]
+    [Column('Telefone',varchar15,true)]
     [LengthMin(10)]
     property Telefone: TString read FTelefone write FTelefone;
-    [FieldTable('ClienteId','Integer',true)]
+    [Column('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
   end;

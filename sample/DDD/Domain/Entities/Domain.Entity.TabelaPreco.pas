@@ -15,9 +15,9 @@ type
   public
     constructor Create;override;
   published
-    [FieldTable('Descricao',varchar50,false)]
+    [Column('Descricao',varchar50,false)]
     property Descricao: TString read FDescricao write FDescricao;
-    [NotMapper]
+    [NotMapped]
     property ItensTabelaPreco: TEntityList<TItensTabelaPreco> read FItensTabelaPreco write FItensTabelaPreco;
   end;
 

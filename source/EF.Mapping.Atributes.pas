@@ -34,7 +34,7 @@ type
     OnUpdate: TRule;
   end;
 
-  NotMapper = class(TCustomAttribute)
+  NotMapped = class(TCustomAttribute)
   end;
 
 
@@ -46,7 +46,7 @@ type
     property Name: string read FName;
   end;
 
-  FieldTable = class(TCustomAttribute)
+  Column = class(TCustomAttribute)
   private
     FName: String;
     FIsNull: boolean;
@@ -199,6 +199,14 @@ type
   RadioGroup = class(TCustomAttribute)
   end;
 
+  const
+  varchar50  = 'varchar(50)';
+  varchar20  = 'varchar(20)';
+  varchar10  = 'varchar(10)';
+  varchar15  = 'varchar(15)';
+  Char1      = 'varchar(1)';
+  varchar500 = 'varchar(500)';
+
 implementation
 
 
@@ -210,7 +218,7 @@ end;
 
 { EntityField }
 
-constructor FieldTable.Create(aName: String; aTipo: string =''; aIsNull: boolean=true;
+constructor Column.Create(aName: String; aTipo: string =''; aIsNull: boolean=true;
   aPrimaryKey: boolean = false; aAutoInc: boolean = false);
 begin
   FName := aName;
@@ -220,7 +228,7 @@ begin
   FAutoInc := aAutoInc;
 end;
 
-procedure FieldTable.SetAutoInc(const Value: boolean);
+procedure Column.SetAutoInc(const Value: boolean);
 begin
   FAutoInc := Value;
 end;

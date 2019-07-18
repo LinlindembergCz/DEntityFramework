@@ -12,7 +12,7 @@ type
   private
     FDescricao: Tstring;
   public
-    [FieldTable('Descricao',varchar50,false)]
+    [Column('Descricao',varchar50,false)]
     property Descricao: Tstring read FDescricao write FDescricao;
   end;
 

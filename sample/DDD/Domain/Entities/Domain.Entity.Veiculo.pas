@@ -14,9 +14,9 @@ type
     FClienteId: TInteger;
   public
   published
-    [FieldTable('Placa',varchar10,false)]
+    [Column('Placa',varchar10,false)]
      property Placa: TString read FPlaca write FPlaca;
-    [FieldTable('ClienteId','Integer',true)]
+    [Column('ClienteId','Integer',true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
 

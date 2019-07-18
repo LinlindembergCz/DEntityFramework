@@ -15,16 +15,16 @@ type
     FValor: TFloat;
     FProduto: TProduto;
   published
-    [FieldTable('ProdutoId','integer',false)]
+    [Column('ProdutoId','integer',false)]
     property ProdutoId:TInteger read FProdutoId write FProdutoId;
 
-    [FieldTable('TabelaPrecoId','integer',false)]
+    [Column('TabelaPrecoId','integer',false)]
     property TabelaPrecoId:TInteger read FTabelaPrecoId write FTabelaPrecoId;
 
-    [FieldTable('Valor','float',false)]
+    [Column('Valor','float',false)]
     property Valor: TFloat read FValor write FValor;
 
-    [NotMapper]
+    [NotMapped]
     property Produto: TProduto read  FProduto write FProduto;
     constructor Create;override;
   end;

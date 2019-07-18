@@ -158,7 +158,7 @@ begin
            Found:= false;
            for Atributo in Prop.GetAttributes do
            begin
-              if (Atributo is NotMapper) then
+              if (Atributo is NotMapped) then
               begin
                  Found:= true;
                  break;
@@ -178,22 +178,22 @@ begin
         Found:= false;
         for Atributo in Prop.GetAttributes do
         begin
-          if (Atributo is FieldTable) then
+          if (Atributo is Column) then
           begin
-            if FieldTable(Atributo).Tipo <> '' then
+            if Column(Atributo).Tipo <> '' then
             begin
               New(Atributies);
-              Atributies^.Name := FieldTable(Atributo).Name;
-              Atributies^.Tipo := FieldTable(Atributo).Tipo;
-              Atributies^.IsNull := FieldTable(Atributo).IsNull;
-              Atributies^.PrimaryKey := FieldTable(Atributo).PrimaryKey;
-              Atributies^.DefaultValue := FieldTable(Atributo).DefaultValue;
-              Atributies^.AutoInc := FieldTable(Atributo).AutoInc;
+              Atributies^.Name := Column(Atributo).Name;
+              Atributies^.Tipo := Column(Atributo).Tipo;
+              Atributies^.IsNull := Column(Atributo).IsNull;
+              Atributies^.PrimaryKey := Column(Atributo).PrimaryKey;
+              Atributies^.DefaultValue := Column(Atributo).DefaultValue;
+              Atributies^.AutoInc := Column(Atributo).AutoInc;
               List.Add(Atributies);
             end;
             Found:= true;
           end;
-          if (Atributo is NotMapper) then
+          if (Atributo is NotMapped) then
           begin
             Found:= true;
           end;
@@ -333,7 +333,7 @@ begin
            FoundAttribute:= false;
            for Atributo in Prop.GetAttributes do
            begin
-              if (Atributo is NotMapper) then
+              if (Atributo is NotMapped) then
               begin
                  FoundAttribute:= true;
                  break;
@@ -357,13 +357,13 @@ begin
                  break;
 
                FoundAttribute:= false;
-               if Atributo is FieldTable then
+               if Atributo is Column then
                begin
                  if Attributies = '' then
-                    Attributies := FieldTable(Atributo).Name
+                    Attributies := Column(Atributo).Name
                  else
-                 if Pos( FieldTable(Atributo).Name , Attributies ) = 0 then
-                    Attributies := Attributies + ', ' + FieldTable(Atributo).Name;
+                 if Pos( Column(Atributo).Name , Attributies ) = 0 then
+                    Attributies := Attributies + ', ' + Column(Atributo).Name;
                  FoundAttribute:= true;
                  break;
                end
@@ -378,7 +378,7 @@ begin
                  break;
                end
                else
-               if Atributo IS NotMapper then
+               if Atributo IS NotMapped then
                begin
                   FoundAttribute:= true;
                   break;
@@ -432,7 +432,7 @@ begin
          FoundAttribute:= false;
          for Atributo in Prop.GetAttributes do
          begin
-            if (Atributo is NotMapper) then
+            if (Atributo is NotMapped) then
             begin
                FoundAttribute:= true;
                break;
@@ -454,21 +454,21 @@ begin
         ctx2 := TRttiContext.Create;
         for Atributo in Prop.GetAttributes do
         begin
-          if Atributo is FieldTable then
+          if Atributo is Column then
           begin
-            if (not FieldTable(Atributo).AutoInc) or (WithID) then
+            if (not Column(Atributo).AutoInc) or (WithID) then
             begin
-               L.Add(upperCase(FieldTable(Atributo).Name));
+               L.Add(upperCase(Column(Atributo).Name));
                FoundAttribute:= true;
             end;
           end;
-          if Atributo is NotMapper then
+          if Atributo is NotMapped then
           begin
             FoundAttribute:= true;
           end;
         end;
         ctx2.Free;
-        if (not FoundAttribute) and (not FieldTable(Atributo).AutoInc) then
+        if (not FoundAttribute) and (not Column(Atributo).AutoInc) then
            L.Add( upperCase(Prop.Name) );
       end;
     end;
@@ -499,7 +499,7 @@ begin
          FoundAttribute:= false;
          for Atributo in Prop.GetAttributes do
          begin
-            if (Atributo is NotMapper) then
+            if (Atributo is NotMapped) then
             begin
                FoundAttribute:= true;
                break;
@@ -522,17 +522,17 @@ begin
         ctx2 := TRttiContext.Create;
         for Atributo in Prop.GetAttributes do
         begin
-          if Atributo is FieldTable then
+          if Atributo is Column then
           begin
-            if not FieldTable(Atributo).AutoInc then
+            if not Column(Atributo).AutoInc then
             begin
-               L.Add(FieldTable(Atributo).Name);
+               L.Add(Column(Atributo).Name);
                FoundAttribute:= true;
             end;
           end;
         end;
         ctx2.Free;
-        if (not FoundAttribute) and (not FieldTable(Atributo).AutoInc ) then
+        if (not FoundAttribute) and (not Column(Atributo).AutoInc ) then
            L.Add( Prop.Name );
       end;
     end;
@@ -560,11 +560,11 @@ begin
       ctx2 := TRttiContext.Create;
       for Atrib in Prop.GetAttributes do
       begin
-        if Atrib is FieldTable then
+        if Atrib is Column then
         begin
-          if FieldTable(Atrib).PrimaryKey then
+          if Column(Atrib).PrimaryKey then
           begin
-            L.Add(FieldTable(Atrib).Name);
+            L.Add(Column(Atrib).Name);
             break;////////////////////////////
           end;
         end;
@@ -760,7 +760,7 @@ begin
            FoundAttribute:= false;
            for Atrib in Prop.GetAttributes do
            begin
-              if (Atrib is NotMapper) then
+              if (Atrib is NotMapped) then
               begin
                  FoundAttribute:= true;
                  break;
@@ -785,9 +785,9 @@ begin
           begin
             for Atrib in Prop.GetAttributes do
             begin
-              if Atrib is FieldTable then
+              if Atrib is Column then
               begin
-                if (not FieldTable(Atrib).AutoInc) or (WithId) then
+                if (not Column(Atrib).AutoInc) or (WithId) then
                 begin
                   Value := GetValueField(E, lField);
                   L.Add(Value);
@@ -795,7 +795,7 @@ begin
                 end;
               end
               else
-              if Atrib is NotMapper then
+              if Atrib is NotMapped then
               begin
                   break;
               end;
@@ -832,7 +832,7 @@ begin
         begin
           for Atributo in Prop.GetAttributes do
           begin
-            if (Atributo is FieldTable) and (FieldTable(Atributo).PrimaryKey)
+            if (Atributo is Column) and (Column(Atributo).PrimaryKey)
             then
             begin
               Value := GetValueField(E, lField);
@@ -1132,13 +1132,13 @@ begin
         for Atrib in Prop.GetAttributes do
         begin
           try
-            if Atrib is FieldTable then
+            if Atrib is Column then
             begin
               Found := true;
 
               TAutoMapper.SetAtribute(Entity, Prop.Name,
                CharQuoted+ UpperCase( TAutoMapper.GetTableAttribute(Entity.ClassType) ) + CharQuoted + '.' +
-               CharQuoted+ FieldTable(Atrib).Name + CharQuoted, InContext);
+               CharQuoted+ Column(Atrib).Name + CharQuoted, InContext);
               result := true;
               break;
             end;
@@ -1184,7 +1184,7 @@ begin
            breaked:= false;
            for Atrib in Prop.GetAttributes do
            begin
-              if (Atrib is NotMapper) then
+              if (Atrib is NotMapped) then
               begin
                  breaked:= true;
                  break;
@@ -1198,12 +1198,12 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is FieldTable then
+          if Atrib is Column then
           begin
-            if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
+            if DataSet.FindField(Column(Atrib).Name) <> nil then
             begin
               SetFieldValue(Entity, Prop,
-                            DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
+                            DataSet.Fieldbyname(Column(Atrib).Name).AsVariant);
               breaked:= true;
               break;
             end;
@@ -1239,7 +1239,7 @@ begin
            breaked:= false;
            for Atrib in Prop.GetAttributes do
            begin
-              if (Atrib is NotMapper) then
+              if (Atrib is NotMapped) then
               begin
                  breaked:= true;
                  break;
@@ -1253,12 +1253,12 @@ begin
       begin
         for Atrib in Prop.GetAttributes do
         begin
-          if Atrib is FieldTable then
+          if Atrib is Column then
           begin
-            if DataSet.FindField(FieldTable(Atrib).Name) <> nil then
+            if DataSet.FindField(Column(Atrib).Name) <> nil then
             begin
               SetFieldValue( Entity  as TEntityBase , Prop,
-                            DataSet.Fieldbyname(FieldTable(Atrib).Name).AsVariant);
+                            DataSet.Fieldbyname(Column(Atrib).Name).AsVariant);
               breaked:= true;
               break;
             end;

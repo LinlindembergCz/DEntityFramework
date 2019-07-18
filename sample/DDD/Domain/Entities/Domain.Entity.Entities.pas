@@ -12,9 +12,9 @@ type
     FLogradouro: TString;
     FPessoaId:TInteger;
   public
-    [FieldTable('Logradouro','varchar(50)',true)]
+    [Column('Logradouro','varchar(50)',true)]
     property Logradouro: TString read FLogradouro write FLogradouro;
-    [FieldTable('PessoaId','integer',false)]
+    [Column('PessoaId','integer',false)]
     property PessoaId: TInteger read FPessoaId write FPessoaId;
   end;
 
@@ -27,11 +27,11 @@ type
   public
     constructor Create;
   published
-    [FieldTable('Nome','varchar(50)',true)]
+    [Column('Nome','varchar(50)',true)]
     property Nome: TString read FNome write FNome;
-    [FieldTable('Pessoa.Id = Endereco.PessoaId')]
+    [Reference('Pessoa.Id = Endereco.PessoaId')]
     property Endereco:TEndereco read FEndereco write FEndereco;
-    [FieldTable('Salario','float',true)]
+    [Column('Salario','float',true)]
     property Salario: TFloat read FSalario write FSalario;
   end;
 
@@ -43,13 +43,13 @@ type
     FComissao: TFloat;
     FDataNascimento: TDate;
   published
-    [FieldTable('CPF','varchar(11)',true)]
+    [Column('CPF','varchar(11)',true)]
     property CPFCNPJ: TCPF read FCPFCNPJ write FCPFCNPJ;
-    [FieldTable('Idade','integer',true)]
+    [Column('Idade','integer',true)]
     property Idade: TInteger read FIdade write FIdade;
-    [FieldTable('Comissao','float', true)]
+    [Column('Comissao','float', true)]
     property Comissao: TFloat read FComissao write FComissao;
-    [FieldTable('DataNascimento','Datetime',true)]
+    [Column('DataNascimento','Datetime',true)]
     property DataNascimento:TDate read FDataNascimento write FDataNascimento;
   end;
 
@@ -58,7 +58,7 @@ type
   private
     FCNPJ: TString;
   published
-    [FieldTable('CNPJ','varchar(15)',true)]
+    [Column('CNPJ','varchar(15)',true)]
     property CNPJ: TString read FCNPJ write FCNPJ;
   end;
 
@@ -69,13 +69,13 @@ type
     FUNidade:TString;
     FPrecoVenda:TFloat;
   published
-    [FieldTable('Descricao','varchar(50)',true)]
+    [Column('Descricao','varchar(50)',true)]
     [MaxLength(20)]
     property Descricao: TString read FDescricao write FDescricao;
-    [FieldTable('Unidade','varchar(5)',true)]
+    [Column('Unidade','varchar(5)',true)]
     [Default('UN')]
     property Unidade: TString read FUnidade write FUnidade;
-    [FieldTable('PrecoVenda','float',true)]
+    [Column('PrecoVenda','float',true)]
     //[EntityDefault('0')]
     property PrecoVenda: TFloat read FPrecoVenda write FPrecoVenda;
   end;
@@ -87,7 +87,7 @@ type
   public
      [Reference('IdProduto=Produto.Id')]
      property Produto: TProduto read FProduto write FProduto;
-     [FieldTable('Descricao','', true)]
+     [Column('Descricao','', true)]
      property Descricao: TString read FDescricao write FDescricao;
      constructor Create;
   end;
@@ -135,7 +135,7 @@ type
   private
     FDescricao: TString;
   public
-    [FieldTable('Descricao','varchar(20)',false)]
+    [Column('Descricao','varchar(20)',false)]
     property Descricao:TString read FDescricao write FDescricao;
   end;
 

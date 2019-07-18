@@ -13,7 +13,7 @@ type
   public
     procedure validar;
   published
-   [FieldTable('Email','varchar(200)',true)]
+   [Column('Email','varchar(200)',true)]
     property value: TString read Fvalue write Setvalue;
   end;
 

@@ -13,9 +13,9 @@ type
     FDescricao: TString;
     FCNPJ: TString;
   published
-    [FieldTable('Descricao',varchar20,false)]
+    [Column('Descricao',varchar20,false)]
     property Descricao: TString read FDescricao write FDescricao;
-    [FieldTable('CNPJ',varchar20,false)]
+    [Column('CNPJ',varchar20,false)]
     property CNPJ: TString read FCNPJ write FCNPJ;
   end;
 
