@@ -6,30 +6,31 @@ uses
    EF.Mapping.Base, SysUtils, strUtils, RTTI, EF.Core.Functions, System.Generics.Collections;
 
 type
-  TEntityList<T:TEntityBase> = class( TObjectList<T> )
-  private
+  ClassEntity = TEntityBase;
+
+  Collection<T:ClassEntity> = class( TObjectList<T> )
   public
     function List: T;
     constructor Create;
   end;
 
-  TEntityList = class( TEntityList<TEntityBase> )
+  Collection = class( Collection<ClassEntity> )
   public
   end;
 
 implementation
 
 
-{ TEntityList<T> }
+{ Collection<T> }
 
-constructor TEntityList<T>.Create;
+constructor Collection<T>.Create;
 begin
   inherited Create(true);
   if (count = 0 ) then
      Add( T.Create );
 end;
 
-function TEntityList<T>.List: T;
+function Collection<T>.List: T;
 begin
    result:= first;
 end;
