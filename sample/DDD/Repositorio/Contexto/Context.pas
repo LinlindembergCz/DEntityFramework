@@ -27,7 +27,7 @@ begin
   Connection:= TFactoryConnection.GetConnection;
   E:= T.Create;//TFactoryEntity<T>.GetEntity;
   if Connection.CustomTypeDataBase is TPostGres then
-     E.Mapped := TAutoMapper.ToMapping(E, true, Connection.CustomTypeDataBase is TPostGres );
+     TAutoMapper.ToMapping(E, true, Connection.CustomTypeDataBase is TPostGres );
   inherited Create( E );
 end;
 

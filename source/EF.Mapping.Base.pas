@@ -18,7 +18,6 @@ type
   protected
     // FDataCadastro: TEntityDatetime;
   public
-    Mapped: boolean;
     constructor Create; overload; virtual;
     destructor Destroy;override;
     procedure Validate; virtual;
@@ -39,8 +38,7 @@ uses EF.Mapping.AutoMapper;
 
 constructor TEntityBase.Create;
 begin
-   if not Mapped then
-     Mapped := TAutoMapper.ToMapping(self, true, false);
+   TAutoMapper.ToMapping(self, true, false);
    inherited Create;
 end;
 
