@@ -51,10 +51,10 @@ Type
     function Include( E: TObject ):TDataContext<T>;
     function ThenInclude(E: TObject ): TDataContext<T>;
     function ToDataSet(QueryAble: IQueryAble): TFDQuery;
-    function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): TEntityList;overload;
-    function ToList<T: TEntityBase>(QueryAble: IQueryAble): TEntityList<T>; overload;
+    function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): Collection;overload;
+    function ToList<T: TEntityBase>(QueryAble: IQueryAble): Collection<T>; overload;
     function BuildQuery(QueryAble: IQueryAble): string;
-    function ToList(Condicion: TString): TEntityList<T>;overload;
+    function ToList(Condicion: TString): Collection<T>;overload;
     function ToJson(QueryAble: IQueryAble): string;
 
     procedure Add(E: T;AutoSaveChange:boolean = false);
@@ -120,14 +120,14 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList(Condicion: TString): TEntityList<T>;
+function TDataContext<T>.ToList(Condicion: TString): Collection<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
   FirstEntity: T;
   CurrentEntidy , CurrentList : TObject;
   FirstTable, TableForeignKey, ValueId: string;
-  ListEntity :TEntityList<T>;
+  ListEntity :Collection<T>;
   H, I, j : Integer;
   IndexInclude , IndexThenInclude:integer;
   Json: string;
@@ -175,10 +175,10 @@ begin
               begin
                 CurrentEntidy := ListObjectsInclude.Items[IndexInclude];
                 ValueId:= FirstEntity.Id.Value.ToString;
-                if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+                if Pos('Collection', CurrentEntidy.ClassName) > 0 then
                 begin
                    CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-                   QueryAble:= From( TEntityList(CurrentEntidy).List.ClassType ).
+                   QueryAble:= From( Collection(CurrentEntidy).List.ClassType ).
                                    Where( FirstTable+'Id='+ ValueId ).Select;
                    ToList(QueryAble , CurrentEntidy  );
                 end
@@ -216,11 +216,11 @@ begin
                 if ListObjectsthenInclude.Items[j] <> nil then
                 begin
                   CurrentEntidy:= ListObjectsthenInclude.Items[j];
-                  if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+                  if Pos('Collection', CurrentEntidy.ClassName) > 0 then
                   begin
                     CurrentList := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName );
                     ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
-                    QueryAble:= From( TEntityList(CurrentEntidy).List.ClassType).
+                    QueryAble:= From( Collection(CurrentEntidy).List.ClassType).
                                 Where( TableForeignKey+'Id='+ ValueId ).Select;
                     ToList( QueryAble , CurrentList );
                     TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
@@ -274,14 +274,14 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList<T>(QueryAble: IQueryAble): TEntityList<T>;
+function TDataContext<T>.ToList<T>(QueryAble: IQueryAble): Collection<T>;
 var
-  List: TEntityList<T>;
+  List: Collection<T>;
   DataSet: TFDQuery;
   E: T;
 begin
   try
-    List := TEntityList<T>.Create;
+    List := Collection<T>.Create;
     List.Clear;
     DataSet := ToDataSet(QueryAble);
     while not DataSet.Eof do
@@ -298,18 +298,18 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): TEntityList;
+function TDataContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): Collection;
 var
-  List: TEntityList;
+  List: Collection;
   DataSet: TFDQuery;
   E: TEntityBase;
   Json: string;
 begin
   try
     if EntityList = nil then
-       List := TEntityList.Create
+       List := Collection.Create
     else
-       List :=  TEntityList(EntityList);
+       List :=  Collection(EntityList);
 
     List.Clear;
     DataSet := ToDataSet(QueryAble);
@@ -563,7 +563,7 @@ var
   FirstEntity: T;
   CurrentEntidy: TObject;
   FirstTable, TableForeignKey: string;
-  List:TEntityList;
+  List:Collection;
   I, j, k: Integer;
   IndexInclude , IndexThenInclude:integer;
   QueryAble: IQueryAble;
@@ -602,10 +602,10 @@ begin
           end
           else
           begin
-            if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+            if Pos('Collection', CurrentEntidy.ClassName) > 0 then
             begin
               CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-              QueryAble:= From( TEntityList(CurrentEntidy).List.ClassType ).
+              QueryAble:= From( Collection(CurrentEntidy).List.ClassType ).
                           Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
                           Select;
               ToList( QueryAble , CurrentEntidy  );
@@ -640,20 +640,20 @@ begin
               if ListObjectsthenInclude.Items[j] <> nil then
               begin
                 CurrentEntidy:= ListObjectsthenInclude.Items[j];
-                if Pos('TEntityList', CurrentEntidy.ClassName) > 0 then
+                if Pos('Collection', CurrentEntidy.ClassName) > 0 then
                 begin
                    //Refatorar
-                   QueryAble:= From(TEntityBase(TEntityList(ListObjectsthenInclude.Items[j]).List)).
+                   QueryAble:= From(TEntityBase(Collection(ListObjectsthenInclude.Items[j]).List)).
                                Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
                                Select;
                    List := ToList( QueryAble );
 
-                   while TEntityList(ListObjectsthenInclude.items[j]).Count > 1 do
-                      TEntityList(ListObjectsthenInclude.items[j]).Delete( TEntityList(ListObjectsthenInclude.items[j]).Count - 1 );
+                   while Collection(ListObjectsthenInclude.items[j]).Count > 1 do
+                      Collection(ListObjectsthenInclude.items[j]).Delete( Collection(ListObjectsthenInclude.items[j]).Count - 1 );
 
                    for k := 0 to List.Count-1 do
                    begin
-                      TEntityList(ListObjectsthenInclude.items[j]).Add( List[k]);
+                      Collection(ListObjectsthenInclude.items[j]).Add( List[k]);
                    end;
                 end
                 else

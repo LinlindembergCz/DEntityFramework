@@ -11,14 +11,14 @@ type
   TTabelaPreco = class( TEntityBase )
   private
     FDescricao: TString;
-    FItensTabelaPreco: TEntityList<TItensTabelaPreco>;
+    FItensTabelaPreco: Collection<TItensTabelaPreco>;
   public
     constructor Create;override;
   published
     [Column('Descricao',varchar50,false)]
     property Descricao: TString read FDescricao write FDescricao;
     [NotMapped]
-    property ItensTabelaPreco: TEntityList<TItensTabelaPreco> read FItensTabelaPreco write FItensTabelaPreco;
+    property ItensTabelaPreco: Collection<TItensTabelaPreco> read FItensTabelaPreco write FItensTabelaPreco;
   end;
 
 
@@ -29,7 +29,7 @@ implementation
 constructor TTabelaPreco.Create;
 begin
    inherited;
-   ItensTabelaPreco:= TEntityList<TItensTabelaPreco>.create;
+   ItensTabelaPreco:= Collection<TItensTabelaPreco>.create;
 end;
 
 

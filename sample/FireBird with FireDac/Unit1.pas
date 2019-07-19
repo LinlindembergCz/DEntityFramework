@@ -189,7 +189,7 @@ end;
 
 procedure TForm1.Button9Click(Sender: TObject);
 var
-  L:TEntityList<TCliente>;
+  L:Collection<TCliente>;
   C:TCliente;
 begin
    mlog.Lines.clear;

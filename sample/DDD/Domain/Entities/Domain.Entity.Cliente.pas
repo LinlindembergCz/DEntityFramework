@@ -27,7 +27,7 @@ type
     FCalcRenda: TFloat;
 
     FEmail:TEmail;
-    FContados: TEntityList<TContato>;
+    FContados: Collection<TContato>;
     FVeiculo: TVeiculo;
     FClienteTabelaPreco: TClienteTabelaPreco;
     FClienteEmpresa: TClienteEmpresa;
@@ -70,7 +70,7 @@ type
 
     property Email:TEmail read FEmail write FEmail;
     [NotMapped]
-    property Contatos: TEntityList<TContato> read FContados write FContados;
+    property Contatos: Collection<TContato> read FContados write FContados;
     [NotMapped]
     property Veiculo: TVeiculo read  FVeiculo write FVeiculo;
     [NotMapped]
@@ -88,7 +88,7 @@ begin
   FVeiculo            := TVeiculo.Create;
   FClienteTabelaPreco := TClienteTabelaPreco.Create;
   FClienteEmpresa     := TClienteEmpresa.Create;
-  FContados           := TEntityList<TContato>.create;
+  FContados           := Collection<TContato>.create;
 end;
 
 
