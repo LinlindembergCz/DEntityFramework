@@ -42,7 +42,7 @@ type
   private
     FName: string;
   public
-    constructor Create(aName: String);
+    constructor Create(aName: String; alias : string = '');
     property Name: string read FName;
   end;
 
@@ -213,9 +213,11 @@ type
 implementation
 
 { EntityTable }
-constructor Table.Create(aName: String);
+constructor Table.Create(aName: String; alias : string = '');
 begin
   FName := aName;
+  if alias = '' then
+  alias := FName;
 end;
 
 { EntityField }

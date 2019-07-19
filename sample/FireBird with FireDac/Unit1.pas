@@ -161,7 +161,7 @@ begin
 
     Context.Add(C, true);
 
-    Context.SaveChanges;
+    //Context.SaveChanges;
 
   finally
     C.Free;
@@ -175,13 +175,13 @@ procedure TForm1.Button7Click(Sender: TObject);
 begin
    if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
    begin
-      TAutoMapper.DataToEntity( DataSource1.DataSet, E );
+    //TAutoMapper.DataToEntity( DataSource1.DataSet, E );
+      E := Context.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
       E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
 
       Context.Update(true);
-
-      Context.SaveChanges;
+      //Context.SaveChanges;
    end;
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
    DataSource1.DataSet := Context.ToDataSet( QueryAble );
