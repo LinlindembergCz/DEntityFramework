@@ -10,7 +10,7 @@ type
   TFactoryConnection = class
   private
   public
-    class function GetConnection( Conn : TFDConnection = nil ): TEntityConn;
+    class function GetConnection( Conn : TFDConnection = nil ): TDataBaseFacade;
   end;
 
 implementation
@@ -18,7 +18,7 @@ implementation
 { TFactoryEntity }
 
 
-class function TFactoryConnection.GetConnection( Conn : TFDConnection = nil ): TEntityConn;
+class function TFactoryConnection.GetConnection( Conn : TFDConnection = nil ): TDataBaseFacade;
 begin
   //if Conn <> nil then
    //   result:= TEntityFDConnection.Create( fdPG , Conn )

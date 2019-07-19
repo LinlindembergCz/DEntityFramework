@@ -12,7 +12,7 @@ type
   private
     { Private declarations }
   public
-    FConnection: TEntityConn;
+    FConnection: TDatabaseFacade;
     { Public declarations }
   end;
 

@@ -13,7 +13,7 @@ type
      E: T;
     _RepositoryCliente:IRepository<T>;
   public
-    Constructor Create(dbContext:TdbContext<T>);override;
+    Constructor Create(dbContext:TContext<T>);override;
     function LoadDataSetPorNome(value: string):TDataSet;
     function LoadDataSetPorID(value: string):TDataSet;
   end;
@@ -25,7 +25,7 @@ implementation
 
 { TRepositoryCliente }
 
-constructor TRepositoryCliente<T>.Create(dbContext:TdbContext<T>);
+constructor TRepositoryCliente<T>.Create(dbContext:TContext<T>);
 begin
   _RepositoryCliente := TRepository<T>.create(dbContext);
   _RepositoryBase    := _RepositoryCliente As IRepository<T>;

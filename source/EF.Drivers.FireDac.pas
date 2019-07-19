@@ -20,7 +20,7 @@ uses
 type
 
 
-  TEntityFDConnection = class(TEntityConn)
+  TEntityFDConnection = class(TDatabaseFacade)
   private
     procedure BeforeConnect(Sender: TObject);
   public

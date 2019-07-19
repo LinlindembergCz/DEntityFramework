@@ -16,7 +16,7 @@ type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
   FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB, fdPG );
 
-  TEntityConn = class
+  TDatabaseFacade = class
   private
     FCustomTypeDataBase: TCustomDataBase;
     FTableList: TStringList;
@@ -33,7 +33,7 @@ type
     FUser: string;
     FPassword: string;
     FDriver: string;
-    procedure InsereFields(ADataSet: TFDQuery);
+    procedure CreateFields(ADataSet: TFDQuery);
     procedure BeforeConnect(Sender: TObject);virtual;abstract;
   public
     constructor Create(aDriver:FDConn; aUser,aPassword,aServer,aDataBase: string);overload;virtual; abstract;
@@ -62,12 +62,13 @@ uses
   EF.Mapping.AutoMapper,EF.Mapping.Atributes, EF.Schema.Firebird,
   EF.Schema.PostGres;
 
-procedure TEntityConn.InsereFields(ADataSet: TFDQuery);
+procedure TDatabaseFacade.CreateFields(ADataSet: TFDQuery);
 var
   i: integer;
   Field: TComponent;
   j:word;
 begin
+  //revisar e analizar se de fato isso é necessário ou será descontinuado
   For i := 0 to (ADataSet.Fields.Count - 1) do
   begin
     Case ADataSet.Fields[i].DataType of
@@ -132,12 +133,12 @@ begin
   end;
 end;
 
-function TEntityConn.IsFireBird:boolean;
+function TDatabaseFacade.IsFireBird:boolean;
 begin
   result:= (Driver = 'Firebird') or (Driver = 'FB');
 end;
 
-function TEntityConn.MigrationDataBase(aClasses: array of TClass): boolean;
+function TDatabaseFacade.MigrationDataBase(aClasses: array of TClass): boolean;
 var
   i: integer;
   Created, Altered: boolean;
@@ -161,7 +162,7 @@ begin
   result := Created;
 end;
 
-function TEntityConn.CreateTables: boolean;
+function TDatabaseFacade.CreateTables: boolean;
 var
   i: integer;
   Created: boolean;
@@ -176,7 +177,7 @@ begin
   end;
 end;
 
-destructor TEntityConn.Destroy;
+destructor TDatabaseFacade.Destroy;
 begin
   if FTableList <> nil then
      FTableList.Free;
@@ -186,7 +187,7 @@ begin
      FCustomConnection.Free;
 end;
 
-function TEntityConn.CreateSingleTable(i: integer): boolean;
+function TDatabaseFacade.CreateSingleTable(i: integer): boolean;
 var
   Table: string;
   ListAtributes: TList;
@@ -216,8 +217,8 @@ begin
           ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
           ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
         end;
-      end;
-
+      end
+      else
       if CustomTypeDataBase is TPostGres then
       begin
         ExecutarSQL( 'ALTER TABLE public."'+upperCase(Table)+'" OWNER TO postgres');
@@ -233,11 +234,12 @@ begin
       result := true;
     finally
       KeyList.Free;
+      //ListAtributes.Free;
     end;
   end;
 end;
 
-function TEntityConn.AlterTables: boolean;
+function TDatabaseFacade.AlterTables: boolean;
 var
   i, K, j: integer;
   Table: string;

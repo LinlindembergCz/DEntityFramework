@@ -13,9 +13,9 @@ type
      FRefCount: integer;
    protected
      _RepositoryBase: IRepository<T>;
-      function dbContext: TdbContext<T>;virtual;
+      function dbContext: TContext<T>;virtual;
    public
-     Constructor Create(dbContext:TdbContext<T>);virtual;
+     Constructor Create(dbContext:TContext<T>);virtual;
      procedure RefreshDataSet; virtual;
      function  LoadDataSet(iId:Integer; Fields: string = ''): TDataSet;virtual;
      function  Load(iId: Integer = 0): T;virtual;
@@ -52,12 +52,12 @@ begin
   result:= dbContext.Entity as T;
 end;
 
-function TRepositoryBase<T>.dbContext: TdbContext<T>;
+function TRepositoryBase<T>.dbContext: TContext<T>;
 begin
   result:= _RepositoryBase.dbContext;
 end;
 
-constructor TRepositoryBase<T>.Create(dbContext: TdbContext<T>);
+constructor TRepositoryBase<T>.Create(dbContext: TContext<T>);
 begin
    inherited Create;
 end;

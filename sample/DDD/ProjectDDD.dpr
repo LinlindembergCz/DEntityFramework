@@ -64,7 +64,7 @@ uses
 {$R *.res}
 
 var
-  c:TEntityConn;
+  c:TDataBaseFacade;
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;

@@ -25,49 +25,53 @@ uses
 Type
    TTypeSQL       = (  tsInsert, tsUpdate );
 
-  TDataContext<T:TEntityBase> = class
-  private
+  TDbContext<T:TEntityBase> = class
+  strict private
     ListObjectsInclude:TObjectList;
     ListObjectsThenInclude:TObjectList;
     FDbSet: TFDQuery;
-    FConnection: TEntityConn;
-    FProviderName: string;
-    FTypeConnetion: TTypeConnection;
-    ListField: TStringList;
+    FDatabase: TDatabaseFacade;
+    FListFields: TStringList;
     FEntity : T;
-    procedure FreeObjects;
+    procedure FreeDbSet;
   protected
-    property Connection: TEntityConn read FConnection write FConnection;
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
   public
+    property Database: TDatabaseFacade read FDatabase write FDatabase;
     destructor Destroy; override;
     constructor Create(proEntity: TEntityBase = nil); overload; virtual;
 
+    property DbSet: TFDQuery read FDbSet write FDbSet;
+
+    function BuildQuery(QueryAble: IQueryAble): string;
     function Find(QueryAble: IQueryAble): T; overload;
     function Find(Condicion: TString): T;overload;
 
     function Where(Condicion: TString): T;
 
-    function Include( E: TObject ):TDataContext<T>;
-    function ThenInclude(E: TObject ): TDataContext<T>;
-    function ToDataSet(QueryAble: IQueryAble): TFDQuery;
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): Collection;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): Collection<T>; overload;
-    function BuildQuery(QueryAble: IQueryAble): string;
     function ToList(Condicion: TString): Collection<T>;overload;
+    function Include( E: TObject ):TDbContext<T>;
+    function ThenInclude(E: TObject ): TDbContext<T>;
+
+    function ToDataSet(QueryAble: IQueryAble): TFDQuery;
     function ToJson(QueryAble: IQueryAble): string;
 
     procedure Add(E: T;AutoSaveChange:boolean = false);
     procedure Update(AutoSaveChange:boolean = false);
     procedure Remove;overload;
+
+    procedure AddRange(entities: Array of T;AutoSaveChange:boolean = false);
+    procedure UpdateRange(entities: Array of T;AutoSaveChange:boolean = false);
+    procedure RemoveRange(entities: Array of T;AutoSaveChange:boolean = false);
+
     procedure SaveChanges;
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
   published
-    property DbSet: TFDQuery read FDbSet write FDbSet;
-    property ProviderName: string read FProviderName write FProviderName;
-    property TypeConnetion: TTypeConnection read FTypeConnetion write FTypeConnetion;
+
     property Entity : T read FEntity write FEntity;
   end;
 
@@ -85,7 +89,7 @@ uses
   EF.Schema.MSSQL,
   EF.Mapping.AutoMapper,  EF.Schema.PostGres;
 
-procedure TDataContext<T>.FreeObjects;
+procedure TDbContext<T>.FreeDbSet;
 begin
   if DbSet <> nil then
   begin
@@ -95,18 +99,18 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
+function TDbContext<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
   Keys: TStringList;
   DataSet:TFDQuery;
 begin
   try
     try
-      FreeObjects;
+      FreeDbSet;
       Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-      if FConnection.CustomTypeDataBase is TPostGres then
+      if FDatabase.CustomTypeDataBase is TPostGres then
          QueryAble.Prepare;
-      DataSet := FConnection.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
+      DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
       DataSet.Open;
       result := DataSet;
     except
@@ -120,7 +124,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList(Condicion: TString): Collection<T>;
+function TDbContext<T>.ToList(Condicion: TString): Collection<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
@@ -196,7 +200,7 @@ begin
               end;
             finally
               Inc(I);
-              FreeObjects;
+              FreeDbSet;
             end;
           end
           else
@@ -249,7 +253,7 @@ begin
                   break;
                 end;
               finally
-                FreeObjects;
+                FreeDbSet;
               end;
             end;
           end;
@@ -274,7 +278,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList<T>(QueryAble: IQueryAble): Collection<T>;
+function TDbContext<T>.ToList<T>(QueryAble: IQueryAble): Collection<T>;
 var
   List: Collection<T>;
   DataSet: TFDQuery;
@@ -298,7 +302,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): Collection;
+function TDbContext<T>.ToList(QueryAble: IQueryAble; EntityList: TObject = nil): Collection;
 var
   List: Collection;
   DataSet: TFDQuery;
@@ -330,7 +334,7 @@ end;
 
 
 
-function TDataContext<T>.FindEntity(QueryAble: IQueryAble): TEntityBase;
+function TDbContext<T>.FindEntity(QueryAble: IQueryAble): TEntityBase;
 var
   DataSet: TFDQuery;
 begin
@@ -344,7 +348,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.Find(QueryAble: IQueryAble): T;
+function TDbContext<T>.Find(QueryAble: IQueryAble): T;
 var
   DataSet: TFDQuery;
   E: T;
@@ -362,7 +366,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.Find(Condicion: TString): T;
+function TDbContext<T>.Find(Condicion: TString): T;
 var
   DataSet: TFDQuery;
   E: T;
@@ -382,21 +386,22 @@ begin
   end;
 end;
 
-procedure TDataContext<T>.Add(E: T; AutoSaveChange:boolean = false);
+procedure TDbContext<T>.Add(E: T; AutoSaveChange:boolean = false);
 var
   ListValues: TStringList;
   i: integer;
 begin
-  if DbSet <> nil then
+  if FDbSet <> nil then
   begin
+    //E.Validate;
     try
       try
-        if ListField = nil then
-           ListField := TAutoMapper.GetFieldsList(E);
+        if FListFields = nil then
+           FListFields := TAutoMapper.GetFieldsList(E);
         ListValues := TAutoMapper.GetValuesFieldsList(E);
-        DbSet.append;
-        pParserDataSet(ListField, ListValues, DbSet);
-        DbSet.Post;
+        FDbSet.append;
+        pParserDataSet(FListFields, ListValues, FDbSet);
+        FDbSet.Post;
         if AutoSaveChange then
            SaveChanges;
       except
@@ -412,26 +417,26 @@ begin
   end
   else
   begin
-    DbSet:= ToDataSet( from(E).Select.Where(E.Id = 0) );
+    FDbSet:= ToDataSet( from(E).Select.Where(E.Id = 0) );
     Add(E);
   end;
 end;
 
-procedure TDataContext<T>.Update( AutoSaveChange:boolean = false);
+procedure TDbContext<T>.Update( AutoSaveChange:boolean = false);
 var
   ListValues: TStringList;
 begin
-  if DbSet <> nil then
+  if FDbSet <> nil then
   begin
-    Entity.Validate;
+    //Entity.Validate;
     try
       try
-         if ListField = nil then
-           ListField := TAutoMapper.GetFieldsList(Entity);
+         if FListFields = nil then
+           FListFields := TAutoMapper.GetFieldsList(Entity);
         ListValues := TAutoMapper.GetValuesFieldsList(Entity);
-       DbSet.Edit;
-        pParserDataSet(ListField, ListValues, DbSet);
-        DbSet.Post;
+        FDbSet.Edit;
+        pParserDataSet(FListFields, ListValues, FDbSet);
+        FDbSet.Post;
         if AutoSaveChange then
            SaveChanges;
       except
@@ -447,28 +452,65 @@ begin
   end
   else
   begin
-    DbSet:= ToDataSet( from(Entity).Select.Where(Entity.Id = Entity.Id.Value) );
+    FDbSet:= ToDataSet( from(Entity).Select.Where(Entity.Id = Entity.Id.Value) );
     Update;
   end;
 end;
 
-function TDataContext<T>.GetFieldList: Data.DB.TFieldList;
+procedure TDbContext<T>.AddRange(entities: array of T;AutoSaveChange:boolean = false );
+var
+  E: T;
+begin
+   for E in entities do
+   begin
+     Add( E );
+   end;
+   if AutoSaveChange then
+      SaveChanges;
+end;
+
+procedure TDbContext<T>.UpdateRange(entities: array of T;AutoSaveChange:boolean = false);
+var
+  E: T;
+begin
+   for E in entities do
+   begin
+     FEntity:= E;
+     Update;
+   end;
+   if AutoSaveChange then
+      SaveChanges;
+end;
+
+procedure TDbContext<T>.RemoveRange(entities: array of T;AutoSaveChange:boolean = false);
+var
+  E: T;
+begin
+   for E in entities do
+   begin
+     //To do
+   end;
+   if AutoSaveChange then
+      SaveChanges;
+end;
+
+function TDbContext<T>.GetFieldList: Data.DB.TFieldList;
 begin
   result := DbSet.FieldList;
 end;
 
-function TDataContext<T>.BuildQuery(QueryAble: IQueryAble): string;
+function TDbContext<T>.BuildQuery(QueryAble: IQueryAble): string;
 begin
    result:= QueryAble.BuildQuery(QueryAble);
 end;
 
-function TDataContext<T>.ToJson(QueryAble: IQueryAble): string;
+function TDbContext<T>.ToJson(QueryAble: IQueryAble): string;
   var
   Keys: TStringList;
 begin
   try
     Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-    DBSet := FConnection.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
+    DBSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
     if not DBSet.Active then
        DBSet.Open;
     result:= DBSet.ToJson();
@@ -480,23 +522,23 @@ begin
   end;
 end;
 
-destructor TDataContext<T>.Destroy;
+destructor TDbContext<T>.Destroy;
 begin
   if FDbSet <> nil then
     FreeAndNil(FDbSet);
   if FEntity <> nil then
     FreeAndNil(FEntity);
-  if ListField <> nil then
-    FreeAndNil(ListField);
+  if FListFields <> nil then
+    FreeAndNil(FListFields);
   if ListObjectsInclude <> nil then
     FreeAndNil(ListObjectsInclude);
   if ListObjectsThenInclude <> nil then
     FreeAndNil(ListObjectsThenInclude);
-  if Connection <> nil then
-     Connection.Free;
+  if Database <> nil then
+     Database.Free;
 end;
 
-procedure TDataContext<T>.Remove;
+procedure TDbContext<T>.Remove;
     {
     procedure RemoveDirect;
     var
@@ -528,19 +570,21 @@ begin
     DbSet.Delete;
 end;
 
-procedure TDataContext<T>.SaveChanges;
+
+
+procedure TDbContext<T>.SaveChanges;
 begin
   if (DbSet <> nil ) and (ChangeCount > 0) then
       DbSet.ApplyUpdates(0);
 end;
 
-procedure TDataContext<T>.RefreshDataSet;
+procedure TDbContext<T>.RefreshDataSet;
 begin
   if (DbSet <> nil ) and (DbSet.Active) then
     DbSet.Refresh;
 end;
 
-function TDataContext<T>.ChangeCount: integer;
+function TDbContext<T>.ChangeCount: integer;
 begin
    if (DbSet <> nil ) then
       result := FDbSet.ChangeCount
@@ -548,7 +592,7 @@ begin
       result := 0;
 end;
 
-constructor TDataContext<T>.Create(proEntity: TEntityBase = nil  );
+constructor TDbContext<T>.Create(proEntity: TEntityBase = nil  );
 begin
   if proEntity = nil then
     Entity := T.Create
@@ -556,7 +600,7 @@ begin
     Entity := proEntity as T;
 end;
 
-function TDataContext<T>.Where(Condicion: TString ): T;
+function TDbContext<T>.Where(Condicion: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, EntidyInclude: TEntityBase;
@@ -624,7 +668,7 @@ begin
           end;
         finally
           Inc(i);
-          FreeObjects;
+          FreeDbSet;
         end;
       end
       else
@@ -677,7 +721,7 @@ begin
                 break;
               end;
             finally
-              FreeObjects;
+              FreeDbSet;
             end;
           end;
         end;
@@ -701,7 +745,7 @@ begin
   end;
 end;
 
-function TDataContext<T>.Include( E: TObject ):TDataContext<T>;
+function TDbContext<T>.Include( E: TObject ):TDbContext<T>;
 begin
    if ListObjectsInclude = nil then
    begin
@@ -714,7 +758,7 @@ begin
    result:= self;
 end;
 
-function TDataContext<T>.ThenInclude( E: TObject ):TDataContext<T>;
+function TDbContext<T>.ThenInclude( E: TObject ):TDbContext<T>;
 begin
    ListObjectsThenInclude.Add( E );
    ListObjectsInclude.Add( nil );

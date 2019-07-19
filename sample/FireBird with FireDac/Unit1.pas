@@ -43,7 +43,7 @@ type
     { Private declarations }
   public
     E: TCliente;
-    Context: TDataContext<TCliente>;
+    Context: TDbContext<TCliente>;
     QueryAble: IQueryAble;
     { Public declarations }
   end;
@@ -66,8 +66,8 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Context := TDataContext<TCliente>.Create;
-  Context.Connection := DataModule1.FConnection;
+  Context := TDbContext<TCliente>.Create;
+  Context.Database := DataModule1.FConnection;
   E:= Context.Entity;
 
 end;

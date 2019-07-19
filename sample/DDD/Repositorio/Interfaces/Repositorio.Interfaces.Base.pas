@@ -16,7 +16,7 @@ type
     procedure Commit;
     function GetEntity: T;
     property Entity: T read GetEntity;
-    function dbContext: TdbContext<T>;
+    function dbContext: TContext<T>;
   end;
 
 
@@ -29,9 +29,9 @@ type
     procedure AddOrUpdate( State: TEntityState);
     procedure Commit;
     function GetEntity: T;
-    function GetContext:TdbContext<T>;
+    function GetContext:TContext<T>;
     property Entity: T read GetEntity;
-    property dbContext: TdbContext<T> read GetContext;
+    property dbContext: TContext<T> read GetContext;
   end;
 
 implementation

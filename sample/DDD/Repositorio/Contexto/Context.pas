@@ -9,7 +9,7 @@ uses
 type
   TEntityState = (esInsert, esEdit, esBrowser);
 
-  TdbContext<T:TEntityBase> = class(TDataContext<T>)
+  TContext<T:TEntityBase> = class(TDbContext<T>)
   public
     constructor Create;
   end;
@@ -20,14 +20,14 @@ implementation
 
 uses  FactoryConnection, EF.Schema.PostGres, EF.Mapping.AutoMapper;
 
-constructor TdbContext<T>.Create;
+constructor TContext<T>.Create;
 var
   E:T;
 begin
-  Connection:= TFactoryConnection.GetConnection;
+  DataBase:= TFactoryConnection.GetConnection;
   E:= T.Create;//TFactoryEntity<T>.GetEntity;
-  if Connection.CustomTypeDataBase is TPostGres then
-     TAutoMapper.ToMapping(E, true, Connection.CustomTypeDataBase is TPostGres );
+  if DataBase.CustomTypeDataBase is TPostGres then
+     TAutoMapper.ToMapping(E, true, DataBase.CustomTypeDataBase is TPostGres );
   inherited Create( E );
 end;
 

@@ -66,7 +66,7 @@ type
 
     class function GetInstance<T:TEntityBase>(const Str_Class: TValue): T; static;
     class function GetInstance2(const Str_Class: TValue): TObject;
-    class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil);
+  //class procedure CreateDinamicView( Entity: TEntityBase; Form:TForm;Parent:TWinControl = nil); //Descontinuado!
     class procedure JsonToObject<T:TEntityBase>(Json: TJSOnObject; O: T);
   end;
 
@@ -1373,6 +1373,7 @@ begin
   // .Invoke(ARttiType.AsInstance.MetaclassType, []).AsObject);
 end;
 
+(*
 class procedure TAutoMapper.CreateDinamicView(Entity: TEntityBase; Form: TForm;Parent:TWinControl = nil);
 //TAutoMapper.CreateDinamicView( TCliente.create , Self );
 var
@@ -1578,6 +1579,7 @@ begin
   end;
 
 end;
+*)
 
 
 class procedure  TAutoMapper.JsonToObject<T>(Json:TJSOnObject; O:T);

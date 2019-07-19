@@ -13,12 +13,12 @@ type
   private
     FRefCount: integer;
   protected
-    FDbContext: TdbContext<T>;
+    FDbContext: TContext<T>;
   private
     function GetEntity: T;
-    function GetContext:TdbContext<T>;
+    function GetContext:TContext<T>;
   public
-    constructor Create(dbContext: TdbContext<T>);virtual;
+    constructor Create(dbContext: TContext<T>);virtual;
     destructor Destroy;override;
 
     procedure RefreshDataSet;virtual;
@@ -37,7 +37,7 @@ implementation
 uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client;
 { TRepository }
 
-constructor TRepository<T>.Create(dbContext: TdbContext<T>);
+constructor TRepository<T>.Create(dbContext: TContext<T>);
 begin
   Inherited Create;
   FDbContext := dbContext;
@@ -79,7 +79,7 @@ begin
   end;
 end;
 
-function TRepository<T>.GetContext: TdbContext<T>;
+function TRepository<T>.GetContext: TContext<T>;
 begin
   result := FDbContext;
 end;
