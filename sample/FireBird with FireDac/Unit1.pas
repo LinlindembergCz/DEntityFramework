@@ -27,6 +27,9 @@ type
     Button7: TButton;
     Button8: TButton;
     Button9: TButton;
+    Button10: TButton;
+    Button11: TButton;
+    Button12: TButton;
     procedure FormCreate(Sender: TObject);
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
@@ -39,6 +42,10 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button10Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -57,7 +64,7 @@ implementation
 
 uses UDataModule, EF.Mapping.AutoMapper,
      Domain.Entity.Contato, EF.Core.Types,
-  EF.Core.List;
+  EF.Core.List, System.Generics.Collections;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -70,6 +77,67 @@ begin
   Context.Database := DataModule1.FConnection;
   E:= Context.Entity;
 
+end;
+
+procedure TForm1.Button10Click(Sender: TObject);
+var
+  I:integer;
+  C: TCliente;
+  Clientes : TObjectList<TCliente>;
+begin
+  try
+    Clientes := TObjectList<TCliente>.create;
+
+    for I := 0 to 2 do
+    begin
+      C := TCliente.Create;
+      C.Nome:= 'JOAO MARIA'+'-'+inttostr(I);
+      C.NomeFantasia:= 'jesus Cristo de nazare';
+      C.CPFCNPJ:= '02316937455';
+      C.RG:= '1552666';
+      C.Ativo:= '1';
+      C.DataNascimento := strtodate('19/04/1976');
+      C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
+
+      Clientes.Add( C );
+    end;
+
+    Context.AddRange( Clientes , true);
+
+  finally
+    Clientes.Free;
+    QueryAble:= From( E ).Select.OrderBy(E.Nome);
+    DataSource1.DataSet := Context.ToDataSet(QueryAble );
+  end;
+
+end;
+
+procedure TForm1.Button11Click(Sender: TObject);
+begin
+  {
+  E := Context.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+  E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
+  Context.UpdateRange(true);
+  }
+end;
+
+procedure TForm1.Button12Click(Sender: TObject);
+var
+  Entities:TObjectList<TCliente>;
+  Cliente: TCliente;
+  I:integer;
+begin
+  Entities:=TObjectList<TCliente>.create;
+  for I := 0 to 1 do
+  begin
+    Cliente:= TCliente.Create;
+    TAutoMapper.DataToEntity( DataSource1.DataSet, Cliente );
+    Entities.Add(Cliente);
+    DataSource1.DataSet.Next;
+  end;
+  Context.RemoveRange(Entities);
+  Entities.Free;
+  DataSource1.DataSet := Context.ToDataSet(QueryAble );
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -185,6 +253,12 @@ begin
    end;
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
    DataSource1.DataSet := Context.ToDataSet( QueryAble );
+end;
+
+procedure TForm1.Button8Click(Sender: TObject);
+begin
+  Context.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
+  DataSource1.DataSet := Context.ToDataSet(QueryAble );
 end;
 
 procedure TForm1.Button9Click(Sender: TObject);

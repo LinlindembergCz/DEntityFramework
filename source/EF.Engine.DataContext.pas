@@ -60,11 +60,11 @@ Type
 
     procedure Add(E: T;AutoSaveChange:boolean = false);
     procedure Update(AutoSaveChange:boolean = false);
-    procedure Remove;overload;
+    procedure Remove(Condicion: TString);overload;
 
-    procedure AddRange(entities: Array of T;AutoSaveChange:boolean = false);
+    procedure AddRange(entities:  TObjectList<T>;AutoSaveChange:boolean = false);
     procedure UpdateRange(entities: Array of T;AutoSaveChange:boolean = false);
-    procedure RemoveRange(entities: Array of T;AutoSaveChange:boolean = false);
+    procedure RemoveRange(entities: TObjectList<T>);
 
     procedure SaveChanges;
     procedure RefreshDataSet;
@@ -112,7 +112,9 @@ begin
          QueryAble.Prepare;
       DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
       DataSet.Open;
+      FDbSet:= DataSet;
       result := DataSet;
+
     except
       on E: Exception do
       begin
@@ -356,7 +358,6 @@ begin
   try
     result := nil;
     DataSet := ToDataSet(QueryAble);
-
     //E:= T.Create;
     TAutoMapper.DataToEntity(DataSet,QueryAble.ConcretEntity );
     result := QueryAble.ConcretEntity as T;
@@ -457,11 +458,11 @@ begin
   end;
 end;
 
-procedure TDbContext<T>.AddRange(entities: array of T;AutoSaveChange:boolean = false );
+procedure TDbContext<T>.AddRange(entities: TObjectList<T>;AutoSaveChange:boolean = false );
 var
   E: T;
 begin
-   for E in entities do
+   for E in entities  do
    begin
      Add( E );
    end;
@@ -482,16 +483,14 @@ begin
       SaveChanges;
 end;
 
-procedure TDbContext<T>.RemoveRange(entities: array of T;AutoSaveChange:boolean = false);
+procedure TDbContext<T>.RemoveRange(entities: TObjectList<T>);
 var
   E: T;
 begin
    for E in entities do
    begin
-     //To do
+     Remove(Entity.ID = E.ID.Value );
    end;
-   if AutoSaveChange then
-      SaveChanges;
 end;
 
 function TDbContext<T>.GetFieldList: Data.DB.TFieldList;
@@ -538,36 +537,20 @@ begin
      Database.Free;
 end;
 
-procedure TDbContext<T>.Remove;
-    {
-    procedure RemoveDirect;
-    var
-      SQL: string;
-      ListPrimaryKey, FieldsPrimaryKey: TStringList;
-    begin
-      try
-        try
-          ListPrimaryKey := TAutoMapper.GetFieldsPrimaryKeyList(Entity);
-          FieldsPrimaryKey := TAutoMapper.GetValuesFieldsPrimaryKeyList(Entity);
-          SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(Entity.ClassType),
-                                                    fParserWhere(ListPrimaryKey, FieldsPrimaryKey) ] );
-          FConnection.ExecutarSQL(SQL);
-        except
-          on E: Exception do
-          begin
-            raise Exception.Create(E.message);
-          end;
-        end;
-      finally
-        ListPrimaryKey.Free;
-        FieldsPrimaryKey.Free;
-      end;
-    end;
-    }
+procedure TDbContext<T>.Remove(Condicion: TString);
+var
+  SQL: string;
 begin
-  //Refatorar
-  if (DbSet <> nil ) and (DbSet.Active) and (not DbSet.IsEmpty) then
-    DbSet.Delete;
+  try
+    SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(T), Condicion.Value ] );
+    FDataBase.ExecutarSQL(SQL);
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create(E.message);
+    end;
+  end;
+
 end;
 
 
