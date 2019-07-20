@@ -418,7 +418,7 @@ begin
   else
   begin
     FDbSet:= ToDataSet( from(E).Select.Where(E.Id = 0) );
-    Add(E);
+    Add(E, AutoSaveChange);
   end;
 end;
 
@@ -453,7 +453,7 @@ begin
   else
   begin
     FDbSet:= ToDataSet( from(Entity).Select.Where(Entity.Id = Entity.Id.Value) );
-    Update;
+    Update(AutoSaveChange);
   end;
 end;
 
