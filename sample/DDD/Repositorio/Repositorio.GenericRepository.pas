@@ -67,7 +67,7 @@ end;
 
 procedure TRepository<T>.Delete;
 begin
-  FDbContext.Remove;
+  //FDbContext.Remove;
 end;
 
 destructor TRepository<T>.Destroy;
