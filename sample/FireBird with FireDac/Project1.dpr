@@ -43,7 +43,7 @@ uses
 
 begin
   Application.Initialize;
-  ReportMemoryLeaksOnShutdown:= true;
+  //ReportMemoryLeaksOnShutdown:= true;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDataModule1, DataModule1);
   Application.CreateForm(TForm1, Form1);
