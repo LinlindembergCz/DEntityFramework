@@ -51,6 +51,10 @@ type
   public
     E: TCliente;
     Context: TDbContext<TCliente>;
+
+    //E2: TvwCliente;
+    //Context2: TDbContext<TvwCliente>;
+
     QueryAble: IQueryAble;
     { Public declarations }
   end;
@@ -74,9 +78,11 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Context := TDbContext<TCliente>.Create;
+  //Context2 := TDbContext<TvwCliente>.Create;
   Context.Database := DataModule1.FConnection;
+  //Context2.Database := DataModule1.FConnection;
   E:= Context.Entity;
-
+  //E2:= Context2.Entity;
 end;
 
 procedure TForm1.Button10Click(Sender: TObject);
@@ -279,6 +285,8 @@ procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
    DataSource1.DataSet := Context.ToDataSet( QueryAble );
+   //QueryAble := From( E2 ).Select.OrderBy ( E2.Nome );
+   //DataSource1.DataSet := Context2.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);

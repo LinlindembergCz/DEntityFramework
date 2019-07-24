@@ -392,7 +392,10 @@ begin
              if ( (PropIsVisible(Prop) and (OnlyPublished)) or (not OnlyPublished) )  then
              begin
                if ( (uppercase(Prop.Name) = 'ID' ) and (not WithID ) ) then
+               begin
+                 FoundAttribute:= true;
                  break;
+               end;
 
                FoundAttribute:= false;
                if Atributo is Column then
@@ -892,7 +895,7 @@ var
   ctx: TRttiContext;
   TypObj: TRttiType;
   Atributo: TCustomAttribute;
-  strTables: String;
+  strName: String;
 begin
   try
     ctx := TRttiContext.Create;
@@ -901,13 +904,19 @@ begin
     begin
       if (Atributo is Table) then
       begin
-        strTables := Table(Atributo).Name;
+        strName := Table(Atributo).Name;
+        break;
+      end
+      else
+      if (Atributo is View) then
+      begin
+        strName := View(Atributo).Name;
         break;
       end;
     end;
-    if strTables = '' then  strTables := Obj.ClassName;
+    if strName = '' then  strName := Obj.ClassName;
 
-    result := strTables
+    result := strName
   finally
     ctx.Free;
   end;
@@ -929,6 +938,11 @@ begin
         result := Table(Atributo).Name;
         break;
       end;
+      if (Atributo is View) then
+      begin
+        result := View(Atributo).Name;
+        break;
+      end
     end;
   finally
     ctx.Free;

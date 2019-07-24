@@ -68,16 +68,19 @@ begin
     Prepared := true;
     open;
 
-    UpdateOptions.AutoIncFields:= 'ID';
-    Fieldbyname('ID').ProviderFlags :=[pfInWhere, pfInKey];
-    Fieldbyname('ID').Required := false;
-    UpdateOptions.UpdateMode := upWhereKeyOnly;
-
-    for J := 0 to Fields.Count-1 do
+    if FindField('ID') <> nil then
     begin
-      if UpperCase( Fields[J].FieldName) <> 'ID' then
+      UpdateOptions.AutoIncFields:= 'ID';
+      Fieldbyname('ID').ProviderFlags :=[pfInWhere, pfInKey];
+      Fieldbyname('ID').Required := false;
+      UpdateOptions.UpdateMode := upWhereKeyOnly;
+
+      for J := 0 to Fields.Count-1 do
       begin
-        Fields[J].ProviderFlags:=[pfInUpdate];
+        if UpperCase( Fields[J].FieldName) <> 'ID' then
+        begin
+          Fields[J].ProviderFlags:=[pfInUpdate];
+        end;
       end;
     end;
   end;

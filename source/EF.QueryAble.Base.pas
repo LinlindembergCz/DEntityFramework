@@ -153,7 +153,6 @@ type
   end;
 
   TFrom = class(TQueryAble)
-  private
   protected
     constructor Create;
     procedure InitializeString;
@@ -180,10 +179,10 @@ type
 
   Linq = class sealed
   private
+    class var oFrom: TFrom;
     class function BuildFrom: TFrom;
     class function MakeCaseOf(Expression: string; _When, _then: array of variant): string; static;
   public
-    class var oFrom: TFrom;
     class function From(E: String): TFrom; overload;
     class function From(E: TEntityBase): TFrom; overload;
     class function From(Entities: array of TEntityBase): TFrom; overload;
@@ -549,7 +548,9 @@ function TQueryAble.Select(Fields: string = ''): TSelect;
 var
   _Atribs:string;
 begin
-  _Atribs:= TAutoMapper.GetAttributies(FConcretEntity, true);
+
+  _Atribs:= TAutoMapper.GetAttributies(FConcretEntity,true, Pos('From vw',FSEntity) = 0 );
+
   if Pos('Select', Fields) > 0 then
     Fields := '(' + Fields + ')';
 
@@ -574,7 +575,7 @@ var
   _Atribs:string;
 begin
   _Fields := '';
-  _Atribs:= TAutoMapper.GetAttributies(FConcretEntity, true);
+  _Atribs:= TAutoMapper.GetAttributies(FConcretEntity,true, Pos('From vw',FSEntity) = 0  );
   for Field in Fields do
   begin
     _Fields := _Fields + ifthen(_Fields <> '', ', ', '') + Field;
@@ -703,9 +704,5 @@ begin
   FSUnion := BuildQuery(Q);
   result := self;
 end;
-
-
-
-
 
 end.

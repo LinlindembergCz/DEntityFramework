@@ -46,6 +46,14 @@ type
     property Name: string read FName;
   end;
 
+  View = class(TCustomAttribute)
+  private
+    FName: string;
+  public
+    constructor Create(aName: String);
+    property Name: string read FName;
+  end;
+
   Column = class(TCustomAttribute)
   private
     FName: String;
@@ -373,6 +381,13 @@ end;
 { Index }
 
 constructor Index.Create(aName: String);
+begin
+  FName:= aName;
+end;
+
+{ View }
+
+constructor View.Create(aName: String);
 begin
   FName:= aName;
 end;

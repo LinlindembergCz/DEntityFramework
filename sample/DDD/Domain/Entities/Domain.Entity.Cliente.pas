@@ -8,6 +8,14 @@ uses
   System.Generics.Collections, Domain.Consts, Domain.Entity.ClienteEmpresa, EF.Core.List;
 
 type
+  [View('vwClientes')]
+  TvwCliente = class( TEntityBase )
+  private
+    FNome: TString;
+  published
+    property Nome: TString read FNome write FNome;
+  end;
+
   [Table('Clientes')]
   TCliente = class( TEntityBase )
   private
@@ -78,6 +86,8 @@ type
     [NotMapped]
     property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
   end;
+
+
 
 implementation
 
