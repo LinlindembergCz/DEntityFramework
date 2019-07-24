@@ -81,6 +81,15 @@ type
 
   end;
 
+
+  Index = class(TCustomAttribute)
+  private
+    FName: string;
+  public
+    constructor Create( aName: String );
+    property Name: string read FName;
+  end;
+
   Reference = class(TCustomAttribute)
   private
     FName: string;
@@ -209,6 +218,8 @@ type
     varchar200 = 'varchar(200)';
     varchar300 = 'varchar(200)';
     varchar500 = 'varchar(500)';
+    Int        = 'Integer';
+    Float      = 'Float';
 
 implementation
 
@@ -357,6 +368,13 @@ begin
   FOnDelete := aOnDelete;
   FOnUpdate := aOnUpdate;
 //ALTER TABLE CONTATOS ADD CONSTRAINT FK_CONTATOS_1 FOREIGN KEY (CLIENTEID) REFERENCES CLIENTES(ID) ON DELETE CASCADE
+end;
+
+{ Index }
+
+constructor Index.Create(aName: String);
+begin
+  FName:= aName;
 end;
 
 end.

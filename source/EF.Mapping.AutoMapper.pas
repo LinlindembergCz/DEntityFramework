@@ -17,6 +17,7 @@ type
     class var TypObj: TRttiType;
     class function GetValueField(E: TEntityBase; Field: TRttiField): string; static;
 
+
   public
     class function GetMaxLengthValue(E: TEntityBase; aProp: string): variant; static;
     class function PropIsInstance(Prop: TRttiProperty): boolean; static;
@@ -34,7 +35,10 @@ type
     class function GetTableAttribute(Obj: TClass): String; overload;
     class function GetTableAttribute(ClassInfo: Pointer): String; overload;
     class function GetAttributies(E: TEntityBase;OnlyPublished:boolean = false; WithID:boolean =true): String; static;
+
     class function GetListAtributesForeignKeys(Obj: TClass): TList; static;
+    class function GetListAtributesIndex(Obj: TClass): TList; static;
+
     class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
 
     class function GetFieldsList(E: TEntityBase;OnlyPublished: boolean = false; WithID:boolean =false): TStringList;overload;
@@ -237,6 +241,40 @@ begin
           Atributies^.Name := ForeignKey(Atributo).Name;
           Atributies^.OnDelete:=ForeignKey(Atributo).OnDelete;
           Atributies^.OnUpdate:=ForeignKey(Atributo).OnUpdate;
+          List.Add(Atributies);
+          Found:= true;
+        end;
+      end;
+    end;
+  finally
+    ctx.Free;
+    result := List;
+  end;
+end;
+
+class function TAutoMapper.GetListAtributesIndex(Obj: TClass): TList;
+var
+  ctx: TRttiContext;
+  Prop: TRttiProperty;
+  TypObj: TRttiType;
+  Atributo: TCustomAttribute;
+  Atributies: PParamForeignKeys;
+  List: TList;
+  Found:Boolean;
+begin
+  try
+    List := TObjectList.Create(true);
+    ctx := TRttiContext.Create;
+    TypObj := ctx.GetType(Obj.ClassInfo);
+    for Prop in TypObj.GetProperties do
+    begin
+      Found:= false;
+      for Atributo in Prop.GetAttributes do
+      begin
+        if (Atributo is Index) then
+        begin
+          New(Atributies);
+          Atributies^.Name := ForeignKey(Atributo).Name;
           List.Add(Atributies);
           Found:= true;
         end;
@@ -557,7 +595,6 @@ begin
     TypObj := ctx.GetType(E.ClassInfo);
     for Prop in TypObj.GetProperties do
     begin
-      ctx2 := TRttiContext.Create;
       for Atrib in Prop.GetAttributes do
       begin
         if Atrib is Column then

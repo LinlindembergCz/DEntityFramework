@@ -45,9 +45,9 @@ type
     [LengthMin(11)]
     [NoSpecialChar]
     property CPFCNPJ: TString read FCPFCNPJ write FCPFCNPJ;
-    [Column('Renda','float',true)]
+    [Column('Renda', float,true)]
     property Renda:TFloat read FRenda write FRenda;
-    [Column('Idade','integer',true)]
+    [Column('Idade',int,true)]
     property Idade: TInteger read FIdade write FIdade;
     [Column('RG',varchar10,true)]
     [LengthMin(6)]

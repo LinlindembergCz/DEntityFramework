@@ -16,7 +16,7 @@ type
   published
     [Column('Placa',varchar10,false)]
      property Placa: TString read FPlaca write FPlaca;
-    [Column('ClienteId','Integer',true)]
+    [Column('ClienteId',Int,true)]
     [ForeignKey('ClienteId','Clientes', rlCascade, rlCascade )]
     property ClienteId: TInteger read FClienteId write FClienteId;
 

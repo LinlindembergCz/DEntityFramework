@@ -22,7 +22,7 @@ type
   TFrom = class;
   TSelect = class;
 
-  IQueryAble = Interface(IInterface)
+  IQueryAble = Interface//(IInterface)
     ['{554062C0-0BD3-4378-BFA2-DFA85CCC5938}']
     function Inner(E: string; _On: string): IQueryAble; overload;
     function Inner(E: TEntityBase; _On: TString): IQueryAble; overload;
@@ -149,9 +149,11 @@ type
     function Select(Fields: array of string): TSelect; overload;
     function BuildQuery(Q: IQueryAble): string;
     procedure Prepare;
+
   end;
 
   TFrom = class(TQueryAble)
+  private
   protected
     constructor Create;
     procedure InitializeString;
@@ -178,21 +180,19 @@ type
 
   Linq = class sealed
   private
-    class var oFrom: TFrom;
-    class function GetFromSigleton: TFrom;
+    class function BuildFrom: TFrom;
     class function MakeCaseOf(Expression: string; _When, _then: array of variant): string; static;
   public
+    class var oFrom: TFrom;
     class function From(E: String): TFrom; overload;
     class function From(E: TEntityBase): TFrom; overload;
     class function From(Entities: array of TEntityBase): TFrom; overload;
     class function From(E: TClass): TFrom; overload;
     class function From(E: IQueryAble): TFrom; overload;
-
     class function Caseof(Expression: TString; _When, _then: array of variant)
       : TString; overload;
     class function Caseof(Expression: TInteger; _When, _then: array of variant)
       : TString; overload;
-
   end;
 
   
@@ -201,25 +201,9 @@ implementation
 
 uses EF.Mapping.AutoMapper, System.Types;
 
-{
-function TQueryAble._AddRef: Integer;
-begin
-  Result := inherited _AddRef;
-  InterlockedIncrement(FRefCount);
-end;
-
-function TQueryAble._Release: Integer;
-begin
-  Result := inherited _Release;
-  InterlockedDecrement(FRefCount);
-  if FRefCount <=0 then
-    Free;
-end;
-}
-
 function TQueryAble.BuildQuery(Q: IQueryAble): string;
 begin
-  with Q as TQueryAble do
+  with Q do
   begin
     result := Concat(FSSelect + FSCount, ifthen(Pos(StrSelect, FSEntity) > 0,
                      fStringReplace(FSEntity, StrFrom , StrFrom+' (') + ')', FSEntity),
@@ -301,16 +285,24 @@ begin
    result:= FSWhere;
 end;
 
+class function Linq.BuildFrom: TFrom;
+begin
+  if oFrom = nil  then
+     oFrom:= TFrom.Create;
+  oFrom.InitializeString;
+  result := oFrom;
+end;
+
 class function Linq.From(E: String): TFrom;
 begin
-  oFrom := GetFromSigleton;
+  BuildFrom;
   oFrom.FSEntity := StrFrom + E;
   result := oFrom;
 end;
 
 class function Linq.From(E: TEntityBase): TFrom;
 begin
-  oFrom := GetFromSigleton;
+  BuildFrom;
   oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
   oFrom.FConcretEntity := E;
   result := oFrom;
@@ -320,9 +312,8 @@ class function Linq.From(Entities: array of TEntityBase): TFrom;
 var
   E: TEntityBase;
   sFrom: string;
-  oFrom : TFrom;
 begin
-  oFrom := GetFromSigleton;
+   BuildFrom;
   for E in Entities do
     sFrom := sFrom + ifthen(sFrom <> '', ',', '') + TAutoMapper.GetTableAttribute
       (E.ClassType);
@@ -334,7 +325,7 @@ end;
 class function Linq.From(E: TClass): TFrom;
 begin
  ///ESTRANHO
-  oFrom := GetFromSigleton;
+  BuildFrom;
   oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
   oFrom.FConcretEntity := TAutoMapper.CreateObject(E.UnitName+'.'+E.ClassName) as TEntityBase;
   result := oFrom;
@@ -342,14 +333,6 @@ end;
 
 class function Linq.From(E: IQueryAble): TFrom;
 begin
-  result := oFrom;
-end;
-
-class function Linq.GetFromSigleton: TFrom;
-begin
-  if oFrom = nil  then
-     oFrom:= TFrom.Create;
-  oFrom.InitializeString;
   result := oFrom;
 end;
 
@@ -383,23 +366,22 @@ end;
 
 constructor TFrom.Create;
 begin
-
+  inherited;
 end;
-
 
 procedure TFrom.InitializeString;
 begin
-    FSWhere:= '';
-    FSOrder:= '';
-    FSSelect:= '';
-    FSEntity:= '';
-    FSJoin:= '';
-    FSGroupBy:= '';
-    FSUnion:= '';
-    FSExcept:= '';
-    FSIntersect:= '';
-    FSConcat:= '';
-    FSCount:= '';
+  FSWhere:= '';
+  FSOrder:= '';
+  FSSelect:= '';
+  FSEntity:= '';
+  FSJoin:= '';
+  FSGroupBy:= '';
+  FSUnion:= '';
+  FSExcept:= '';
+  FSIntersect:= '';
+  FSConcat:= '';
+  FSCount:= '';
 end;
 
 { TCustomLinqQueryAble }
@@ -561,6 +543,7 @@ begin
    Self.FSSelect := 'Select '+ PutQuoted( Self.FSSelect );
    Self.FSEntity := ' From "'+ upperCase( trim( stringreplace( Self.FSEntity ,'From ','', [] ) ) ) +'"';
 end;
+
 
 function TQueryAble.Select(Fields: string = ''): TSelect;
 var

@@ -26,6 +26,7 @@ type
     function SetGenarator(Table,FieldAutoInc:string): string;
     function CrateTriggerGenarator(Table,FieldAutoInc:string): string;
     function CreateForeignKey(AtributoForeignKey: PParamForeignKeys; Table: string ): string;override;
+    function CreateIndex(Table, IndexName, Field: string): string;override;
   end;
 
 implementation
@@ -51,6 +52,12 @@ end;
 function TFirebird.CreateGenarator(Table, FieldAutoInc: string): string;
 begin
    result:= ' CREATE GENERATOR "' + Table + '_' + FieldAutoInc + '_GEN1"'
+end;
+
+function TFirebird.CreateIndex(Table, IndexName, Field: string):string;
+begin
+  inherited;
+  result:= Format(' CREATE INDEX %s ON %s (%s)',[IndexName, Table, Field] );
 end;
 
 function TFirebird.SetGenarator(Table, FieldAutoInc: string): string;

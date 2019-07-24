@@ -34,7 +34,7 @@ type
 
 implementation
 
-uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client;
+uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client, EF.QueryAble.Base;
 { TRepository }
 
 constructor TRepository<T>.Create(dbContext: TContext<T>);
@@ -46,15 +46,20 @@ end;
 function TRepository<T>.LoadDataSet(iId: Integer; Fields: string = ''): TDataSet;
 var
   DataSet:TDataSet;
+  Q:IQueryAble;
 begin
   if iId = 0 then
-     DataSet := FDbContext.ToDataSet( From(GetEntity).Select( Fields) ) as TDataSet
+    Q := From(GetEntity).Select( Fields)
   else
-     DataSet := FDbContext.ToDataSet( From(GetEntity).where( GetEntity.Id = iId ).Select( Fields) ) as TDataSet;
+    Q := From(GetEntity).where( GetEntity.Id = iId ).Select( Fields);
+
+   DataSet := FDbContext.ToDataSet( Q ) as TDataSet;
 
    FDbContext.DBSet:= DataSet as TFDQuery;
 
    result:= FDbContext.DBSet;
+
+
 end;
 
 function TRepository<T>.Load(iId: Integer): T;

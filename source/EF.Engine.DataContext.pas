@@ -112,9 +112,8 @@ begin
          QueryAble.Prepare;
       DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
       DataSet.Open;
-      FDbSet:= DataSet;
+      //FDbSet:= DataSet;
       result := DataSet;
-
     except
       on E: Exception do
       begin
@@ -122,6 +121,7 @@ begin
       end;
     end;
   finally
+    Keys.Clear;
     Keys.Free;
   end;
 end;

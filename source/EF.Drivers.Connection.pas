@@ -192,9 +192,10 @@ var
   Table: string;
   ListAtributes: TList;
   ListForeignKeys: TList;
+  ListIndex: TList;
   KeyList: TStringList;
   classe: TClass;
-  index:integer;
+  index :integer;
 
 begin
   classe := FClasses[i];
@@ -208,6 +209,7 @@ begin
       ExecutarSQL(CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
 
       ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
+      //ListIndex:= TAutoMapper.GetListAtributesIndex(classe);
 
       if CustomTypeDataBase is TFirebird then
       begin
@@ -216,6 +218,7 @@ begin
           ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
           ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
           ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
+
         end;
       end
       else
@@ -267,13 +270,21 @@ begin
             if not ColumnExist then
             begin
               ExecutarSQL( CustomTypeDataBase.AlterTable
-                  (Table, PParamAtributies(List.Items[K]).Name,
-                  PParamAtributies(List.Items[K]).Tipo,
-                  PParamAtributies(List.Items[K]).IsNull, ColumnExist));
+                          (Table, PParamAtributies(List.Items[K]).Name,
+                           PParamAtributies(List.Items[K]).Tipo,
+                           PParamAtributies(List.Items[K]).IsNull, ColumnExist));
+
+              //ExecutarSQL( CustomTypeDataBase.CreateIndex(Table,
+              //             Table+PParamAtributies(List.Items[K]).Name+'_IDX',
+              //             PParamAtributies(List.Items[K]).Name ) );
+
+
               Created := true;
             end;
           end;
         end;
+
+
       end;
     end;
   finally
