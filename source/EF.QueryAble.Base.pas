@@ -40,8 +40,8 @@ type
     function OrderBy(Fields: array of string): IQueryAble; overload;
     function OrderByDesc(Fields: string): IQueryAble; overload;
     function OrderByDesc(Fields: array of string): IQueryAble; overload;
-    function Select(Fields: string = ''): TSelect; overload;
-    function Select(Fields: array of string): TSelect; overload;
+    function Select(Fields: string = ''): IQueryAble; overload;
+    function Select(Fields: array of string): IQueryAble; overload;
     //não estou achando seguro manter essa referencia aqui nessa classe!
     procedure SetConcretEntity(value: TEntityBase);
     function GetConcretEntity: TEntityBase;
@@ -145,8 +145,8 @@ type
     function OrderBy(Fields: array of string): IQueryAble; overload;
     function OrderByDesc(Fields: string): IQueryAble; overload;
     function OrderByDesc(Fields: array of string): IQueryAble;overload;
-    function Select(Fields: string = ''): TSelect; overload;
-    function Select(Fields: array of string): TSelect; overload;
+    function Select(Fields: string = ''): IQueryAble; overload;
+    function Select(Fields: array of string): IQueryAble; overload;
     function BuildQuery(Q: IQueryAble): string;
     procedure Prepare;
 
@@ -549,7 +549,7 @@ begin
 end;
 
 
-function TQueryAble.Select(Fields: string = ''): TSelect;
+function TQueryAble.Select(Fields: string = ''): IQueryAble;
 var
   _Atribs:string;
 begin
@@ -568,10 +568,10 @@ begin
   else
       Fields := _Atribs;
 
-  result := TSelect(self);
+  result := self;
 end;
 
-function TQueryAble.Select(Fields: array of string): TSelect;
+function TQueryAble.Select(Fields: array of string): IQueryAble;
 var
   _Fields: string;
   Field: string;
@@ -585,7 +585,7 @@ begin
   end;
   TSelect(self).FFields:= _Fields;
   FSSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
-  result := TSelect(self);
+  result := self;
 end;
 
 procedure TQueryAble.SetConcretEntity(value: TEntityBase);

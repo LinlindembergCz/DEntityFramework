@@ -87,7 +87,8 @@ uses
   Vcl.ExtCtrls,
   EF.Schema.Firebird,
   EF.Schema.MSSQL,
-  EF.Mapping.AutoMapper,  EF.Schema.PostGres;
+  EF.Mapping.AutoMapper,
+  EF.Schema.PostGres;
 
 procedure TDbContext<T>.FreeDbSet;
 begin
@@ -755,7 +756,7 @@ var
   F: TFrom;
 begin
   F := TFrom.create;
-  with TFrom( F ) do
+  with  F  do
   begin
     InitializeString;
     result := From( E );
@@ -767,7 +768,7 @@ var
   F: TFrom;
 begin
   F := TFrom.create;
-  with TFrom( F ) do
+  with  F do
   begin
     InitializeString;
     result := From( E );
@@ -779,7 +780,7 @@ var
   F: TFrom;
 begin
   F := TFrom.create;
-  with TFrom( F ) do
+  with  F  do
   begin
     InitializeString;
     result := From( E );
@@ -791,7 +792,7 @@ var
   F: TFrom;
 begin
   F := TFrom.create;
-  with TFrom( F ) do
+  with  F  do
   begin
     InitializeString;
     result := From( E );
@@ -803,7 +804,7 @@ var
   F: TFrom;
 begin
   F := TFrom.create;
-  with TFrom( F ) do
+  with  F  do
   begin
     InitializeString;
     result := From( E );
