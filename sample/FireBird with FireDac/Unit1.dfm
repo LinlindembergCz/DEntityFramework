@@ -47,6 +47,7 @@ object Form1: TForm1
       Width = 147
       Height = 25
       Caption = 'GetQuery'
+      Enabled = False
       TabOrder = 1
       OnClick = buttonGetSQLClick
     end

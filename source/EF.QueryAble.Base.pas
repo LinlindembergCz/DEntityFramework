@@ -85,7 +85,7 @@ type
     property SCount: string read GetSCount write SetSCount;
   end;
 
-  TQueryAble = class (TInterfacedPersistent, IQueryAble)
+  TQueryAble = class (TInterfacedObject, IQueryAble)
   private
     procedure SetConcretEntity(value: TEntityBase);
     function GetConcretEntity: TEntityBase;
@@ -153,9 +153,20 @@ type
   end;
 
   TFrom = class(TQueryAble)
-  protected
+  public
     constructor Create;
     procedure InitializeString;
+    function MakeCaseOf(Expression: string; _When, _then: array of variant): string;
+
+    function From(E: String): TFrom; overload;
+    function From(E: TEntityBase): TFrom; overload;
+    function From(Entities: array of TEntityBase): TFrom; overload;
+    function From(E: TClass): TFrom; overload;
+    function From(E: IQueryAble): TFrom; overload;
+    function Caseof(Expression: TString; _When, _then: array of variant)
+      : TString; overload;
+     function Caseof(Expression: TInteger; _When, _then: array of variant)
+      : TString; overload;
   end;
 
   TJoin = class(TQueryAble);
@@ -177,6 +188,7 @@ type
     function Count: IQueryAble;
   end;
 
+  {
   Linq = class sealed
   private
     class var oFrom: TFrom;
@@ -193,6 +205,7 @@ type
     class function Caseof(Expression: TInteger; _When, _then: array of variant)
       : TString; overload;
   end;
+  }
 
   
 
@@ -284,58 +297,50 @@ begin
    result:= FSWhere;
 end;
 
-class function Linq.BuildFrom: TFrom;
+function TFrom.From(E: String): TFrom;
 begin
-  if oFrom = nil  then
-     oFrom:= TFrom.Create;
-  oFrom.InitializeString;
-  result := oFrom;
+ // BuildFrom;
+  FSEntity := StrFrom + E;
+  result := Self;
 end;
 
-class function Linq.From(E: String): TFrom;
+function TFrom.From(E: TEntityBase): TFrom;
 begin
-  BuildFrom;
-  oFrom.FSEntity := StrFrom + E;
-  result := oFrom;
+  //BuildFrom;
+  FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
+  FConcretEntity := E;
+  result := self;
 end;
 
-class function Linq.From(E: TEntityBase): TFrom;
-begin
-  BuildFrom;
-  oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E.ClassType);
-  oFrom.FConcretEntity := E;
-  result := oFrom;
-end;
-
-class function Linq.From(Entities: array of TEntityBase): TFrom;
+function TFrom.From(Entities: array of TEntityBase): TFrom;
 var
   E: TEntityBase;
   sFrom: string;
 begin
-   BuildFrom;
+  // BuildFrom;
   for E in Entities do
     sFrom := sFrom + ifthen(sFrom <> '', ',', '') + TAutoMapper.GetTableAttribute
       (E.ClassType);
-  oFrom.FSEntity := StrFrom + sFrom;
-  oFrom.FConcretEntity := Entities[0];
-  result := oFrom;
+  FSEntity := StrFrom + sFrom;
+  FConcretEntity := Entities[0];
+  result := self;
 end;
 
-class function Linq.From(E: TClass): TFrom;
+function TFrom.From(E: TClass): TFrom;
 begin
  ///ESTRANHO
-  BuildFrom;
-  oFrom.FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
-  oFrom.FConcretEntity := TAutoMapper.CreateObject(E.UnitName+'.'+E.ClassName) as TEntityBase;
-  result := oFrom;
+ // BuildFrom;
+  FSEntity := StrFrom + TAutoMapper.GetTableAttribute(E);
+  FConcretEntity := TAutoMapper.CreateObject(E.UnitName+'.'+E.ClassName) as TEntityBase;
+  result := self;
 end;
 
-class function Linq.From(E: IQueryAble): TFrom;
+function TFrom.From(E: IQueryAble): TFrom;
 begin
-  result := oFrom;
+  result := self;
 end;
 
-class function Linq.MakeCaseOf(Expression: string; _When, _then: array of variant): string;
+function TFrom.MakeCaseOf(Expression: string; _When, _then: array of variant): string;
 var
   s: string;
   i: integer;
@@ -349,13 +354,13 @@ begin
   result:= s;
 end;
 
-class function Linq.Caseof(Expression: TString;
+ function TFrom.Caseof(Expression: TString;
   _When, _then: array of variant): TString;
 begin
   result.SetAs( MakeCaseOf( Expression.&As,_When , _then) );
 end;
 
-class function Linq.Caseof(Expression: TInteger;
+function TFrom.Caseof(Expression: TInteger;
   _When, _then: array of variant): TString;
 begin
   result.SetAs( MakeCaseOf( Expression.&As,_When , _then) );
@@ -387,13 +392,13 @@ end;
 
 function TQueryAble.Inner(E, _On: string): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrInnerJoin + E + StrOn + _On;
+  FSJoin := FSJoin + StrInnerJoin + E + StrOn + _On;
   result := self;
 end;
 
 function TQueryAble.Inner(E: TEntityBase; _On: TString): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
+  FSJoin := FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
@@ -407,52 +412,52 @@ end;
 
 function TQueryAble.Inner(E: TClass): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
+  FSJoin := FSJoin + StrInnerJoin + TAutoMapper.GetTableAttribute
     (E) + StrOn + TAutoMapper.GetReferenceAtribute(self.FConcretEntity, E);
   result := self;
 end;
 
 function TQueryAble.InnerLeft(E, _On: string): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrLeftJoin + E + StrOn + _On;
+  FSJoin := FSJoin + StrLeftJoin + E + StrOn + _On;
   result := self;
 end;
 
 function TQueryAble.InnerLeft(E: TEntityBase; _On: TString): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
+  FSJoin := FSJoin + StrLeftJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
 function TQueryAble.InnerRight(E, _On: string): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrRightJoin + E + StrOn + _On;
+  FSJoin := FSJoin + StrRightJoin + E + StrOn + _On;
   result := self;
 end;
 
 function TQueryAble.InnerRight(E: TEntityBase; _On: TString): IQueryAble;
 begin
-  self.FSJoin := self.FSJoin + StrRightJoin + TAutoMapper.GetTableAttribute
+  FSJoin := FSJoin + StrRightJoin + TAutoMapper.GetTableAttribute
     (E.ClassType) + StrOn + _On.Value;
   result := self;
 end;
 
 function TQueryAble.Where(condition: string): IQueryAble;
 begin
-  self.FSWhere := StrWhere + condition;
+  FSWhere := StrWhere + condition;
   result := self;
 end;
 
 function TQueryAble.Where(condition: TString): IQueryAble;
 begin
-  self.FSWhere := Concat(StrWhere, condition);
+  FSWhere := Concat(StrWhere, condition);
   result := self;
 end;
 
 function TQueryAble.GroupBy(Fields: string): IQueryAble;
 begin
-  self.FSGroupBy := Concat(StrGroupBy, Fields);
+  FSGroupBy := Concat(StrGroupBy, Fields);
   result := self;
 end;
 
@@ -465,7 +470,7 @@ begin
   begin
     values := values + ifthen(values <> '', ', ', '') + Value;
   end;
-  self.FSGroupBy := Concat(StrGroupBy, values);
+  FSGroupBy := Concat(StrGroupBy, values);
   result := self;
 end;
 
@@ -476,7 +481,7 @@ end;
 
 function TQueryAble.OrderBy(Fields: string): IQueryAble;
 begin
-  self.FSOrder := Concat(StrOrderBy, Fields);
+  FSOrder := Concat(StrOrderBy, Fields);
   result := self;
 end;
 
@@ -489,13 +494,13 @@ begin
   begin
     values := values + ifthen(values <> '', ', ', '') + Value;
   end;
-  self.FSOrder := StrOrderBy + values;
+  FSOrder := StrOrderBy + values;
   result := self;
 end;
 
 function TQueryAble.OrderByDesc(Fields: string): IQueryAble;
 begin
-  self.FSOrder := Concat(StrOrderBy, Fields, StrDesc);
+  FSOrder := Concat(StrOrderBy, Fields, StrDesc);
   result := self;
 end;
 
@@ -508,7 +513,7 @@ begin
   begin
     values := values + ifthen(values <> '', ', ', '') + Value;
   end;
-  self.FSOrder := StrOrderBy + values + StrDesc;
+  FSOrder := StrOrderBy + values + StrDesc;
   result := self;
 end;
 
@@ -539,8 +544,8 @@ procedure TQueryAble.Prepare;
   end;
 
 begin
-   Self.FSSelect := 'Select '+ PutQuoted( Self.FSSelect );
-   Self.FSEntity := ' From "'+ upperCase( trim( stringreplace( Self.FSEntity ,'From ','', [] ) ) ) +'"';
+   FSSelect := 'Select '+ PutQuoted( Self.FSSelect );
+   FSEntity := ' From "'+ upperCase( trim( stringreplace( Self.FSEntity ,'From ','', [] ) ) ) +'"';
 end;
 
 
@@ -548,22 +553,20 @@ function TQueryAble.Select(Fields: string = ''): TSelect;
 var
   _Atribs:string;
 begin
-
   _Atribs:= TAutoMapper.GetAttributies(FConcretEntity,true, Pos('From vw',FSEntity) = 0 );
 
   if Pos('Select', Fields) > 0 then
     Fields := '(' + Fields + ')';
 
-  self.FSSelect := StrSelect + ifthen( self.FSSelect <> '' ,
+  FSSelect := StrSelect + ifthen( FSSelect <> '' ,
                                     ifthen( Fields  <> '', Fields,
-                                          ifthen( _Atribs <> '', _Atribs,'*')) + ' From (' + self.FSSelect ,
+                                          ifthen( _Atribs <> '', _Atribs,'*')) + ' From (' + FSSelect ,
                                                 ifthen( Fields  <> '', Fields,
                                                       ifthen(_Atribs  <> '', _Atribs,'*')));
   if Fields <> ''  then
-      TSelect(self).FFields := Fields
+      Fields := Fields
   else
-      TSelect(self).FFields := _Atribs;
-
+      Fields := _Atribs;
 
   result := TSelect(self);
 end;
@@ -581,7 +584,7 @@ begin
     _Fields := _Fields + ifthen(_Fields <> '', ', ', '') + Field;
   end;
   TSelect(self).FFields:= _Fields;
-  self.FSSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
+  FSSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
   result := TSelect(self);
 end;
 

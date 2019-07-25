@@ -315,6 +315,7 @@ begin
     end;
   finally
     ctx.Free;
+    ctx2.Free;
   end;
 end;
 
@@ -347,6 +348,7 @@ begin
     end;
   finally
     ctx.Free;
+    ctx2.Free;
   end;
 end;
 

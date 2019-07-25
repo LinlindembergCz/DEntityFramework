@@ -303,11 +303,11 @@ begin
 end;
 
 procedure TForm1.buttonGetSQLClick(Sender: TObject);
+//var
+ //Q: IQueryAble;
 begin
-   QueryAble := From   ( E )
-                .Select([ E.Id, E.Nome, E.Observacao ])
-                .OrderBy ( E.Nome );
-   mlog.Lines.Text := Context.BuildQuery( QueryAble );
+ //Q:= From( E ).Select([ E.Id, E.Nome, E.Observacao ]).OrderBy( E.Nome ) ;
+ //mlog.Lines.Text := Context.BuildQuery(  Q );
 end;
 
 end.

@@ -751,29 +751,63 @@ end;
 { TLinq }
 
 function From(E: TEntityBase): TFrom;
+var
+  F: TFrom;
 begin
-  result := TFrom(Linq.From(E));
+  F := TFrom.create;
+  with TFrom( F ) do
+  begin
+    InitializeString;
+    result := From( E );
+  end;
 end;
 
 function From(E: array of TEntityBase): TFrom;
+var
+  F: TFrom;
 begin
-  result := TFrom(Linq.From(E));
+  F := TFrom.create;
+  with TFrom( F ) do
+  begin
+    InitializeString;
+    result := From( E );
+  end;
 end;
 
 function From(E: String): TFrom;
+var
+  F: TFrom;
 begin
-  result := TFrom(Linq.From(E));
+  F := TFrom.create;
+  with TFrom( F ) do
+  begin
+    InitializeString;
+    result := From( E );
+  end;
 end;
 
 function From(E: TClass): TFrom;
+var
+  F: TFrom;
 begin
-  result := TFrom(Linq.From(E));
+  F := TFrom.create;
+  with TFrom( F ) do
+  begin
+    InitializeString;
+    result := From( E );
+  end;
 end;
 
 function From(E: IQueryAble): TFrom;
+var
+  F: TFrom;
 begin
-  result := TFrom(Linq.From(E));
-
+  F := TFrom.create;
+  with TFrom( F ) do
+  begin
+    InitializeString;
+    result := From( E );
+  end;
 end;
 
 end.
