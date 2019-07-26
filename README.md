@@ -61,12 +61,17 @@ end;<br><br>
 Other:
 
 Add;<br>
+AddRange
 Update;<br>
+UpdateRange;<br>
 Remove;<br>
+RemoveRange;<br>
 SaveChanges;<br>
-FindEntity;<br>
+Find;<br>
 ToList;<br>
 ToJson;<br>
+ToDataSet;<br>
+
 
 
 
