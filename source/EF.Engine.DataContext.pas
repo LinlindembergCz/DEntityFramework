@@ -39,7 +39,8 @@ Type
   public
     property Database: TDatabaseFacade read FDatabase write FDatabase;
     destructor Destroy; override;
-    constructor Create(proEntity: TEntityBase = nil); overload; virtual;
+    constructor Create(aDatabase: TDatabaseFacade = nil); overload; virtual;
+    constructor Create(proEntity: T );overload; virtual;
 
     property DbSet: TFDQuery read FDbSet write FDbSet;
 
@@ -576,7 +577,16 @@ begin
       result := 0;
 end;
 
-constructor TDbContext<T>.Create(proEntity: TEntityBase = nil  );
+constructor TDbContext<T>.Create(aDatabase: TDatabaseFacade );
+begin
+  //if proEntity = nil then
+    Entity := T.Create;
+  //else
+  //Entity := proEntity as T;
+  FDatabase:= aDatabase;
+end;
+
+constructor TDbContext<T>.Create(proEntity: T );
 begin
   if proEntity = nil then
     Entity := T.Create

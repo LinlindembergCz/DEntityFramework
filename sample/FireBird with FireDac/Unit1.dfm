@@ -32,6 +32,8 @@ object Form1: TForm1
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = -48
+    ExplicitTop = -6
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4
@@ -160,6 +162,15 @@ object Form1: TForm1
       Caption = 'Remove  Range'
       TabOrder = 13
       OnClick = Button12Click
+    end
+    object Button13: TButton
+      Left = 320
+      Top = 66
+      Width = 147
+      Height = 25
+      Caption = 'SaveChanges'
+      TabOrder = 14
+      OnClick = Button13Click
     end
   end
   object Panel2: TPanel
