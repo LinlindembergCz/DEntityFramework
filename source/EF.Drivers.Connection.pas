@@ -22,7 +22,6 @@ type
     FTableList: TStringList;
     FClasses: array of TClass;
     function AlterTables: boolean;
-    function CreateSingleTable(i: integer): boolean;
     function CreateTables: boolean;
     function IsFireBird: boolean;
 
@@ -167,13 +166,63 @@ end;
 function TDatabaseFacade.CreateTables: boolean;
 var
   i: integer;
-  Created: boolean;
+
+  Table: string;
+  ListAtributes: TList;
+  ListForeignKeys: TList;
+  ListIndex: TList;
+  KeyList: TStringList;
+  classe: TClass;
+  index :integer;
 begin
-  Created := false;
   result := false;
   for i := 0 to length(FClasses) - 1 do
   begin
-    result := CreateSingleTable(i);
+    classe := FClasses[i];
+    Table := TAutoMapper.GetTableAttribute(classe);
+    if Pos(uppercase(Table), uppercase(FTableList.Text)) = 0 then
+    begin
+      try
+        ListAtributes := nil;
+        ListAtributes := TAutoMapper.GetListAtributes(classe, false);
+
+        KeyList := TStringList.Create(true);
+        ExecutarSQL(CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
+        if CustomTypeDataBase is TFirebird then
+        begin
+          with FCustomTypeDataBase as TFirebird do
+          begin
+            ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
+            ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
+            ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
+          end;
+        end
+        else
+        if CustomTypeDataBase is TPostGres then
+        begin
+          ExecutarSQL( 'ALTER TABLE public."'+upperCase(Table)+'" OWNER TO postgres');
+        end
+        else//Refatorar Criar ForenKeys para PostGres
+        begin
+          {
+          ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
+          for index := 0 to ListForeignKeys.Count -1  do
+          begin
+            ExecutarSQL( CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
+          end;
+          }
+        end;
+        result := true;
+      finally
+        KeyList.Free;
+        while ListAtributes.Count> 0 do
+        begin
+          Dispose(PParamAtributies(ListAtributes.Items[0]));
+          ListAtributes.Delete(0);
+        end;
+        ListAtributes.Free;
+      end;
+    end;
   end;
 end;
 
@@ -185,68 +234,6 @@ begin
      FCustomTypeDataBase.Free;
   if FCustomConnection <> nil then
      FCustomConnection.Free;
-end;
-
-function TDatabaseFacade.CreateSingleTable(i: integer): boolean;
-var
-  Table: string;
-  ListAtributes: TList;
-  ListForeignKeys: TList;
-  ListIndex: TList;
-  KeyList: TStringList;
-  classe: TClass;
-  index :integer;
-
-begin
-  classe := FClasses[i];
-  Table := TAutoMapper.GetTableAttribute(classe);
-  if Pos(uppercase(Table), uppercase(FTableList.Text)) = 0 then
-  begin
-    try
-      ListAtributes := nil;
-      ListAtributes := TAutoMapper.GetListAtributes(classe, false);
-
-      KeyList := TStringList.Create(true);
-      ExecutarSQL(CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
-
-      //ListIndex:= TAutoMapper.GetListAtributesIndex(classe);
-
-      if CustomTypeDataBase is TFirebird then
-      begin
-        with FCustomTypeDataBase as TFirebird do
-        begin
-          ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
-          ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
-          ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
-        end;
-      end
-      else
-      if CustomTypeDataBase is TPostGres then
-      begin
-        ExecutarSQL( 'ALTER TABLE public."'+upperCase(Table)+'" OWNER TO postgres');
-      end
-      else//Refatorar Criar ForenKeys para PostGres
-      begin
-        {
-        ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
-        for index := 0 to ListForeignKeys.Count -1  do
-        begin
-          ExecutarSQL( CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
-        end;
-        }
-      end;
-
-      result := true;
-    finally
-      KeyList.Free;
-      while ListAtributes.Count> 0 do
-      begin
-        Dispose(PParamAtributies(ListAtributes.Items[0]));
-        ListAtributes.Delete(0);
-      end;
-      ListAtributes.Free;
-    end;
-  end;
 end;
 
 function TDatabaseFacade.AlterTables: boolean;
