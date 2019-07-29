@@ -45,7 +45,7 @@ type
     class function GetFieldsList(E: Pointer; OnlyPublished: boolean = false): TStringList;overload;
     class function GetFieldsPrimaryKeyList(E: TEntityBase): TStringList;
 
-    class function GetListAtributes(Obj: TClass): TList;
+    class function GetListAtributes(Obj: TClass; VerifyInstance:boolean = true): TList;
     class function GetValuesFields(E: TEntityBase; WithID :boolean = true): String; static;
     class function GetValuesFieldsList(E: TEntityBase; WithId:boolean = false): TStringList; static;
     class function GetValuesFieldsPrimaryKeyList(E: TEntityBase)
@@ -117,7 +117,7 @@ begin
   result:= Prop.Visibility in [mvPublished];
 end;
 
-class function TAutoMapper.GetListAtributes(Obj: TClass): TList;
+class function TAutoMapper.GetListAtributes(Obj: TClass; VerifyInstance:boolean = true ): TList;
 var
   ctx: TRttiContext;
   Prop: TRttiProperty;
@@ -149,15 +149,16 @@ var
 
 begin
   try
-    List := TObjectList.Create(true);
+    List:= nil;
+    List := TObjectList.Create(false);
     ctx := TRttiContext.Create;
     TypObj := ctx.GetType(Obj.ClassInfo);
 
     for Prop in TypObj.GetProperties do
     begin
-      if PropIsInstance(Prop) then
+      if ( PropIsInstance(Prop) ) then
       begin
-         if Prop.Propertytype.AsInstance <> nil then
+        if (VerifyInstance) and (Prop.Propertytype.AsInstance <> nil) then
          begin
            Found:= false;
            for Atributo in Prop.GetAttributes do
@@ -174,8 +175,7 @@ begin
              if tempList.Count > 0 then
                 List.Add( tempList[0] );
            end;
-         end
-         //tempList.Clear;
+        end;
       end
       else
       begin

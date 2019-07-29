@@ -143,23 +143,25 @@ var
   i: integer;
   Created, Altered: boolean;
 begin
-  Created := false;
-  Altered := false;
-
-  FTableList := TStringList.Create(true);
-  GetTableNames(FTableList);
-  SetLength(FClasses, length(aClasses));
-  for i := 0 to length(aClasses) - 1 do
-  begin
-    FClasses[i] := aClasses[i];
+  try
+    FTableList := TStringList.Create;
+    GetTableNames(FTableList);
+    SetLength(FClasses, length(aClasses));
+    for i := 0 to length(aClasses) - 1 do
+    begin
+      FClasses[i] := aClasses[i];
+    end;
+    if length(aClasses) > 0 then
+    begin
+      Created := CreateTables;
+      if not Created then
+        Altered := AlterTables;
+    end;
+    result := true;
+  finally
+    FreeAndNil(FTableList);
   end;
-  if length(aClasses) > 0 then
-  begin
-    Created := CreateTables;
-    // Altered := AlterTables;
-  end;
 
-  result := Created;
 end;
 
 function TDatabaseFacade.CreateTables: boolean;
@@ -171,9 +173,7 @@ begin
   result := false;
   for i := 0 to length(FClasses) - 1 do
   begin
-    Created := CreateSingleTable(i);
-    if Created then
-      result := Created;
+    result := CreateSingleTable(i);
   end;
 end;
 
@@ -204,11 +204,11 @@ begin
   begin
     try
       ListAtributes := nil;
-      ListAtributes := TAutoMapper.GetListAtributes(classe);
+      ListAtributes := TAutoMapper.GetListAtributes(classe, false);
+
       KeyList := TStringList.Create(true);
       ExecutarSQL(CustomTypeDataBase.CreateTable(ListAtributes, Table, KeyList));
 
-      ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
       //ListIndex:= TAutoMapper.GetListAtributesIndex(classe);
 
       if CustomTypeDataBase is TFirebird then
@@ -218,7 +218,6 @@ begin
           ExecutarSQL( CreateGenarator(Table, trim(KeyList.Text)) );
           ExecutarSQL( SetGenarator(Table, trim(KeyList.Text)) );
           ExecutarSQL( CrateTriggerGenarator(Table,trim(KeyList.Text)) );
-
         end;
       end
       else
@@ -226,70 +225,84 @@ begin
       begin
         ExecutarSQL( 'ALTER TABLE public."'+upperCase(Table)+'" OWNER TO postgres');
       end
-      else //Refatorar Criar ForenKeys para PostGres
+      else//Refatorar Criar ForenKeys para PostGres
       begin
+        {
+        ListForeignKeys:= TAutoMapper.GetListAtributesForeignKeys(classe);
         for index := 0 to ListForeignKeys.Count -1  do
         begin
           ExecutarSQL( CustomTypeDataBase.CreateForeignKey( ListForeignKeys[index], Table ) );
         end;
+        }
       end;
 
       result := true;
     finally
       KeyList.Free;
-      //ListAtributes.Free;
+      while ListAtributes.Count> 0 do
+      begin
+        Dispose(PParamAtributies(ListAtributes.Items[0]));
+        ListAtributes.Delete(0);
+      end;
+      ListAtributes.Free;
     end;
   end;
 end;
 
 function TDatabaseFacade.AlterTables: boolean;
 var
-  i, K, j: integer;
-  Table: string;
-  List: TList;
+  i, K: integer;
+  Table, FieldName: string;
+  ListAtributes: TList;
   FieldList: TStringList;
   ColumnExist: boolean;
-  Created: boolean;
+  Altered: boolean;
 begin
   try
-    Created := false;
-    FieldList := TStringList.Create(true);
+    Altered := false;
+    FieldList := TStringList.Create;
     for i := 0 to length(FClasses) - 1 do
     begin
       Table := TAutoMapper.GetTableAttribute(FClasses[i]);
       if FTableList.IndexOf(Table) <> -1 then
       begin
         GetFieldNames(FieldList, Table);
-        List := TAutoMapper.GetListAtributes(FClasses[i]);
-        for K := 0 to List.Count - 1 do
+        ListAtributes := TAutoMapper.GetListAtributes(FClasses[i], false);
+
+        for K := 0 to ListAtributes.Count - 1 do
         begin
-          if PParamAtributies(List.Items[K]).Tipo <> '' then
+          if PParamAtributies(ListAtributes.Items[K]).Tipo <> '' then
           begin
-            ColumnExist := FieldList.IndexOf(PParamAtributies(List.Items[K])
-                .Name) <> -1;
+            FieldName:= PParamAtributies(ListAtributes.Items[K]).Name;
+
+            ColumnExist := FieldList.IndexOf( FieldName) <> -1;
             if not ColumnExist then
             begin
               ExecutarSQL( CustomTypeDataBase.AlterTable
-                          (Table, PParamAtributies(List.Items[K]).Name,
-                           PParamAtributies(List.Items[K]).Tipo,
-                           PParamAtributies(List.Items[K]).IsNull, ColumnExist));
+                          (Table, PParamAtributies(ListAtributes.Items[K]).Name,
+                           PParamAtributies(ListAtributes.Items[K]).Tipo,
+                           PParamAtributies(ListAtributes.Items[K]).IsNull, ColumnExist));
 
               //ExecutarSQL( CustomTypeDataBase.CreateIndex(Table,
               //             Table+PParamAtributies(List.Items[K]).Name+'_IDX',
               //             PParamAtributies(List.Items[K]).Name ) );
 
-
-              Created := true;
+              Altered := true;
             end;
           end;
         end;
-
-
+        while ListAtributes.Count> 0 do
+        begin
+          Dispose(PParamAtributies(ListAtributes.Items[0]));
+          ListAtributes.Delete(0);
+        end;
+        ListAtributes.Free;
       end;
     end;
   finally
-    result := Created;
-    FieldList.Free;
+    result := Altered;
+    if FieldList <> nil then
+    FreeAndNil(FieldList)
   end;
 end;
 

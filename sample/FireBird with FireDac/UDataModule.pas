@@ -27,7 +27,10 @@ implementation
 {$R *.dfm}
 
 Uses
-  EF.Drivers.FireDac;
+  EF.Drivers.FireDac, Domain.Entity.Cliente, Domain.Entity.ClienteEmpresa,
+  Domain.Entity.ClienteTabelaPreco, Domain.Entity.Contato,
+  Domain.Entity.Empresa, Domain.Entity.Entities, Domain.Entity.ItensTabelaPreco,
+  Domain.Entity.Produto, Domain.Entity.TabelaPreco, Domain.Entity.Veiculo;
 
 procedure TDataModule1.DataModuleCreate(Sender: TObject);
 begin
@@ -36,6 +39,17 @@ begin
                                        'masterkey',
                                        'LocalHost',
                                        extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+
+    FConnection.MigrationDataBase( [ TEmpresa,
+                                     TCliente,
+                                     TClienteEmpresa,
+                                     TContato,
+                                     TVeiculo,
+                                     TTabelaPreco,
+                                     TClienteTabelaPreco,
+                                     TProduto,
+                                     TItensTabelaPreco ] );
+
 
 end;
 
