@@ -32,8 +32,6 @@ object Form1: TForm1
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = -48
-    ExplicitTop = -6
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4

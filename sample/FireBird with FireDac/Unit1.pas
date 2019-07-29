@@ -5,10 +5,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
-  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente, System.Generics.Collections,
   EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient;
 
 type
+     TFuncao = reference to function:TCliente;
+
+
   TForm1 = class(TForm)
     DataSource1: TDataSource;
     Button1: TButton;
@@ -50,6 +53,7 @@ type
     procedure Button13Click(Sender: TObject);
   private
      E: TCliente;
+    function AdicionaCliente(Clientes : TObjectList<TCliente> ;  F: TFuncao): TCliente;
     { Private declarations }
   public
     Context: TDbContext<TCliente>;
@@ -62,13 +66,14 @@ type
 var
   Form1: TForm1;
 
+
 implementation
 
 {$R *.dfm}
 
 uses UDataModule, EF.Mapping.AutoMapper,
      Domain.Entity.Contato, EF.Core.Types,
-  EF.Core.List, System.Generics.Collections;
+  EF.Core.List;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -193,10 +198,15 @@ begin
    Context.SaveChanges;
 end;
 
+function TForm1.AdicionaCliente(Clientes : TObjectList<TCliente> ; F: TFuncao):TCliente;
+begin
+  Clientes.Add(F);
+end;
+
 procedure TForm1.Button10Click(Sender: TObject);
 var
   I:integer;
-  C: TCliente;
+
   Clientes : TObjectList<TCliente>;
 begin
   try
@@ -204,16 +214,23 @@ begin
 
     for I := 0 to 2 do
     begin
-      C := TCliente.Create;
-      C.Nome:= 'JOAO MARIA'+'-'+inttostr(I);
-      C.NomeFantasia:= 'jesus Cristo de nazare';
-      C.CPFCNPJ:= '02316937455';
-      C.RG:= '1552666';
-      C.Ativo:= '1';
-      C.DataNascimento := strtodate('19/04/1976');
-      C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
-
-      Clientes.Add( C );
+        AdicionaCliente(Clientes,  function : TCliente
+                                   var
+                                   C: TCliente;
+                                   begin
+                                      C := TCliente.Create;
+                                      with C do
+                                       begin
+                                         Nome:= 'JOAO MARIA'+'-'+inttostr(I);
+                                         NomeFantasia:= 'jesus Cristo de nazare';
+                                         CPFCNPJ:= '02316937455';
+                                         RG:= '1552666';
+                                         Ativo:= '1';
+                                         DataNascimento := strtodate('19/04/1976');
+                                         Email.value := 'lindemberg.desenvolvimento@gmail.com';
+                                         result:= C;
+                                       end;
+                                   end);
     end;
 
     Context.AddRange( Clientes , true);
