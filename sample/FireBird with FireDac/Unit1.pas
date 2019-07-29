@@ -9,7 +9,7 @@ uses
   EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient;
 
 type
-     TFuncao = reference to function:TCliente;
+     TFuncaoCliente = reference to function:TCliente;
 
 
   TForm1 = class(TForm)
@@ -53,7 +53,7 @@ type
     procedure Button13Click(Sender: TObject);
   private
      E: TCliente;
-    function AdicionaCliente(Clientes : TObjectList<TCliente> ;  F: TFuncao): TCliente;
+    function AdicionaCliente( F: TFuncaoCliente): TObjectList<TCliente>;
     { Private declarations }
   public
     Context: TDbContext<TCliente>;
@@ -198,45 +198,41 @@ begin
    Context.SaveChanges;
 end;
 
-function TForm1.AdicionaCliente(Clientes : TObjectList<TCliente> ; F: TFuncao):TCliente;
+function TForm1.AdicionaCliente( F: TFuncaoCliente):TObjectList<TCliente>;
+var
+   I:integer;
+   Clientes : TObjectList<TCliente>;
 begin
-  Clientes.Add(F);
+   Clientes := TObjectList<TCliente>.create;
+   for I := 0 to 2 do
+   begin
+       F.Nome:= 'JOAO MARIA'+'-'+inttostr(I);
+       Clientes.Add(F);
+   end;
+   Clientes.Free;
 end;
 
 procedure TForm1.Button10Click(Sender: TObject);
-var
-  I:integer;
-
-  Clientes : TObjectList<TCliente>;
 begin
   try
-    Clientes := TObjectList<TCliente>.create;
-
-    for I := 0 to 2 do
-    begin
-        AdicionaCliente(Clientes,  function : TCliente
-                                   var
-                                   C: TCliente;
-                                   begin
-                                      C := TCliente.Create;
-                                      with C do
+   Context.AddRange(  AdicionaCliente( function : TCliente
+                                       var
+                                          C: TCliente;
                                        begin
-                                         Nome:= 'JOAO MARIA'+'-'+inttostr(I);
-                                         NomeFantasia:= 'jesus Cristo de nazare';
-                                         CPFCNPJ:= '02316937455';
-                                         RG:= '1552666';
-                                         Ativo:= '1';
-                                         DataNascimento := strtodate('19/04/1976');
-                                         Email.value := 'lindemberg.desenvolvimento@gmail.com';
-                                         result:= C;
-                                       end;
-                                   end);
-    end;
-
-    Context.AddRange( Clientes , true);
-
+                                          C := TCliente.Create;
+                                          with C do
+                                           begin
+                                             NomeFantasia:= 'jesus Cristo de nazare';
+                                             CPFCNPJ:= '02316937455';
+                                             RG:= '1552666';
+                                             Ativo:= '1';
+                                             DataNascimento := strtodate('19/04/1976');
+                                             Email.value := 'lindemberg.desenvolvimento@gmail.com';
+                                             result:= C;
+                                           end;
+                                       end) ,
+                                       true);
   finally
-    Clientes.Free;
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
     DataSource1.DataSet := Context.ToDataSet(QueryAble );
   end;
