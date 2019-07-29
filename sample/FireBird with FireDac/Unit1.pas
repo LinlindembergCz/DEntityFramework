@@ -53,7 +53,7 @@ type
     procedure Button13Click(Sender: TObject);
   private
      E: TCliente;
-    function AdicionaCliente( F: TFuncaoCliente): TObjectList<TCliente>;
+    function AdicionaCliente( F: TFuncaoCliente; Max:integer): TObjectList<TCliente>;
     { Private declarations }
   public
     Context: TDbContext<TCliente>;
@@ -198,13 +198,13 @@ begin
    Context.SaveChanges;
 end;
 
-function TForm1.AdicionaCliente( F: TFuncaoCliente):TObjectList<TCliente>;
+function TForm1.AdicionaCliente( F: TFuncaoCliente; Max:integer):TObjectList<TCliente>;
 var
    I:integer;
    Clientes : TObjectList<TCliente>;
 begin
    Clientes := TObjectList<TCliente>.create;
-   for I := 0 to 2 do
+   for I := 0 to Max do
    begin
        F.Nome:= 'JOAO MARIA'+'-'+inttostr(I);
        Clientes.Add(F);
@@ -230,8 +230,7 @@ begin
                                              Email.value := 'lindemberg.desenvolvimento@gmail.com';
                                              result:= C;
                                            end;
-                                       end) ,
-                                       true);
+                                       end, 2) , true);
   finally
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
     DataSource1.DataSet := Context.ToDataSet(QueryAble );
