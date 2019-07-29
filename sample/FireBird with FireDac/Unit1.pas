@@ -78,6 +78,9 @@ uses UDataModule, EF.Mapping.AutoMapper,
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Context := TDbContext<TCliente>.Create(DataModule1.FConnection);
+
+
+
   E:= Context.Entity;
 end;
 
@@ -95,11 +98,11 @@ procedure TForm1.buttonGetEntityClick(Sender: TObject);
 begin
    if DataSource1.DataSet <> nil then
    begin
-     QueryAble := From( E ).
+     {QueryAble := From( E ).
                   Select.
-                  Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+                  Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
 
-     E := Context.Find( QueryAble  );
+     E := Context.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger  );
 
      mlog.Lines.Add('ID: ' + E.ID.Value.ToString);
      mlog.Lines.Add( ' Nome:'+ E.Nome.Value);
@@ -111,11 +114,11 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-   QueryAble := From( E )
+  { QueryAble := From( E )
                .Select
-               .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+               .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );  }
 
-   E := Context.Find( QueryAble );
+   E := Context.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
    mLog.Text:= E.ToJson;
 end;
@@ -127,11 +130,14 @@ var
 begin
    mlog.Lines.clear;
 
-   L := Context.ToList( E.Ativo = '1' );
+   L := Context.
+        Include(E.Veiculo).
+        ToList( E.Ativo = '1' );
 
    for C in L do
    begin
       mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
+      mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
    end;
 
    FreeAndNil( L );
@@ -147,7 +153,7 @@ begin
      C := Context.Include(E.Contatos).
                   Include(E.Veiculo).
                   Include(E.ClienteEmpresa).
-                  ThenInclude(E.ClienteEmpresa.Empresa).
+                     ThenInclude(E.ClienteEmpresa.Empresa).
                   Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
 
      mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
@@ -215,7 +221,7 @@ end;
 procedure TForm1.Button10Click(Sender: TObject);
 begin
   try
-   Context.AddRange(  AdicionaCliente( function : TCliente
+    Context.AddRange( AdicionaCliente( function : TCliente
                                        var
                                           C: TCliente;
                                        begin
@@ -230,7 +236,8 @@ begin
                                              Email.value := 'lindemberg.desenvolvimento@gmail.com';
                                              result:= C;
                                            end;
-                                       end, 2) , true);
+                                       end, 2) ,
+                                       true );
   finally
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
     DataSource1.DataSet := Context.ToDataSet(QueryAble );
