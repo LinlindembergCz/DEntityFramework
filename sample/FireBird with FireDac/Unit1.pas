@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente, System.Generics.Collections,
-  EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient;
+  EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient, EF.Core.List;
 
 type
      TFuncaoCliente = reference to function:TCliente;
@@ -53,7 +53,7 @@ type
     procedure Button13Click(Sender: TObject);
   private
      E: TCliente;
-    function AdicionaCliente( F: TFuncaoCliente; Max:integer): TObjectList<TCliente>;
+    function AdicionaCliente( F: TFuncaoCliente; Max:integer): Collection<TCliente>;
     { Private declarations }
   public
     Context: TDbContext<TCliente>;
@@ -72,8 +72,7 @@ implementation
 {$R *.dfm}
 
 uses UDataModule, EF.Mapping.AutoMapper,
-     Domain.Entity.Contato, EF.Core.Types,
-  EF.Core.List;
+     Domain.Entity.Contato, EF.Core.Types;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -204,12 +203,12 @@ begin
    Context.SaveChanges;
 end;
 
-function TForm1.AdicionaCliente( F: TFuncaoCliente; Max:integer):TObjectList<TCliente>;
+function TForm1.AdicionaCliente( F: TFuncaoCliente; Max:integer):Collection<TCliente>;
 var
    I:integer;
-   Clientes : TObjectList<TCliente>;
+   Clientes : Collection<TCliente>;
 begin
-   Clientes := TObjectList<TCliente>.create;
+   Clientes := Collection<TCliente>.create;
    for I := 0 to Max do
    begin
        F.Nome:= 'JOAO MARIA'+'-'+inttostr(I);
@@ -256,11 +255,12 @@ end;
 
 procedure TForm1.Button12Click(Sender: TObject);
 var
-  Entities:TObjectList<TCliente>;
+  Entities:Collection<TCliente>;
   Cliente: TCliente;
   I:integer;
 begin
-  Entities:=TObjectList<TCliente>.create;
+  Entities:=Collection<TCliente>.create;
+
   for I := 0 to 1 do
   begin
     Cliente:= TCliente.Create;

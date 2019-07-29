@@ -63,7 +63,7 @@ Type
     procedure Update(AutoSaveChange:boolean = false);
     procedure Remove(Condicion: TString);overload;
 
-    procedure AddRange(entities:  TObjectList<T>;AutoSaveChange:boolean = false);
+    procedure AddRange(entities:  Collection<T>;AutoSaveChange:boolean = false);
     procedure UpdateRange(entities: Array of T;AutoSaveChange:boolean = false);
     procedure RemoveRange(entities: TObjectList<T>);
 
@@ -460,7 +460,7 @@ begin
   end;
 end;
 
-procedure TDbContext<T>.AddRange(entities: TObjectList<T>;AutoSaveChange:boolean = false );
+procedure TDbContext<T>.AddRange(entities: Collection<T>;AutoSaveChange:boolean = false );
 var
   E: T;
 begin
