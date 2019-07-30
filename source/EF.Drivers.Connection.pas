@@ -43,7 +43,7 @@ type
     procedure ExecutarSQL(prsSQL: string); virtual; abstract;
     procedure AlterTable(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
     procedure AlterColumn(Table, Field, Tipo: string; IsNull: boolean);virtual;abstract;
-    function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; virtual; abstract;
+    function CreateDataSet(prsSQL: string): TFDQuery; virtual; abstract;
     procedure LoadFromFile(IniFileName: string);virtual; abstract;
     function MigrationDataBase(aClasses: array of TClass): boolean;
     property CustomConnection: TCustomConnection read FCustomConnection write FCustomConnection;

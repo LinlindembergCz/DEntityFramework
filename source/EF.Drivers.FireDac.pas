@@ -27,7 +27,7 @@ type
     procedure GetTableNames(var List: TStringList); override;
     procedure GetFieldNames(var List: TStringList; Table: string); override;
     procedure ExecutarSQL(prsSQL: string); override;
-    function CreateDataSet(prsSQL: string; Keys:TStringList = nil): TFDQuery; override;
+    function CreateDataSet(prsSQL: string): TFDQuery; override;
     procedure LoadFromFile(IniFileName: string);override;
     constructor Create(aDriver: FDConn; aUser,aPassword,aServer,aDataBase: string);overload;override;
     constructor Create(aDriver: FDConn; Conn : TFDConnection);overload;override;
@@ -53,7 +53,7 @@ resourcestring
 
 { TLinqFDConnection }
 
-function TEntityFDConnection.CreateDataSet(prsSQL: string; Keys:TStringList = nil ): TFDQuery;
+function TEntityFDConnection.CreateDataSet(prsSQL: string ): TFDQuery;
 var
   qryVariavel: TFDQuery;
   J : integer;

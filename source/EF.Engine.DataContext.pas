@@ -56,8 +56,11 @@ Type
     function Include( E: TObject ):TDbContext<T>;
     function ThenInclude(E: TObject ): TDbContext<T>;
 
-    function ToDataSet(QueryAble: IQueryAble): TFDQuery;
-    function ToJson(QueryAble: IQueryAble): string;
+    function ToDataSet(QueryAble: IQueryAble): TFDQuery;overload;
+    function ToDataSet(QueryAble: String): TFDQuery;overload;
+
+    function ToJson(QueryAble: IQueryAble): string;overload;
+    function ToJson(QueryAble: String): string; overload;
 
     procedure Add(E: T;AutoSaveChange:boolean = false);
     procedure Update(AutoSaveChange:boolean = false);
@@ -103,28 +106,39 @@ end;
 
 function TDbContext<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
-  Keys: TStringList;
   DataSet:TFDQuery;
 begin
   try
-    try
-      FreeDbSet;
-      Keys := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-      if FDatabase.CustomTypeDataBase is TPostGres then
-         QueryAble.Prepare;
-      DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
-      DataSet.Open;
-      //FDbSet:= DataSet;
-      result := DataSet;
-    except
-      on E: Exception do
-      begin
-        showmessage(E.message);
-      end;
+    FreeDbSet;
+    if FDatabase.CustomTypeDataBase is TPostGres then
+       QueryAble.Prepare;
+    DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
+    DataSet.Open;
+    //FDbSet:= DataSet;
+    result := DataSet;
+  except
+    on E: Exception do
+    begin
+      showmessage(E.message);
     end;
-  finally
-    Keys.Clear;
-    Keys.Free;
+  end;
+end;
+
+function TDbContext<T>.ToDataSet(QueryAble: String): TFDQuery;
+var
+  DataSet:TFDQuery;
+begin
+  try
+    FreeDbSet;
+     DataSet := FDatabase.CreateDataSet( QueryAble );
+    DataSet.Open;
+    //FDbSet:= DataSet;
+    result := DataSet;
+  except
+    on E: Exception do
+    begin
+      showmessage(E.message);
+    end;
   end;
 end;
 
@@ -148,7 +162,7 @@ begin
     if ListObjectsInclude.Count = 0 then
        ListObjectsInclude.Add(Entity);
 
-    FirstEntity:= Entity;
+    FirstEntity:= ListObjectsInclude.Items[0] as T;//Entity;
 
     H:=0;
     I:=0;
@@ -162,6 +176,8 @@ begin
 
     ListEntity := ToList<T>( QueryAble );
 
+    FirstEntity.free;
+
     if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
     begin
       for H := 0 to ListEntity.Count - 1 do
@@ -170,7 +186,7 @@ begin
         while I <= maxInclude do
         begin
           IndexInclude:= i;
-          if ListObjectsInclude.Items[IndexInclude] <> nil then
+         if ListObjectsInclude.Items[IndexInclude] <> nil then
           begin
             try
               if i = 0 then
@@ -194,8 +210,8 @@ begin
                 else
                 begin
                    QueryAble:= From( CurrentEntidy.ClassType).
-                          Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                          Select;
+                               Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                               Select;
                    EntidyInclude := FindEntity( QueryAble );
                    Json:= EntidyInclude.ToJson;
                    EntidyInclude.Free;
@@ -249,7 +265,6 @@ begin
                     end;
                     ReferenceEntidy :=  ConcretEntity  as TEntityBase;
                     TableForeignKey := Copy(ConcretEntity.ClassName,2,length(ConcretEntity.ClassName) );
-
                   end;
                   Inc(I);
                 end
@@ -262,6 +277,7 @@ begin
               end;
             end;
           end;
+
           if i > maxInclude then
              break;
         end;
@@ -512,13 +528,28 @@ function TDbContext<T>.ToJson(QueryAble: IQueryAble): string;
   Keys: TStringList;
 begin
   try
-    Keys     := TAutoMapper.GetFieldsPrimaryKeyList(QueryAble.ConcretEntity);
-    DBSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble), Keys);
+    DBSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
     if not DBSet.Active then
        DBSet.Open;
     result:= DBSet.ToJson();
   finally
     QueryAble.ConcretEntity.Free;
+    DBSet.Free;
+    DBSet:= nil;
+    Keys.Free;
+  end;
+end;
+
+function TDbContext<T>.ToJson(QueryAble: String): string;
+  var
+  Keys: TStringList;
+begin
+  try
+    DBSet := FDatabase.CreateDataSet(QueryAble);
+    if not DBSet.Active then
+       DBSet.Open;
+    result:= DBSet.ToJson();
+  finally
     DBSet.Free;
     DBSet:= nil;
     Keys.Free;
@@ -746,6 +777,12 @@ begin
    if ListObjectsInclude = nil then
    begin
       ListObjectsInclude:= TObjectList.Create(false);
+      {if FEntity.ID.&As = '' then
+      begin
+         FEntity:= T.Create;
+         ListObjectsInclude.Add(FEntity);
+      end
+      else }
       ListObjectsInclude.Add(T.Create);
       ListObjectsThenInclude:= TObjectList.Create(false);
    end;

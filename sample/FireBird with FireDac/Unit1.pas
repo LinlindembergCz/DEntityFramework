@@ -126,11 +126,12 @@ var
 begin
    mlog.Lines.clear;
 
-   L := Context.ToList( E.Ativo = '1' );
+   L := Context.Include(E.Veiculo).ToList( E.Ativo = '1' );
 
    for C in L do
    begin
       mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
+      mlog.Lines.Add('Placa: ' + C.Veiculo.Placa.Value );
    end;
 
    FreeAndNil( L );
