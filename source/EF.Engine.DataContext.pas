@@ -160,7 +160,7 @@ begin
        ListObjectsInclude:= TObjectList.Create(false);
     //Adicionar primeira a entidade principal do contexto
     if ListObjectsInclude.Count = 0 then
-       ListObjectsInclude.Add(Entity);
+       ListObjectsInclude.Add(T.Create);
 
     FirstEntity:= ListObjectsInclude.Items[0] as T;//Entity;
 
@@ -353,8 +353,6 @@ begin
      DataSet:= nil;
   end;
 end;
-
-
 
 function TDbContext<T>.FindEntity(QueryAble: IQueryAble): TEntityBase;
 var
@@ -585,10 +583,7 @@ begin
       raise Exception.Create(E.message);
     end;
   end;
-
 end;
-
-
 
 procedure TDbContext<T>.SaveChanges;
 begin
@@ -777,12 +772,6 @@ begin
    if ListObjectsInclude = nil then
    begin
       ListObjectsInclude:= TObjectList.Create(false);
-      {if FEntity.ID.&As = '' then
-      begin
-         FEntity:= T.Create;
-         ListObjectsInclude.Add(FEntity);
-      end
-      else }
       ListObjectsInclude.Add(T.Create);
       ListObjectsThenInclude:= TObjectList.Create(false);
    end;
