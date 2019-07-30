@@ -73,7 +73,7 @@ Type
     function GetFieldList: Data.DB.TFieldList;
   published
 
-    property Entity : T read FEntity write FEntity;
+    property Entity : T read FEntity;
   end;
 
   function From(E: String): TFrom; overload;
@@ -159,6 +159,7 @@ begin
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
     QueryAble:= From( FirstEntity ).Where( Condicion ).Select;
+
     ListEntity := ToList<T>( QueryAble );
 
     if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
@@ -268,6 +269,7 @@ begin
       end;
     end;
 
+
     result  := ListEntity;
   finally
     ListObjectsInclude.clear;
@@ -317,7 +319,7 @@ begin
     if EntityList = nil then
        List := Collection.Create
     else
-       List :=  Collection(EntityList);
+       List := Collection(EntityList);
 
     List.Clear;
     DataSet := ToDataSet(QueryAble);
@@ -580,7 +582,7 @@ end;
 constructor TDbContext<T>.Create(aDatabase: TDatabaseFacade );
 begin
   //if proEntity = nil then
-    Entity := T.Create;
+    FEntity := T.Create;
   //else
   //Entity := proEntity as T;
   FDatabase:= aDatabase;
@@ -589,9 +591,9 @@ end;
 constructor TDbContext<T>.Create(proEntity: T );
 begin
   if proEntity = nil then
-    Entity := T.Create
+    FEntity := T.Create
   else
-    Entity := proEntity as T;
+    FEntity := proEntity as T;
 end;
 
 function TDbContext<T>.Where(Condicion: TString ): T;

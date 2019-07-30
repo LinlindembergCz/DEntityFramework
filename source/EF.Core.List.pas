@@ -11,7 +11,7 @@ type
   Collection<T:ClassEntity> = class( TObjectList<T> )
   public
     function List: T;
-    constructor Create;
+    constructor Create(Initialize:boolean = true);
   end;
 
   Collection = class( Collection<ClassEntity> )
@@ -23,10 +23,10 @@ implementation
 
 { Collection<T> }
 
-constructor Collection<T>.Create;
+constructor Collection<T>.Create(Initialize:boolean = true);
 begin
   inherited Create(true);
-  if (count = 0 ) then
+  if (count = 0 ) and Initialize then
      Add( T.Create );
 end;
 

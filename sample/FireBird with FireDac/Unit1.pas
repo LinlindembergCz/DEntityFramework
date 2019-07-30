@@ -9,9 +9,6 @@ uses
   EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient, EF.Core.List;
 
 type
-     TFuncaoCliente = reference to function:TCliente;
-
-
   TForm1 = class(TForm)
     DataSource1: TDataSource;
     Button1: TButton;
@@ -53,11 +50,11 @@ type
     procedure Button13Click(Sender: TObject);
   private
      E: TCliente;
-    function AdicionaCliente( F: TFuncaoCliente; Max:integer): Collection<TCliente>;
+     Context: TDbContext<TCliente>;
+     QueryAble: IQueryAble;
     { Private declarations }
   public
-    Context: TDbContext<TCliente>;
-    QueryAble: IQueryAble;
+
   //E2: TvwCliente;
   //Context2: TDbContext<TvwCliente>;
     { Public declarations }
@@ -129,14 +126,11 @@ var
 begin
    mlog.Lines.clear;
 
-   L := Context.
-        Include(E.Veiculo).
-        ToList( E.Ativo = '1' );
+   L := Context.ToList( E.Ativo = '1' );
 
    for C in L do
    begin
       mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
-      mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
    end;
 
    FreeAndNil( L );
@@ -203,42 +197,35 @@ begin
    Context.SaveChanges;
 end;
 
-function TForm1.AdicionaCliente( F: TFuncaoCliente; Max:integer):Collection<TCliente>;
+procedure TForm1.Button10Click(Sender: TObject);
 var
    I:integer;
    Clientes : Collection<TCliente>;
-begin
-   Clientes := Collection<TCliente>.create;
-   for I := 0 to Max do
-   begin
-       F.Nome:= 'JOAO MARIA'+'-'+inttostr(I);
-       Clientes.Add(F);
-   end;
-   Clientes.Free;
-end;
-
-procedure TForm1.Button10Click(Sender: TObject);
+   C: TCliente;
 begin
   try
-    Context.AddRange( AdicionaCliente( function : TCliente
-                                       var
-                                          C: TCliente;
-                                       begin
-                                          C := TCliente.Create;
-                                          with C do
-                                           begin
-                                             NomeFantasia:= 'jesus Cristo de nazare';
-                                             CPFCNPJ:= '02316937455';
-                                             RG:= '1552666';
-                                             Ativo:= '1';
-                                             DataNascimento := strtodate('19/04/1976');
-                                             Email.value := 'lindemberg.desenvolvimento@gmail.com';
-                                             result:= C;
-                                           end;
-                                       end, 2) ,
-                                       true );
+    Clientes := Collection<TCliente>.create(false);
+    for I := 0 to 3 do
+    begin
+       C := TCliente.Create;
+       with C do
+       begin
+         Nome:= 'JOAO MARIA'+'-'+inttostr(I);
+         NomeFantasia:= 'jesus Cristo de nazare';
+         CPFCNPJ:= '02316937455';
+         RG:= '1552666';
+         Ativo:= '1';
+         DataNascimento := strtodate('19/04/1976');
+         Email.value := 'lindemberg.desenvolvimento@gmail.com';
+       end;
+       Clientes.Add(C);
+    end;
+    Context.AddRange(Clientes, true);
   finally
+    Clientes.Free;
+
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
+
     DataSource1.DataSet := Context.ToDataSet(QueryAble );
   end;
 
