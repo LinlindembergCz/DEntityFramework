@@ -85,6 +85,7 @@ begin
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
 
    DataSource1.DataSet := Context.ToDataSet( QueryAble );
+   //Context.ToDataSet( 'Select * From Clientes Order by Nome' );
 
    //QueryAble := From( E2 ).Select.OrderBy ( E2.Nome );
    //DataSource1.DataSet := Context2.ToDataSet( QueryAble );
