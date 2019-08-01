@@ -122,15 +122,23 @@ procedure TForm1.Button9Click(Sender: TObject);
 var
   L:Collection<TCliente>;
   C:TCliente;
+   contato:TContato;
 begin
    mlog.Lines.clear;
 
-   L := _Db.Clientes.Include(E.Veiculo).ToList( E.Ativo = '1' );
+   L := _Db.Clientes.Include(E.Veiculo)
+                    .Include(E.Contatos)
+                    .ToList( E.Ativo = '1' );
 
    for C in L do
    begin
       mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
       mlog.Lines.Add('Placa: ' + C.Veiculo.Placa.Value );
+      mlog.Lines.Add('Contatos :');
+      for contato in C.Contatos do
+      begin
+        mlog.Lines.Add('    ' + contato.Nome.Value);
+      end;
    end;
 
    FreeAndNil( L );
@@ -144,10 +152,10 @@ begin
    if DataSource1.DataSet <> nil then
    begin
      C := _Db.Clientes.Include(E.Contatos).
-                  Include(E.Veiculo).
-                  Include(E.ClienteEmpresa).
-                     ThenInclude(E.ClienteEmpresa.Empresa).
-                  Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
+                       Include(E.Veiculo).
+                       Include(E.ClienteEmpresa).
+                          ThenInclude(E.ClienteEmpresa.Empresa).
+                       Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
 
      mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
      mlog.Lines.Add('ID : ' + C.ID.Value.ToString );
