@@ -35,7 +35,9 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 * ...\EntityFramework\sample\Testes (TDD)
 
 begin<br>
-   dbContext.Include( E.Veiculo ).<br>
+    _Db := TDataContext.Create(DataModule1.FConnection);
+    
+   _Db.Clientes.Include( E.Veiculo ).<br>
                     Include( E.Contatos ).<br>
                     Include( E.ClienteTabelaPreco).<br>
                         ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
@@ -59,6 +61,10 @@ begin<br>
 end;<br><br>
 
 Other:
+
+TDbContext;
+TDbset<T>;
+EF.QueryAble.Linq;
 
 Add;<br>
 AddRange
