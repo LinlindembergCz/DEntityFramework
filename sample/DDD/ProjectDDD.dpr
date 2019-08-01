@@ -35,7 +35,7 @@ uses
   EF.Core.Types in '..\..\source\EF.Core.Types.pas',
   EF.Drivers.Connection in '..\..\source\EF.Drivers.Connection.pas',
   EF.Drivers.FireDac in '..\..\source\EF.Drivers.FireDac.pas',
-  EF.Engine.DataContext in '..\..\source\EF.Engine.DataContext.pas',
+  EF.Engine.DbSet in '..\..\source\EF.Engine.DbSet.pas',
   EF.Mapping.Atributes in '..\..\source\EF.Mapping.Atributes.pas',
   EF.Mapping.AutoMapper in '..\..\source\EF.Mapping.AutoMapper.pas',
   EF.Mapping.Base in '..\..\source\EF.Mapping.Base.pas',
@@ -59,7 +59,10 @@ uses
   Domain.Entity.ClienteEmpresa in 'Domain\Entities\Domain.Entity.ClienteEmpresa.pas',
   GenericFactory in 'Domain\Factories\GenericFactory.pas',
   EF.Schema.PostGres in '..\..\source\EF.Schema.PostGres.pas',
-  EF.Core.List in '..\..\source\EF.Core.List.pas';
+  EF.Core.List in '..\..\source\EF.Core.List.pas',
+  EF.QueryAble.Linq in '..\..\source\EF.QueryAble.Linq.pas';
+
+
 
 {$R *.res}
 

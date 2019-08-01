@@ -240,7 +240,7 @@
         <DCCReference Include="..\..\source\EF.Core.Types.pas"/>
         <DCCReference Include="..\..\source\EF.Drivers.Connection.pas"/>
         <DCCReference Include="..\..\source\EF.Drivers.FireDac.pas"/>
-        <DCCReference Include="..\..\source\EF.Engine.DataContext.pas"/>
+        <DCCReference Include="..\..\source\EF.Engine.DbSet.pas"/>
         <DCCReference Include="..\..\source\EF.Mapping.Atributes.pas"/>
         <DCCReference Include="..\..\source\EF.Mapping.AutoMapper.pas"/>
         <DCCReference Include="..\..\source\EF.Mapping.Base.pas"/>
@@ -256,7 +256,7 @@
             <Form>FormViewBase</Form>
         </DCCReference>
         <DCCReference Include="App\Views\viewCliente.pas">
-            <Form>FormViewBase</Form>
+            <Form>FormviewCliente</Form>
         </DCCReference>
         <DCCReference Include="App\Model\App.Model.Cliente.pas"/>
         <DCCReference Include="App\Controllers\App.Controller.Base.pas"/>
@@ -264,6 +264,16 @@
         <DCCReference Include="App\Controllers\App.Interfaces.ControllerBase.pas"/>
         <DCCReference Include="Service\Utils\Service.Utils.DataBind.pas"/>
         <DCCReference Include="Domain\Entities\Domain.Consts.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.Empresa.pas"/>
+        <DCCReference Include="Domain\Entities\Domain.Entity.ClienteEmpresa.pas"/>
+        <DCCReference Include="Domain\Factories\GenericFactory.pas"/>
+        <DCCReference Include="..\..\source\EF.Schema.PostGres.pas"/>
+        <DCCReference Include="..\..\source\EF.Core.List.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
+        <DCCReference Include="..\..\source\EF.QueryAble.Linq.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
         <None Include="ModelSupport_Project2Tests\Entity\default.txvpck"/>
         <None Include="ModelSupport_Project2Tests\Entity\default.txaPackage"/>
         <None Include="ModelSupport_Project2Tests\LinqXE\default.txvpck"/>
@@ -394,25 +404,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\Context\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ModelSupport_Project2Tests\LinqXE\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\Unit1\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="ModelSupport_ProjectDDD\EntityXE\default.txaPackage" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\viewFornecedor\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\ClienteService\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -490,6 +500,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_ProjectDDD\Unit1\default.txaPackage" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="bin\ProjectDDD.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjectDDD.exe</RemoteName>
@@ -503,12 +519,6 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="ModelSupport_ProjectDDD\InterfaceController\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\Unit1\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -640,13 +650,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\Mapping\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\RepositoryBase\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\RepositoryBase\default.txaPackage" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EF\Mapping\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -923,13 +933,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_Project2Tests\LinqXE\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\viewFornecedor\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\Unit1\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\ClienteService\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -947,7 +957,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_ProjectDDD\Context\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_ProjectDDD\EntityBase\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

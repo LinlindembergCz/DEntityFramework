@@ -4,7 +4,7 @@
 {         https://github.com/LinlindembergCz            }
 {		            Since 01/01/2019                        }
 {*******************************************************}
-unit EF.Engine.DataContext;
+unit EF.Engine.DbSet;
 
 interface
 
@@ -14,6 +14,7 @@ uses
   System.Generics.Collections, Vcl.DBCtrls,
   FireDAC.Comp.Client, Data.DB.Helper,EF.Core.List,
   // Essas units darão suporte ao nosso framework
+  EF.QueryAble.Linq,
   EF.Drivers.Connection,
   EF.Core.Types,
   EF.Mapping.Atributes,
@@ -81,22 +82,10 @@ Type
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
 
-
-
-
-
   published
 
     property Entity : T read FEntity;
   end;
-
-
-
-  function From(E: String): TFrom; overload;
-  function From(E: TEntityBase): TFrom; overload;
-  function From(E: array of TEntityBase): TFrom; overload;
-  function From(E: TClass): TFrom; overload;
-  function From(E: IQueryAble): TFrom; overload;
 
 implementation
 
@@ -805,66 +794,6 @@ begin
    result:= self;
 end;
 
-{ TLinq }
 
-function From(E: TEntityBase): TFrom;
-var
-  F: TFrom;
-begin
-  F := TFrom.create;
-  with  F  do
-  begin
-    InitializeString;
-    result := From( E );
-  end;
-end;
-
-function From(E: array of TEntityBase): TFrom;
-var
-  F: TFrom;
-begin
-  F := TFrom.create;
-  with  F do
-  begin
-    InitializeString;
-    result := From( E );
-  end;
-end;
-
-function From(E: String): TFrom;
-var
-  F: TFrom;
-begin
-  F := TFrom.create;
-  with  F  do
-  begin
-    InitializeString;
-    result := From( E );
-  end;
-end;
-
-function From(E: TClass): TFrom;
-var
-  F: TFrom;
-begin
-  F := TFrom.create;
-  with  F  do
-  begin
-    InitializeString;
-    result := From( E );
-  end;
-end;
-
-function From(E: IQueryAble): TFrom;
-var
-  F: TFrom;
-begin
-  F := TFrom.create;
-  with  F  do
-  begin
-    InitializeString;
-    result := From( E );
-  end;
-end;
 
 end.

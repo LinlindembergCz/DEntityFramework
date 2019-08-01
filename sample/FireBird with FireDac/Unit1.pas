@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente, System.Generics.Collections,
-  EF.Engine.DataContext, EF.QueryAble.base, Vcl.ExtCtrls, Datasnap.DBClient, EF.Core.List;
+  Vcl.ExtCtrls, Datasnap.DBClient,
+  DataContext, EF.Core.List, EF.QueryAble.Base, EF.QueryAble.Linq, EF.Core.Types;
 
 type
   TForm1 = class(TForm)
@@ -50,13 +51,12 @@ type
     procedure Button13Click(Sender: TObject);
   private
      E: TCliente;
-     _Db: TDbSet<TCliente>;
+     _Db: TDataContext;
      QueryAble: IQueryAble;
     { Private declarations }
   public
+   //E: TvwCliente;
 
-  //E2: TvwCliente;
-  //Context2: TDbSet<TvwCliente>;
     { Public declarations }
   end;
 
@@ -69,19 +69,19 @@ implementation
 {$R *.dfm}
 
 uses UDataModule, EF.Mapping.AutoMapper,
-     Domain.Entity.Contato, EF.Core.Types;
+     Domain.Entity.Contato;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  _Db := TDbSet<TCliente>.Create(DataModule1.FConnection);
-  E:= _Db.Entity;
+  _Db := TDataContext.Create(DataModule1.FConnection);
+  E:= _Db.Clientes.Entity;
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 begin
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
 
-   DataSource1.DataSet := _Db.ToDataSet( QueryAble );
+   DataSource1.DataSet := _Db.Clientes.ToDataSet( QueryAble );
    //_Db.ToDataSet( 'Select * From Clientes Order by Nome' );
 
    //QueryAble := From( E2 ).Select.OrderBy ( E2.Nome );
@@ -96,7 +96,7 @@ begin
                   Select.
                   Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
      //E := _Db.Find( QueryAble );
-     E := _Db.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger  );
+     E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger  );
 
      mlog.Lines.Add('ID: ' + E.ID.Value.ToString);
      mlog.Lines.Add( ' Nome:'+ E.Nome.Value);
@@ -113,7 +113,7 @@ begin
                .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );  }
    //E := _Db.Find( QueryAble );
 
-   E := _Db.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+   E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
    mLog.Text:= E.ToJson;
 end;
@@ -125,7 +125,7 @@ var
 begin
    mlog.Lines.clear;
 
-   L := _Db.Include(E.Veiculo).ToList( E.Ativo = '1' );
+   L := _Db.Clientes.Include(E.Veiculo).ToList( E.Ativo = '1' );
 
    for C in L do
    begin
@@ -143,7 +143,7 @@ var
 begin
    if DataSource1.DataSet <> nil then
    begin
-     C := _Db.Include(E.Contatos).
+     C := _Db.Clientes.Include(E.Contatos).
                   Include(E.Veiculo).
                   Include(E.ClienteEmpresa).
                      ThenInclude(E.ClienteEmpresa.Empresa).
@@ -172,7 +172,7 @@ begin
   if DataSource1.DataSet <> nil then
   begin
      try
-       C := _Db.Include(E.Veiculo).
+       C := _Db.Clientes.Include(E.Veiculo).
                     Include(E.Contatos).
                     Where( E.ID = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
@@ -194,7 +194,7 @@ end;
 
 procedure TForm1.Button13Click(Sender: TObject);
 begin
-   _Db.SaveChanges;
+   _Db.Clientes.SaveChanges;
 end;
 
 procedure TForm1.Button10Click(Sender: TObject);
@@ -220,13 +220,13 @@ begin
        end;
        Clientes.Add(C);
     end;
-    _Db.AddRange(Clientes, true);
+    _Db.Clientes.AddRange(Clientes, true);
   finally
     Clientes.Free;
 
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
 
-    DataSource1.DataSet := _Db.ToDataSet(QueryAble );
+    DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
   end;
 
 end;
@@ -255,16 +255,16 @@ begin
     Entities.Add(Cliente);
     DataSource1.DataSet.Next;
   end;
-  _Db.RemoveRange(Entities);
+  _Db.Clientes.RemoveRange(Entities);
   Entities.Free;
-  DataSource1.DataSet := _Db.ToDataSet(QueryAble );
+  DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
-  _Db.Entity.FromJson(mLog.Text);
+  _Db.Clientes.Entity.FromJson(mLog.Text);
 
-  mLog.Text:= _Db.Entity.ToJson;
+  mLog.Text:= _Db.Clientes.Entity.ToJson;
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
@@ -284,12 +284,12 @@ begin
 
     C.Validate;
 
-    _Db.Add(C, true);
+    _Db.Clientes.Add(C, true);
 
   finally
     C.Free;
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
-    DataSource1.DataSet := _Db.ToDataSet(QueryAble );
+    DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
   end;
 
 end;
@@ -299,23 +299,23 @@ begin
    if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
    begin
     //TAutoMapper.DataToEntity( DataSource1.DataSet, E );
-      E := _Db.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+      E := _Db.Clientes.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
       E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
 
-      _Db.Update(true);
+      _Db.Clientes.Update(true);
       //Context.SaveChanges;
    end;
 
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
 
-   DataSource1.DataSet := _Db.ToDataSet( QueryAble );
+   DataSource1.DataSet := _Db.Clientes.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.Button8Click(Sender: TObject);
 begin
-  _Db.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
-  DataSource1.DataSet := _Db.ToDataSet(QueryAble );
+  _Db.Clientes.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
+  DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
 end;
 
 procedure TForm1.buttonGetSQLClick(Sender: TObject);

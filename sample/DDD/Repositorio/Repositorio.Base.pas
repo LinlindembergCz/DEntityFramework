@@ -4,7 +4,7 @@ interface
 
 uses
  Classes, Repositorio.GenericRepository, Repositorio.Interfaces.Base,
- DB, Context, EF.Engine.DataContext, EF.Mapping.Base;
+ DB, Context, EF.Engine.DbSet, EF.Mapping.Base;
 
 type
    {$M+}
