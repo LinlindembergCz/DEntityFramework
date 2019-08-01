@@ -215,17 +215,19 @@ begin
     Clientes := Collection<TCliente>.create(false);
     for I := 0 to 3 do
     begin
-       C := TCliente.Create;
-       with C do
-       begin
-         Nome:= 'JOAO MARIA'+'-'+inttostr(I);
-         NomeFantasia:= 'jesus Cristo de nazare';
-         CPFCNPJ:= '02316937455';
-         RG:= '1552666';
-         Ativo:= '1';
-         DataNascimento := strtodate('19/04/1976');
-         Email.value := 'lindemberg.desenvolvimento@gmail.com';
-       end;
+       C := TCliente.New( '02316937455',
+              0,
+              43,
+              'JOAO Cristo '+'-'+inttostr(I),
+              '111111',
+              strtodate('19/04/1976'),
+              '1',
+              'lindemberg',
+              '',
+              'Fisica',
+              'Casado',
+              'Teste');
+
        Clientes.Add(C);
     end;
     _Db.Clientes.AddRange(Clientes, true);
@@ -280,18 +282,19 @@ var
  C: TCliente;
 begin
   try
-    C := TCliente.Create;
-
-    C.Nome:= 'JOAO Cristo de nazare';
-    C.NomeFantasia:= 'jesus Cristo de nazare';
-    C.CPFCNPJ:= '02316937455';
-    C.RG:= '1552666';
-    C.Ativo:= '1';
-    C.DataNascimento := strtodate('19/04/1976');
-    C.Email.value := 'lindemberg.desenvolvimento@gmail.com';
-
-    C.Validate;
-
+    C := TCliente.New( '02316937455',
+                        0,
+                        43,
+                        'JOAO Cristo de nazare',
+                        '111111',
+                        strtodate('19/04/1976'),
+                        '1',
+                        'lindemberg',
+                        '',
+                        'Fisica',
+                        'Casado',
+                        'Teste');
+    //C.Validate;
     _Db.Clientes.Add(C, true);
 
   finally
