@@ -37,13 +37,18 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 begin<br>
     _Db := TDataContext.Create(DataModule1.FConnection);
     
-   _Db.Clientes.Include( E.Veiculo ).<br>
+   C :=  _Db.Clientes.Include( E.Veiculo ).<br>
                     Include( E.Contatos ).<br>
                     Include( E.ClienteTabelaPreco).<br>
                         ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
                     Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
                     Where( E.ID = 3 ).<br>
-                    ToJson;<br>
+                    ToJson;<br><br><br>
+                    
+                    
+   L  := _Db.Clientes.Include(E.Veiculo)
+                    .Include(E.Contatos)
+                    .ToList( E.Ativo = '1' );                    
                     
                     
 
