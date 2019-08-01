@@ -4,8 +4,8 @@ interface
 
 uses
  System.SysUtils, DB, Classes, Repositorio.GenericRepository, Domain.Entity.Cliente, Repositorio.Base,
-Repositorio.Interfaces.Cliente,System.Generics.Collections,
-Repositorio.Interfaces.base,  Context, EF.Core.Types, EF.Engine.DataContext;
+Repositorio.Interfaces.Cliente,System.Generics.Collections,EF.QueryAble.Linq,
+Repositorio.Interfaces.base,  Context, EF.Core.Types, EF.Engine.DbSet;
 
 type
   TRepositoryCliente<T:TCliente> = class(TRepositoryBase<T> ,IRepositoryCliente<T>)

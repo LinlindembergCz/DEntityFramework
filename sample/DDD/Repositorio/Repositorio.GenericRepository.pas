@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, Vcl.Controls, DBClient, Forms, Dialogs, Vcl.Grids, DB,
   Vcl.DBGrids, Variants, Vcl.StdCtrls, Vcl.DBCtrls,
-  EF.Engine.DataContext, FactoryEntity, Repositorio.Interfaces.Base, EF.Mapping.Base, Context;
+  EF.Engine.DbSet, FactoryEntity, Repositorio.Interfaces.Base, EF.Mapping.Base, Context;
 
 type
    {$M+}
@@ -34,7 +34,8 @@ type
 
 implementation
 
-uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client, EF.QueryAble.Base;
+uses Winapi.Windows, System.SysUtils, FireDAC.Comp.Client, EF.QueryAble.Base,
+  EF.QueryAble.Linq;
 { TRepository }
 
 constructor TRepository<T>.Create(dbContext: TContext<T>);
