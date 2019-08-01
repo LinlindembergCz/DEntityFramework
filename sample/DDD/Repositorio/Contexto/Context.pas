@@ -9,7 +9,7 @@ uses
 type
   TEntityState = (esInsert, esEdit, esBrowser);
 
-  TContext<T:TEntityBase> = class(TDbContext<T>)
+  TContext<T:TEntityBase> = class(TDbSet<T>)
   public
     constructor Create;
   end;
