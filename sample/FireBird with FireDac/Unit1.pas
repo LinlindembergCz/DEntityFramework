@@ -56,7 +56,7 @@ type
   public
 
   //E2: TvwCliente;
-  //Context2: TDbContext<TvwCliente>;
+  //Context2: TDbSet<TvwCliente>;
     { Public declarations }
   end;
 
@@ -82,10 +82,10 @@ begin
    QueryAble := From( E ).Select.OrderBy ( E.Nome );
 
    DataSource1.DataSet := _Db.ToDataSet( QueryAble );
-   //Context.ToDataSet( 'Select * From Clientes Order by Nome' );
+   //_Db.ToDataSet( 'Select * From Clientes Order by Nome' );
 
    //QueryAble := From( E2 ).Select.OrderBy ( E2.Nome );
-   //DataSource1.DataSet := Context2.ToDataSet( QueryAble );
+   //DataSource1.DataSet := _Db2.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
@@ -95,7 +95,7 @@ begin
      {QueryAble := From( E ).
                   Select.
                   Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
-     //E := Context.Find( QueryAble );
+     //E := _Db.Find( QueryAble );
      E := _Db.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger  );
 
      mlog.Lines.Add('ID: ' + E.ID.Value.ToString);
@@ -111,7 +111,7 @@ begin
   { QueryAble := From( E )
                .Select
                .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );  }
-   //E := Context.Find( QueryAble );
+   //E := _Db.Find( QueryAble );
 
    E := _Db.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
@@ -287,7 +287,7 @@ begin
     _Db.Add(C, true);
 
   finally
-   // C.Free;
+    C.Free;
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
     DataSource1.DataSet := _Db.ToDataSet(QueryAble );
   end;
