@@ -41,15 +41,11 @@ Type
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
     property DbSet: TFDQuery read FDbSet write FDbSet;
   public
-    type
-       TAnonym = reference to function: T;
-
     property Database: TDatabaseFacade read FDatabase write FDatabase;
-    destructor Destroy; override;
-    constructor Create(aDatabase: TDatabaseFacade = nil); overload; virtual;
+
+    constructor Create( aDatabase: TDatabaseFacade ); overload; virtual;
     constructor Create(proEntity: T );overload; virtual;
-
-
+    destructor Destroy; override;
 
     function BuildQuery(QueryAble: IQueryAble): string;
     function Find(QueryAble: IQueryAble): T; overload;
@@ -617,10 +613,10 @@ begin
       result := 0;
 end;
 
-constructor TDbSet<T>.Create(aDatabase: TDatabaseFacade );
+constructor TDbSet<T>.Create( aDatabase: TDatabaseFacade );
 begin
   //if proEntity = nil then
-    FEntity := T.Create;
+  FEntity := T.Create;
   //else
   //Entity := proEntity as T;
   FDatabase:= aDatabase;
