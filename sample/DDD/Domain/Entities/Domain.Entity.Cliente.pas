@@ -136,7 +136,7 @@ end;
 procedure TCliente.Validate;
 begin
   inherited;
- //Email.Validate;
+   Email.Validate;
 end;
 
 
