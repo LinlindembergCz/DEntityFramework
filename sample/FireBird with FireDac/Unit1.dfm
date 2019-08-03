@@ -46,9 +46,9 @@ object Form1: TForm1
       Top = 35
       Width = 147
       Height = 25
-      Caption = 'GetQuery'
-      Enabled = False
+      Caption = 'BuildQuery'
       TabOrder = 1
+      OnClick = buttonGetSQLClick
     end
     object buttonGetEntity: TButton
       Left = 14
@@ -158,6 +158,15 @@ object Form1: TForm1
       Caption = 'Remove  Range'
       TabOrder = 13
       OnClick = Button12Click
+    end
+    object Button13: TButton
+      Left = 320
+      Top = 66
+      Width = 147
+      Height = 25
+      Caption = 'FromSQL'
+      TabOrder = 14
+      OnClick = Button13Click
     end
   end
   object Panel2: TPanel

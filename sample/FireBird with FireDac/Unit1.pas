@@ -35,6 +35,7 @@ type
     Button11: TButton;
     Button12: TButton;
     FDMemTable1: TFDMemTable;
+    Button13: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -49,9 +50,10 @@ type
     procedure Button12Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure Button13Click(Sender: TObject);
+    procedure buttonGetSQLClick(Sender: TObject);
   private
-
-     Connection:TEntityFDConnection;
+    Connection:TEntityFDConnection;
     { Private declarations }
   public
     { Public declarations }
@@ -75,15 +77,15 @@ begin
                                        'masterkey',
                                        'LocalHost',
                                        extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
-    {  Connection.MigrationDataBase( [ TEmpresa,
-                                       TCliente,
-                                       TClienteEmpresa,
-                                       TContato,
-                                       TVeiculo,
-                                       TTabelaPreco,
-                                       TClienteTabelaPreco,
-                                       TProduto,
-                                       TItensTabelaPreco ] ); }
+  {  Connection.MigrationDataBase( [ TEmpresa,
+                                     TCliente,
+                                     TClienteEmpresa,
+                                     TContato,
+                                     TVeiculo,
+                                     TTabelaPreco,
+                                     TClienteTabelaPreco,
+                                     TProduto,
+                                     TItensTabelaPreco ] ); }
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -135,6 +137,28 @@ begin
         _Db.Free;
       end;
    end;
+end;
+
+procedure TForm1.buttonGetSQLClick(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  QueryAble: IQueryAble;
+begin
+  if DataSource1.DataSet <> nil then
+  begin
+     _Db := TDataContext.Create(Connection);
+
+     E:= _Db.Clientes.Entity;
+
+     QueryAble := From( E )
+                 .Select
+                 .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+
+     mLog.Text:= _Db.Clientes.BuildQuery(QueryAble);
+
+     _Db.Free;
+  end;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -331,6 +355,26 @@ begin
      Entities.Free;
   end;
 
+end;
+
+procedure TForm1.Button13Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+
+      E:= _Db.Clientes.FromSQL('Select * From Clientes where ID = 3');
+
+      mlog.Lines.Add('ID: ' + E.ID.Value.ToString);
+      mlog.Lines.Add( ' Nome:'+ E.Nome.Value);
+      mlog.Lines.Add( ' CNPJ:'+ E.CPFCNPJ.Value);
+      mlog.Lines.Add( ' Estado Civil:'+ E.EstadoCivil.Value);
+      mlog.Lines.Add( ' Nascimento:'+ datetostr(E.DataNascimento.Value));
+   finally
+      _Db.Free;
+   end;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

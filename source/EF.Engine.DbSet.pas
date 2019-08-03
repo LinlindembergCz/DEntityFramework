@@ -48,8 +48,11 @@ Type
     destructor Destroy; override;
 
     function BuildQuery(QueryAble: IQueryAble): string;
+
     function Find(QueryAble: IQueryAble): T; overload;
     function Find(Condicion: TString): T;overload;
+
+    function FromSQL(SQL: string):T;
 
     function Where(Condicion: TString): T;
 
@@ -105,6 +108,23 @@ begin
   end;
 end;
 
+function TDbSet<T>.FromSQL(SQL: string): T;
+var
+  DataSet: TFDQuery;
+  E: T;
+begin
+  try
+    result := nil;
+    DataSet := ToDataSet(SQL);
+    //E:= T.Create;
+    TAutoMapper.DataToEntity(DataSet,Entity );
+    result := Entity as T;
+  finally
+     DataSet.Free;
+     DataSet:= nil;
+  end;
+end;
+
 function TDbSet<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
   DataSet:TFDQuery;
@@ -133,7 +153,7 @@ var
 begin
   try
     FreeDbSet;
-     DataSet := FDatabase.CreateDataSet( QueryAble );
+    DataSet := FDatabase.CreateDataSet( QueryAble );
     DataSet.Open;
     //FDbSet:= DataSet;
     result := DataSet;
