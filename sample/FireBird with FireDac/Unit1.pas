@@ -10,7 +10,7 @@ uses
   DataContext, EF.Core.List, EF.QueryAble.Base, EF.QueryAble.Linq, EF.Core.Types,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, EF.Drivers.Connection, EF.Drivers.FireDac;
 
 type
   TForm1 = class(TForm)
@@ -35,7 +35,6 @@ type
     Button11: TButton;
     Button12: TButton;
     FDMemTable1: TFDMemTable;
-    procedure FormCreate(Sender: TObject);
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -49,13 +48,13 @@ type
     procedure Button8Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   private
-
      QueryAble: IQueryAble;
+     Connection:TEntityFDConnection;
     { Private declarations }
   public
-   //E: TvwCliente;
-
     { Public declarations }
   end;
 
@@ -72,8 +71,25 @@ uses UDataModule, EF.Mapping.AutoMapper,
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  //_Db := TDataContext.Create(DataModule1.FConnection);
-  //E:= _Db.Clientes.Entity;
+     Connection:= TEntityFDConnection.Create( fdFB ,
+                                       'SYSDBA',
+                                       'masterkey',
+                                       'LocalHost',
+                                       extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+    {  Connection.MigrationDataBase( [ TEmpresa,
+                                       TCliente,
+                                       TClienteEmpresa,
+                                       TContato,
+                                       TVeiculo,
+                                       TTabelaPreco,
+                                       TClienteTabelaPreco,
+                                       TProduto,
+                                       TItensTabelaPreco ] ); }
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ Connection.Free;
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
@@ -82,18 +98,16 @@ var
   _Db: TDataContext;
 begin
    try
-     _Db := TDataContext.Create(DataModule1.FConnection);
+     _Db := TDataContext.Create( Connection  );
       E:= _Db.Clientes.Entity;
 
       QueryAble := From( E ).Select.OrderBy ( E.Nome );
 
       FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
+
    finally
      _Db.Free;
    end;
-   //_Db.ToDataSet( 'Select * From Clientes Order by Nome' );
-   //QueryAble := From( E2 ).Select.OrderBy ( E2.Nome );
-   //DataSource1.DataSet := _Db2.ToDataSet( QueryAble );
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
@@ -104,12 +118,12 @@ begin
    if DataSource1.DataSet <> nil then
    begin
       try
-        _Db := TDataContext.Create(DataModule1.FConnection);
+        _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
          {QueryAble := From( E ).
                       Select.
                       Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
-         //E := _Db.Find( QueryAble );
+         //E := _Db.Clientes.Find( QueryAble );
          E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger  );
 
          mlog.Lines.Add('ID: ' + E.ID.Value.ToString);
@@ -132,9 +146,9 @@ begin
     { QueryAble := From( E )
                .Select
                .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );  }
-   //E := _Db.Find( QueryAble );
+   //E := _Db.Clientes.Find( QueryAble );
 
-    _Db := TDataContext.Create(DataModule1.FConnection);
+    _Db := TDataContext.Create(Connection);
      E:= _Db.Clientes.Entity;
      E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
@@ -153,7 +167,7 @@ var
    contato:TContato;
 begin
   try
-     _Db := TDataContext.Create(DataModule1.FConnection);
+     _Db := TDataContext.Create(Connection);
      E:= _Db.Clientes.Entity;
 
      L := _Db.Clientes.Include(E.Veiculo)
@@ -187,7 +201,7 @@ begin
    if DataSource1.DataSet <> nil then
    begin
      try
-        _Db := TDataContext.Create(DataModule1.FConnection);
+        _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
         C := _Db.Clientes.Include(E.Contatos).
                           Include(E.Veiculo).
@@ -222,7 +236,7 @@ begin
   if DataSource1.DataSet <> nil then
   begin
      try
-        _Db := TDataContext.Create(DataModule1.FConnection);
+        _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
 
         C := _Db.Clientes.Include(E.Veiculo).
@@ -274,7 +288,7 @@ begin
        Clientes.Add(C);
     end;
 
-    _Db := TDataContext.Create(DataModule1.FConnection);
+    _Db := TDataContext.Create(Connection);
     E:= _Db.Clientes.Entity;
 
     _Db.Clientes.AddRange(Clientes, true);
@@ -293,7 +307,7 @@ end;
 procedure TForm1.Button11Click(Sender: TObject);
 begin
   {
-  E := _Db.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+  E := _Db.Clientes.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
   E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
   _Db.UpdateRange(true);
   }
@@ -301,14 +315,14 @@ end;
 
 procedure TForm1.Button12Click(Sender: TObject);
 var
-  Entities:Collection<TCliente>;
+  Entities: Collection<TCliente>;
   Cliente: TCliente;
   I:integer;
      E: TCliente;
   _Db: TDataContext;
 begin
   try
-     _Db := TDataContext.Create(DataModule1.FConnection);
+     _Db := TDataContext.Create(Connection);
      E:= _Db.Clientes.Entity;
 
      Entities:=Collection<TCliente>.create;
@@ -338,7 +352,7 @@ var
   _Db: TDataContext;
 begin
   try
-     _Db := TDataContext.Create(DataModule1.FConnection);
+     _Db := TDataContext.Create(Connection);
      E:= _Db.Clientes.Entity;
      _Db.Clientes.Entity.FromJson(mLog.Text);
      mLog.Text:= _Db.Clientes.Entity.ToJson;
@@ -354,7 +368,7 @@ var
   _Db: TDataContext;
 begin
   try
-    _Db := TDataContext.Create(DataModule1.FConnection);
+    _Db := TDataContext.Create(Connection);
     E:= _Db.Clientes.Entity;
 
     C := TCliente.New( '02316937455',
@@ -369,7 +383,7 @@ begin
                         'Fisica',
                         'Casado',
                         'Teste');
-    //C.Validate;
+    //C.Clientes.Validate;
     _Db.Clientes.Add(C, true);
 
     QueryAble:= From( E ).Select.OrderBy(E.Nome);
@@ -387,7 +401,7 @@ var
   _Db: TDataContext;
 begin
    try
-      _Db := TDataContext.Create(DataModule1.FConnection);
+      _Db := TDataContext.Create(Connection);
       E:= _Db.Clientes.Entity;
       if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
       begin
@@ -397,7 +411,7 @@ begin
          E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
 
          _Db.Clientes.Update(true);
-         //Context.SaveChanges;
+         //Context.Clientes.SaveChanges;
       end;
       QueryAble := From( E ).Select.OrderBy ( E.Nome );
       DataSource1.DataSet := _Db.Clientes.ToDataSet( QueryAble );
@@ -412,7 +426,7 @@ var
   _Db: TDataContext;
 begin
    try
-      _Db := TDataContext.Create(DataModule1.FConnection);
+      _Db := TDataContext.Create(Connection);
       E:= _Db.Clientes.Entity;
       _Db.Clientes.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
       DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );

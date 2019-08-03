@@ -10,7 +10,7 @@ type
     Clientes : TDbset<TCliente>;
   //Funcionarios : TDbset<TFuncionarios>;
   //Fornecedores : TDbset<TFornecedores>;
-    constructor Create(aDatabase: TDatabaseFacade = nil);override;
+    constructor Create( aDatabase: TDatabaseFacade );override;
     destructor Destroy;override;
   end;
 
@@ -18,7 +18,7 @@ implementation
 
 { BoundContext }
 
-constructor TDataContext.Create(aDatabase: TDatabaseFacade = nil);
+constructor TDataContext.Create( aDatabase: TDatabaseFacade );
 begin
   Clientes := TDbset<TCliente>.create( aDatabase )
 end;
