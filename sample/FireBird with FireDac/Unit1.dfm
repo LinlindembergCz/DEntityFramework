@@ -11,7 +11,6 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -49,7 +48,6 @@ object Form1: TForm1
       Caption = 'GetQuery'
       Enabled = False
       TabOrder = 1
-      OnClick = buttonGetSQLClick
     end
     object buttonGetEntity: TButton
       Left = 14
@@ -161,15 +159,6 @@ object Form1: TForm1
       TabOrder = 13
       OnClick = Button12Click
     end
-    object Button13: TButton
-      Left = 320
-      Top = 66
-      Width = 147
-      Height = 25
-      Caption = 'SaveChanges'
-      TabOrder = 14
-      OnClick = Button13Click
-    end
   end
   object Panel2: TPanel
     Left = 0
@@ -206,7 +195,19 @@ object Form1: TForm1
     TabOrder = 3
   end
   object DataSource1: TDataSource
+    DataSet = FDMemTable1
     Left = 640
     Top = 128
+  end
+  object FDMemTable1: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 256
+    Top = 193
   end
 end

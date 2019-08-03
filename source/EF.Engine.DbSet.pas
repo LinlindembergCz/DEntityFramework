@@ -35,8 +35,11 @@ Type
     FListFields: TStringList;
     FEntity : T;
     procedure FreeDbSet;
+  private
+
   protected
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
+    property DbSet: TFDQuery read FDbSet write FDbSet;
   public
     type
        TAnonym = reference to function: T;
@@ -46,7 +49,7 @@ Type
     constructor Create(aDatabase: TDatabaseFacade = nil); overload; virtual;
     constructor Create(proEntity: T );overload; virtual;
 
-    property DbSet: TFDQuery read FDbSet write FDbSet;
+
 
     function BuildQuery(QueryAble: IQueryAble): string;
     function Find(QueryAble: IQueryAble): T; overload;
@@ -114,10 +117,10 @@ begin
     FreeDbSet;
     if FDatabase.CustomTypeDataBase is TPostGres then
        QueryAble.Prepare;
-    DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
-    DataSet.Open;
-    //FDbSet:= DataSet;
-    result := DataSet;
+
+       DataSet :=  FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
+       DataSet.Open;
+       result := DataSet;
   except
     on E: Exception do
     begin
@@ -125,6 +128,8 @@ begin
     end;
   end;
 end;
+
+
 
 function TDbSet<T>.ToDataSet(QueryAble: String): TFDQuery;
 var
@@ -573,8 +578,8 @@ begin
     FreeAndNil(ListObjectsInclude);
   if ListObjectsThenInclude <> nil then
     FreeAndNil(ListObjectsThenInclude);
-  if Database <> nil then
-     Database.Free;
+  //if Database <> nil then
+  //  Database.Free;
 end;
 
 procedure TDbSet<T>.Remove(Condicion: TString);
