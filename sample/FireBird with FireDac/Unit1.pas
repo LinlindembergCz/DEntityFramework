@@ -46,12 +46,11 @@ type
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
-    procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
-     QueryAble: IQueryAble;
+
      Connection:TEntityFDConnection;
     { Private declarations }
   public
@@ -96,6 +95,7 @@ procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 var
   E: TCliente;
   _Db: TDataContext;
+  QueryAble: IQueryAble;
 begin
    try
      _Db := TDataContext.Create( Connection  );
@@ -141,6 +141,7 @@ procedure TForm1.Button2Click(Sender: TObject);
 var
    E: TCliente;
   _Db: TDataContext;
+  QueryAble: IQueryAble;
 begin
   try
     { QueryAble := From( E )
@@ -269,6 +270,9 @@ var
   _Db: TDataContext;
 begin
   try
+    _Db := TDataContext.Create(Connection);
+    E:= _Db.Clientes.Entity;
+
     Clientes := Collection<TCliente>.create(false);
     for I := 0 to 3 do
     begin
@@ -288,29 +292,14 @@ begin
        Clientes.Add(C);
     end;
 
-    _Db := TDataContext.Create(Connection);
-    E:= _Db.Clientes.Entity;
-
     _Db.Clientes.AddRange(Clientes, true);
 
   finally
      _Db.free;
     Clientes.Free;
 
-    QueryAble:= From( E ).Select.OrderBy(E.Nome);
-
-    DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
   end;
 
-end;
-
-procedure TForm1.Button11Click(Sender: TObject);
-begin
-  {
-  E := _Db.Clientes.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
-  E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
-  _Db.UpdateRange(true);
-  }
 end;
 
 procedure TForm1.Button12Click(Sender: TObject);
@@ -334,11 +323,9 @@ begin
        Entities.Add(Cliente);
        DataSource1.DataSet.Next;
      end;
-
-
      _Db.Clientes.RemoveRange(Entities);
 
-     DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
+
   finally
      _Db.Free;
      Entities.Free;
@@ -386,8 +373,7 @@ begin
     //C.Clientes.Validate;
     _Db.Clientes.Add(C, true);
 
-    QueryAble:= From( E ).Select.OrderBy(E.Nome);
-    DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
+    DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
   finally
     _Db.Free;
     C.Free;
@@ -406,15 +392,16 @@ begin
       if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
       begin
        //TAutoMapper.DataToEntity( DataSource1.DataSet, E );
-         E := _Db.Clientes.Find(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+         E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
          E.Nome.Value:= 'Nome do Cliente '+datetimetostr(now);
 
-         _Db.Clientes.Update(true);
-         //Context.Clientes.SaveChanges;
+         _Db.Clientes.Update;
+
+         _Db.Clientes.SaveChanges;
       end;
-      QueryAble := From( E ).Select.OrderBy ( E.Nome );
-      DataSource1.DataSet := _Db.Clientes.ToDataSet( QueryAble );
+
+      DataSource1.DataSet := _Db.Clientes.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
    finally
      _Db.Free;
    end;
@@ -429,7 +416,7 @@ begin
       _Db := TDataContext.Create(Connection);
       E:= _Db.Clientes.Entity;
       _Db.Clientes.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
-      DataSource1.DataSet := _Db.Clientes.ToDataSet(QueryAble );
+      DataSource1.DataSet := _Db.Clientes.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
    finally
      _Db.Free;
    end;

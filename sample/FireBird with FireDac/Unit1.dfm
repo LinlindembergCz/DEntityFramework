@@ -149,7 +149,6 @@ object Form1: TForm1
       Caption = 'Update  Range'
       Enabled = False
       TabOrder = 12
-      OnClick = Button11Click
     end
     object Button12: TButton
       Left = 626
