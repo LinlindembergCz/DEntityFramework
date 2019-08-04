@@ -195,6 +195,7 @@ type
     Value: string;
   end;
 
+  //Penso que isso nao seja mais necessario!
   Edit = class(TCustomAttribute)
   end;
 
@@ -215,6 +216,7 @@ type
 
   RadioGroup = class(TCustomAttribute)
   end;
+  //*****************************************
 
   const
     Char1      = 'varchar(1)';

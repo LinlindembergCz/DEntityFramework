@@ -46,8 +46,7 @@ object Form1: TForm1
       Top = 35
       Width = 147
       Height = 25
-      Caption = 'GetQuery'
-      Enabled = False
+      Caption = 'BuildQuery'
       TabOrder = 1
       OnClick = buttonGetSQLClick
     end
@@ -150,7 +149,6 @@ object Form1: TForm1
       Caption = 'Update  Range'
       Enabled = False
       TabOrder = 12
-      OnClick = Button11Click
     end
     object Button12: TButton
       Left = 626
@@ -166,7 +164,7 @@ object Form1: TForm1
       Top = 66
       Width = 147
       Height = 25
-      Caption = 'SaveChanges'
+      Caption = 'FromSQL'
       TabOrder = 14
       OnClick = Button13Click
     end
@@ -206,7 +204,19 @@ object Form1: TForm1
     TabOrder = 3
   end
   object DataSource1: TDataSource
+    DataSet = FDMemTable1
     Left = 640
     Top = 128
+  end
+  object FDMemTable1: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 368
+    Top = 185
   end
 end

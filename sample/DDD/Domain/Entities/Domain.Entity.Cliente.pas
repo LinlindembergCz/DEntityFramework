@@ -85,6 +85,11 @@ type
     property ClienteTabelaPreco: TClienteTabelaPreco  read  FClienteTabelaPreco write FClienteTabelaPreco;
     [NotMapped]
     property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
+
+    class function New(const aCPFCNPJ: TString;const  aRenda: TFloat;const  aIdade: TInteger;
+    const aNome, aRG: TString;const  aDataNascimento: TDate;const  aAtivo, aNomeFantasia,
+    aSituacao, aTipo, aEstadoCivil, aObservacao: TString):TCliente;
+
   end;
 
 
@@ -103,10 +108,35 @@ end;
 
 
 
+class function TCliente.New(const aCPFCNPJ: TString;const  aRenda: TFloat;const  aIdade: TInteger;
+  const aNome, aRG: TString;const  aDataNascimento: TDate;const  aAtivo, aNomeFantasia,
+  aSituacao, aTipo, aEstadoCivil, aObservacao: TString): TCliente;
+var
+  C: TCliente;
+begin
+  C:= TCliente.Create;
+  with C do
+  begin
+    CPFCNPJ:= aCPFCNPJ;
+    Renda:= aRenda;
+    Idade:= aIdade;
+    Nome:= aNome;
+    RG:=aRG;
+    DataNascimento:= aDataNascimento;
+    Ativo:= aAtivo;
+    NomeFantasia:= aNomeFantasia;
+    Situacao:=  aSituacao;
+    Tipo:= aTipo;
+    EstadoCivil:= aEstadoCivil;
+    Observacao:=  aObservacao;
+  end;
+  result:= C;
+end;
+
 procedure TCliente.Validate;
 begin
   inherited;
- //Email.Validate;
+   Email.Validate;
 end;
 
 

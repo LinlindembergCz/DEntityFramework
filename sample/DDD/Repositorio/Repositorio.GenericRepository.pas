@@ -81,6 +81,7 @@ begin
   inherited;
   if FDbContext <> nil then
   begin
+     FDbContext.Database.Free;
      FreeAndNil(FDbContext);
   end;
 end;

@@ -35,22 +35,24 @@ Type
     FListFields: TStringList;
     FEntity : T;
     procedure FreeDbSet;
+  private
+
   protected
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
-  public
-    type
-       TAnonym = reference to function: T;
-
-    property Database: TDatabaseFacade read FDatabase write FDatabase;
-    destructor Destroy; override;
-    constructor Create(aDatabase: TDatabaseFacade = nil); overload; virtual;
-    constructor Create(proEntity: T );overload; virtual;
-
     property DbSet: TFDQuery read FDbSet write FDbSet;
+  public
+    property Database: TDatabaseFacade read FDatabase write FDatabase;
+
+    constructor Create( aDatabase: TDatabaseFacade ); overload; virtual;
+    constructor Create(proEntity: T );overload; virtual;
+    destructor Destroy; override;
 
     function BuildQuery(QueryAble: IQueryAble): string;
+
     function Find(QueryAble: IQueryAble): T; overload;
     function Find(Condicion: TString): T;overload;
+
+    function FromSQL(SQL: string):T;
 
     function Where(Condicion: TString): T;
 
@@ -106,6 +108,23 @@ begin
   end;
 end;
 
+function TDbSet<T>.FromSQL(SQL: string): T;
+var
+  DataSet: TFDQuery;
+  E: T;
+begin
+  try
+    result := nil;
+    DataSet := ToDataSet(SQL);
+    //E:= T.Create;
+    TAutoMapper.DataToEntity(DataSet,Entity );
+    result := Entity as T;
+  finally
+     DataSet.Free;
+     DataSet:= nil;
+  end;
+end;
+
 function TDbSet<T>.ToDataSet(QueryAble: IQueryAble): TFDQuery;
 var
   DataSet:TFDQuery;
@@ -114,10 +133,10 @@ begin
     FreeDbSet;
     if FDatabase.CustomTypeDataBase is TPostGres then
        QueryAble.Prepare;
-    DataSet := FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
-    DataSet.Open;
-    //FDbSet:= DataSet;
-    result := DataSet;
+
+       DataSet :=  FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
+       DataSet.Open;
+       result := DataSet;
   except
     on E: Exception do
     begin
@@ -126,13 +145,15 @@ begin
   end;
 end;
 
+
+
 function TDbSet<T>.ToDataSet(QueryAble: String): TFDQuery;
 var
   DataSet:TFDQuery;
 begin
   try
     FreeDbSet;
-     DataSet := FDatabase.CreateDataSet( QueryAble );
+    DataSet := FDatabase.CreateDataSet( QueryAble );
     DataSet.Open;
     //FDbSet:= DataSet;
     result := DataSet;
@@ -573,8 +594,8 @@ begin
     FreeAndNil(ListObjectsInclude);
   if ListObjectsThenInclude <> nil then
     FreeAndNil(ListObjectsThenInclude);
-  if Database <> nil then
-     Database.Free;
+  //if Database <> nil then
+  //  Database.Free;
 end;
 
 procedure TDbSet<T>.Remove(Condicion: TString);
@@ -612,10 +633,10 @@ begin
       result := 0;
 end;
 
-constructor TDbSet<T>.Create(aDatabase: TDatabaseFacade );
+constructor TDbSet<T>.Create( aDatabase: TDatabaseFacade );
 begin
   //if proEntity = nil then
-    FEntity := T.Create;
+  FEntity := T.Create;
   //else
   //Entity := proEntity as T;
   FDatabase:= aDatabase;

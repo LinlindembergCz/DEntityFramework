@@ -40,9 +40,9 @@ type
     function OrderBy(Fields: array of string): IQueryAble; overload;
     function OrderByDesc(Fields: string): IQueryAble; overload;
     function OrderByDesc(Fields: array of string): IQueryAble; overload;
-    function Select(Fields: string = ''): IQueryAble; overload;
-    function Select(Fields: array of string): IQueryAble; overload;
-    //não estou achando seguro manter essa referencia aqui nessa classe!
+    function Select(Fields: string = ''): TSelect; overload;
+    function Select(Fields: array of string): TSelect; overload;
+
     procedure SetConcretEntity(value: TEntityBase);
     function GetConcretEntity: TEntityBase;
     procedure SetSEntity(value: string);
@@ -145,8 +145,8 @@ type
     function OrderBy(Fields: array of string): IQueryAble; overload;
     function OrderByDesc(Fields: string): IQueryAble; overload;
     function OrderByDesc(Fields: array of string): IQueryAble;overload;
-    function Select(Fields: string = ''): IQueryAble; overload;
-    function Select(Fields: array of string): IQueryAble; overload;
+    function Select(Fields: string = ''): TSelect; overload;
+    function Select(Fields: array of string): TSelect; overload;
     function BuildQuery(Q: IQueryAble): string;
     procedure Prepare;
 
@@ -549,7 +549,7 @@ begin
 end;
 
 
-function TQueryAble.Select(Fields: string = ''): IQueryAble;
+function TQueryAble.Select(Fields: string = ''): TSelect;
 var
   _Atribs:string;
 begin
@@ -568,10 +568,10 @@ begin
   else
       Fields := _Atribs;
 
-  result := self;
+  result := TSelect(self);
 end;
 
-function TQueryAble.Select(Fields: array of string): IQueryAble;
+function TQueryAble.Select(Fields: array of string): TSelect;
 var
   _Fields: string;
   Field: string;
@@ -585,7 +585,7 @@ begin
   end;
   TSelect(self).FFields:= _Fields;
   FSSelect := StrSelect + ifthen(_Fields <> '', _Fields,ifthen(_Atribs <> '',_Atribs,'*' ) );
-  result := self;
+  result :=  TSelect(self);
 end;
 
 procedure TQueryAble.SetConcretEntity(value: TEntityBase);
@@ -681,6 +681,7 @@ begin
      FSSelect := StrSelect + StrCount + '(*)';
   result := self;
 end;
+
 
 function TSelect.Distinct(Field: TString): IQueryAble;
 begin
