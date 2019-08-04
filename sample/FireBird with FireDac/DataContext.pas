@@ -20,6 +20,7 @@ implementation
 
 constructor TDataContext.Create( aDatabase: TDatabaseFacade );
 begin
+  inherited;
   Clientes := TDbset<TCliente>.create( aDatabase )
 end;
 
@@ -27,6 +28,7 @@ destructor TDataContext.Destroy;
 begin
   inherited;
   Clientes.Free;
+
 end;
 
 end.

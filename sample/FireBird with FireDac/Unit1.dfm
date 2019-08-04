@@ -35,7 +35,7 @@ object Form1: TForm1
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'ToDataSet'
       TabOrder = 0
@@ -44,7 +44,7 @@ object Form1: TForm1
     object buttonGetSQL: TButton
       Left = 14
       Top = 35
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'BuildQuery'
       TabOrder = 1
@@ -53,25 +53,25 @@ object Form1: TForm1
     object buttonGetEntity: TButton
       Left = 14
       Top = 66
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Find'
       TabOrder = 2
       OnClick = buttonGetEntityClick
     end
     object Button2: TButton
-      Left = 167
+      Left = 140
       Top = 4
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'ToJson'
       TabOrder = 3
       OnClick = Button2Click
     end
     object Button3: TButton
-      Left = 167
+      Left = 140
       Top = 35
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'FromJson'
       Enabled = False
@@ -79,94 +79,103 @@ object Form1: TForm1
       OnClick = Button3Click
     end
     object Button4: TButton
-      Left = 320
+      Left = 266
       Top = 35
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Include'
       TabOrder = 5
       OnClick = Button4Click
     end
     object Button5: TButton
-      Left = 320
+      Left = 266
       Top = 4
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'ThenInclude'
       TabOrder = 6
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 473
+      Left = 392
       Top = 4
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Add'
       TabOrder = 7
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 473
+      Left = 392
       Top = 35
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Update'
       TabOrder = 8
       OnClick = Button7Click
     end
     object Button8: TButton
-      Left = 473
+      Left = 392
       Top = 66
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Remove'
       TabOrder = 9
       OnClick = Button8Click
     end
     object Button9: TButton
-      Left = 167
+      Left = 140
       Top = 66
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'ToList'
       TabOrder = 10
       OnClick = Button9Click
     end
     object Button10: TButton
-      Left = 626
+      Left = 518
       Top = 4
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Add Range'
       TabOrder = 11
       OnClick = Button10Click
     end
     object Button11: TButton
-      Left = 626
+      Left = 518
       Top = 35
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Update  Range'
       Enabled = False
       TabOrder = 12
     end
     object Button12: TButton
-      Left = 626
+      Left = 518
       Top = 66
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'Remove  Range'
       TabOrder = 13
       OnClick = Button12Click
     end
     object Button13: TButton
-      Left = 320
+      Left = 266
       Top = 66
-      Width = 147
+      Width = 120
       Height = 25
       Caption = 'FromSQL'
       TabOrder = 14
       OnClick = Button13Click
+    end
+    object Button14: TButton
+      Left = 644
+      Top = 4
+      Width = 120
+      Height = 25
+      Caption = 'SQLScript'
+      TabOrder = 15
+      OnClick = Button14Click
     end
   end
   object Panel2: TPanel

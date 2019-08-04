@@ -36,6 +36,7 @@ type
     Button12: TButton;
     FDMemTable1: TFDMemTable;
     Button13: TButton;
+    Button14: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -52,6 +53,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -375,6 +377,20 @@ begin
    finally
       _Db.Free;
    end;
+end;
+
+procedure TForm1.Button14Click(Sender: TObject);
+var
+  _Db: TDataContext;
+begin
+  _Db := TDataContext.Create(Connection);
+
+  _Db.AddScript('Insert Into Clientes (Nome, NomeFantasia) Values (''Joao'',''Joao Maria'')');
+  _Db.AddScript('Insert Into Clientes (Nome, NomeFantasia) Values (''Maria'',''Maria Jose'')');
+
+  _Db.ExecuteScript;
+
+  _Db.Free;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
