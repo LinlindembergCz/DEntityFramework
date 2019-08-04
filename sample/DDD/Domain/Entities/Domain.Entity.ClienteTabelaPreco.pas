@@ -31,14 +31,13 @@ type
 
 implementation
 
-uses GenericFactory;
 
 { TClienteTabelaPreco }
 
 constructor TClienteTabelaPreco.Create;
 begin
   inherited;
-  TabelaPreco:=  TGenericFactory.CreateInstance<TTabelaPreco>;
+  TabelaPreco:= TTabelaPreco.Create;// TGenericFactory.CreateInstance<>;
 end;
 
 

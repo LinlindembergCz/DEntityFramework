@@ -31,9 +31,6 @@ type
 
 implementation
 
-uses
-  GenericFactory;
-
 { TItensTabelaPreco }
 
 constructor TItensTabelaPreco.Create;
