@@ -9,7 +9,7 @@ unit EF.Mapping.Atributes;
 interface
 
 uses
-   sysUtils, RTTI, Classes, Dialogs;
+   sysUtils, RTTI, Classes;
 
 type
   PParamAtributies = ^TParamAtributies;
@@ -307,7 +307,7 @@ end;
 procedure Validator.AfterValid(pValido: boolean);
 begin
   if (not pValido) then
-    ShowMessage(FMensagem);
+    raise Exception.Create(FMensagem);
 end;
 
 function Validator.IsValid(pValue: TValue; pMensagem: string = ''): boolean;

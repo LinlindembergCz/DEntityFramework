@@ -9,9 +9,9 @@ unit EF.Engine.DbSet;
 interface
 
 uses
-  System.Classes, strUtils, SysUtils, Variants, Dialogs,
-  DateUtils, System.Types, Forms, System.Contnrs, Data.DB,
-  System.Generics.Collections, Vcl.DBCtrls,
+  System.Classes, strUtils, SysUtils, Variants, //Dialogs,
+  DateUtils, System.Types,  System.Contnrs, Data.DB,
+  System.Generics.Collections,
   FireDAC.Comp.Client, Data.DB.Helper,EF.Core.List,
   // Essas units darão suporte ao nosso framework
   EF.QueryAble.Linq,
@@ -92,7 +92,6 @@ Type
 implementation
 
 uses
-  Vcl.ExtCtrls,
   EF.Schema.Firebird,
   EF.Schema.MSSQL,
   EF.Mapping.AutoMapper,
@@ -140,7 +139,7 @@ begin
   except
     on E: Exception do
     begin
-      showmessage(E.message);
+      raise Exception.Create(E.Message);
     end;
   end;
 end;
@@ -160,7 +159,7 @@ begin
   except
     on E: Exception do
     begin
-      showmessage(E.message);
+            raise Exception.Create(E.Message);
     end;
   end;
 end;

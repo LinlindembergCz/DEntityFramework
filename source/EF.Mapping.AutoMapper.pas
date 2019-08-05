@@ -3,8 +3,8 @@ unit EF.Mapping.AutoMapper;
 interface
 
 uses
-   Forms,  RTTI, Classes,  SysUtils,
-   Vcl.Controls, DB, System.Contnrs,  StdCtrls, strUtils, math,
+   RTTI, Classes,  SysUtils,
+   DB, System.Contnrs,   strUtils, math,
    System.Generics.Collections,
    EF.Mapping.Atributes,
    EF.Mapping.Base,
@@ -83,8 +83,7 @@ type
 implementation
 
 uses
-  System.TypInfo, Vcl.DBCtrls, Vcl.ComCtrls,
-  Vcl.ExtCtrls, VCL.Mask,
+  System.TypInfo,// Vcl.DBCtrls, Vcl.ComCtrls,  Vcl.ExtCtrls, VCL.Mask,
   EF.Core.Functions;
 
 { TAutoMapper }

@@ -9,7 +9,7 @@ unit EF.Schema.PostGres;
 interface
 
 uses
-  SysUtils, classes, strUtils, Dialogs,
+  SysUtils, classes, strUtils,
   EF.Mapping.Atributes,
   EF.Mapping.AutoMapper,
   EF.Drivers.Connection,
@@ -101,7 +101,7 @@ begin
         result:= CreateScript.Text;
       end
       else
-        ShowMessage('Primary Key is riquered!');
+        raise exception.Create('Primary Key is riquered!');
 
       CreateScript.Add( ' ) ' );
       result:= CreateScript.Text;

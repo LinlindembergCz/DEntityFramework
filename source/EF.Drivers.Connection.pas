@@ -9,7 +9,7 @@ unit EF.Drivers.Connection;
 interface
 
 uses
-  Data.SqlExpr , classes, Data.DB,Vcl.Forms, SysUtils, EF.Schema.Abstract,
+  Data.SqlExpr , classes, Data.DB, SysUtils, EF.Schema.Abstract,
   FireDAC.Comp.Client;
 
 type

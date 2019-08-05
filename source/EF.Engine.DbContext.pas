@@ -5,17 +5,16 @@ interface
 uses
 EF.Drivers.Connection, FireDAC.UI.Intf, FireDAC.Stan.Async,
   FireDAC.Comp.ScriptCommands, FireDAC.Stan.Util, FireDAC.Stan.Intf,
-  FireDAC.Comp.Script;
+  FireDAC.Comp.Script, System.Classes;
 
 type
-   TDbContext =class
+   TDbContext =class( TPersistent )
    private
      Script: TFDScript;
      SQL: TFDSQLScript;
-
    public
      constructor Create(aDatabase: TDatabaseFacade = nil);virtual;
-     destructor Destroy;virtual;
+     destructor Destroy; virtual;
      procedure AddScript(aSQL: string);
      procedure ExecuteScript;
    end;
@@ -41,8 +40,9 @@ end;
 
 destructor TDbContext.Destroy;
 begin
+  inherited;
   Script.Free;
-  SQL.Free;
+//SQL.Free;
 end;
 
 procedure TDbContext.ExecuteScript;

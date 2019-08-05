@@ -110,7 +110,7 @@ begin
       FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
 
    finally
-     _Db.Free;
+     _Db.Destroy;
    end;
 end;
 
@@ -136,7 +136,7 @@ begin
          mlog.Lines.Add( ' Estado Civil:'+ E.EstadoCivil.Value);
          mlog.Lines.Add( ' Nascimento:'+ datetostr(E.DataNascimento.Value));
       finally
-        _Db.Free;
+        _Db.Destroy;
       end;
    end;
 end;
@@ -159,7 +159,7 @@ begin
 
      mLog.Text:= _Db.Clientes.BuildQuery(QueryAble);
 
-     _Db.Free;
+     _Db.Destroy;
   end;
 end;
 
@@ -181,7 +181,7 @@ begin
 
      mLog.Text:= E.ToJson;
   finally
-    _Db.Free;
+    _Db.Destroy;
   end;
 end;
 
@@ -212,7 +212,7 @@ begin
          end;
      end;
   finally
-    _Db.Free;
+    _Db.Destroy;
     FreeAndNil( L );
   end;
 
@@ -247,7 +247,7 @@ begin
            mlog.Lines.Add('    ' + contato.Nome.Value);
         end;
      finally
-        _Db.Free;
+        _Db.Destroy;
         FreeAndNIL(C);
      end;
    end;
@@ -280,7 +280,7 @@ begin
            mlog.Lines.Add('    ' + contato.Nome.Value);
         end;
      finally
-        _Db.Free;
+        _Db.Destroy;
         FreeAndNIL(C);
      end;
   end;
@@ -321,7 +321,7 @@ begin
     _Db.Clientes.AddRange(Clientes, true);
 
   finally
-     _Db.free;
+     _Db.Destroy;
     Clientes.Free;
 
   end;
@@ -353,7 +353,7 @@ begin
 
 
   finally
-     _Db.Free;
+     _Db.Destroy;
      Entities.Free;
   end;
 
@@ -375,7 +375,7 @@ begin
       mlog.Lines.Add( ' Estado Civil:'+ E.EstadoCivil.Value);
       mlog.Lines.Add( ' Nascimento:'+ datetostr(E.DataNascimento.Value));
    finally
-      _Db.Free;
+      _Db.Destroy;
    end;
 end;
 
@@ -390,7 +390,7 @@ begin
 
   _Db.ExecuteScript;
 
-  _Db.Free;
+  _Db.Destroy;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
@@ -404,7 +404,7 @@ begin
      _Db.Clientes.Entity.FromJson(mLog.Text);
      mLog.Text:= _Db.Clientes.Entity.ToJson;
   finally
-     _Db.Free;
+     _Db.Destroy;
   end;
 end;
 
@@ -435,7 +435,7 @@ begin
 
     DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
   finally
-    _Db.Free;
+    _Db.Destroy;
     C.Free;
   end;
 
@@ -463,7 +463,7 @@ begin
 
       DataSource1.DataSet := _Db.Clientes.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
    finally
-     _Db.Free;
+     _Db.Destroy;
    end;
 end;
 
@@ -478,7 +478,7 @@ begin
       _Db.Clientes.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
       DataSource1.DataSet := _Db.Clientes.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
    finally
-     _Db.Free;
+     _Db.Destroy;
    end;
 end;
 
