@@ -177,6 +177,15 @@ object Form1: TForm1
       TabOrder = 15
       OnClick = Button14Click
     end
+    object Button15: TButton
+      Left = 644
+      Top = 35
+      Width = 120
+      Height = 25
+      Caption = 'Any'
+      TabOrder = 16
+      OnClick = Button15Click
+    end
   end
   object Panel2: TPanel
     Left = 0
@@ -214,8 +223,8 @@ object Form1: TForm1
   end
   object DataSource1: TDataSource
     DataSet = FDMemTable1
-    Left = 640
-    Top = 128
+    Left = 368
+    Top = 136
   end
   object FDMemTable1: TFDMemTable
     FetchOptions.AssignedValues = [evMode]

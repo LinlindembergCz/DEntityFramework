@@ -37,6 +37,7 @@ type
     FDMemTable1: TFDMemTable;
     Button13: TButton;
     Button14: TButton;
+    Button15: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -54,6 +55,7 @@ type
     procedure Button13Click(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
     procedure Button14Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -391,6 +393,29 @@ begin
   _Db.ExecuteScript;
 
   _Db.Destroy;
+end;
+
+procedure TForm1.Button15Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+      E:= _Db.Clientes.Entity;
+       {QueryAble := From( E ).
+                    Select.
+                    Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
+       //E := _Db.Clientes.Find( QueryAble );
+
+       if _Db.Clientes.Any then
+           mlog.Lines.Add( 'Tem Cliente' )
+       else
+          mlog.Lines.Add( 'Nao Tem Cliente' );
+
+   finally
+     _Db.Destroy;
+   end;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

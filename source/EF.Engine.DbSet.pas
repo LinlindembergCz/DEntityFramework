@@ -26,6 +26,8 @@ uses
 Type
    TTypeSQL       = (  tsInsert, tsUpdate );
 
+   TMethod = reference to procedure;
+
   TDbSet<T:TEntityBase> = class
   strict private
     ListObjectsInclude:TObjectList;
@@ -46,6 +48,8 @@ Type
     constructor Create( aDatabase: TDatabaseFacade ); overload; virtual;
     constructor Create(proEntity: T );overload; virtual;
     destructor Destroy; override;
+
+    function Any:Boolean;
 
     function BuildQuery(QueryAble: IQueryAble): string;
 
@@ -83,6 +87,8 @@ Type
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
+
+    procedure ForEach( M: TMethod );
 
   published
 
@@ -390,6 +396,11 @@ begin
   end;
 end;
 
+procedure TDbSet<T>.ForEach(M: TMethod);
+begin
+
+end;
+
 function TDbSet<T>.Find(QueryAble: IQueryAble): T;
 var
   DataSet: TFDQuery;
@@ -513,6 +524,18 @@ begin
    end;
    if AutoSaveChange then
       SaveChanges;
+end;
+
+function TDbSet<T>.Any: Boolean;
+var
+  DataSet: TFDQuery;
+  E: T;
+  QueryAble:IQueryAble;
+begin
+    QueryAble:= From(FEntity).Select.Count;
+    DataSet := ToDataSet( QueryAble );
+    result:= not DataSet.IsEmpty;
+    DataSet.Free;
 end;
 
 procedure TDbSet<T>.UpdateRange(entities: array of T;AutoSaveChange:boolean = false);
