@@ -230,11 +230,11 @@ procedure TTest.TestarSelectComWhere_Igual_Object;
 //var
 //  Query: IQueryAble;
 begin
-
+  Query := From(Pessoa).
+                      Where( Pessoa.Nome = 'Lindemberg' ).
+                      Select([Pessoa.Nome]);
   CheckEquals('Select CLIENTES.Nome From Clientes Where CLIENTES.Nome = ''Lindemberg''',
-  Context.BuildQuery(From(Pessoa).
-                Where( Pessoa.Nome = 'Lindemberg' ).
-                Select([Pessoa.Nome])) );
+  Context.BuildQuery( Query ) );
 end;
 
 procedure TTest.TestarSelectComWhere_IN_com_tipo_inteiro_Object;
@@ -248,8 +248,6 @@ begin
 end;
 
 procedure TTest.TestarSelectComWhere_IN_Object;
-var
-  Query: IQueryAble;
 begin
   Query := From(Pessoa).
                 Where( Pessoa.Nome in ['A','B','C'] ).
@@ -259,8 +257,6 @@ begin
 end;
 
 procedure TTest.TestarSelectComWhere_IN_Select_Object;
-var
-  Query: IQueryAble;
 begin
   Query := From(Pessoa).
                 Where( Pessoa.Nome in [Context.BuildQuery( From(PessoaFisica).
@@ -275,7 +271,7 @@ procedure TTest.TestarSelectComWhere_LIKE_Object;
 //  Query: IQueryAble;
 begin
   Query := From(Pessoa).
-                Where(  Pessoa.Nome.Contains('Lindemberg%') ).
+                Where(  Pessoa.Nome.Like('Lindemberg%') ).
                 Select([Pessoa.Nome]);
   CheckEquals('Select CLIENTES.Nome From Clientes Where CLIENTES.Nome LIKE(''Lindemberg%'')',
   Context.BuildQuery(Query) );
@@ -474,13 +470,14 @@ procedure TTest.Testar_Validation_campo_CNPJ_requerido;
 begin
   try
      Pessoa:= TCliente.Create;
+     Pessoa.Nome:= 'Lindembrg Cortez';
      Pessoa.CPFCNPJ := '';
      Pessoa.Validate;
      CheckTrue(false);
   except
     on E:Exception do
     begin
-      CheckEquals('Operation aborted', E.Message );
+      CheckEquals(E.Message , 'Valor "CPFCNPJ" é inválido para o mínimo requerido !');
     end;
   end;
 end;
@@ -579,7 +576,7 @@ var
   c:TCliente;
 begin
   c := TCliente.create;
-  c.FromJson('{"Nome":"Lindemberg Cortez","Renda":"100","Idade":"42","DataNascimento":"19/04/1976"}');
+  c.FromJson('{"NOME":"Lindemberg Cortez","RENDA":"100","IDADE":"42","DATANASCIMENTO":"19/04/1976"}');
   CheckEquals( c.Nome ,'Lindemberg Cortez' );
   CheckEquals( c.Renda , 100 );
   CheckEquals( c.Idade , 42 );
@@ -593,10 +590,10 @@ begin
    Cli:= TCliente.Create;
    Cli.Nome:= 'Lindemberg';
    Cli.CPFCNPJ:= '02316937454';
-   CheckEquals( Cli.ToJson , '{"Nome":"''Lindemberg''","NomeFantasia":"''''",'+
-                             '"CPFCNPJ":"''02316937454''","Renda":"0","Idade":"0","RG":"''''","DataNascimento":"",'+
-                             '"Ativo":"''''","Situacao":"''''","Tipo":"''''","EstadoCivil":"''''",'+
-                             '"Observacao":"''''","Email":"''''"}' );
+   CheckEquals( Cli.ToJson , '{"NOME":"''Lindemberg''","NOMEFANTASIA":"''''",'+
+                             '"CPFCNPJ":"''02316937454''","RENDA":"0","IDADE":"0","RG":"''''","DATANASCIMENTO":"",'+
+                             '"ATIVO":"''''","SITUACAO":"''''","TIPO":"''''","ESTADOCIVIL":"''''",'+
+                             '"OBSERVACAO":"''''","EMAIL":"''''","ID":"0"}' );
 end;
 
 procedure TTest.Testar_GetData;
