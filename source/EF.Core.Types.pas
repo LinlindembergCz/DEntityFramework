@@ -43,7 +43,7 @@ type
   TStringHelp = record helper for TString
   public
     function SubString(i, p: integer): string;
-    function Contains(const a: string): TString;
+    function Like(const a: string): TString;
     function CharIndex(Ch: string): string;
     function Left(i: integer): string;
     function Len(&As: string = ''): TString;
@@ -416,7 +416,7 @@ begin
     length(FAs));
 end;
 
-function TStringHelp.Contains(const a: string): TString;
+function TStringHelp.Like(const a: string): TString;
 begin
   result.Value := FAs + ' LIKE(' + quotedstr(a) + ')';
 end;
