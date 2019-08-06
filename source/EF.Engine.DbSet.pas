@@ -49,20 +49,22 @@ Type
     constructor Create(proEntity: T );overload; virtual;
     destructor Destroy; override;
 
-    function Any:Boolean;
+    function Any(QueryAble: IQueryAble ):Boolean;overload;
+    function Any(Condition:TString ):Boolean;overload;
+    function Any:Boolean;overload;
 
     function BuildQuery(QueryAble: IQueryAble): string;
 
     function Find(QueryAble: IQueryAble): T; overload;
-    function Find(Condicion: TString): T;overload;
+    function Find(Condition: TString): T;overload;
 
     function FromSQL(SQL: string):T;
 
-    function Where(Condicion: TString): T;
+    function Where(Condition: TString): T;
 
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): Collection;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): Collection<T>; overload;
-    function ToList(Condicion: TString): Collection<T>;overload;
+    function ToList(Condition: TString): Collection<T>;overload;
     function Include( E: TObject ):TDbSet<T>;
     function ThenInclude(E: TObject ): TDbSet<T>;
 
@@ -77,7 +79,7 @@ Type
 
 
     procedure Update(AutoSaveChange:boolean = false);
-    procedure Remove(Condicion: TString);overload;
+    procedure Remove(Condition: TString);overload;
 
     procedure AddRange(entities:  Collection<T>;AutoSaveChange:boolean = false);
     procedure UpdateRange(entities: Array of T;AutoSaveChange:boolean = false);
@@ -170,7 +172,7 @@ begin
   end;
 end;
 
-function TDbSet<T>.ToList(Condicion: TString): Collection<T>;
+function TDbSet<T>.ToList(Condition: TString): Collection<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
@@ -200,7 +202,7 @@ begin
     if ListObjectsthenInclude <> nil then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
-    QueryAble:= From( FirstEntity ).Where( Condicion ).Select;
+    QueryAble:= From( FirstEntity ).Where( Condition ).Select;
 
     ListEntity := ToList<T>( QueryAble );
 
@@ -418,7 +420,7 @@ begin
   end;
 end;
 
-function TDbSet<T>.Find(Condicion: TString): T;
+function TDbSet<T>.Find(Condition: TString): T;
 var
   DataSet: TFDQuery;
   E: T;
@@ -426,7 +428,7 @@ var
 begin
   try
     result := nil;
-    QueryAble:= From(FEntity).Where(Condicion).Select;
+    QueryAble:= From(FEntity).Where(Condition).Select;
 
     DataSet := ToDataSet( QueryAble );
 
@@ -529,10 +531,29 @@ end;
 function TDbSet<T>.Any: Boolean;
 var
   DataSet: TFDQuery;
-  E: T;
   QueryAble:IQueryAble;
 begin
     QueryAble:= From(FEntity).Select.Count;
+    DataSet := ToDataSet( QueryAble );
+    result:= not DataSet.IsEmpty;
+    DataSet.Free;
+end;
+
+function TDbSet<T>.Any(QueryAble: IQueryAble): Boolean;
+var
+  DataSet: TFDQuery;
+begin
+    DataSet := ToDataSet( QueryAble );
+    result:= not DataSet.IsEmpty;
+    DataSet.Free;
+end;
+
+function TDbSet<T>.Any(Condition:TString ): Boolean;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+    QueryAble:= From(FEntity).Where(Condition).Select.Count;
     DataSet := ToDataSet( QueryAble );
     result:= not DataSet.IsEmpty;
     DataSet.Free;
@@ -620,12 +641,12 @@ begin
   //  Database.Free;
 end;
 
-procedure TDbSet<T>.Remove(Condicion: TString);
+procedure TDbSet<T>.Remove(Condition: TString);
 var
   SQL: string;
 begin
   try
-    SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(T), Condicion.Value ] );
+    SQL := Format( 'Delete From %s where %s',[TAutoMapper.GetTableAttribute(T), Condition.Value ] );
     FDataBase.ExecutarSQL(SQL);
   except
     on E: Exception do
@@ -672,7 +693,7 @@ begin
     FEntity := proEntity as T;
 end;
 
-function TDbSet<T>.Where(Condicion: TString ): T;
+function TDbSet<T>.Where(Condition: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, EntidyInclude: TEntityBase;
@@ -713,7 +734,7 @@ begin
           begin
             FirstEntity := T(ListObjectsInclude.Items[0]);
             FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-            QueryAble   := From(FirstEntity).Where( Condicion ).Select;
+            QueryAble   := From(FirstEntity).Where( Condition ).Select;
             FirstEntity := Find( QueryAble );
           end
           else
