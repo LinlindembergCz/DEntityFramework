@@ -72,16 +72,18 @@ TDbset<T>;
 EF.QueryAble.Linq;
 
 Add;<br>
-AddRange
-Update;<br>
+AddRange;<br>
 UpdateRange;<br>
 Remove;<br>
 RemoveRange;<br>
 SaveChanges;<br>
 Find;<br>
+Any;<br>
 ToList;<br>
 ToJson;<br>
 ToDataSet;<br>
+Include;<br>
+ThenInclude;<br>
 
 
 
