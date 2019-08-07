@@ -203,6 +203,20 @@ begin
                        .Include(E.Contatos)
                        .ToList( E.Ativo = '1' );
       mlog.Lines.clear;
+     { L.ForEach(
+                  procedure
+                  var
+                     C:TCliente;
+                  begin
+                     mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
+                     mlog.Lines.Add('Placa: ' + C.Veiculo.Placa.Value );
+                     mlog.Lines.Add('Contatos :');
+                     for contato in C.Contatos do
+                     begin
+                       mlog.Lines.Add('    ' + contato.Nome.Value);
+                     end;
+                  end ); }
+
      for C in L do
      begin
          mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
@@ -213,6 +227,7 @@ begin
            mlog.Lines.Add('    ' + contato.Nome.Value);
          end;
      end;
+
   finally
     _Db.Destroy;
     FreeAndNil( L );

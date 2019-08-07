@@ -8,10 +8,13 @@ uses
 type
   ClassEntity = TEntityBase;
 
+  TMethod = reference to procedure;
+
   Collection<T:ClassEntity> = class( TObjectList<T> )
   public
     function List: T;
     constructor Create(Initialize:boolean = true);
+    procedure ForEach( M: TMethod );
   end;
 
   Collection = class( Collection<ClassEntity> )
@@ -28,6 +31,16 @@ begin
   inherited Create(true);
   if (count = 0 ) and Initialize then
      Add( T.Create );
+end;
+
+procedure Collection<T>.ForEach( M: TMethod);
+var
+  E:T;
+begin
+  for E in Self do
+  begin
+    M;
+  end;
 end;
 
 function Collection<T>.List: T;

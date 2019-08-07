@@ -26,7 +26,7 @@ uses
 Type
    TTypeSQL       = (  tsInsert, tsUpdate );
 
-   TMethod = reference to procedure;
+
 
   TDbSet<T:TEntityBase> = class
   strict private
@@ -49,9 +49,9 @@ Type
     constructor Create(proEntity: T );overload; virtual;
     destructor Destroy; override;
 
-    function Any(QueryAble: IQueryAble ):Boolean;overload;
-    function Any(Condition:TString ):Boolean;overload;
     function Any:Boolean;overload;
+    function Any(Condition:TString ):Boolean;overload;
+    function Any(QueryAble: IQueryAble ):Boolean;overload;
 
     function BuildQuery(QueryAble: IQueryAble): string;
 
@@ -89,8 +89,6 @@ Type
     procedure RefreshDataSet;
     function ChangeCount: integer;
     function GetFieldList: Data.DB.TFieldList;
-
-    procedure ForEach( M: TMethod );
 
   published
 
@@ -396,11 +394,6 @@ begin
      DataSet.Free;
      DataSet:= nil;
   end;
-end;
-
-procedure TDbSet<T>.ForEach(M: TMethod);
-begin
-
 end;
 
 function TDbSet<T>.Find(QueryAble: IQueryAble): T;
