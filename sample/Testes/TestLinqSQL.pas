@@ -1198,21 +1198,17 @@ var
 //  Query: IQueryAble;
 SubQuery: string;
 begin
-
- {
   SubQuery:= Context.BuildQuery( From( Pessoa ).
                                   Inner(PessoaFisica, Pessoa.Id = PessoaFisica.Id ).
                                   Select(Pessoa.NomeFantasia) );
 
-  Query  := From( Pessoa ).Select(SubQuery);
+  Query  := From( SubQuery ).Select('NomeFantasia');
 
   CheckEquals('Select NomeFantasia From '+
-              ' (Select CLIENTES.NomeFantasia From Clientes '+
+              '(Select CLIENTES.NomeFantasia From Clientes '+
               'Inner Join Clientes On '+
               'CLIENTES.ID = CLIENTES.ID)',
               Context.BuildQuery(Query) );
-
-}
 
 end;
 
@@ -1237,9 +1233,12 @@ end;
 procedure TTest.TestarSelectCOUNTCampoGroupByOrderByNome_Object;
 begin
  Query  := From(Pessoa).
+                 Where(Pessoa.Id = 3).
                  GroupBy([Pessoa.Nome]).
                  Select([Pessoa.Nome]).Count;
-  CheckEquals('Select COUNT(*), CLIENTES.Nome From Clientes Group by CLIENTES.Nome',
+
+  //Query  := From(Pessoa).Where(Pessoa.Id = 3).Select.Count;
+  CheckEquals('Select COUNT(*), CLIENTES.Nome From Clientes Where CLIENTES.ID = 3 Group by CLIENTES.Nome',
                Context.BuildQuery(Query) );
 end;
 

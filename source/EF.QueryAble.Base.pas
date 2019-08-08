@@ -215,26 +215,43 @@ uses EF.Mapping.AutoMapper, System.Types;
 
 function TQueryAble.BuildQuery(Q: IQueryAble): string;
 begin
-  with Q do
-  begin
-    result := Concat(FSSelect + FSCount, ifthen(Pos(StrSelect, FSEntity) > 0,
-                     fStringReplace(FSEntity, StrFrom , StrFrom+' (') + ')', FSEntity),
+    result := Concat(FSSelect , FSCount,
 
-                     FSJoin + ifthen((FSJoin <> '') and (Pos('(', FSSelect) > 0), ')', ''),
+                     ifthen( Pos(StrSelect, FSEntity) > 0,
+                                         fStringReplace(FSEntity, StrSelect , '(' +StrSelect) +')' ,
+                                         FSEntity ) ,
 
-                     FSWhere + ifthen((FSWhere <> '') and (FSJoin = '') and
-                     (Pos('(', FSSelect) > 0), ')', ''),
+                     FSJoin , ifthen((FSJoin <> '') and (Pos('(', FSSelect) > 0),
+                                     ')',
+                                     ''),
 
-                     ifthen(FSExcept <> '', ifthen(FSWhere = '', StrWhere, _And) +
+                     FSWhere , { ifthen((FSWhere <> '') and (FSJoin = '') and (Pos('(', FSSelect) > 0),
+                                       ' ',
+                                       ''),}
 
-                     StrNot + '(' + StrExist + '(' + FSExcept + ')' + ')', ''),
+                     ifthen(FSExcept <> '',
+                             ifthen(FSWhere = '',
+                                    StrWhere,
+                                   _And) +
+                             StrNot + '(' + StrExist + '(' + FSExcept + ')' {+ ')'},
+                             ''),
 
-                     ifthen(FSIntersect <> '', ifthen(FSWhere = '', StrWhere, _And) + StrExist +
-                     '(' + FSIntersect + ')', ''),
+                     ifthen(FSIntersect <> '',
+                            ifthen(FSWhere = '',
+                                  StrWhere,
+                                  _And) + StrExist +
+                                  '(' + FSIntersect + ')',
+                                  ''),
 
-                     FSGroupBy, FSOrder, ifthen(FSUnion <> '', StrUnion + FSUnion, ''),
-                     ifthen(FSConcat <> '', StrUnionAll + FSConcat, ''));
-  end;
+                     FSGroupBy,
+                     FSOrder,
+                     ifthen(FSUnion <> '',
+                           StrUnion + FSUnion,
+                           ''),
+                     ifthen(FSConcat <> '',
+                            StrUnionAll + FSConcat,
+                            '')
+                     );
 end;
 
 function TQueryAble.GetConcretEntity: TEntityBase;

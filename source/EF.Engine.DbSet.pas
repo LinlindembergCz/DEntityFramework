@@ -526,8 +526,7 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-
-    QueryAble:= From(FEntity).Select(FEntity.ID);
+    QueryAble:= From(FEntity).Select.Count;//From(FEntity).Select(FEntity.ID);
     DataSet := ToDataSet( QueryAble );
     result:= not DataSet.IsEmpty;
     DataSet.Free;
@@ -547,7 +546,7 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-    QueryAble:= From(FEntity).Where(Condition).Select(FEntity.ID);
+    QueryAble:= From(FEntity).Where(Condition).Select.Count;
     DataSet := ToDataSet( QueryAble );
     result:= not DataSet.IsEmpty;
     DataSet.Free;
