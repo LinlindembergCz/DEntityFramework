@@ -139,7 +139,7 @@ begin
     if FDatabase.CustomTypeDataBase is TPostGres then
        QueryAble.Prepare;
 
-       DataSet :=  FDatabase.CreateDataSet(QueryAble.BuildQuery(QueryAble));
+       DataSet :=  FDatabase.CreateDataSet( QueryAble.BuildQuery(QueryAble) );
        DataSet.Open;
        result := DataSet;
   except
@@ -526,7 +526,8 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-    QueryAble:= From(FEntity).Select.Count;
+
+    QueryAble:= From(FEntity).Select(FEntity.ID);
     DataSet := ToDataSet( QueryAble );
     result:= not DataSet.IsEmpty;
     DataSet.Free;
@@ -546,7 +547,7 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-    QueryAble:= From(FEntity).Where(Condition).Select.Count;
+    QueryAble:= From(FEntity).Where(Condition).Select(FEntity.ID);
     DataSet := ToDataSet( QueryAble );
     result:= not DataSet.IsEmpty;
     DataSet.Free;

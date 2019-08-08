@@ -320,7 +320,7 @@ begin
                           '',
                           'Fisica',
                           'Casado',
-                          'Teste');
+                          'Teste' );
 
        Clientes.Add(C);
     end;
@@ -357,8 +357,6 @@ begin
        DataSource1.DataSet.Next;
      end;
      _Db.Clientes.RemoveRange(Entities);
-
-
   finally
      _Db.Destroy;
      Entities.Free;
@@ -413,7 +411,7 @@ begin
                     Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
        //E := _Db.Clientes.Find( QueryAble );
 
-       if _Db.Clientes.Any then
+       if _Db.Clientes.Any( E.Id = 3 ) then
            mlog.Lines.Add( 'Tem Cliente' )
        else
           mlog.Lines.Add( 'Nao Tem Cliente' );
