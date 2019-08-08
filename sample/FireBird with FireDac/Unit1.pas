@@ -192,8 +192,6 @@ var
    E: TCliente;
   _Db: TDataContext;
   L:Collection<TCliente>;
-  C:TCliente;
-   contato:TContato;
 begin
   try
      _Db := TDataContext.Create(Connection);
@@ -202,32 +200,24 @@ begin
      L := _Db.Clientes.Include(E.Veiculo)
                        .Include(E.Contatos)
                        .ToList( E.Ativo = '1' );
-      mlog.Lines.clear;
-     { L.ForEach(
-                  procedure
-                  var
-                     C:TCliente;
-                  begin
-                     mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
-                     mlog.Lines.Add('Placa: ' + C.Veiculo.Placa.Value );
-                     mlog.Lines.Add('Contatos :');
-                     for contato in C.Contatos do
-                     begin
-                       mlog.Lines.Add('    ' + contato.Nome.Value);
-                     end;
-                  end ); }
+     mlog.Lines.clear;
+     L.ForEach(  procedure (C: TCliente)
+                 var
+                   contato:TContato;
+                 begin
 
-     for C in L do
-     begin
-         mlog.Lines.Add('ID: ' + C.ID.Value.ToString +'       Nome: ' + C.Nome.Value+'       CNPJ: ' + C.CPFCNPJ.Value);
-         mlog.Lines.Add('Placa: ' + C.Veiculo.Placa.Value );
-         mlog.Lines.Add('Contatos :');
-         for contato in C.Contatos do
-         begin
-           mlog.Lines.Add('    ' + contato.Nome.Value);
-         end;
-     end;
-
+                    with TCliente(C) do
+                    begin
+                      mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' + Nome.Value+'       CNPJ: ' +CPFCNPJ.Value);
+                      mlog.Lines.Add('Placa: ' + Veiculo.Placa.Value );
+                      mlog.Lines.Add('Contatos :');
+                      for contato in Contatos do
+                      begin
+                        mlog.Lines.Add('    ' + contato.Nome.Value);
+                      end;
+                    end;
+                 end
+                 );
   finally
     _Db.Destroy;
     FreeAndNil( L );

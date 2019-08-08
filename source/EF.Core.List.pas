@@ -8,9 +8,12 @@ uses
 type
   ClassEntity = TEntityBase;
 
-  TMethod = reference to procedure;
+
 
   Collection<T:ClassEntity> = class( TObjectList<T> )
+  private
+     type
+       TMethod = reference to procedure (C: T);
   public
     function List: T;
     constructor Create(Initialize:boolean = true);
@@ -39,7 +42,7 @@ var
 begin
   for E in Self do
   begin
-    M;
+    M(E);
   end;
 end;
 
