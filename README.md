@@ -73,6 +73,7 @@ EF.QueryAble.Linq;
 
 Add;<br>
 AddRange;<br>
+Update;<br>
 UpdateRange;<br>
 Remove;<br>
 RemoveRange;<br>
