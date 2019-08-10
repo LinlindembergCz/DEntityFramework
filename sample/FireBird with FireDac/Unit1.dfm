@@ -173,7 +173,7 @@ object Form1: TForm1
       Top = 4
       Width = 120
       Height = 25
-      Caption = 'SQLScript'
+      Caption = 'AddScript'
       TabOrder = 15
       OnClick = Button14Click
     end
@@ -185,6 +185,15 @@ object Form1: TForm1
       Caption = 'Any'
       TabOrder = 16
       OnClick = Button15Click
+    end
+    object Button16: TButton
+      Left = 644
+      Top = 66
+      Width = 120
+      Height = 25
+      Caption = 'Count'
+      TabOrder = 17
+      OnClick = Button16Click
     end
   end
   object Panel2: TPanel

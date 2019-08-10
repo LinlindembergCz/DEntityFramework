@@ -38,6 +38,7 @@ type
     Button13: TButton;
     Button14: TButton;
     Button15: TButton;
+    Button16: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -56,6 +57,7 @@ type
     procedure buttonGetSQLClick(Sender: TObject);
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -411,7 +413,7 @@ begin
                     Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
        //E := _Db.Clientes.Find( QueryAble );
 
-       if _Db.Clientes.Any( E.Id = 3 ) then
+       if _Db.Clientes.Any(E.Id = 3 ) then
            mlog.Lines.Add( 'Tem Cliente' )
        else
           mlog.Lines.Add( 'Nao Tem Cliente' );
@@ -419,6 +421,26 @@ begin
    finally
      _Db.Destroy;
    end;
+end;
+
+procedure TForm1.Button16Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  count: integer;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+      E:= _Db.Clientes.Entity;
+
+      count:= _Db.Clientes.Count;
+
+      mlog.Lines.Add( count.ToString );
+
+   finally
+     _Db.Destroy;
+   end;
+
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

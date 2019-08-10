@@ -53,6 +53,9 @@ Type
     function Any(Condition:TString ):Boolean;overload;
     function Any(QueryAble: IQueryAble ):Boolean;overload;
 
+    function Count:integer;overload;
+    function Count(Condition:TString ):integer;overload;
+
     function BuildQuery(QueryAble: IQueryAble): string;
 
     function Find(QueryAble: IQueryAble): T; overload;
@@ -667,6 +670,28 @@ begin
       result := FDbSet.ChangeCount
    else
       result := 0;
+end;
+
+function TDbSet<T>.Count: integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Count(Condition: TString): integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
 end;
 
 constructor TDbSet<T>.Create( aDatabase: TDatabaseFacade );
