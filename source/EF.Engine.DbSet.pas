@@ -677,7 +677,7 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-  QueryAble:= From(FEntity).Select('Count(*)');//From(FEntity).Select(FEntity.ID);
+  QueryAble:= From(FEntity).Select.Count;//('Count(*)');//From(FEntity).Select(FEntity.ID);
   DataSet := ToDataSet( QueryAble );
   result:= DataSet.fields[0].AsInteger;
   DataSet.Free;
@@ -688,7 +688,7 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-  QueryAble:= From(FEntity).Where(Condition).Select('Count(*)');//From(FEntity).Select(FEntity.ID);
+  QueryAble:= From(FEntity).Where(Condition).Select.Count;//('Count(*)');//From(FEntity).Select(FEntity.ID);
   DataSet := ToDataSet( QueryAble );
   result:= DataSet.fields[0].AsInteger;
   DataSet.Free;
