@@ -79,6 +79,7 @@ RemoveRange;<br>
 SaveChanges;<br>
 Find;<br>
 Any;<br>
+Count;<br>
 ToList;<br>
 ToJson;<br>
 ToDataSet;<br>
