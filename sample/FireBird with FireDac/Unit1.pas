@@ -10,7 +10,9 @@ uses
   DataContext, EF.Core.List, EF.QueryAble.Base, EF.QueryAble.Linq, EF.Core.Types,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, EF.Drivers.Connection, EF.Drivers.FireDac;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, EF.Drivers.Connection, EF.Drivers.FireDac,
+  FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.VCLUI.Wait;
 
 type
   TForm1 = class(TForm)
@@ -79,10 +81,10 @@ uses UDataModule, EF.Mapping.AutoMapper,
 procedure TForm1.FormCreate(Sender: TObject);
 begin
      Connection:= TEntityFDConnection.Create( fdFB ,
-                                       'SYSDBA',
-                                       'masterkey',
-                                       'LocalHost',
-                                       extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+                                              'SYSDBA',
+                                              'masterkey',
+                                              'LocalHost',
+                                              extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
   {  Connection.MigrationDataBase( [ TEmpresa,
                                      TCliente,
                                      TClienteEmpresa,
@@ -110,9 +112,9 @@ begin
       E:= _Db.Clientes.Entity;
 
       QueryAble := From( E ).Select.OrderBy ( E.Nome );
-
-      FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
-
+      //FDMemTable1.Close;
+      //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
+      DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
    finally
      _Db.Destroy;
    end;
@@ -329,7 +331,11 @@ begin
 
     _Db.Clientes.AddRange(Clientes, true);
 
+    //_Db.Clientes.SaveChanges;
+
   finally
+     //DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
+
      _Db.Destroy;
     Clientes.Free;
 
@@ -392,8 +398,8 @@ var
 begin
   _Db := TDataContext.Create(Connection);
 
-  _Db.AddScript('Insert Into Clientes (Nome, NomeFantasia) Values (''Joao'',''Joao Maria'')');
-  _Db.AddScript('Insert Into Clientes (Nome, NomeFantasia) Values (''Maria'',''Maria Jose'')');
+  _Db.AddScript(Format('Insert Into Clientes (Nome, NomeFantasia) Values ( ''%s'', ''%s'')',['Joao','Joao Maria']));
+  _Db.AddScript(Format('Insert Into Clientes (Nome, NomeFantasia) Values (''%s'', ''%s'')',['Maria','Maria Jose']));
 
   _Db.ExecuteScript;
 
@@ -481,7 +487,9 @@ begin
                         'Casado',
                         'Teste');
     //C.Clientes.Validate;
-    _Db.Clientes.Add(C, true);
+    _Db.Clientes.Add(C);
+
+    _Db.Clientes.SaveChanges;
 
     DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
   finally
