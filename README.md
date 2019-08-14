@@ -73,12 +73,14 @@ EF.QueryAble.Linq;
 
 Add;<br>
 AddRange;<br>
+Update;<br>
 UpdateRange;<br>
 Remove;<br>
 RemoveRange;<br>
 SaveChanges;<br>
 Find;<br>
 Any;<br>
+Count;<br>
 ToList;<br>
 ToJson;<br>
 ToDataSet;<br>
