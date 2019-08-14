@@ -14,7 +14,7 @@ uses
 
 type
   TTypeConnection = (tpNone, tpADO, tpDBExpress, tpFireDac);
-  FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB, fdPG );
+  FDConn = ( fdMyQL,fdMSSQL,fdFirebird, fdFB, fdPG, fdSQLite );
 
   TDatabaseFacade = class
   private

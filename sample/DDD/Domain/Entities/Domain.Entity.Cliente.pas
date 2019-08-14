@@ -5,7 +5,8 @@ interface
 uses
   System.Classes,  Domain.ValuesObject.Email, Dialogs, SysUtils,  EF.Mapping.Base, EF.Core.Types,
   EF.Mapping.Atributes, Domain.Entity.Contato, Domain.Entity.Veiculo,Domain.Entity.ClienteTabelaPreco,
-  System.Generics.Collections, Domain.Consts, Domain.Entity.ClienteEmpresa, EF.Core.List;
+  System.Generics.Collections, Domain.Consts, Domain.Entity.ClienteEmpresa, EF.Core.List,
+  Domain.Entity.Endereco;
 
 type
   [View('vwClientes')]
@@ -39,6 +40,7 @@ type
     FVeiculo: TVeiculo;
     FClienteTabelaPreco: TClienteTabelaPreco;
     FClienteEmpresa: TClienteEmpresa;
+    FEndereco: TEndereco;
 
   public
     constructor Create;override;
@@ -86,6 +88,11 @@ type
     [NotMapped]
     property ClienteEmpresa: TClienteEmpresa read FClienteEmpresa write FClienteEmpresa;
 
+
+    [NotMapped]
+    [Reference('CLIENTES.ID = ENDERECO.ClienteId')]
+    property Endereco: TEndereco read FEndereco write FEndereco;
+
     class function New(const aCPFCNPJ: TString;const  aRenda: TFloat;const  aIdade: TInteger;
     const aNome, aRG: TString;const  aDataNascimento: TDate;const  aAtivo, aNomeFantasia,
     aSituacao, aTipo, aEstadoCivil, aObservacao: TString):TCliente;
@@ -104,9 +111,8 @@ begin
   FClienteTabelaPreco := TClienteTabelaPreco.Create;
   FClienteEmpresa     := TClienteEmpresa.Create;
   FContados           := Collection<TContato>.create;
+  Endereco            := TEndereco.Create;
 end;
-
-
 
 class function TCliente.New(const aCPFCNPJ: TString;const  aRenda: TFloat;const  aIdade: TInteger;
   const aNome, aRG: TString;const  aDataNascimento: TDate;const  aAtivo, aNomeFantasia,

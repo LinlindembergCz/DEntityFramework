@@ -40,7 +40,9 @@ uses
   EF.Core.List in '..\..\source\EF.Core.List.pas',
   DataContext in 'DataContext.pas',
   EF.Engine.DbContext in '..\..\source\EF.Engine.DbContext.pas',
-  EF.QueryAble.Linq in '..\..\source\EF.QueryAble.Linq.pas';
+  EF.QueryAble.Linq in '..\..\source\EF.QueryAble.Linq.pas',
+  EF.Schema.SQLite in '..\..\source\EF.Schema.SQLite.pas',
+  Domain.Entity.Endereco in '..\DDD\Domain\Entities\Domain.Entity.Endereco.pas';
 
 {$R *.res}
 

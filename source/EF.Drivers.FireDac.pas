@@ -23,6 +23,7 @@ type
   TEntityFDConnection = class(TDatabaseFacade)
   private
     procedure BeforeConnect(Sender: TObject);
+    procedure FillDataBase(aDriver: FDConn);
   public
     procedure GetTableNames(var List: TStringList); override;
     procedure GetFieldNames(var List: TStringList; Table: string); override;
@@ -42,7 +43,7 @@ uses
  EF.Schema.MSSQL,
  EF.Schema.Firebird,
  EF.Schema.MySQL,
- EF.Schema.PostGres;
+ EF.Schema.PostGres, EF.Schema.SQLite;
 
 resourcestring
   StrMyQL = 'MySQL';
@@ -50,6 +51,7 @@ resourcestring
   StrFirebird = 'Firebird';
   StrFB = 'FB';
   StrPG = 'PG';
+  StrSQLite = 'SQLite';
 
 { TLinqFDConnection }
 
@@ -118,6 +120,7 @@ constructor TEntityFDConnection.Create(aDriver: FDConn; aUser,aPassword,aServer,
 begin
   inherited;
   CustomConnection := TFDConnection.Create(application);
+
   CustomConnection.LoginPrompt:= false;
   CustomConnection.BeforeConnect:= BeforeConnect;
 
@@ -127,67 +130,52 @@ begin
   FUser     := aUser;
   FPassword := aPassword;
 
-  case aDriver of
-     fdMyQL:
-     begin
-        CustomTypeDataBase := TMySQL.create;
-        FDriver   := StrMyQL;
-     end;
-     fdMSSQL:
-     begin
-        CustomTypeDataBase := TMSSQL.create;
-        FDriver   := StrMSSQL;
-     end;
-     fdFirebird:
-     begin
-        CustomTypeDataBase := TFirebird.create;
-        FDriver   := StrFirebird;
-     end;
-     fdFB:
-     begin
-        CustomTypeDataBase := TFirebird.create;
-        FDriver   := StrFB;
-     end;
-     fdPG:
-     begin
-        CustomTypeDataBase := TPostgres.create;
-        FDriver   := StrPG;
-     end;
-  end;
+  FillDataBase(aDriver);
 end;
 
 constructor TEntityFDConnection.Create(aDriver: FDConn; Conn: TFDConnection);
 begin
   CustomConnection:= Conn;
   CustomConnection.LoginPrompt:= false;
-  case aDriver of
-     fdMyQL:
-     begin
-        CustomTypeDataBase := TMySQL.create;
-        FDriver   := StrMyQL;
-     end;
-     fdMSSQL:
-     begin
-        CustomTypeDataBase := TMSSQL.create;
-        FDriver   := StrMSSQL;
-     end;
-     fdFirebird:
-     begin
-        CustomTypeDataBase := TFirebird.create;
-        FDriver   := StrFirebird;
-     end;
-     fdFB:
-     begin
-        CustomTypeDataBase := TFirebird.create;
-        FDriver   := StrFB;
-     end;
-     fdPG:
-     begin
-        CustomTypeDataBase := TPostgres.create;
-        FDriver   := StrPG;
-     end;
-  end;
 
+  FillDataBase(aDriver);
+
+end;
+
+procedure TEntityFDConnection.FillDataBase(aDriver: FDConn);
+begin
+  case aDriver of
+    fdMyQL:
+      begin
+        CustomTypeDataBase := TMySQL.create;
+        FDriver := StrMyQL;
+      end;
+    fdMSSQL:
+      begin
+        CustomTypeDataBase := TMSSQL.create;
+        FDriver := StrMSSQL;
+      end;
+    fdFirebird:
+      begin
+        CustomTypeDataBase := TFirebird.create;
+        FDriver := StrFirebird;
+      end;
+    fdFB:
+      begin
+        CustomTypeDataBase := TFirebird.create;
+        FDriver := StrFB;
+      end;
+    fdPG:
+      begin
+        CustomTypeDataBase := TPostgres.create;
+        FDriver := StrPG;
+      end;
+    fdSQLite:
+      begin
+        CustomTypeDataBase := TSQLite.create;
+        FDriver := StrSQLite;
+      end;
+  end;
 end;
 
 procedure TEntityFDConnection.BeforeConnect(Sender: TObject);

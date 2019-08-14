@@ -220,6 +220,7 @@ type
 
   const
     Char1      = 'varchar(1)';
+    varchar2   = 'varchar(2)';
     varchar10  = 'varchar(10)';
     varchar15  = 'varchar(15)';
     varchar20  = 'varchar(20)';

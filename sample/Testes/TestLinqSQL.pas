@@ -90,14 +90,10 @@ type
     procedure TestarSelectComWhere_MenorIgualA_com_tipo_float_Object;
     //Avançados
     procedure TestarSelectJoinComWhereObject;
-    procedure TestarSelectDoisJoinComWhereObject;
     procedure TestarSelectLeftJoinComWhereObject;
     procedure TestarSelectRightJoinComWhereObject;
-    procedure TestarSelectJoinELeftJoinComWhereObject;
-    procedure TestarSelectJoinERightJoinComWhereObject;
     procedure TestarSelectCamposArrayComWhere_AND_Object;
     procedure TestarSelectCamposArrayComWhere_OR_Object;
-    procedure TestarSelectJoin_Operator_AND_ComWhereObject;
     procedure TestarSelectCamposArrayComWhereObject;
     procedure TestarSelectCom_SubQuery_Object;
     procedure TestarSelectCom_SubQuery2_Object;
@@ -639,20 +635,7 @@ begin
 end;
 
 
-procedure TTest.Testar_Reference;
-//var
-//  Query: IQueryAble;
-begin
-  {Query := From(Pessoa).
-           Join(Pessoa.Endereco).
-           Where(Pessoa.Id = 1).
-           Select([ Pessoa.Nome,
-                    Pessoa.Endereco.Logradouro]) ;
 
-  CheckEquals('Select Pessoa.Nome, Endereco.Logradouro From Pessoa '+
-  'Inner Join Endereco On Pessoa.Id = Endereco.PessoaId Where Pessoa.Id = 1',
-  Context.GetQuery(Query) );}
-end;
 
 procedure TTest.Testar_Sincronizer;
 begin
@@ -999,6 +982,22 @@ begin
   Context.BuildQuery(Query) );
 end;
 
+procedure TTest.Testar_Reference;
+//var
+//  Query: IQueryAble;
+begin
+  Query := From(Pessoa).
+           inner(Pessoa.Endereco). //Ou , Pessoa.ID = Pessoa.Endereco.ClienteId'
+           Where(Pessoa.Id = 1).
+           Select([ Pessoa.Nome,
+                    Pessoa.Endereco.Logradouro]) ;
+
+  CheckEquals('Select CLIENTES.Nome, ENDERECO.Logradouro From Clientes '+
+  'Inner Join Endereco On CLIENTES.ID = ENDERECO.ClienteId Where CLIENTES.ID = 1',
+  Context.BuildQuery(Query) );
+
+end;
+
 procedure TTest.TestarSelectJoinComWhereObject;
 //var
 //  Query: IQueryAble;
@@ -1012,22 +1011,6 @@ begin
   Context.BuildQuery(Query) );
 end;
 
-procedure TTest.TestarSelectDoisJoinComWhereObject;
-//var
-//  Query: IQueryAble;
-begin
-  {
-  Query := From(Pessoa).
-                Join( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id ).
-                Join( PessoaFisica, PessoaFisica.Id=Pessoa.Id).
-                Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
-                Select([Pessoa.Nome]);
-  CheckEquals( 'Select Pessoa.Nome From Pessoa Inner Join Endereco On Endereco.PessoaId = Pessoa.Id '+
-               'Inner Join PessoaFisica On PessoaFisica.Id = Pessoa.Id Where Pessoa.Id = 1 Order by Pessoa.Nome',
-               Context.BuildQuery(Query) );
-  }
-end;
 
 procedure TTest.TestarSelectLeftJoinComWhereObject;
 //var
@@ -1123,62 +1106,10 @@ procedure TTest.TestarSelectTodosCampo_Top_10_Object;
 //var
 //  Query: IQueryAble;
 begin
-  CheckEquals('','');
- { Query := From(Pessoa).Select.TopFirst(10);
+  {CheckEquals('','');
+  Query := From(Pessoa).Select.Top(10);
   CheckEquals('Select Top 10 Nome, NomeFantasia, CPFCNPJ, Renda, Idade, RG, DataNascimento, Ativo, Situacao, Tipo, EstadoCivil, Observacao, Email, ID From Clientes',
   Context.BuildQuery(Query) );}
-end;
-
-procedure TTest.TestarSelectJoinERightJoinComWhereObject;
-//var
-//  Query: IQueryAble;
-begin
-  {
-  Query := From(Pessoa).
-                Join( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id ).
-                JoinRight( PessoaFisica, PessoaFisica.Id=Pessoa.Id).
-                Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
-                Select([Pessoa.Nome]);
-  CheckEquals('Select Pessoa.Nome From Pessoa Inner Join Endereco On Endereco.PessoaId = Pessoa.Id '+
-  'Right Join PessoaFisica On PessoaFisica.Id = Pessoa.Id Where Pessoa.Id = 1 Order by Pessoa.Nome',
-  Context.BuildQuery(Query) );
-  }
-end;
-
-procedure TTest.TestarSelectJoinELeftJoinComWhereObject;
-//var
-//  Query: IQueryAble;
-begin
-  {
-  Query := From(Pessoa).
-                Join( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id ).
-                JoinLeft( PessoaFisica, PessoaFisica.Id=Pessoa.Id).
-                Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
-                Select([Pessoa.Nome]);
-  CheckEquals('Select Pessoa.Nome From Pessoa Inner Join Endereco On Endereco.PessoaId = Pessoa.Id '+
-  'Left Join PessoaFisica On PessoaFisica.Id = Pessoa.Id Where Pessoa.Id = 1 Order by Pessoa.Nome',
-  Context.BuildQuery(Query) );
-  }
-end;
-
-procedure TTest.TestarSelectJoin_Operator_AND_ComWhereObject;
-//var
-//  Query: IQueryAble;
-begin
-  {
-  Query := From(Pessoa).
-                Join( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id).
-                Join( PessoaFisica, (PessoaFisica.Id=Pessoa.Id) and (PessoaFisica.Nome=Pessoa.Nome) ).
-                Where(Pessoa.Id=1).
-                Order([Pessoa.Nome]).
-                Select([Pessoa.Nome]);
-
-  CheckEquals('Select Pessoa.Nome From Pessoa Inner Join Endereco On Endereco.PessoaId = Pessoa.Id '+
-  'Inner Join PessoaFisica On PessoaFisica.Id = Pessoa.Id and PessoaFisica.Nome = Pessoa.Nome Where Pessoa.Id = 1 Order by Pessoa.Nome',
-  Context.BuildQuery(Query) );
-  }
 end;
 
 procedure TTest.TestarSelectCamposArrayComWhereObject;

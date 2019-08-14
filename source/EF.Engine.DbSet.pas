@@ -655,7 +655,9 @@ end;
 procedure TDbSet<T>.SaveChanges;
 begin
   if (DbSet <> nil ) and (ChangeCount > 0) then
+  begin
       DbSet.ApplyUpdates(0);
+  end;
 end;
 
 procedure TDbSet<T>.RefreshDataSet;

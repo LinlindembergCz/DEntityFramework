@@ -51,7 +51,8 @@ uses
   Domain.Entity.Produto in '..\DDD\Domain\Entities\Domain.Entity.Produto.pas',
   Domain.Entity.TabelaPreco in '..\DDD\Domain\Entities\Domain.Entity.TabelaPreco.pas',
   Domain.Entity.Veiculo in '..\DDD\Domain\Entities\Domain.Entity.Veiculo.pas',
-  EF.Engine.DbContext in '..\..\source\EF.Engine.DbContext.pas';
+  EF.Engine.DbContext in '..\..\source\EF.Engine.DbContext.pas',
+  Domain.Entity.Endereco in '..\DDD\Domain\Entities\Domain.Entity.Endereco.pas';
 
 {$R *.RES}
 
