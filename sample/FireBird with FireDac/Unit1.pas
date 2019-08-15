@@ -8,11 +8,7 @@ uses
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente, System.Generics.Collections,
   Vcl.ExtCtrls, Datasnap.DBClient, Data.DB.Helper,
   DataContext, EF.Core.List, EF.QueryAble.Base, EF.QueryAble.Linq, EF.Core.Types,
-  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
-  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, EF.Drivers.Connection, EF.Drivers.FireDac,
-  FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
-  FireDAC.Phys, FireDAC.VCLUI.Wait;
+  EF.Drivers.FireDac;
 
 type
   TForm1 = class(TForm)
@@ -36,7 +32,6 @@ type
     Button10: TButton;
     Button11: TButton;
     Button12: TButton;
-    FDMemTable1: TFDMemTable;
     Button13: TButton;
     Button14: TButton;
     Button15: TButton;
@@ -76,7 +71,7 @@ implementation
 {$R *.dfm}
 
 uses UDataModule, EF.Mapping.AutoMapper,
-     Domain.Entity.Contato;
+     Domain.Entity.Contato, EF.Drivers.Connection;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -85,6 +80,8 @@ begin
                                               'masterkey',
                                               'LocalHost',
                                               extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+
+
   {  Connection.MigrationDataBase( [ TEmpresa,
                                      TCliente,
                                      TClienteEmpresa,
@@ -94,6 +91,7 @@ begin
                                      TClienteTabelaPreco,
                                      TProduto,
                                      TItensTabelaPreco ] ); }
+
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -176,15 +174,8 @@ var
   QueryAble: IQueryAble;
 begin
   try
-    { QueryAble := From( E )
-               .Select
-               .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );  }
-   //E := _Db.Clientes.Find( QueryAble );
-
     _Db := TDataContext.Create(Connection);
-     E:= _Db.Clientes.Entity;
-     E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
-
+     E := _Db.Clientes.Find( _Db.Clientes.Entity.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
      mLog.Text:= E.ToJson;
   finally
     _Db.Destroy;
@@ -278,8 +269,8 @@ begin
         E:= _Db.Clientes.Entity;
 
         C := _Db.Clientes.Include(E.Veiculo).
-                     Include(E.Contatos).
-                     Where( E.ID = DataSource1.DataSet.FieldByName('ID').AsInteger );
+                          Include(E.Contatos).
+                          Where( E.ID = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
         mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
         mlog.Lines.Add('Nome: ' + C.Nome.Value);
@@ -300,15 +291,13 @@ end;
 
 procedure TForm1.Button10Click(Sender: TObject);
 var
+  _Db: TDataContext;
    I:integer;
    Clientes : Collection<TCliente>;
    C: TCliente;
-   E: TCliente;
-  _Db: TDataContext;
 begin
   try
     _Db := TDataContext.Create(Connection);
-    E:= _Db.Clientes.Entity;
 
     Clientes := Collection<TCliente>.create(false);
     for I := 0 to 3 do
@@ -329,9 +318,9 @@ begin
        Clientes.Add(C);
     end;
 
-    _Db.Clientes.AddRange(Clientes, true);
+    _Db.Clientes.AddRange(Clientes);
 
-    //_Db.Clientes.SaveChanges;
+    _Db.Clientes.SaveChanges;
 
   finally
      //DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
@@ -417,7 +406,6 @@ begin
        {QueryAble := From( E ).
                     Select.
                     Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
-       //E := _Db.Clientes.Find( QueryAble );
 
        if _Db.Clientes.Any(E.Id = 3 ) then
            mlog.Lines.Add( 'Tem Cliente' )
@@ -467,12 +455,10 @@ end;
 procedure TForm1.Button6Click(Sender: TObject);
 var
    C: TCliente;
-    E: TCliente;
   _Db: TDataContext;
 begin
   try
     _Db := TDataContext.Create(Connection);
-    E:= _Db.Clientes.Entity;
 
     C := TCliente.New( '02316937455',
                         0,
@@ -491,7 +477,6 @@ begin
 
     _Db.Clientes.SaveChanges;
 
-    DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
   finally
     _Db.Destroy;
     C.Free;
@@ -501,8 +486,8 @@ end;
 
 procedure TForm1.Button7Click(Sender: TObject);
 var
-   E: TCliente;
   _Db: TDataContext;
+   E: TCliente;
 begin
    try
       _Db := TDataContext.Create(Connection);

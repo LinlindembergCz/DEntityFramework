@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   Caption = 'Form1'
   ClientHeight = 532
-  ClientWidth = 799
+  ClientWidth = 882
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -26,12 +26,13 @@ object Form1: TForm1
   object panelButtons: TPanel
     Left = 0
     Top = 0
-    Width = 799
-    Height = 105
-    Align = alTop
+    Width = 297
+    Height = 296
+    Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitHeight = 327
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4
@@ -43,7 +44,7 @@ object Form1: TForm1
     end
     object buttonGetSQL: TButton
       Left = 14
-      Top = 35
+      Top = 31
       Width = 120
       Height = 25
       Caption = 'BuildQuery'
@@ -52,7 +53,7 @@ object Form1: TForm1
     end
     object buttonGetEntity: TButton
       Left = 14
-      Top = 66
+      Top = 57
       Width = 120
       Height = 25
       Caption = 'Find'
@@ -60,8 +61,8 @@ object Form1: TForm1
       OnClick = buttonGetEntityClick
     end
     object Button2: TButton
-      Left = 140
-      Top = 4
+      Left = 14
+      Top = 83
       Width = 120
       Height = 25
       Caption = 'ToJson'
@@ -69,8 +70,8 @@ object Form1: TForm1
       OnClick = Button2Click
     end
     object Button3: TButton
-      Left = 140
-      Top = 35
+      Left = 14
+      Top = 110
       Width = 120
       Height = 25
       Caption = 'FromJson'
@@ -79,8 +80,8 @@ object Form1: TForm1
       OnClick = Button3Click
     end
     object Button4: TButton
-      Left = 266
-      Top = 35
+      Left = 14
+      Top = 192
       Width = 120
       Height = 25
       Caption = 'Include'
@@ -88,8 +89,8 @@ object Form1: TForm1
       OnClick = Button4Click
     end
     object Button5: TButton
-      Left = 266
-      Top = 4
+      Left = 15
+      Top = 165
       Width = 120
       Height = 25
       Caption = 'ThenInclude'
@@ -97,7 +98,7 @@ object Form1: TForm1
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 392
+      Left = 152
       Top = 4
       Width = 120
       Height = 25
@@ -106,8 +107,8 @@ object Form1: TForm1
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 392
-      Top = 35
+      Left = 152
+      Top = 31
       Width = 120
       Height = 25
       Caption = 'Update'
@@ -115,8 +116,8 @@ object Form1: TForm1
       OnClick = Button7Click
     end
     object Button8: TButton
-      Left = 392
-      Top = 66
+      Left = 152
+      Top = 57
       Width = 120
       Height = 25
       Caption = 'Remove'
@@ -124,8 +125,8 @@ object Form1: TForm1
       OnClick = Button8Click
     end
     object Button9: TButton
-      Left = 140
-      Top = 66
+      Left = 14
+      Top = 137
       Width = 120
       Height = 25
       Caption = 'ToList'
@@ -133,8 +134,8 @@ object Form1: TForm1
       OnClick = Button9Click
     end
     object Button10: TButton
-      Left = 518
-      Top = 4
+      Left = 152
+      Top = 83
       Width = 120
       Height = 25
       Caption = 'Add Range'
@@ -142,8 +143,8 @@ object Form1: TForm1
       OnClick = Button10Click
     end
     object Button11: TButton
-      Left = 518
-      Top = 35
+      Left = 152
+      Top = 110
       Width = 120
       Height = 25
       Caption = 'Update  Range'
@@ -151,8 +152,8 @@ object Form1: TForm1
       TabOrder = 12
     end
     object Button12: TButton
-      Left = 518
-      Top = 66
+      Left = 152
+      Top = 137
       Width = 120
       Height = 25
       Caption = 'Remove  Range'
@@ -160,8 +161,8 @@ object Form1: TForm1
       OnClick = Button12Click
     end
     object Button13: TButton
-      Left = 266
-      Top = 66
+      Left = 14
+      Top = 219
       Width = 120
       Height = 25
       Caption = 'FromSQL'
@@ -169,8 +170,8 @@ object Form1: TForm1
       OnClick = Button13Click
     end
     object Button14: TButton
-      Left = 644
-      Top = 4
+      Left = 152
+      Top = 165
       Width = 120
       Height = 25
       Caption = 'AddScript'
@@ -178,8 +179,8 @@ object Form1: TForm1
       OnClick = Button14Click
     end
     object Button15: TButton
-      Left = 644
-      Top = 35
+      Left = 152
+      Top = 192
       Width = 120
       Height = 25
       Caption = 'Any'
@@ -187,8 +188,8 @@ object Form1: TForm1
       OnClick = Button15Click
     end
     object Button16: TButton
-      Left = 644
-      Top = 66
+      Left = 152
+      Top = 219
       Width = 120
       Height = 25
       Caption = 'Count'
@@ -197,20 +198,21 @@ object Form1: TForm1
     end
   end
   object Panel2: TPanel
-    Left = 0
-    Top = 105
-    Width = 799
-    Height = 222
+    Left = 297
+    Top = 0
+    Width = 585
+    Height = 296
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
+    ExplicitHeight = 327
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
-      Width = 795
-      Height = 218
+      Width = 581
+      Height = 292
       Align = alClient
       DataSource = DataSource1
       TabOrder = 0
@@ -223,27 +225,15 @@ object Form1: TForm1
   end
   object mLog: TMemo
     Left = 0
-    Top = 327
-    Width = 799
-    Height = 205
+    Top = 296
+    Width = 882
+    Height = 236
     Align = alBottom
     ScrollBars = ssVertical
     TabOrder = 3
   end
   object DataSource1: TDataSource
-    DataSet = FDMemTable1
     Left = 368
     Top = 136
-  end
-  object FDMemTable1: TFDMemTable
-    FetchOptions.AssignedValues = [evMode]
-    FetchOptions.Mode = fmAll
-    ResourceOptions.AssignedValues = [rvSilentMode]
-    ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.AutoCommitUpdates = True
-    Left = 368
-    Top = 185
   end
 end
