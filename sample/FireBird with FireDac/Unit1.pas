@@ -18,7 +18,6 @@ type
     Panel2: TPanel;
     DBGrid1: TDBGrid;
     buttonGetDataSet: TButton;
-    mLog: TMemo;
     buttonGetSQL: TButton;
     buttonGetEntity: TButton;
     Button2: TButton;
@@ -37,6 +36,10 @@ type
     Button15: TButton;
     Button16: TButton;
     Button17: TButton;
+    mLog: TMemo;
+    Button18: TButton;
+    Button19: TButton;
+    Button20: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -57,6 +60,9 @@ type
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
+    procedure Button19Click(Sender: TObject);
+    procedure Button20Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -167,6 +173,26 @@ begin
 
      _Db.Destroy;
   end;
+end;
+
+procedure TForm1.Button20Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  Media: Double;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+      E:= _Db.Clientes.Entity;
+
+      Media:= _Db.Clientes.Avg(E.Idade);
+
+      mlog.Lines.Add( Media.ToString );
+
+   finally
+     _Db.Destroy;
+   end;
+
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -442,19 +468,59 @@ procedure TForm1.Button17Click(Sender: TObject);
 var
    E: TCliente;
   _Db: TDataContext;
-  Soma: Double;
+  SUM: Double;
 begin
    try
       _Db := TDataContext.Create(Connection);
       E:= _Db.Clientes.Entity;
 
-      Soma:= _Db.Clientes.SUM(E.Renda);
+      SUM:= _Db.Clientes.SUM(E.Renda);
 
-      mlog.Lines.Add( Soma.ToString );
+      mlog.Lines.Add( SUM.ToString );
 
    finally
      _Db.Destroy;
    end;
+end;
+
+procedure TForm1.Button18Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  Min: Double;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+      E:= _Db.Clientes.Entity;
+
+      Min:= _Db.Clientes.Min(E.Id);
+
+      mlog.Lines.Add( Min.ToString );
+
+   finally
+     _Db.Destroy;
+   end;
+
+end;
+
+procedure TForm1.Button19Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  Max: Double;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+      E:= _Db.Clientes.Entity;
+
+      Max:= _Db.Clientes.Max(E.Id);
+
+      mlog.Lines.Add( Max.ToString );
+
+   finally
+     _Db.Destroy;
+   end;
+
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

@@ -26,12 +26,13 @@ object Form1: TForm1
   object panelButtons: TPanel
     Left = 0
     Top = 0
-    Width = 297
-    Height = 296
+    Width = 281
+    Height = 532
     Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = -4
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4
@@ -97,7 +98,7 @@ object Form1: TForm1
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 152
+      Left = 141
       Top = 4
       Width = 120
       Height = 25
@@ -106,7 +107,7 @@ object Form1: TForm1
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 152
+      Left = 141
       Top = 31
       Width = 120
       Height = 25
@@ -115,7 +116,7 @@ object Form1: TForm1
       OnClick = Button7Click
     end
     object Button8: TButton
-      Left = 152
+      Left = 141
       Top = 57
       Width = 120
       Height = 25
@@ -133,7 +134,7 @@ object Form1: TForm1
       OnClick = Button9Click
     end
     object Button10: TButton
-      Left = 152
+      Left = 141
       Top = 83
       Width = 120
       Height = 25
@@ -142,7 +143,7 @@ object Form1: TForm1
       OnClick = Button10Click
     end
     object Button11: TButton
-      Left = 152
+      Left = 141
       Top = 110
       Width = 120
       Height = 25
@@ -151,7 +152,7 @@ object Form1: TForm1
       TabOrder = 12
     end
     object Button12: TButton
-      Left = 152
+      Left = 141
       Top = 137
       Width = 120
       Height = 25
@@ -169,7 +170,7 @@ object Form1: TForm1
       OnClick = Button13Click
     end
     object Button14: TButton
-      Left = 152
+      Left = 141
       Top = 165
       Width = 120
       Height = 25
@@ -178,7 +179,7 @@ object Form1: TForm1
       OnClick = Button14Click
     end
     object Button15: TButton
-      Left = 152
+      Left = 141
       Top = 192
       Width = 120
       Height = 25
@@ -187,8 +188,8 @@ object Form1: TForm1
       OnClick = Button15Click
     end
     object Button16: TButton
-      Left = 152
-      Top = 219
+      Left = 15
+      Top = 245
       Width = 120
       Height = 25
       Caption = 'Count'
@@ -196,29 +197,59 @@ object Form1: TForm1
       OnClick = Button16Click
     end
     object Button17: TButton
-      Left = 152
-      Top = 247
+      Left = 15
+      Top = 272
       Width = 120
       Height = 25
       Caption = 'SUM'
       TabOrder = 18
       OnClick = Button17Click
     end
+    object Button18: TButton
+      Left = 15
+      Top = 299
+      Width = 120
+      Height = 25
+      Caption = 'Min'
+      TabOrder = 19
+      OnClick = Button18Click
+    end
+    object Button19: TButton
+      Left = 15
+      Top = 326
+      Width = 120
+      Height = 25
+      Caption = 'Max'
+      TabOrder = 20
+      OnClick = Button19Click
+    end
+    object Button20: TButton
+      Left = 15
+      Top = 354
+      Width = 120
+      Height = 25
+      Caption = 'Avg'
+      TabOrder = 21
+      OnClick = Button20Click
+    end
   end
   object Panel2: TPanel
-    Left = 297
+    Left = 281
     Top = 0
-    Width = 585
-    Height = 296
+    Width = 601
+    Height = 532
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
+    ExplicitLeft = 297
+    ExplicitWidth = 585
+    ExplicitHeight = 296
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
-      Width = 581
+      Width = 597
       Height = 292
       Align = alClient
       DataSource = DataSource1
@@ -229,15 +260,17 @@ object Form1: TForm1
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
     end
-  end
-  object mLog: TMemo
-    Left = 0
-    Top = 296
-    Width = 882
-    Height = 236
-    Align = alBottom
-    ScrollBars = ssVertical
-    TabOrder = 3
+    object mLog: TMemo
+      Left = 0
+      Top = 292
+      Width = 597
+      Height = 236
+      Align = alBottom
+      ScrollBars = ssVertical
+      TabOrder = 1
+      ExplicitTop = 296
+      ExplicitWidth = 882
+    end
   end
   object DataSource1: TDataSource
     Left = 368

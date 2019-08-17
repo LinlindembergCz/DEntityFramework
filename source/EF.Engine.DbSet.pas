@@ -38,8 +38,6 @@ Type
     FEntity : T;
     procedure FreeDbSet;
   private
-
-
   protected
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
     property DbSet: TFDQuery read FDbSet write FDbSet;
@@ -58,6 +56,21 @@ Type
     function Count(Condition:TString ):integer;overload;
     function SUM(Field: TFloat): Double;overload;
     function SUM(Field: TFloat; Condition: TString ): Double;overload;
+
+    function Min(Field: TInteger): Integer;overload;
+    function Min(Field: TInteger; Condition: TString ): Integer;overload;
+    function Min(Field: TFloat): Double;overload;
+    function Min(Field: TFloat; Condition: TString ): Double;overload;
+
+    function Max(Field: TInteger): Integer;overload;
+    function Max(Field: TInteger; Condition: TString ): Integer;overload;
+    function Max(Field: TFloat): Double;overload;
+    function Max(Field: TFloat; Condition: TString ): Double;overload;
+
+    function Avg(Field: TInteger): Integer;overload;
+    function Avg(Field: TInteger; Condition: TString ): Integer;overload;
+    function Avg(Field: TFloat): Double;overload;
+    function Avg(Field: TFloat; Condition: TString ): Double;overload;
 
     function BuildQuery(QueryAble: IQueryAble): string;
 
@@ -389,6 +402,7 @@ begin
     DataSet.Free;
 end;
 
+
 function TDbSet<T>.Any(Condition:TString ): Boolean;
 var
   DataSet: TFDQuery;
@@ -517,50 +531,6 @@ begin
       result := FDbSet.ChangeCount
    else
       result := 0;
-end;
-
-function TDbSet<T>.Count: integer;
-var
-  DataSet: TFDQuery;
-  QueryAble:IQueryAble;
-begin
-  QueryAble:= From(FEntity).Select.Count;//('Count(*)');//From(FEntity).Select(FEntity.ID);
-  DataSet := ToDataSet( QueryAble );
-  result:= DataSet.fields[0].AsInteger;
-  DataSet.Free;
-end;
-
-function TDbSet<T>.Count(Condition: TString): integer;
-var
-  DataSet: TFDQuery;
-  QueryAble:IQueryAble;
-begin
-  QueryAble:= From(FEntity).Where(Condition).Select.Count;//('Count(*)');//From(FEntity).Select(FEntity.ID);
-  DataSet := ToDataSet( QueryAble );
-  result:= DataSet.fields[0].AsInteger;
-  DataSet.Free;
-end;
-
-function TDbSet<T>.SUM(Field:TFloat ): Double;
-var
-  DataSet: TFDQuery;
-  QueryAble:IQueryAble;
-begin
-  QueryAble:= From(FEntity).Select('SUM('+Field.&As+')');
-  DataSet:= ToDataSet( QueryAble );
-  result:= DataSet.fields[0].AsFloat;
-  DataSet.Free;
-end;
-
-function TDbSet<T>.SUM(Field:TFloat; Condition: TString  ): Double;
-var
-  DataSet: TFDQuery;
-  QueryAble:IQueryAble;
-begin
-  QueryAble:= From(FEntity).Where(Condition).Select('SUM('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
-  DataSet := ToDataSet( QueryAble );
-  result:= DataSet.fields[0].AsFloat;
-  DataSet.Free;
 end;
 
 constructor TDbSet<T>.Create( aDatabase: TDatabaseFacade );
@@ -900,6 +870,181 @@ begin
    result:= self;
 end;
 
+function TDbSet<T>.Count: integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select.Count;//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
 
+function TDbSet<T>.Count(Condition: TString): integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select.Count;//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.SUM(Field:TFloat ): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('SUM('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.SUM(Field:TFloat; Condition: TString  ): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('SUM('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Max(Field: TInteger): Integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Max('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Max(Field: TInteger; Condition: TString): Integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Max('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Max(Field: TFloat): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Max('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Max(Field: TFloat; Condition: TString): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Max('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Min(Field: TInteger): Integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Min('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Min(Field: TInteger; Condition: TString): Integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Min('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Min(Field: TFloat): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Min('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Min(Field: TFloat; Condition: TString): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Min('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Avg(Field: TInteger; Condition: TString): Integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Avg('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Avg(Field: TInteger): Integer;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Avg('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsInteger;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Avg(Field: TFloat; Condition: TString): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('Avg('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.Avg(Field: TFloat): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('Min('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+
+end;
 
 end.
