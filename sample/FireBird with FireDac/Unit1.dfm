@@ -32,7 +32,6 @@ object Form1: TForm1
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 327
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4
@@ -196,6 +195,15 @@ object Form1: TForm1
       TabOrder = 17
       OnClick = Button16Click
     end
+    object Button17: TButton
+      Left = 152
+      Top = 247
+      Width = 120
+      Height = 25
+      Caption = 'SUM'
+      TabOrder = 18
+      OnClick = Button17Click
+    end
   end
   object Panel2: TPanel
     Left = 297
@@ -207,7 +215,6 @@ object Form1: TForm1
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitHeight = 327
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0

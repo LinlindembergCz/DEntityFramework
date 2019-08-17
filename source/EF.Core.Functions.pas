@@ -50,6 +50,7 @@ var
   StrNot = 'Not ';
   StrExist = 'Exists';
   StrCount = 'COUNT';
+  StrSUM = 'SUM';
   _And = ' and ';
   _Equal = ' = ';
   _NotEqual = ' <> ';

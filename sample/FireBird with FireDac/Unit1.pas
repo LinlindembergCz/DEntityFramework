@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
-  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente, System.Generics.Collections,
-  Vcl.ExtCtrls, Datasnap.DBClient, Data.DB.Helper,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente,
+  System.Generics.Collections, Vcl.ExtCtrls, Datasnap.DBClient, Data.DB.Helper,
   DataContext, EF.Core.List, EF.QueryAble.Base, EF.QueryAble.Linq, EF.Core.Types,
   EF.Drivers.FireDac;
 
@@ -36,6 +36,7 @@ type
     Button14: TButton;
     Button15: TButton;
     Button16: TButton;
+    Button17: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -55,6 +56,7 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -434,7 +436,25 @@ begin
    finally
      _Db.Destroy;
    end;
+end;
 
+procedure TForm1.Button17Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  Soma: Double;
+begin
+   try
+      _Db := TDataContext.Create(Connection);
+      E:= _Db.Clientes.Entity;
+
+      Soma:= _Db.Clientes.SUM(E.Renda);
+
+      mlog.Lines.Add( Soma.ToString );
+
+   finally
+     _Db.Destroy;
+   end;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

@@ -39,6 +39,7 @@ Type
     procedure FreeDbSet;
   private
 
+
   protected
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
     property DbSet: TFDQuery read FDbSet write FDbSet;
@@ -55,6 +56,8 @@ Type
 
     function Count:integer;overload;
     function Count(Condition:TString ):integer;overload;
+    function SUM(Field: TFloat): Double;overload;
+    function SUM(Field: TFloat; Condition: TString ): Double;overload;
 
     function BuildQuery(QueryAble: IQueryAble): string;
 
@@ -108,12 +111,14 @@ uses
 
 procedure TDbSet<T>.FreeDbSet;
 begin
+  {
   if DbSet <> nil then
   begin
     DbSet.Close;
     DbSet.Free;
     DbSet:= nil;
   end;
+  }
 end;
 
 function TDbSet<T>.FromSQL(SQL: string): T;
@@ -138,7 +143,7 @@ var
   DataSet:TFDQuery;
 begin
   try
-    FreeDbSet;
+    //FreeDbSet;
     if FDatabase.CustomTypeDataBase is TPostGres then
        QueryAble.Prepare;
 
@@ -153,14 +158,12 @@ begin
   end;
 end;
 
-
-
 function TDbSet<T>.ToDataSet(QueryAble: String): TFDQuery;
 var
   DataSet:TFDQuery;
 begin
   try
-    FreeDbSet;
+    //FreeDbSet;
     DataSet := FDatabase.CreateDataSet( QueryAble );
     DataSet.Open;
     //FDbSet:= DataSet;
@@ -169,164 +172,6 @@ begin
     on E: Exception do
     begin
             raise Exception.Create(E.Message);
-    end;
-  end;
-end;
-
-function TDbSet<T>.ToList(Condition: TString): Collection<T>;
-var
-  maxthenInclude, maxInclude :integer;
-  ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
-  FirstEntity: T;
-  CurrentEntidy , CurrentList : TObject;
-  FirstTable, TableForeignKey, ValueId: string;
-  ListEntity :Collection<T>;
-  H, I, j : Integer;
-  IndexInclude , IndexThenInclude:integer;
-  Json: string;
-  QueryAble:IQueryAble;
-begin
-  try
-    if ListObjectsInclude = nil then
-       ListObjectsInclude:= TObjectList.Create(false);
-    //Adicionar primeira a entidade principal do contexto
-    if ListObjectsInclude.Count = 0 then
-       ListObjectsInclude.Add(T.Create);
-
-    FirstEntity:= ListObjectsInclude.Items[0] as T;//Entity;
-
-    H:=0;
-    I:=0;
-    j:=0;
-
-    maxInclude:= ListObjectsInclude.Count-1;
-    if ListObjectsthenInclude <> nil then
-       maxthenInclude:= ListObjectsthenInclude.Count-1;
-
-    QueryAble:= From( FirstEntity ).Where( Condition ).Select;
-
-    ListEntity := ToList<T>( QueryAble );
-
-    FirstEntity.free;
-
-    if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
-    begin
-      for H := 0 to ListEntity.Count - 1 do
-      begin
-        I:= 0;
-        while I <= maxInclude do
-        begin
-          IndexInclude:= i;
-         if ListObjectsInclude.Items[IndexInclude] <> nil then
-          begin
-            try
-              if i = 0 then
-              begin
-                Json:= (ListEntity.Items[H] as T).ToJson;
-                FirstEntity := T.Create;
-                FirstEntity.FromJson( Json );
-                FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-              end
-              else
-              begin
-                CurrentEntidy := ListObjectsInclude.Items[IndexInclude];
-                ValueId:= FirstEntity.Id.Value.ToString;
-                if Pos('Collection', CurrentEntidy.ClassName) > 0 then
-                begin
-                   CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
-                   QueryAble:= From( Collection(CurrentEntidy).List.ClassType ).
-                                   Where( FirstTable+'Id='+ ValueId ).Select;
-                   ToList(QueryAble , CurrentEntidy  );
-                end
-                else
-                begin
-                   QueryAble:= From( CurrentEntidy.ClassType).
-                               Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
-                               Select;
-                   EntidyInclude := FindEntity( QueryAble );
-                   Json:= EntidyInclude.ToJson;
-                   EntidyInclude.Free;
-                   EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
-                   EntidyInclude.FromJson( Json );
-                end;
-              end;
-            finally
-              Inc(I);
-              FreeDbSet;
-            end;
-          end
-          else
-          begin
-            ReferenceEntidy  := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName ) as TEntityBase;
-            json := (TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase).ToJson;
-            ReferenceEntidy.FromJson( json );
-
-            TAutoMapper.SetObject( FirstEntity,
-                                   ReferenceEntidy.ClassName,
-                                   ReferenceEntidy );
-
-            TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
-            for j := i-1 to maxthenInclude do
-            begin
-              try
-                if ListObjectsthenInclude.Items[j] <> nil then
-                begin
-                  CurrentEntidy:= ListObjectsthenInclude.Items[j];
-                  if Pos('Collection', CurrentEntidy.ClassName) > 0 then
-                  begin
-                    CurrentList := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName );
-                    ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
-                    QueryAble:= From( Collection(CurrentEntidy).List.ClassType).
-                                Where( TableForeignKey+'Id='+ ValueId ).Select;
-                    ToList( QueryAble , CurrentList );
-                    TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
-                    ReferenceEntidy := nil;
-                  end
-                  else
-                  begin
-                    TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
-                    ValueId:=     TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id');
-                    if ValueId <> '' then
-                    begin
-                       QueryAble:= From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select;
-                       Json:= FindEntity( QueryAble ).ToJson;
-                       ConcretEntity := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName) as TEntityBase;
-                       ConcretEntity.FromJson( Json );
-                       TAutoMapper.SetObject( ReferenceEntidy, ConcretEntity.ClassName, ConcretEntity );
-                    end;
-                    ReferenceEntidy :=  ConcretEntity  as TEntityBase;
-                    TableForeignKey := Copy(ConcretEntity.ClassName,2,length(ConcretEntity.ClassName) );
-                  end;
-                  Inc(I);
-                end
-                else
-                begin
-                  break;
-                end;
-              finally
-                FreeDbSet;
-              end;
-            end;
-          end;
-
-          if i > maxInclude then
-             break;
-        end;
-        ListEntity.Items[H]:= FirstEntity as T;
-      end;
-    end;
-
-
-    result  := ListEntity;
-  finally
-    ListObjectsInclude.clear;
-    ListObjectsInclude.Free;
-    ListObjectsInclude:= nil;
-    if ListObjectsthenInclude <> nil then
-    begin
-      ListObjectsthenInclude.clear;
-      ListObjectsthenInclude.Free;
-      ListObjectsthenInclude:= nil;
     end;
   end;
 end;
@@ -696,12 +541,31 @@ begin
   DataSet.Free;
 end;
 
+function TDbSet<T>.SUM(Field:TFloat ): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Select('SUM('+Field.&As+')');
+  DataSet:= ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
+function TDbSet<T>.SUM(Field:TFloat; Condition: TString  ): Double;
+var
+  DataSet: TFDQuery;
+  QueryAble:IQueryAble;
+begin
+  QueryAble:= From(FEntity).Where(Condition).Select('SUM('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  DataSet := ToDataSet( QueryAble );
+  result:= DataSet.fields[0].AsFloat;
+  DataSet.Free;
+end;
+
 constructor TDbSet<T>.Create( aDatabase: TDatabaseFacade );
 begin
-  //if proEntity = nil then
   FEntity := T.Create;
-  //else
-  //Entity := proEntity as T;
   FDatabase:= aDatabase;
 end;
 
@@ -711,6 +575,164 @@ begin
     FEntity := T.Create
   else
     FEntity := proEntity as T;
+end;
+
+function TDbSet<T>.ToList(Condition: TString): Collection<T>;
+var
+  maxthenInclude, maxInclude :integer;
+  ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
+  FirstEntity: T;
+  CurrentEntidy , CurrentList : TObject;
+  FirstTable, TableForeignKey, ValueId: string;
+  ListEntity :Collection<T>;
+  H, I, j : Integer;
+  IndexInclude , IndexThenInclude:integer;
+  Json: string;
+  QueryAble:IQueryAble;
+begin
+  try
+    if ListObjectsInclude = nil then
+       ListObjectsInclude:= TObjectList.Create(false);
+    //Adicionar primeira a entidade principal do contexto
+    if ListObjectsInclude.Count = 0 then
+       ListObjectsInclude.Add(T.Create);
+
+    FirstEntity:= ListObjectsInclude.Items[0] as T;//Entity;
+
+    H:=0;
+    I:=0;
+    j:=0;
+
+    maxInclude:= ListObjectsInclude.Count-1;
+    if ListObjectsthenInclude <> nil then
+       maxthenInclude:= ListObjectsthenInclude.Count-1;
+
+    QueryAble:= From( FirstEntity ).Where( Condition ).Select;
+
+    ListEntity := ToList<T>( QueryAble );
+
+    FirstEntity.free;
+
+    if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
+    begin
+      for H := 0 to ListEntity.Count - 1 do
+      begin
+        I:= 0;
+        while I <= maxInclude do
+        begin
+          IndexInclude:= i;
+         if ListObjectsInclude.Items[IndexInclude] <> nil then
+          begin
+            try
+              if i = 0 then
+              begin
+                Json:= (ListEntity.Items[H] as T).ToJson;
+                FirstEntity := T.Create;
+                FirstEntity.FromJson( Json );
+                FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
+              end
+              else
+              begin
+                CurrentEntidy := ListObjectsInclude.Items[IndexInclude];
+                ValueId:= FirstEntity.Id.Value.ToString;
+                if Pos('Collection', CurrentEntidy.ClassName) > 0 then
+                begin
+                   CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
+                   QueryAble:= From( Collection(CurrentEntidy).List.ClassType ).
+                                   Where( FirstTable+'Id='+ ValueId ).Select;
+                   ToList(QueryAble , CurrentEntidy  );
+                end
+                else
+                begin
+                   QueryAble:= From( CurrentEntidy.ClassType).
+                               Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                               Select;
+                   EntidyInclude := FindEntity( QueryAble );
+                   Json:= EntidyInclude.ToJson;
+                   EntidyInclude.Free;
+                   EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
+                   EntidyInclude.FromJson( Json );
+                end;
+              end;
+            finally
+              Inc(I);
+              //FreeDbSet;
+            end;
+          end
+          else
+          begin
+            ReferenceEntidy  := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName ) as TEntityBase;
+            json := (TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase).ToJson;
+            ReferenceEntidy.FromJson( json );
+
+            TAutoMapper.SetObject( FirstEntity,
+                                   ReferenceEntidy.ClassName,
+                                   ReferenceEntidy );
+
+            TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
+            for j := i-1 to maxthenInclude do
+            begin
+              try
+                if ListObjectsthenInclude.Items[j] <> nil then
+                begin
+                  CurrentEntidy:= ListObjectsthenInclude.Items[j];
+                  if Pos('Collection', CurrentEntidy.ClassName) > 0 then
+                  begin
+                    CurrentList := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName );
+                    ValueId:= TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id');
+                    QueryAble:= From( Collection(CurrentEntidy).List.ClassType).
+                                Where( TableForeignKey+'Id='+ ValueId ).Select;
+                    ToList( QueryAble , CurrentList );
+                    TAutoMapper.SetObject( ReferenceEntidy, CurrentEntidy.ClassName, CurrentList );
+                    ReferenceEntidy := nil;
+                  end
+                  else
+                  begin
+                    TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+                    ValueId:=     TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id');
+                    if ValueId <> '' then
+                    begin
+                       QueryAble:= From(CurrentEntidy.ClassType).Where('Id='+ ValueId).Select;
+                       Json:= FindEntity( QueryAble ).ToJson;
+                       ConcretEntity := TAutoMapper.CreateObject(CurrentEntidy.QualifiedClassName) as TEntityBase;
+                       ConcretEntity.FromJson( Json );
+                       TAutoMapper.SetObject( ReferenceEntidy, ConcretEntity.ClassName, ConcretEntity );
+                    end;
+                    ReferenceEntidy :=  ConcretEntity  as TEntityBase;
+                    TableForeignKey := Copy(ConcretEntity.ClassName,2,length(ConcretEntity.ClassName) );
+                  end;
+                  Inc(I);
+                end
+                else
+                begin
+                  break;
+                end;
+              finally
+                //FreeDbSet;
+              end;
+            end;
+          end;
+
+          if i > maxInclude then
+             break;
+        end;
+        ListEntity.Items[H]:= FirstEntity as T;
+      end;
+    end;
+
+
+    result  := ListEntity;
+  finally
+    ListObjectsInclude.clear;
+    ListObjectsInclude.Free;
+    ListObjectsInclude:= nil;
+    if ListObjectsthenInclude <> nil then
+    begin
+      ListObjectsthenInclude.clear;
+      ListObjectsthenInclude.Free;
+      ListObjectsthenInclude:= nil;
+    end;
+  end;
 end;
 
 function TDbSet<T>.Where(Condition: TString ): T;
@@ -781,7 +803,7 @@ begin
           end;
         finally
           Inc(i);
-          FreeDbSet;
+          //FreeDbSet;
         end;
       end
       else
@@ -834,7 +856,7 @@ begin
                 break;
               end;
             finally
-              FreeDbSet;
+             // FreeDbSet;
             end;
           end;
         end;
