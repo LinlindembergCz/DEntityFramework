@@ -1040,7 +1040,7 @@ var
   DataSet: TFDQuery;
   QueryAble:IQueryAble;
 begin
-  QueryAble:= From(FEntity).Select('Min('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
+  QueryAble:= From(FEntity).Select('Avg('+Field.&As+')');//('Count(*)');//From(FEntity).Select(FEntity.ID);
   DataSet := ToDataSet( QueryAble );
   result:= DataSet.fields[0].AsFloat;
   DataSet.Free;
