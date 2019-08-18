@@ -17,7 +17,9 @@ type
     FValue: string;
     FAs: string;
     FInContext: boolean;
+    FColumn: string;
     procedure SetInContext(const Value: boolean);
+    procedure SetColumn(const Value: string);
   public
     procedure SetAs(const Value: string);
     procedure SetValue(const Value: string);
@@ -36,6 +38,7 @@ type
     class operator Add(const a: TString; b: string): TString; overload;
 
     property Value: string read FValue write SetValue;
+    property Column: string read FColumn write SetColumn;
     property InContext: boolean read FInContext write SetInContext;
     function &As(_as: string = ''): string;
   end;
@@ -59,7 +62,8 @@ type
   private
     FValue: Double;
     FAs: string;
-
+    FColumn: string;
+    procedure SetColumn(const Value: string);
   public
     procedure SetAs(const Value: string);
     procedure SetValue(const Value: Double);
@@ -92,6 +96,7 @@ type
     class operator Subtract(const a: TFloat; b: Double): TString; overload;
     property Value: Double read FValue write SetValue;
     function &As(_as: string = ''): string;
+    property Column: string read FColumn write SetColumn;
   end;
 
   TFloatHelp = record helper for TFloat
@@ -106,6 +111,8 @@ type
   private
     FValue: TDatetime;
     FAs: string;
+    FColumn: string;
+    procedure SetColumn(const Value: string);
   public
     procedure SetAs(const Value: string);
     procedure SetValue(const Value: TDatetime);
@@ -153,12 +160,15 @@ type
 
     property Value: TDatetime read FValue write SetValue;
     function &As(_as: string = ''): string;
+    property Column: string read FColumn write SetColumn;
   end;
 
   TInteger = record
   private
     FValue: integer;
     FAs: string;
+    FColumn: string;
+    procedure SetColumn(const Value: string);
   public
     procedure SetAs(const Value: string);
     procedure SetValue(const Value: integer);
@@ -198,6 +208,7 @@ type
     class operator Multiply(const a: TInteger; b: integer): TString; overload;
     property Value: integer read FValue write SetValue;
     function &As(_as: string = ''): string;
+    property Column: string read FColumn write SetColumn;
   end;
 
   TIntegerHelp = record helper for TInteger
@@ -211,7 +222,9 @@ type
   private
     FAs: string;
     FValue: boolean;
+    FColumn: string;
     procedure SetValue(const Value: boolean);
+    procedure SetColumn(const Value: string);
   public
     procedure SetAs(const Value: string);
     class operator Equal(const a: TBoolean; const b: TBoolean)
@@ -240,6 +253,7 @@ type
 
     property Value: boolean read FValue write SetValue;
     function &As(_as: string = ''): string;
+    property Column: string read FColumn write SetColumn;
   end;
 
 
@@ -339,6 +353,11 @@ end;
 procedure TString.SetAs(const Value: string);
 begin
   FAs := Value;
+end;
+
+procedure TString.SetColumn(const Value: string);
+begin
+  FColumn := Value;
 end;
 
 procedure TString.SetInContext(const Value: boolean);
@@ -525,6 +544,11 @@ end;
 procedure TFloat.SetAs(const Value: string);
 begin
   FAs := Value;
+end;
+
+procedure TFloat.SetColumn(const Value: string);
+begin
+  FColumn := Value;
 end;
 
 procedure TFloat.SetValue(const Value: Double);
@@ -718,6 +742,11 @@ begin
   FAs := Value;
 end;
 
+procedure TDate.SetColumn(const Value: string);
+begin
+  FColumn := Value;
+end;
+
 procedure TDate.SetValue(const Value: TDatetime);
 begin
   FValue := Value;
@@ -908,6 +937,11 @@ begin
   FAs := Value;
 end;
 
+procedure TInteger.SetColumn(const Value: string);
+begin
+  FColumn := Value;
+end;
+
 procedure TInteger.SetValue(const Value: integer);
 begin
   FValue := Value;
@@ -1038,6 +1072,11 @@ end;
 procedure TBoolean.SetAs(const Value: string);
 begin
 
+end;
+
+procedure TBoolean.SetColumn(const Value: string);
+begin
+  FColumn := Value;
 end;
 
 procedure TBoolean.SetValue(const Value: boolean);
