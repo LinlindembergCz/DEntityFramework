@@ -26,13 +26,12 @@ object Form1: TForm1
   object panelButtons: TPanel
     Left = 0
     Top = 0
-    Width = 281
+    Width = 271
     Height = 532
     Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = -4
     object buttonGetDataSet: TButton
       Left = 14
       Top = 4
@@ -125,11 +124,11 @@ object Form1: TForm1
       OnClick = Button8Click
     end
     object Button9: TButton
-      Left = 14
-      Top = 137
+      Left = 15
+      Top = 134
       Width = 120
       Height = 25
-      Caption = 'ToList'
+      Caption = 'ToList + ForEach'
       TabOrder = 10
       OnClick = Button9Click
     end
@@ -232,24 +231,30 @@ object Form1: TForm1
       TabOrder = 21
       OnClick = Button20Click
     end
+    object Button21: TButton
+      Left = 141
+      Top = 355
+      Width = 120
+      Height = 25
+      Caption = 'Migration'
+      TabOrder = 22
+      OnClick = Button21Click
+    end
   end
   object Panel2: TPanel
-    Left = 281
+    Left = 271
     Top = 0
-    Width = 601
+    Width = 611
     Height = 532
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitLeft = 297
-    ExplicitWidth = 585
-    ExplicitHeight = 296
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
-      Width = 597
+      Width = 607
       Height = 292
       Align = alClient
       DataSource = DataSource1
@@ -263,13 +268,11 @@ object Form1: TForm1
     object mLog: TMemo
       Left = 0
       Top = 292
-      Width = 597
+      Width = 607
       Height = 236
       Align = alBottom
       ScrollBars = ssVertical
       TabOrder = 1
-      ExplicitTop = 296
-      ExplicitWidth = 882
     end
   end
   object DataSource1: TDataSource

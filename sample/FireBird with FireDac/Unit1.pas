@@ -40,6 +40,7 @@ type
     Button18: TButton;
     Button19: TButton;
     Button20: TButton;
+    Button21: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -63,6 +64,7 @@ type
     procedure Button18Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
+    procedure Button21Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -78,8 +80,9 @@ implementation
 
 {$R *.dfm}
 
-uses UDataModule, EF.Mapping.AutoMapper,
-     Domain.Entity.Contato, EF.Drivers.Connection;
+uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Funcionario,
+     Domain.Entity.Fornecedor, Domain.Entity.Contato, EF.Drivers.Connection,
+     EF.Drivers.Migration, EF.Mapping.Base;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -88,18 +91,6 @@ begin
                                               'masterkey',
                                               'LocalHost',
                                               extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
-
-
-  {  Connection.MigrationDataBase( [ TEmpresa,
-                                     TCliente,
-                                     TClienteEmpresa,
-                                     TContato,
-                                     TVeiculo,
-                                     TTabelaPreco,
-                                     TClienteTabelaPreco,
-                                     TProduto,
-                                     TItensTabelaPreco ] ); }
-
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -165,8 +156,7 @@ begin
 
      E:= _Db.Clientes.Entity;
 
-     QueryAble := From( E )
-                 .Select
+     QueryAble := From( E ).Select
                  .Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
 
      mLog.Text:= _Db.Clientes.BuildQuery(QueryAble);
@@ -192,6 +182,61 @@ begin
    finally
      _Db.Destroy;
    end;
+
+end;
+
+procedure TForm1.Button21Click(Sender: TObject);
+var
+  migrationBuilder: TMigrationBuilder;
+  Cli:TCliente;
+  Func:TFuncionario;
+  Forn:TFornecedor;
+begin
+
+  {  Connection.MigrationDataBase( [ TEmpresa,
+                                     TCliente,
+                                     TClienteEmpresa,
+                                     TContato,
+                                     TVeiculo,
+                                     TTabelaPreco,
+                                     TClienteTabelaPreco,
+                                     TProduto,
+                                     TItensTabelaPreco ] ); }
+
+  migrationBuilder:= TMigrationBuilder.Create( fdFirebird ,'C:\Windows\Temp' );
+
+  migrationBuilder.CreateTable<TCliente>( Cli,
+                                   'Clientes' ,
+                                   procedure
+                                   begin
+                                     Cli.ID.Column := 'ID int not null';
+                                     Cli.Nome.Column := 'Nome varchar(50) is null';
+                                   end
+                                  );
+
+  migrationBuilder.CreateTable<TFuncionario>( Func,
+                                       'Funcionario' ,
+                                       procedure
+                                       begin
+                                         Func.ID.Column := 'ID int not null';
+                                         Func.Nome.Column := 'Nome varchar(50) is null';
+                                         Func.CPF.Column:= 'CPF varchar(11) is null';
+                                       end
+                                       );
+
+  migrationBuilder.CreateTable<TFornecedor>( Forn,
+                                     'Fornecedor' ,
+                                     procedure
+                                     begin
+                                       Forn.ID.Column := 'ID int not null';
+                                       Forn.RazaoSocial.Column := 'Nome varchar(50) is null';
+                                       Forn.CPFCNPJ.Column := 'CPFCNPJ varchar(20) not null';
+                                     end
+                                    );
+
+  mLog.Text:= migrationBuilder.Script.Text;
+
+  migrationBuilder.Free;
 
 end;
 
