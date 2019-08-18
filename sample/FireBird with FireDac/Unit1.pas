@@ -22,7 +22,6 @@ type
     buttonGetEntity: TButton;
     Button2: TButton;
     Button3: TButton;
-    Button4: TButton;
     Button5: TButton;
     Button6: TButton;
     Button7: TButton;
@@ -45,7 +44,6 @@ type
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
@@ -91,6 +89,62 @@ begin
                                               'masterkey',
                                               'LocalHost',
                                               extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+end;
+
+procedure TForm1.Button21Click(Sender: TObject);
+var
+  migrationBuilder: TMigrationBuilder;
+  Cli:TCliente;
+  Func:TFuncionario;
+  Forn:TFornecedor;
+begin
+  {
+  Connection.MigrationDataBase( [ TEmpresa,
+                                  TCliente,
+                                  TClienteEmpresa,
+                                  TContato,
+                                  TVeiculo,
+                                  TTabelaPreco,
+                                  TClienteTabelaPreco,
+                                  TProduto,
+                                  TItensTabelaPreco ] );
+  }
+
+  migrationBuilder:= TMigrationBuilder.Create( fdFirebird ,'C:\Windows\Temp' );
+
+  migrationBuilder.CreateTable<TCliente>( Cli,
+                                           'Clientes' ,
+                                           procedure
+                                           begin
+                                             Cli.ID.Column := 'ID int not null';
+                                             Cli.Nome.Column := 'Nome varchar(50) is null';
+                                           end
+                                          );
+
+  migrationBuilder.CreateTable<TFuncionario>( Func,
+                                             'Funcionario' ,
+                                             procedure
+                                             begin
+                                               Func.ID.Column := 'ID int not null';
+                                               Func.Nome.Column := 'Nome varchar(50) is null';
+                                               Func.CPF.Column:= 'CPF varchar(11) is null';
+                                             end
+                                             );
+
+  migrationBuilder.CreateTable<TFornecedor>( Forn,
+                                             'Fornecedor' ,
+                                             procedure
+                                             begin
+                                               Forn.ID.Column := 'ID int not null';
+                                               Forn.RazaoSocial.Column := 'Nome varchar(50) is null';
+                                               Forn.CPFCNPJ.Column := 'CPFCNPJ varchar(20) not null';
+                                             end
+                                            );
+
+  mLog.Text:= migrationBuilder.Script.Text;
+
+  migrationBuilder.Free;
+
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -185,61 +239,6 @@ begin
 
 end;
 
-procedure TForm1.Button21Click(Sender: TObject);
-var
-  migrationBuilder: TMigrationBuilder;
-  Cli:TCliente;
-  Func:TFuncionario;
-  Forn:TFornecedor;
-begin
-
-  {  Connection.MigrationDataBase( [ TEmpresa,
-                                     TCliente,
-                                     TClienteEmpresa,
-                                     TContato,
-                                     TVeiculo,
-                                     TTabelaPreco,
-                                     TClienteTabelaPreco,
-                                     TProduto,
-                                     TItensTabelaPreco ] ); }
-
-  migrationBuilder:= TMigrationBuilder.Create( fdFirebird ,'C:\Windows\Temp' );
-
-  migrationBuilder.CreateTable<TCliente>( Cli,
-                                   'Clientes' ,
-                                   procedure
-                                   begin
-                                     Cli.ID.Column := 'ID int not null';
-                                     Cli.Nome.Column := 'Nome varchar(50) is null';
-                                   end
-                                  );
-
-  migrationBuilder.CreateTable<TFuncionario>( Func,
-                                       'Funcionario' ,
-                                       procedure
-                                       begin
-                                         Func.ID.Column := 'ID int not null';
-                                         Func.Nome.Column := 'Nome varchar(50) is null';
-                                         Func.CPF.Column:= 'CPF varchar(11) is null';
-                                       end
-                                       );
-
-  migrationBuilder.CreateTable<TFornecedor>( Forn,
-                                     'Fornecedor' ,
-                                     procedure
-                                     begin
-                                       Forn.ID.Column := 'ID int not null';
-                                       Forn.RazaoSocial.Column := 'Nome varchar(50) is null';
-                                       Forn.CPFCNPJ.Column := 'CPFCNPJ varchar(20) not null';
-                                     end
-                                    );
-
-  mLog.Text:= migrationBuilder.Script.Text;
-
-  migrationBuilder.Free;
-
-end;
-
 procedure TForm1.Button2Click(Sender: TObject);
 var
    E: TCliente;
@@ -274,7 +273,7 @@ begin
                    contato:TContato;
                  begin
 
-                    with TCliente(C) do
+                    with C do
                     begin
                       mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' + Nome.Value+'       CNPJ: ' +CPFCNPJ.Value);
                       mlog.Lines.Add('Placa: ' + Veiculo.Placa.Value );
@@ -328,40 +327,6 @@ begin
    end;
 end;
 
-procedure TForm1.Button4Click(Sender: TObject);
-var
-   E: TCliente;
-  _Db: TDataContext;
-   C:TCliente;
-   contato: TContato;
-begin
-  if DataSource1.DataSet <> nil then
-  begin
-     try
-        _Db := TDataContext.Create(Connection);
-        E:= _Db.Clientes.Entity;
-
-        C := _Db.Clientes.Include(E.Veiculo).
-                          Include(E.Contatos).
-                          Where( E.ID = DataSource1.DataSet.FieldByName('ID').AsInteger );
-
-        mlog.Lines.Add('ID: ' + C.ID.Value.ToString );
-        mlog.Lines.Add('Nome: ' + C.Nome.Value);
-
-        mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
-        mlog.Lines.Add('Contatos :');
-        for contato in C.Contatos do
-        begin
-           mlog.Lines.Add('    ' + contato.Nome.Value);
-        end;
-     finally
-        _Db.Destroy;
-        FreeAndNIL(C);
-     end;
-  end;
-
-end;
-
 procedure TForm1.Button10Click(Sender: TObject);
 var
   _Db: TDataContext;
@@ -397,10 +362,8 @@ begin
 
   finally
      //DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
-
      _Db.Destroy;
     Clientes.Free;
-
   end;
 
 end;
