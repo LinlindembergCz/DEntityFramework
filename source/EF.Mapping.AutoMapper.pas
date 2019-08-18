@@ -16,6 +16,7 @@ type
     class var ctx: TRttiContext;
     class var TypObj: TRttiType;
     class function GetValueField(E: TEntityBase; Field: TRttiField): string; static;
+    class function GetColumnField(E: TEntityBase; Field: TRttiField): string; static;
 
 
   public
@@ -38,6 +39,8 @@ type
 
     class function GetListAtributesForeignKeys(Obj: TClass): TList; static;
     class function GetListAtributesIndex(Obj: TClass): TList; static;
+
+    class function GetColumns(E: TEntityBase): String; static;
 
     class procedure SetAtribute(Entity: TEntityBase; Campo, Valor: string;InContext: boolean = false); static;
 
@@ -713,6 +716,40 @@ begin
   result := Value;
 end;
 
+class function TAutoMapper.GetColumnField(E: TEntityBase; Field: TRttiField): string;
+var
+  Val: TValue;
+  iInteger: TInteger;
+  fFloat: TFloat;
+  sString: TString;
+  dDatetime: TDate;
+  Value, TypeClassName: string;
+begin
+  Val := Field.GetValue(E);
+  TypeClassName := uppercase(Field.FieldType.ToString);
+  if TypeClassName = uppercase(cInteger) then
+  begin
+    iInteger := Val.AsType<TInteger>;
+    Value := iInteger.Column;
+  end
+  else if TypeClassName = uppercase(cFloat) then
+  begin
+    fFloat := Val.AsType<TFloat>;
+    Value := fFloat.Column;
+  end
+  else if TypeClassName = uppercase(cString) then
+  begin
+    sString := Val.AsType<TString>;
+    Value := sString.Column;
+  end
+  else if TypeClassName = uppercase(cDateTime) then
+  begin
+    dDatetime := Val.AsType<TDate>;
+    Value := dDatetime.Column;// quotedstr( datetostr() ); // FormatDateTime('DD/MM/YYYY',)  quotedstr( FormatDateTime('YYYY-MM-DD',dDatetime.Value) );//
+  end;
+  result := Value;
+end;
+
 class function TAutoMapper.GetValuesFields(E: TEntityBase; WithID :boolean = true): String;
 var
   ctx: TRttiContext;
@@ -736,6 +773,37 @@ begin
             values := values + ',' + Value;
           break;
         end;
+      end;
+    end;
+  end;
+  result := values;
+end;
+
+class function TAutoMapper.GetColumns(E: TEntityBase): String;
+var
+  ctx: TRttiContext;
+  Prop: TRttiProperty;
+  Field: TRttiField;
+  values, Value: string;
+begin
+  for Prop in ctx.GetType(E.ClassType).GetProperties do
+  begin
+    if not PropIsInstance(Prop) then
+    begin
+      for Field in ctx.GetType(E.ClassType).GetFields do
+      begin
+          if (uppercase(Field.Name) = uppercase('F' + Prop.Name)) then
+          begin
+            Value := GetColumnField(E, Field);
+            if (Value <> '') then
+            begin
+              if values = '' then
+                values := Value
+              else
+                values := values + ', ' + Value;
+            end;
+            break;
+          end;
       end;
     end;
   end;
