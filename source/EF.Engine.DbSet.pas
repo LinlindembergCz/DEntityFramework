@@ -38,6 +38,7 @@ Type
     FEntity : T;
     procedure FreeDbSet;
   private
+
   protected
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
     property DbSet: TFDQuery read FDbSet write FDbSet;
@@ -79,13 +80,14 @@ Type
 
     function FromSQL(SQL: string):T;
 
+    function Entry(E:T):TDbSet<T>;
+    procedure Load;
+
     function Single(Condition: TString): T;
 
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): Collection;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): Collection<T>; overload;
     function ToList(Condition: TString): Collection<T>;overload;
-
-    function Entry(E:T):TDbSet<T>;
 
     function Include( E: TObject ):TDbSet<T>;
     function ThenInclude(E: TObject ): TDbSet<T>;
@@ -499,10 +501,7 @@ begin
   //  Database.Free;
 end;
 
-function TDbSet<T>.Entry(E: T): TDbSet<T>;
-begin
 
-end;
 
 procedure TDbSet<T>.Remove(Condition: TString);
 var
@@ -713,6 +712,139 @@ begin
   end;
 end;
 
+procedure TDbSet<T>.Load();
+var
+  maxthenInclude, maxInclude :integer;
+  ReferenceEntidy, EntidyInclude: TEntityBase;
+  FirstEntity: T;
+  CurrentEntidy: TObject;
+  FirstTable, TableForeignKey: string;
+  List:Collection;
+  I, j, k: Integer;
+  IndexInclude , IndexThenInclude:integer;
+  QueryAble: IQueryAble;
+  Json:string;
+begin
+  try
+    I:=0;
+    j:=0;
+    k:=0;
+    maxInclude:= ListObjectsInclude.Count-1;
+    if ListObjectsthenInclude <> nil then
+       maxthenInclude:= ListObjectsthenInclude.Count-1;
+
+    while I <= maxInclude do
+    begin
+      IndexInclude:= i;
+      if ListObjectsInclude.Items[IndexInclude] <> nil then
+      begin
+        CurrentEntidy:= ListObjectsInclude.Items[IndexInclude];
+        try
+          if i = 0 then
+          begin
+            FirstEntity := T(ListObjectsInclude.Items[0]);
+            FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
+          end
+          else
+          begin
+            if Pos('Collection', CurrentEntidy.ClassName) > 0 then
+            begin
+              CurrentEntidy := TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName );
+              QueryAble:= From( Collection(CurrentEntidy).List.ClassType ).
+                          Where( FirstTable+'Id='+ FirstEntity.Id.Value.ToString ).
+                          Select;
+              ToList( QueryAble , CurrentEntidy  );
+            end
+            else
+            begin
+               QueryAble:= From( CurrentEntidy.ClassType).
+                           Where( FirstTable+'Id='+  FirstEntity.Id.Value.ToString ).
+                           Select;
+               EntidyInclude := FindEntity( QueryAble );
+               Json:= EntidyInclude.ToJson;
+               EntidyInclude.Free;
+               EntidyInclude:= TAutoMapper.GetObject(FirstEntity, CurrentEntidy.ClassName ) as TEntityBase;
+               EntidyInclude.FromJson( Json );
+            end;
+          end;
+        finally
+          Inc(i);
+          //FreeDbSet;
+        end;
+      end
+      else
+      begin
+        if ListObjectsthenInclude <> nil then
+        begin
+          ReferenceEntidy := EntidyInclude;
+          TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
+
+          for j := i to maxthenInclude do
+          begin
+            try
+              if ListObjectsthenInclude.Items[j] <> nil then
+              begin
+                CurrentEntidy:= ListObjectsthenInclude.Items[j];
+                if Pos('Collection', CurrentEntidy.ClassName) > 0 then
+                begin
+                   //Refatorar
+                   QueryAble:= From(TEntityBase(Collection(ListObjectsthenInclude.Items[j]).List)).
+                               Where( TableForeignKey+'Id='+ TAutoMapper.GetValueProperty( ReferenceEntidy, 'Id') ).
+                               Select;
+                   List := ToList( QueryAble );
+
+                   while Collection(ListObjectsthenInclude.items[j]).Count > 1 do
+                      Collection(ListObjectsthenInclude.items[j]).Delete( Collection(ListObjectsthenInclude.items[j]).Count - 1 );
+
+                   for k := 0 to List.Count-1 do
+                   begin
+                      Collection(ListObjectsthenInclude.items[j]).Add( List[k]);
+                   end;
+                end
+                else
+                begin
+                  TableForeignKey := Copy(CurrentEntidy.ClassName,2,length(CurrentEntidy.ClassName) );
+                  QueryAble:= From( CurrentEntidy.ClassType).
+                                          Where( 'Id='+  TAutoMapper.GetValueProperty( ReferenceEntidy, TableForeignKey+'Id') ).
+                                          Select;
+                   EntidyInclude := FindEntity( QueryAble );
+                   Json:= EntidyInclude.ToJson;
+                   EntidyInclude.Free;
+                   EntidyInclude:= TAutoMapper.GetObject(ReferenceEntidy, CurrentEntidy.ClassName ) as TEntityBase;
+                   EntidyInclude.FromJson( Json );
+                end;
+                ReferenceEntidy := ListObjectsthenInclude.Items[j] as TEntityBase;
+                TableForeignKey := Copy( CurrentEntidy.ClassName, 2, length(CurrentEntidy.ClassName) );
+                Inc(I);
+              end
+              else
+              begin
+                break;
+              end;
+            finally
+             // FreeDbSet;
+            end;
+          end;
+        end;
+      end;
+
+      if i > maxInclude then
+         break;
+    end;
+  finally
+    ListObjectsInclude.Clear;
+    ListObjectsInclude.Free;
+    ListObjectsInclude:= nil;
+    if ListObjectsthenInclude <> nil then
+    begin
+      ListObjectsthenInclude.Clear;
+      ListObjectsthenInclude.Free;
+      ListObjectsthenInclude:= nil;
+    end;
+  end;
+
+end;
+
 function TDbSet<T>.Single(Condition: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
@@ -856,6 +988,19 @@ begin
       ListObjectsthenInclude:= nil;
     end;
   end;
+end;
+
+function TDbSet<T>.Entry(E: T): TDbSet<T>;
+begin
+   if ListObjectsInclude = nil then
+   begin
+      ListObjectsInclude:= TObjectList.Create(false);
+      ListObjectsInclude.Add(E);
+
+      ListObjectsThenInclude:= TObjectList.Create(false);
+   end;
+   ListObjectsThenInclude.Add( nil );
+   result:= self;
 end;
 
 function TDbSet<T>.Include( E: TObject ):TDbSet<T>;

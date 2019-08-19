@@ -40,6 +40,7 @@ type
     Button19: TButton;
     Button20: TButton;
     Button21: TButton;
+    Button4: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -63,6 +64,7 @@ type
     procedure Button19Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     Connection:TEntityFDConnection;
     { Private declarations }
@@ -319,10 +321,6 @@ begin
         mlog.Lines.Add('Cliente : ' +C.Nome.Value);
         mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
 
-
-        //_Db.Clientes.Entry(C).Include(C.Contatos).Load();
-
-
         mlog.Lines.Add('Contatos :');
 
         for contato in C.Contatos do
@@ -553,6 +551,58 @@ begin
   finally
      _Db.Destroy;
   end;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+var
+   E: TCliente;
+  _Db: TDataContext;
+  C:TCliente;
+  contato:TContato;
+begin
+   if DataSource1.DataSet <> nil then
+   begin
+     try
+        _Db := TDataContext.Create(Connection);
+        E:= _Db.Clientes.Entity;
+
+        C := _Db.Clientes.Single( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
+
+        mlog.Lines.Add('Cliente : ' +C.Nome.Value);
+
+        if C.Id.Value > 0 then
+        begin
+          _Db.Clientes.
+                      Entry(C).
+                      Include(E.Contatos).
+                      Include(E.Veiculo).
+                      Include(E.ClienteEmpresa).
+                         ThenInclude(E.ClienteEmpresa.Empresa).
+                      Include(E.ClienteTabelaPreco).
+                          ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+                      //      ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
+                      Load();
+
+          mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
+          mlog.Lines.Add('ID : ' + C.ID.Value.ToString );
+
+          mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+
+          mlog.Lines.Add('Tabela de Preco: ' + E.ClienteTabelaPreco.TabelaPreco.Id.Value.ToString);
+
+          mlog.Lines.Add('Contatos :');
+
+          for contato in C.Contatos do
+          begin
+             mlog.Lines.Add('    ' + contato.Nome.Value);
+          end;
+        end;
+     finally
+        _Db.Destroy;
+        FreeAndNIL(C);
+     end;
+   end;
+
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
