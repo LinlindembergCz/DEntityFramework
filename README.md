@@ -71,8 +71,10 @@ TDbContext;
 TDbset<T>;
 EF.QueryAble.Linq;
 
+Migration Builder;<br>
 Add;<br>
 AddRange;<br>
+AddScript;<br>
 Update;<br>
 UpdateRange;<br>
 Remove;<br>
@@ -84,7 +86,7 @@ Count;<br>
 ToList;<br>
 ToJson;<br>
 ToDataSet;<br>
-Include;<br
+Include;<br>
 ThenInclude;<br>
 Single;<br>
 Entry;<br>
