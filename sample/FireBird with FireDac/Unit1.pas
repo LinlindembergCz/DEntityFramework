@@ -113,13 +113,14 @@ begin
   migrationBuilder:= TMigrationBuilder.Create( fdFirebird ,'C:\Windows\Temp' );
 
   migrationBuilder.CreateTable<TCliente>( Cli,
-                                           'Clientes' ,
-                                           procedure
-                                           begin
-                                             Cli.ID.Column := 'ID int not null';
-                                             Cli.Nome.Column := 'Nome varchar(50) is null';
-                                           end
-                                          );
+                                          'Clientes' ,
+                                          procedure
+                                          begin
+                                            Cli.ID.Column := 'ID int not null';
+                                            Cli.Nome.Column := 'Nome varchar(50) is null';
+                                          end,
+                                          'ID'
+                                         );
 
   migrationBuilder.CreateTable<TFuncionario>( Func,
                                              'Funcionario' ,
@@ -128,8 +129,9 @@ begin
                                                Func.ID.Column := 'ID int not null';
                                                Func.Nome.Column := 'Nome varchar(50) is null';
                                                Func.CPF.Column:= 'CPF varchar(11) is null';
-                                             end
-                                             );
+                                             end ,
+                                             'ID'
+                                            );
 
   migrationBuilder.CreateTable<TFornecedor>( Forn,
                                              'Fornecedor' ,
@@ -138,10 +140,11 @@ begin
                                                Forn.ID.Column := 'ID int not null';
                                                Forn.RazaoSocial.Column := 'Nome varchar(50) is null';
                                                Forn.CPFCNPJ.Column := 'CPFCNPJ varchar(20) not null';
-                                             end
-                                            );
+                                             end,
+                                             'ID'
+                                           );
 
-  mLog.Text:= migrationBuilder.Script.Text;
+  mLog.Text := migrationBuilder.Script.Text;
 
   migrationBuilder.Free;
 
@@ -304,16 +307,24 @@ begin
      try
         _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
-        C := _Db.Clientes.Include(E.Contatos).
+        C := _Db.Clientes.//Include(E.Contatos).
                           Include(E.Veiculo).
                           Include(E.ClienteEmpresa).
                              ThenInclude(E.ClienteEmpresa.Empresa).
-                          Where( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
+                          Single( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
 
         mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
         mlog.Lines.Add('ID : ' + C.ID.Value.ToString );
         mlog.Lines.Add('Cliente : ' +C.Nome.Value);
         mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
+
+        {
+            _Db.Clientes.
+            Entry(C).
+            Include(C.Contatos).
+            Load();
+        }
+
         mlog.Lines.Add('Contatos :');
 
         for contato in C.Contatos do

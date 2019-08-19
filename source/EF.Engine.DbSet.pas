@@ -79,11 +79,14 @@ Type
 
     function FromSQL(SQL: string):T;
 
-    function Where(Condition: TString): T;
+    function Single(Condition: TString): T;
 
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): Collection;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): Collection<T>; overload;
     function ToList(Condition: TString): Collection<T>;overload;
+
+    function Entry(E:T):TDbSet<T>;
+
     function Include( E: TObject ):TDbSet<T>;
     function ThenInclude(E: TObject ): TDbSet<T>;
 
@@ -496,6 +499,11 @@ begin
   //  Database.Free;
 end;
 
+function TDbSet<T>.Entry(E: T): TDbSet<T>;
+begin
+
+end;
+
 procedure TDbSet<T>.Remove(Condition: TString);
 var
   SQL: string;
@@ -705,7 +713,7 @@ begin
   end;
 end;
 
-function TDbSet<T>.Where(Condition: TString ): T;
+function TDbSet<T>.Single(Condition: TString ): T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, EntidyInclude: TEntityBase;

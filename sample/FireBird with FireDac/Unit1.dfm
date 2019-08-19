@@ -26,14 +26,12 @@ object Form1: TForm1
   object panelButtons: TPanel
     Left = 0
     Top = 0
-    Width = 271
+    Width = 277
     Height = 532
     Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = -4
-    ExplicitTop = 8
     object buttonGetDataSet: TButton
       Left = 14
       Top = 31
@@ -90,7 +88,7 @@ object Form1: TForm1
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 141
+      Left = 140
       Top = 4
       Width = 120
       Height = 25
@@ -100,7 +98,7 @@ object Form1: TForm1
     end
     object Button7: TButton
       Left = 140
-      Top = 138
+      Top = 85
       Width = 120
       Height = 25
       Caption = 'Update'
@@ -126,7 +124,7 @@ object Form1: TForm1
       OnClick = Button9Click
     end
     object Button10: TButton
-      Left = 141
+      Left = 140
       Top = 32
       Width = 120
       Height = 25
@@ -136,7 +134,7 @@ object Form1: TForm1
     end
     object Button11: TButton
       Left = 140
-      Top = 85
+      Top = 112
       Width = 120
       Height = 25
       Caption = 'Update  Range'
@@ -145,7 +143,7 @@ object Form1: TForm1
     end
     object Button12: TButton
       Left = 140
-      Top = 111
+      Top = 138
       Width = 120
       Height = 25
       Caption = 'Remove  Range'
@@ -193,7 +191,7 @@ object Form1: TForm1
       Top = 218
       Width = 120
       Height = 25
-      Caption = 'SUM'
+      Caption = 'Sum'
       TabOrder = 17
       OnClick = Button17Click
     end
@@ -235,20 +233,19 @@ object Form1: TForm1
     end
   end
   object Panel2: TPanel
-    Left = 271
+    Left = 277
     Top = 0
-    Width = 640
+    Width = 634
     Height = 532
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitWidth = 611
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
-      Width = 636
+      Width = 630
       Height = 292
       Align = alClient
       DataSource = DataSource1
@@ -262,16 +259,15 @@ object Form1: TForm1
     object mLog: TMemo
       Left = 0
       Top = 292
-      Width = 636
+      Width = 630
       Height = 236
       Align = alBottom
       ScrollBars = ssVertical
       TabOrder = 1
-      ExplicitWidth = 607
     end
   end
   object DataSource1: TDataSource
-    Left = 368
-    Top = 136
+    Left = 568
+    Top = 128
   end
 end

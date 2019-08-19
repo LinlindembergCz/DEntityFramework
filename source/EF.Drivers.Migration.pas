@@ -17,7 +17,7 @@ type
      Script:TStringList;
    type
        TMethod = reference to procedure;
-     procedure CreateTable<T:TEntityBase>(out E:T; aTableName:string; Method: TMethod );
+     procedure CreateTable<T:TEntityBase>(out E:T; aTableName:string; Method: TMethod;aPrimareKey:string );
      constructor Create(aFDConn: FDConn ; aPath:string);
      destructor Destroy;override;
    end;
@@ -44,14 +44,14 @@ begin
    Script:=TStringList.Create;
 end;
 
-procedure TMigrationBuilder.CreateTable<T>(out E:T; aTableName:string; Method: TMethod );
+procedure TMigrationBuilder.CreateTable<T>(out E:T; aTableName:string; Method: TMethod; aPrimareKey:string );
 begin
   try
     E := T.Create;
     Method;
     Script.Add( BuildScript<T>(E,aTableName));
     Script.Add(ifthen(FFDConn = fdMSSQL,'GO',';'));
-    Script.Add( Format('ALTER TABLE %s ADD PRIMARY KEY (ID)',[aTableName]) );
+    Script.Add( Format('ALTER TABLE %s ADD PRIMARY KEY (%s)',[aTableName,aPrimareKey]) );
     Script.Add(ifthen(FFDConn = fdMSSQL,'GO',';'));
   finally
     E.free;//Destroi o objeto
