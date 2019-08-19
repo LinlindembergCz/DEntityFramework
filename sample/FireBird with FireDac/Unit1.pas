@@ -307,7 +307,8 @@ begin
      try
         _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
-        C := _Db.Clientes.//Include(E.Contatos).
+
+        C := _Db.Clientes.Include(E.Contatos).
                           Include(E.Veiculo).
                           Include(E.ClienteEmpresa).
                              ThenInclude(E.ClienteEmpresa.Empresa).
@@ -318,12 +319,9 @@ begin
         mlog.Lines.Add('Cliente : ' +C.Nome.Value);
         mlog.Lines.Add('Veiculo: ' + C.Veiculo.Placa.Value);
 
-        {
-            _Db.Clientes.
-            Entry(C).
-            Include(C.Contatos).
-            Load();
-        }
+
+        //_Db.Clientes.Entry(C).Include(C.Contatos).Load();
+
 
         mlog.Lines.Add('Contatos :');
 
