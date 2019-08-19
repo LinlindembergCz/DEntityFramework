@@ -67,9 +67,9 @@ end;<br><br>
 
 Other:
 
-TDbContext;
-TDbset<T>;
-EF.QueryAble.Linq;
+TDbContext;<br>
+TDbset<T>;<br>
+EF.QueryAble.Linq;<br>
 
 Migration Builder;<br>
 Add;<br>
