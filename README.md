@@ -42,7 +42,7 @@ begin<br>
                     Include( E.ClienteTabelaPreco).<br>
                         ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
                     Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
-                    Where( E.ID = 3 ).<br>
+                    Single( E.ID = 3 ).<br>
                     ToJson;<br><br>
                     
                     
@@ -84,8 +84,11 @@ Count;<br>
 ToList;<br>
 ToJson;<br>
 ToDataSet;<br>
-Include;<br>
+Include;<br
 ThenInclude;<br>
+Single;<br>
+Entry;<br>
+Load;<br>
 
 
 
