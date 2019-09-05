@@ -82,7 +82,7 @@ RemoveRange;<br>
 SaveChanges;<br>
 Find;<br>
 Any;<br>
-Count;<br>
+Count, Max, Min, SUM;<br>
 ToList;<br>
 ToJson;<br>
 ToDataSet;<br>
