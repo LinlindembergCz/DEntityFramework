@@ -81,7 +81,10 @@ implementation
 {$R *.dfm}
 
 uses UDataModule, EF.Mapping.AutoMapper,  Domain.Entity.Contato, EF.Drivers.Connection,
-     EF.Drivers.Migration, EF.Mapping.Base;
+     EF.Drivers.Migration, EF.Mapping.Base, Domain.Entity.Empresa,
+  Domain.Entity.ClienteEmpresa, Domain.Entity.Veiculo,
+  Domain.Entity.TabelaPreco, Domain.Entity.ClienteTabelaPreco,
+  Domain.Entity.Produto, Domain.Entity.ItensTabelaPreco;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -99,7 +102,7 @@ var
   //Func:TFuncionario;
   //Forn:TFornecedor;
 begin
-  {
+
   Connection.MigrationDataBase( [ TEmpresa,
                                   TCliente,
                                   TClienteEmpresa,
@@ -109,8 +112,9 @@ begin
                                   TClienteTabelaPreco,
                                   TProduto,
                                   TItensTabelaPreco ] );
-  }
 
+
+ {
   migrationBuilder:= TMigrationBuilder.Create( fdFirebird ,'C:\Windows\Temp' );
 
   migrationBuilder.CreateTable<TCliente>( Cli,
@@ -122,7 +126,7 @@ begin
                                           end,
                                           'ID'
                                          );
-   {
+
   migrationBuilder.CreateTable<TFuncionario>( Func,
                                              'Funcionario' ,
                                              procedure
@@ -144,11 +148,12 @@ begin
                                              end,
                                              'ID'
                                            );
-                                           }
+
 
   mLog.Text := migrationBuilder.Script.Text;
 
   migrationBuilder.Free;
+  }
 
 end;
 
