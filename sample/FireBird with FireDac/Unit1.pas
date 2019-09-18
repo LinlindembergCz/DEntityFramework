@@ -170,7 +170,12 @@ begin
       QueryAble := From( E ).Select.OrderBy ( E.Nome );
       //FDMemTable1.Close;
       //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
-      DataSource1.DataSet := _Db.Clientes.ToDataSet(From( E ).Select.OrderBy(E.Nome) );
+      DataSource1.DataSet := _Db.Clientes.
+                              //OrderBy('ID').
+                              ToDataSet(From( E ).
+                                        Select
+                                        .OrderBy(E.Nome)
+                                         );
    finally
      _Db.Destroy;
    end;
