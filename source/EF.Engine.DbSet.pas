@@ -13,15 +13,10 @@ uses
   DateUtils, System.Types,  System.Contnrs, Data.DB,
   System.Generics.Collections,
   FireDAC.Comp.Client, Data.DB.Helper,EF.Core.List,
-  // Essas units dar„o suporte ao nosso framework
-  EF.QueryAble.Linq,
-  EF.Drivers.Connection,
-  EF.Core.Types,
-  EF.Mapping.Atributes,
-  EF.Mapping.Base,
-  EF.Core.Functions,
-  EF.QueryAble.Base,
-  EF.QueryAble.Interfaces;
+  // Essas units dar√£o suporte ao nosso framework
+  EF.QueryAble.Linq, EF.Drivers.Connection,  EF.Core.Types,
+  EF.Mapping.Atributes, EF.Mapping.Base,  EF.Core.Functions,
+  EF.QueryAble.Base,  EF.QueryAble.Interfaces;
 
 Type
    TTypeSQL       = (  tsInsert, tsUpdate );
@@ -36,6 +31,7 @@ Type
     FDatabase: TDatabaseFacade;
     FListFields: TStringList;
     FEntity : T;
+    FOrderBy: string;
     procedure FreeDbSet;
   private
 
@@ -91,6 +87,7 @@ Type
 
     function Include( E: TObject ):TDbSet<T>;
     function ThenInclude(E: TObject ): TDbSet<T>;
+    function OrderBy(QueryAble: String): TDbSet<T>;
 
     function ToDataSet(QueryAble: IQueryAble): TFDQuery;overload;
     function ToDataSet(QueryAble: String): TFDQuery;overload;
@@ -99,7 +96,7 @@ Type
     function ToJson(QueryAble: String): string; overload;
 
     procedure Add(E: T;AutoSaveChange:boolean = false); overload;
-    //procedure Add(E: TAnonym;AutoSaveChange:boolean = false); overload;
+  //procedure Add(E: TAnonym;AutoSaveChange:boolean = false); overload;
 
 
     procedure Update(AutoSaveChange:boolean = false);
@@ -147,6 +144,7 @@ begin
   try
     result := nil;
     DataSet := ToDataSet(SQL);
+    DataSet.IndexFieldNames:= FOrderBy;
     //E:= T.Create;
     TAutoMapper.DataToEntity(DataSet,Entity );
     result := Entity as T;
@@ -204,6 +202,7 @@ begin
     List := Collection<T>.Create;
     List.Clear;
     DataSet := ToDataSet(QueryAble);
+    DataSet.IndexFieldNames:= FOrderBy;
     while not DataSet.Eof do
     begin
       E:= T.Create;
@@ -709,6 +708,7 @@ begin
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
+    FOrderBy:= '';
   end;
 end;
 
@@ -1153,6 +1153,12 @@ begin
   DataSet := ToDataSet( QueryAble );
   result:= DataSet.fields[0].AsFloat;
   DataSet.Free;
+end;
+
+function TDbSet<T>.OrderBy(QueryAble: String): TDbSet<T>;
+begin
+  FOrderBy:= QueryAble;
+  result:= self;
 end;
 
 function TDbSet<T>.Avg(Field: TInteger; Condition: TString): Integer;
