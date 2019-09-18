@@ -80,8 +80,7 @@ implementation
 
 {$R *.dfm}
 
-uses UDataModule, EF.Mapping.AutoMapper, Domain.Entity.Funcionario,
-     Domain.Entity.Fornecedor, Domain.Entity.Contato, EF.Drivers.Connection,
+uses UDataModule, EF.Mapping.AutoMapper,  Domain.Entity.Contato, EF.Drivers.Connection,
      EF.Drivers.Migration, EF.Mapping.Base;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -97,8 +96,8 @@ procedure TForm1.Button21Click(Sender: TObject);
 var
   migrationBuilder: TMigrationBuilder;
   Cli:TCliente;
-  Func:TFuncionario;
-  Forn:TFornecedor;
+  //Func:TFuncionario;
+  //Forn:TFornecedor;
 begin
   {
   Connection.MigrationDataBase( [ TEmpresa,
@@ -123,7 +122,7 @@ begin
                                           end,
                                           'ID'
                                          );
-                                         {
+   {
   migrationBuilder.CreateTable<TFuncionario>( Func,
                                              'Funcionario' ,
                                              procedure
@@ -271,14 +270,14 @@ begin
      E:= _Db.Clientes.Entity;
 
      L := _Db.Clientes.Include(E.Veiculo)
-                       .Include(E.Contatos)
-                       .ToList( E.Ativo = '1' );
+                      .Include(E.Contatos)
+                      .OrderBy('ID')
+                      .ToList( E.Ativo = '1' );
      mlog.Lines.clear;
      L.ForEach(  procedure (C: TCliente)
                  var
                    contato:TContato;
                  begin
-
                     with C do
                     begin
                       mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' + Nome.Value+'       CNPJ: ' +CPFCNPJ.Value);
@@ -413,7 +412,7 @@ begin
    try
       _Db := TDataContext.Create(Connection);
 
-      E:= _Db.Clientes.FromSQL('Select * From Clientes where ID = 3');
+      E:= _Db.Clientes.OrderBy('ID').FromSQL('Select * From Clientes where ID = 3');
 
       mlog.Lines.Add('ID: ' + E.ID.Value.ToString);
       mlog.Lines.Add( ' Nome:'+ E.Nome.Value);
