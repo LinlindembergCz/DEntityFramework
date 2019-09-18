@@ -123,7 +123,7 @@ begin
                                           end,
                                           'ID'
                                          );
-
+                                         {
   migrationBuilder.CreateTable<TFuncionario>( Func,
                                              'Funcionario' ,
                                              procedure
@@ -145,6 +145,7 @@ begin
                                              end,
                                              'ID'
                                            );
+                                           }
 
   mLog.Text := migrationBuilder.Script.Text;
 
