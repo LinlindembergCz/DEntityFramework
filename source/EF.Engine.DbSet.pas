@@ -87,7 +87,7 @@ Type
 
     function Include( E: TObject ):TDbSet<T>;
     function ThenInclude(E: TObject ): TDbSet<T>;
-    function OrderBy(QueryAble: String): TDbSet<T>;
+    function OrderBy( Order : String): TDbSet<T>;
 
     function ToDataSet(QueryAble: IQueryAble): TFDQuery;overload;
     function ToDataSet(QueryAble: String): TFDQuery;overload;
@@ -144,7 +144,6 @@ begin
   try
     result := nil;
     DataSet := ToDataSet(SQL);
-    DataSet.IndexFieldNames:= FOrderBy;
     //E:= T.Create;
     TAutoMapper.DataToEntity(DataSet,Entity );
     result := Entity as T;
@@ -164,6 +163,7 @@ begin
        QueryAble.Prepare;
 
        DataSet :=  FDatabase.CreateDataSet( QueryAble.BuildQuery(QueryAble) );
+       DataSet.IndexFieldNames:= FOrderBy;
        DataSet.Open;
        result := DataSet;
   except
@@ -181,6 +181,7 @@ begin
   try
     //FreeDbSet;
     DataSet := FDatabase.CreateDataSet( QueryAble );
+    DataSet.IndexFieldNames:= FOrderBy;
     DataSet.Open;
     //FDbSet:= DataSet;
     result := DataSet;
@@ -202,7 +203,6 @@ begin
     List := Collection<T>.Create;
     List.Clear;
     DataSet := ToDataSet(QueryAble);
-    DataSet.IndexFieldNames:= FOrderBy;
     while not DataSet.Eof do
     begin
       E:= T.Create;
@@ -1155,9 +1155,9 @@ begin
   DataSet.Free;
 end;
 
-function TDbSet<T>.OrderBy(QueryAble: String): TDbSet<T>;
+function TDbSet<T>.OrderBy(Order: String): TDbSet<T>;
 begin
-  FOrderBy:= QueryAble;
+  FOrderBy:= Order;
   result:= self;
 end;
 
