@@ -42,13 +42,15 @@ begin<br>
                     Include( E.ClienteTabelaPreco).<br>
                         ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
                     Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
-                    Single( E.ID = 3 ).<br>
+                    where( E.ID = 3 ).<br>
+                    Single.<br>
                     ToJson;<br><br>
                     
                     
    L  := _Db.Clientes.Include(E.Veiculo)<br>
                     .Include(E.Contatos)<br>
-                    .ToList( E.Ativo = '1' ); <br>                   
+                    .Where( E.Ativo = '1' )<br>
+                    .ToList; <br>                   
                     
                     
 
