@@ -845,6 +845,8 @@ begin
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
+    FOrderBy:= '';
+    FWhere:= '';
   end;
 
 end;
@@ -991,6 +993,8 @@ begin
       ListObjectsthenInclude.Free;
       ListObjectsthenInclude:= nil;
     end;
+    FOrderBy:= '';
+    FWhere:= '';
   end;
 end;
 
