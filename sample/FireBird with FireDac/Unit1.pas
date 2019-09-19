@@ -92,7 +92,8 @@ begin
                                               'SYSDBA',
                                               'masterkey',
                                               'LocalHost',
-                                              extractfilepath(application.ExeName)+'..\..\DataBase\DBLINQ.FDB');
+                                              extractfilepath(application.ExeName)+
+                                              '..\..\DataBase\DBLINQ.FDB');
 end;
 
 procedure TForm1.Button21Click(Sender: TObject);
@@ -282,7 +283,8 @@ begin
      L := _Db.Clientes.Include(E.Veiculo)
                       .Include(E.Contatos)
                       .OrderBy('ID')
-                      .ToList( E.Ativo = '1' );
+                      .Where( E.Ativo = '1' )
+                      .ToList;
      mlog.Lines.clear;
      L.ForEach(  procedure (C: TCliente)
                  var
@@ -324,7 +326,8 @@ begin
                           Include(E.Veiculo).
                           Include(E.ClienteEmpresa).
                              ThenInclude(E.ClienteEmpresa.Empresa).
-                          Single( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
+                          Where(E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger).
+                          Single;
 
         mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
         mlog.Lines.Add('ID : ' + C.ID.Value.ToString );
@@ -576,7 +579,9 @@ begin
         _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
 
-        C := _Db.Clientes.Single( E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger);
+        C := _Db.Clientes.
+                 Where(E.ID =  DataSource1.DataSet.FieldByName('ID').AsInteger).
+                 Single;
 
         mlog.Lines.Add('Cliente : ' +C.Nome.Value);
 
