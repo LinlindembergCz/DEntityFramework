@@ -32,8 +32,10 @@ Type
     FListFields: TStringList;
     FEntity : T;
     FOrderBy: string;
+    FWhere: TString;
     procedure FreeDbSet;
   private
+
 
   protected
     function FindEntity(QueryAble: IQueryAble): TEntityBase;
@@ -79,15 +81,16 @@ Type
     function Entry(E:T):TDbSet<T>;
     procedure Load;
 
-    function Single(Condition: TString): T;
+    function Single: T;
 
     function ToList(QueryAble: IQueryAble;  EntityList: TObject = nil): Collection;overload;
     function ToList<T: TEntityBase>(QueryAble: IQueryAble): Collection<T>; overload;
-    function ToList(Condition: TString): Collection<T>;overload;
+    function ToList: Collection<T>;overload;
 
     function Include( E: TObject ):TDbSet<T>;
     function ThenInclude(E: TObject ): TDbSet<T>;
     function OrderBy( Order : String): TDbSet<T>;
+    function Where(Condition: TString): TDbSet<T>;
 
     function ToDataSet(QueryAble: IQueryAble): TFDQuery;overload;
     function ToDataSet(QueryAble: String): TFDQuery;overload;
@@ -553,7 +556,7 @@ begin
     FEntity := proEntity as T;
 end;
 
-function TDbSet<T>.ToList(Condition: TString): Collection<T>;
+function TDbSet<T>.ToList: Collection<T>;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, ConcretEntity, EntidyInclude : TEntityBase;
@@ -583,7 +586,7 @@ begin
     if ListObjectsthenInclude <> nil then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
-    QueryAble:= From( FirstEntity ).Where( Condition ).Select;
+    QueryAble:= From( FirstEntity ).Where( FWhere ).Select;
 
     ListEntity := ToList<T>( QueryAble );
 
@@ -709,6 +712,7 @@ begin
       ListObjectsthenInclude:= nil;
     end;
     FOrderBy:= '';
+    FWhere:= '';
   end;
 end;
 
@@ -845,7 +849,7 @@ begin
 
 end;
 
-function TDbSet<T>.Single(Condition: TString ): T;
+function TDbSet<T>.Single: T;
 var
   maxthenInclude, maxInclude :integer;
   ReferenceEntidy, EntidyInclude: TEntityBase;
@@ -886,7 +890,7 @@ begin
           begin
             FirstEntity := T(ListObjectsInclude.Items[0]);
             FirstTable  := Copy(FirstEntity.ClassName,2,length(FirstEntity.ClassName) );
-            QueryAble   := From(FirstEntity).Where( Condition ).Select;
+            QueryAble   := From(FirstEntity).Where( FWhere ).Select;
             FirstEntity := Find( QueryAble );
           end
           else
@@ -1160,6 +1164,14 @@ begin
   FOrderBy:= Order;
   result:= self;
 end;
+
+
+function TDbSet<T>.Where(Condition: TString): TDbSet<T>;
+begin
+  FWhere:= Condition;
+  result:= self;
+end;
+
 
 function TDbSet<T>.Avg(Field: TInteger; Condition: TString): Integer;
 var
