@@ -31,11 +31,14 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 
 ## Demos
 
-* ...\EntityFramework\sample\DDD (Domain Driven Design)
-* ...\EntityFramework\sample\Testes (TDD)
+* ...\EntityFramework\sample\DDD (Domain Driven Design)<br>
+* ...\EntityFramework\sample\Testes (TDD)<br>
 
+
+Include/ThenInclude<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF5.png"></img><br><br>
 
+FromSQL<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF2.png"></img><br><br>
 
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF3.png"></img><br><br>
