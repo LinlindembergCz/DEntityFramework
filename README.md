@@ -50,6 +50,7 @@ begin<br>
    L  := _Db.Clientes.Include(E.Veiculo)<br>
                     .Include(E.Contatos)<br>
                     .Where( E.Ativo = '1' )<br>
+                    .OrderBy( 'ID' )<br>                    
                     .ToList; <br>                   
                     
                     
