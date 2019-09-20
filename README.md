@@ -34,39 +34,7 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
 
-begin<br>
-    _Db := TDataContext.Create(DataModule1.FConnection);
-    
-   C :=  _Db.Clientes.Include( E.Veiculo ).<br>
-                    Include( E.Contatos ).<br>
-                    Include( E.ClienteTabelaPreco).<br>
-                        ThenInclude(E.ClienteTabelaPreco.TabelaPreco).                           ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco.).<br>
-                    Include( E.ClienteEmpresa).ThenInclude(E.ClienteEmpresa.Empresa).<br>
-                    where( E.ID = 3 ).<br>
-                    Single.<br>
-                    ToJson;<br><br>
-                    
-                    
-   L  := _Db.Clientes.Include(E.Veiculo)<br>
-                    .Include(E.Contatos)<br>
-                    .Where( E.Ativo = '1' )<br>
-                    .OrderBy( 'ID' )<br>                    
-                    .ToList; <br>                   
-                    
-                    
-
-end;                    
-<br><br>
-var<br>
-  Query: IQueryAble;<br>
-begin<br>
-  Query := From(TPessoa).<br>
-                inner( Pessoa.Endereco , Pessoa.Endereco.PessoaId = Pessoa.Id ).<br>
-                innerLeft( PessoaFisica, PessoaFisica.Id=Pessoa.Id).<br>
-                Where(Pessoa.Id=1).<br>
-                OrderBy(Pessoa,[Pessoa.Nome]).<br>
-                Select([Pessoa.Nome]);<br>
-end;<br><br>
+<img source="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF1.png"></img><br>
 
 Other:
 
