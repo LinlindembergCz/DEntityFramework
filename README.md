@@ -40,6 +40,8 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF3.png"></img><br><br>
 
+<img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF4.png"></img><br><br>
+
 Other:
 
 TDbContext;<br>
