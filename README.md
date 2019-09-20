@@ -44,7 +44,7 @@ FromSQL<br>
 Add/SaveChanges<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF3.png"></img><br><br>
 
-Migration<br>
+MigrationBuilder<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF4.png"></img><br><br>
 
 Other:
