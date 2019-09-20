@@ -34,7 +34,7 @@ In short, add the following path to your Delphi IDE (in the Tools/Environment/Li
 * ...\EntityFramework\sample\DDD (Domain Driven Design)
 * ...\EntityFramework\sample\Testes (TDD)
 
-<img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF1.png"></img><br><br>
+<img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF5.png"></img><br><br>
 
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF2.png"></img><br><br>
 
