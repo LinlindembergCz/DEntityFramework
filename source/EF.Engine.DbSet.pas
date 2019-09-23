@@ -35,6 +35,8 @@ Type
     FWhere: TString;
     procedure FreeDbSet;
   private
+    function HasInclude: boolean;
+    function HasThenInclude: boolean;
 
 
   protected
@@ -206,6 +208,7 @@ begin
     List := Collection<T>.Create;
     List.Clear;
     DataSet := ToDataSet(QueryAble);
+    DataSet.IndexFieldNames:= FOrderBy;
     while not DataSet.Eof do
     begin
       E:= T.Create;
@@ -235,6 +238,7 @@ begin
 
     List.Clear;
     DataSet := ToDataSet(QueryAble);
+    DataSet.IndexFieldNames:= FOrderBy;
     while not DataSet.Eof do
     begin
       E:= QueryAble.ConcretEntity.NewInstance as TEntityBase;
@@ -495,15 +499,13 @@ begin
     FreeAndNil(FEntity);
   if FListFields <> nil then
     FreeAndNil(FListFields);
-  if ListObjectsInclude <> nil then
+  if HasInclude then
     FreeAndNil(ListObjectsInclude);
-  if ListObjectsThenInclude <> nil then
+  if HasThenInclude then
     FreeAndNil(ListObjectsThenInclude);
   //if Database <> nil then
   //  Database.Free;
 end;
-
-
 
 procedure TDbSet<T>.Remove(Condition: TString);
 var
@@ -556,6 +558,18 @@ begin
     FEntity := proEntity as T;
 end;
 
+function TDbSet<T>.HasInclude:boolean;
+begin
+  result:= false;
+  if ListObjectsInclude <> nil then
+  result:= (ListObjectsInclude.Count > 1) or ( HasThenInclude )
+end;
+
+function TDbSet<T>.HasThenInclude:boolean;
+begin
+  result:= ListObjectsthenInclude <> nil;
+end;
+
 function TDbSet<T>.ToList: Collection<T>;
 var
   maxthenInclude, maxInclude :integer;
@@ -583,7 +597,7 @@ begin
     j:=0;
 
     maxInclude:= ListObjectsInclude.Count-1;
-    if ListObjectsthenInclude <> nil then
+    if HasThenInclude then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
     QueryAble:= From( FirstEntity ).Where( FWhere ).Select;
@@ -592,7 +606,7 @@ begin
 
     FirstEntity.free;
 
-    if (ListObjectsInclude.Count > 1) or ( ListObjectsthenInclude <> nil ) then
+    if HasInclude then
     begin
       for H := 0 to ListEntity.Count - 1 do
       begin
@@ -600,7 +614,7 @@ begin
         while I <= maxInclude do
         begin
           IndexInclude:= i;
-         if ListObjectsInclude.Items[IndexInclude] <> nil then
+          if ListObjectsInclude.Items[IndexInclude] <> nil then
           begin
             try
               if i = 0 then
@@ -705,7 +719,7 @@ begin
     ListObjectsInclude.clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
-    if ListObjectsthenInclude <> nil then
+    if HasThenInclude then
     begin
       ListObjectsthenInclude.clear;
       ListObjectsthenInclude.Free;
@@ -734,7 +748,7 @@ begin
     j:=0;
     k:=0;
     maxInclude:= ListObjectsInclude.Count-1;
-    if ListObjectsthenInclude <> nil then
+    if HasThenInclude then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
     while I <= maxInclude do
@@ -778,7 +792,7 @@ begin
       end
       else
       begin
-        if ListObjectsthenInclude <> nil then
+        if HasThenInclude then
         begin
           ReferenceEntidy := EntidyInclude;
           TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
@@ -839,7 +853,7 @@ begin
     ListObjectsInclude.Clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
-    if ListObjectsthenInclude <> nil then
+    if HasThenInclude then
     begin
       ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
@@ -878,7 +892,7 @@ begin
     j:=0;
     k:=0;
     maxInclude:= ListObjectsInclude.Count-1;
-    if ListObjectsthenInclude <> nil then
+    if HasThenInclude then
        maxthenInclude:= ListObjectsthenInclude.Count-1;
 
     while I <= maxInclude do
@@ -924,7 +938,7 @@ begin
       end
       else
       begin
-        if ListObjectsthenInclude <> nil then
+        if HasThenInclude then
         begin
           ReferenceEntidy := EntidyInclude;
           TableForeignKey := Copy(ReferenceEntidy.ClassName,2,length(ReferenceEntidy.ClassName) );
@@ -987,7 +1001,7 @@ begin
     ListObjectsInclude.Clear;
     ListObjectsInclude.Free;
     ListObjectsInclude:= nil;
-    if ListObjectsthenInclude <> nil then
+    if HasThenInclude then
     begin
       ListObjectsthenInclude.Clear;
       ListObjectsthenInclude.Free;
