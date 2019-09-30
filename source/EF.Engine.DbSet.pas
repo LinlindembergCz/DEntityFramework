@@ -330,6 +330,7 @@ begin
         end;
       end;
     finally
+      E.Free;
       ListValues.Free;
       ListValues := nil;
     end;
@@ -503,8 +504,6 @@ begin
     FreeAndNil(ListObjectsInclude);
   if HasThenInclude then
     FreeAndNil(ListObjectsThenInclude);
-  //if Database <> nil then
-  //  Database.Free;
 end;
 
 procedure TDbSet<T>.Remove(Condition: TString);
