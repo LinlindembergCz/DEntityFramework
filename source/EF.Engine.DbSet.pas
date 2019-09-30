@@ -111,6 +111,8 @@ Type
     procedure UpdateRange(entities: Array of T;AutoSaveChange:boolean = false);
     procedure RemoveRange(entities: TObjectList<T>);
 
+    procedure Import(FilenameCSV:string; Fields: array of string);
+
     procedure SaveChanges;
     procedure RefreshDataSet;
     function ChangeCount: integer;
@@ -127,7 +129,7 @@ uses
   EF.Schema.Firebird,
   EF.Schema.MSSQL,
   EF.Mapping.AutoMapper,
-  EF.Schema.PostGres;
+  EF.Schema.PostGres, Vcl.Dialogs;
 
 procedure TDbSet<T>.FreeDbSet;
 begin
@@ -379,6 +381,60 @@ begin
   begin
     FDbSet:= ToDataSet( from(Entity).Select.Where(Entity.Id = Entity.Id.Value) );
     Update(AutoSaveChange);
+  end;
+end;
+
+procedure TDbSet<T>.Import(FilenameCSV: string; Fields: array of string);
+var
+  DataSet: TFDQuery;
+
+  lStringListFile: TStringList;
+  lStringListLine: TStringList;
+
+  sTable: string;
+  sFields: string;
+  sParams: string;
+  I: Integer;
+  lCounter: integer;
+begin
+  sTable:= uppercase( TAutoMapper.GetTableAttribute(T) );
+
+  sFields:= stringReplace( fields[0],sTable+'.','',[]);
+  sParams:= ':'+sFields;
+  for I := 1 to length(fields)-1 do
+  begin
+      sFields:= sFields + ',' +stringReplace( fields[i], sTable+'.','',[]);
+      sParams:= sParams + ',' +':'+stringReplace( fields[i], sTable+'.','',[]);
+  end;
+
+  try
+    DataSet:= TFDQuery.Create(nil);
+
+    DataSet.Connection:= TFDConnection(Database.CustomConnection);
+
+    DataSet.SQL.Add(Format('INSERT INTO %s (%s) VALUES (%s)', [sTable,sFields,sParams] ));
+
+    lStringListFile := TStringList.Create;
+    lStringListLine := TStringList.Create;
+    lStringListFile.LoadFromFile(FilenameCSV);
+    DataSet.Params.ArraySize := lStringListFile.Count;
+
+    for lCounter := 0 to lStringListFile.Count-1 do
+    begin
+      lStringListLine.Delimiter:= ';';
+      lStringListLine.StrictDelimiter := True;
+      lStringListLine.DelimitedText := lStringListFile[lCounter];
+      for I := 0 to length(fields)-1 do
+      begin
+        DataSet.ParamByName( stringReplace( fields[i],sTable+'.','',[])).AsStrings[lCounter]:= lStringListLine[I];
+      end;
+    end;
+
+    DataSet.Execute(lStringListFile.Count, 0);
+  finally
+    DataSet.Free;
+    lStringListLine.Free;
+    lStringListFile.Free;
   end;
 end;
 
