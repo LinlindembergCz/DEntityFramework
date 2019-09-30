@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 532
-  ClientWidth = 911
+  ClientHeight = 557
+  ClientWidth = 922
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,7 +12,6 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
@@ -26,8 +25,8 @@ object Form1: TForm1
   object panelButtons: TPanel
     Left = 0
     Top = 0
-    Width = 297
-    Height = 532
+    Width = 281
+    Height = 557
     Align = alLeft
     BevelKind = bkTile
     BevelOuter = bvNone
@@ -80,15 +79,15 @@ object Form1: TForm1
     end
     object Button5: TButton
       Left = 14
-      Top = 111
-      Width = 139
+      Top = 112
+      Width = 120
       Height = 25
-      Caption = 'Include/ThenInclude/Single'
+      Caption = 'Include/Single'
       TabOrder = 5
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 169
+      Left = 143
       Top = 4
       Width = 120
       Height = 25
@@ -97,7 +96,7 @@ object Form1: TForm1
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 169
+      Left = 143
       Top = 85
       Width = 120
       Height = 25
@@ -106,8 +105,8 @@ object Form1: TForm1
       OnClick = Button7Click
     end
     object Button8: TButton
-      Left = 169
-      Top = 165
+      Left = 143
+      Top = 166
       Width = 120
       Height = 25
       Caption = 'Remove'
@@ -116,7 +115,7 @@ object Form1: TForm1
     end
     object Button9: TButton
       Left = 14
-      Top = 85
+      Top = 81
       Width = 120
       Height = 25
       Caption = 'ToList + ForEach'
@@ -124,8 +123,8 @@ object Form1: TForm1
       OnClick = Button9Click
     end
     object Button10: TButton
-      Left = 169
-      Top = 32
+      Left = 143
+      Top = 31
       Width = 120
       Height = 25
       Caption = 'Add Range'
@@ -133,7 +132,7 @@ object Form1: TForm1
       OnClick = Button10Click
     end
     object Button11: TButton
-      Left = 169
+      Left = 143
       Top = 112
       Width = 120
       Height = 25
@@ -142,8 +141,8 @@ object Form1: TForm1
       TabOrder = 11
     end
     object Button12: TButton
-      Left = 169
-      Top = 138
+      Left = 143
+      Top = 139
       Width = 120
       Height = 25
       Caption = 'Remove  Range'
@@ -160,7 +159,7 @@ object Form1: TForm1
       OnClick = Button13Click
     end
     object Button14: TButton
-      Left = 169
+      Left = 143
       Top = 59
       Width = 120
       Height = 25
@@ -224,7 +223,7 @@ object Form1: TForm1
     end
     object Button21: TButton
       Left = 14
-      Top = 0
+      Top = 4
       Width = 120
       Height = 25
       Caption = 'Migration'
@@ -233,7 +232,7 @@ object Form1: TForm1
     end
     object Button4: TButton
       Left = 14
-      Top = 138
+      Top = 139
       Width = 120
       Height = 25
       Caption = 'Entry/Load'
@@ -242,22 +241,20 @@ object Form1: TForm1
     end
   end
   object Panel2: TPanel
-    Left = 297
+    Left = 281
     Top = 0
-    Width = 614
-    Height = 532
+    Width = 641
+    Height = 557
     Align = alClient
     BevelKind = bkTile
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 2
-    ExplicitLeft = 277
-    ExplicitWidth = 634
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
-      Width = 610
-      Height = 292
+      Width = 384
+      Height = 317
       Align = alClient
       DataSource = DataSource1
       TabOrder = 0
@@ -266,20 +263,157 @@ object Form1: TForm1
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDblClick = DBGrid1DblClick
     end
     object mLog: TMemo
       Left = 0
-      Top = 292
-      Width = 610
+      Top = 317
+      Width = 637
       Height = 236
       Align = alBottom
       ScrollBars = ssVertical
       TabOrder = 1
-      ExplicitWidth = 630
+      ExplicitLeft = 4
+      ExplicitTop = 323
+    end
+    object Panel1: TPanel
+      Left = 384
+      Top = 0
+      Width = 253
+      Height = 317
+      Align = alRight
+      TabOrder = 2
+      ExplicitTop = -6
+      object Label1: TLabel
+        Left = 16
+        Top = 16
+        Width = 51
+        Height = 13
+        Caption = 'DataBind'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object edtNome: TLabeledEdit
+        Left = 16
+        Top = 100
+        Width = 217
+        Height = 21
+        EditLabel.Width = 27
+        EditLabel.Height = 13
+        EditLabel.Caption = 'Nome'
+        TabOrder = 0
+      end
+      object edtId: TLabeledEdit
+        Left = 16
+        Top = 60
+        Width = 49
+        Height = 21
+        BevelInner = bvNone
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        Color = clBtnFace
+        EditLabel.Width = 11
+        EditLabel.Height = 13
+        EditLabel.Caption = 'ID'
+        ReadOnly = True
+        TabOrder = 1
+        Text = '0'
+      end
+      object edtCPF: TLabeledEdit
+        Left = 16
+        Top = 141
+        Width = 217
+        Height = 21
+        EditLabel.Width = 19
+        EditLabel.Height = 13
+        EditLabel.Caption = 'CPF'
+        TabOrder = 2
+      end
+      object btnRefresh: TButton
+        Left = 199
+        Top = 179
+        Width = 49
+        Height = 25
+        Caption = 'Refresh'
+        TabOrder = 3
+        OnClick = btnRefreshClick
+      end
+      object Button22: TButton
+        Left = 18
+        Top = 179
+        Width = 49
+        Height = 25
+        Caption = 'Update'
+        TabOrder = 4
+        OnClick = Button22Click
+      end
+    end
+    object BindNavigator1: TBindNavigator
+      Left = 451
+      Top = 179
+      Width = 132
+      Height = 25
+      DataSource = PrototypeBindSource1
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+      Orientation = orHorizontal
+      TabOrder = 3
     end
   end
   object DataSource1: TDataSource
-    Left = 568
-    Top = 128
+    Left = 376
+    Top = 104
+  end
+  object PrototypeBindSource1: TPrototypeBindSource
+    AutoActivate = True
+    AutoPost = False
+    FieldDefs = <
+      item
+        Name = 'ID'
+        FieldType = ftInteger
+        ReadOnly = False
+      end
+      item
+        Name = 'Nome'
+        ReadOnly = False
+      end
+      item
+        Name = 'CPFCNPJ'
+        ReadOnly = False
+      end>
+    ScopeMappings = <>
+    OnCreateAdapter = PrototypeBindSource1CreateAdapter
+    Left = 377
+    Top = 168
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 380
+    Top = 237
+    object LinkControlToField1: TLinkControlToField
+      Category = 'Quick Bindings'
+      DataSource = PrototypeBindSource1
+      FieldName = 'ID'
+      Control = edtId
+      Track = True
+    end
+    object LinkControlToField2: TLinkControlToField
+      Category = 'Quick Bindings'
+      DataSource = PrototypeBindSource1
+      FieldName = 'Nome'
+      Control = edtNome
+      Track = True
+    end
+    object LinkControlToField3: TLinkControlToField
+      Category = 'Quick Bindings'
+      DataSource = PrototypeBindSource1
+      FieldName = 'CPFCNPJ'
+      Control = edtCPF
+      Track = True
+    end
   end
 end
