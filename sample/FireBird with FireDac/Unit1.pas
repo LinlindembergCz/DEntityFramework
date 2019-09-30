@@ -14,17 +14,17 @@ uses
   Vcl.Bind.Navigator;
 
 type
-  //View Model
-  TClienteView = class
-  private
-    FID:Integer;
-    FNome:String;
-    FCPFCNPJ: string;
-  public
-    property ID:Integer read FID write FID;
-    property Nome: string read FNome write FNome;
-    property CPFCNPJ: string read FCPFCNPJ write FCPFCNPJ;
-  end;
+    //View Model
+    TClienteView = class
+    private
+      FID:Integer;
+      FNome:String;
+      FCPFCNPJ: string;
+    public
+      property ID:Integer read FID write FID;
+      property Nome: string read FNome write FNome;
+      property CPFCNPJ: string read FCPFCNPJ write FCPFCNPJ;
+    end;
 
 
 
@@ -71,6 +71,8 @@ type
     btnRefresh: TButton;
     Label1: TLabel;
     Button22: TButton;
+    Button23: TButton;
+    OpenDialog1: TOpenDialog;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -99,6 +101,7 @@ type
     procedure btnRefreshClick(Sender: TObject);
     procedure Button22Click(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
+    procedure Button23Click(Sender: TObject);
 
   private
     ViewModelList : TObjectList<TClienteView>;
@@ -145,16 +148,16 @@ begin
               ToList;
 
       L.ForEach( procedure (C: TCliente)
-               var
-                 E  : TClienteView;
-               begin
-                 E:= TClienteView.Create;
-                 E.ID:= C.ID.Value;
-                 E.Nome:= C.Nome.Value;
-                 E.CPFCNPJ:= C.CPFCNPJ.Value;
+                 var
+                   E  : TClienteView;
+                 begin
+                   E:= TClienteView.Create;
+                   E.ID:= C.ID.Value;
+                   E.Nome:= C.Nome.Value;
+                   E.CPFCNPJ:= C.CPFCNPJ.Value;
 
-                 ViewModelList.Add( E )
-               end );
+                   ViewModelList.Add( E )
+                 end );
    finally
       L.Free;
       _Db.Destroy;
@@ -242,20 +245,23 @@ end;
 procedure TForm1.Button22Click(Sender: TObject);
 var
   _Db: TDataContext;
-   E: TCliente;
+
+   E: TClienteView;
 begin
    try
       if PrototypeBindSource1.Editing then
          PrototypeBindSource1.Post;
 
+      E := ViewModelList.Items[ PrototypeBindSource1.ItemIndex ];
+
       _Db := TDataContext.Create(Connection);
 
-      E := _Db.Clientes.Find( _Db.Clientes.Entity.Id = ViewModelList.Items[ PrototypeBindSource1.ItemIndex ].ID );
+      _Db.Clientes.Find( _Db.Clientes.Entity.Id = E.ID );
 
-      with ViewModelList.Items[ PrototypeBindSource1.ItemIndex ] do
+      with E do
       begin
-        E.Nome.Value:=  Nome;
-        E.CPFCNPJ.Value:=  CPFCNPJ;
+        _Db.Clientes.Entity.Nome.Value:=  Nome;
+        _Db.Clientes.Entity.CPFCNPJ.Value:=  CPFCNPJ;
       end;
 
       _Db.Clientes.Update;
@@ -269,6 +275,24 @@ begin
      _Db.Destroy;
    end;
 
+end;
+
+procedure TForm1.Button23Click(Sender: TObject);
+var
+  _Db: TDataContext;
+  E:TCliente;
+begin
+   OpenDialog1.Execute;
+   if OpenDialog1.FileName <> '' then
+   begin
+     try
+       _Db := TDataContext.Create( Connection  );
+        E:= _Db.Clientes.Entity;
+       _Db.Clientes.Import( OpenDialog1.FileName, [E.Nome, E.NomeFantasia , E.CPFCNPJ]);
+     finally
+       _Db.Destroy;
+     end;
+   end;
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -286,8 +310,8 @@ begin
    try
      _Db := TDataContext.Create( Connection  );
       E:= _Db.Clientes.Entity;
-      //FDMemTable1.Close;
-      //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
+    //FDMemTable1.Close;
+    //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
       DataSource1.DataSet := _Db.Clientes.
                                  OrderBy('Nome').
                                  ToDataSet( From( E ).Select);
@@ -803,3 +827,9 @@ end;
 
 
 end.
+
+
+{
+
+
+}
