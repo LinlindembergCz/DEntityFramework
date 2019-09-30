@@ -8,9 +8,26 @@ uses
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Domain.Entity.Cliente,
   System.Generics.Collections, Vcl.ExtCtrls, Datasnap.DBClient, Data.DB.Helper,
   DataContext, EF.Core.List, EF.QueryAble.Base, EF.QueryAble.Linq, EF.Core.Types,
-  EF.Drivers.FireDac;
+  EF.Drivers.FireDac, Data.Bind.Components, Data.Bind.DBScope,
+  Data.Bind.ObjectScope, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
+  Data.Bind.EngExt, Vcl.Bind.DBEngExt, Data.Bind.Controls, Vcl.Buttons,
+  Vcl.Bind.Navigator;
 
 type
+  //View Model
+  TClienteView = class
+  private
+    FID:Integer;
+    FNome:String;
+    FCPFCNPJ: string;
+  public
+    property ID:Integer read FID write FID;
+    property Nome: string read FNome write FNome;
+    property CPFCNPJ: string read FCPFCNPJ write FCPFCNPJ;
+  end;
+
+
+
   TForm1 = class(TForm)
     DataSource1: TDataSource;
     Button1: TButton;
@@ -41,6 +58,19 @@ type
     Button20: TButton;
     Button21: TButton;
     Button4: TButton;
+    Panel1: TPanel;
+    edtNome: TLabeledEdit;
+    edtId: TLabeledEdit;
+    PrototypeBindSource1: TPrototypeBindSource;
+    BindingsList1: TBindingsList;
+    LinkControlToField1: TLinkControlToField;
+    LinkControlToField2: TLinkControlToField;
+    BindNavigator1: TBindNavigator;
+    edtCPF: TLabeledEdit;
+    LinkControlToField3: TLinkControlToField;
+    btnRefresh: TButton;
+    Label1: TLabel;
+    Button22: TButton;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -53,7 +83,6 @@ type
     procedure Button8Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormCreate(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure buttonGetSQLClick(Sender: TObject);
     procedure Button14Click(Sender: TObject);
@@ -65,15 +94,26 @@ type
     procedure Button20Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure PrototypeBindSource1CreateAdapter(Sender: TObject;
+      var ABindSourceAdapter: TBindSourceAdapter);
+    procedure btnRefreshClick(Sender: TObject);
+    procedure Button22Click(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+
   private
+    ViewModelList : TObjectList<TClienteView>;
     Connection:TEntityFDConnection;
+    procedure LoadClientes;
     { Private declarations }
   public
     { Public declarations }
   end;
 
+
+
 var
   Form1: TForm1;
+
 
 
 implementation
@@ -86,15 +126,55 @@ uses UDataModule, EF.Mapping.AutoMapper,  Domain.Entity.Contato, EF.Drivers.Conn
   Domain.Entity.TabelaPreco, Domain.Entity.ClienteTabelaPreco,
   Domain.Entity.Produto, Domain.Entity.ItensTabelaPreco;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TForm1.LoadClientes;
+var
+   L: Collection<TCliente>;
+   _Db: TDataContext;
 begin
-     Connection:= TEntityFDConnection.Create( fdFB ,
-                                              'SYSDBA',
-                                              'masterkey',
-                                              'LocalHost',
-                                              extractfilepath(application.ExeName)+
-                                              '..\..\DataBase\DBLINQ.FDB');
+   try
+     if ViewModelList = nil then
+        ViewModelList := TObjectList<TClienteView>.create
+     else
+        ViewModelList.clear;
+
+     _Db := TDataContext.Create( Connection );
+
+      L:= _Db.Clientes.
+              Where( '0=0' ).
+              OrderBy('ID').
+              ToList;
+
+      L.ForEach( procedure (C: TCliente)
+               var
+                 E  : TClienteView;
+               begin
+                 E:= TClienteView.Create;
+                 E.ID:= C.ID.Value;
+                 E.Nome:= C.Nome.Value;
+                 E.CPFCNPJ:= C.CPFCNPJ.Value;
+
+                 ViewModelList.Add( E )
+               end );
+   finally
+      L.Free;
+      _Db.Destroy;
+   end;
 end;
+
+procedure TForm1.PrototypeBindSource1CreateAdapter(Sender: TObject; var ABindSourceAdapter: TBindSourceAdapter);
+begin
+   Connection:= TEntityFDConnection.Create( fdFB ,
+                                            'SYSDBA',
+                                            'masterkey',
+                                            'LocalHost',
+                                            extractfilepath(application.ExeName)+
+                                            '..\..\DataBase\DBLINQ.FDB');
+   LoadClientes;
+
+   ABindSourceAdapter := TListBindSourceAdapter<TClienteView>.Create(Self, ViewModelList, false );
+end;
+
+
 
 procedure TForm1.Button21Click(Sender: TObject);
 var
@@ -158,9 +238,43 @@ begin
 
 end;
 
+
+procedure TForm1.Button22Click(Sender: TObject);
+var
+  _Db: TDataContext;
+   E: TCliente;
+begin
+   try
+      if PrototypeBindSource1.Editing then
+         PrototypeBindSource1.Post;
+
+      _Db := TDataContext.Create(Connection);
+
+      E := _Db.Clientes.Find( _Db.Clientes.Entity.Id = ViewModelList.Items[ PrototypeBindSource1.ItemIndex ].ID );
+
+      with ViewModelList.Items[ PrototypeBindSource1.ItemIndex ] do
+      begin
+        E.Nome.Value:=  Nome;
+        E.CPFCNPJ.Value:=  CPFCNPJ;
+      end;
+
+      _Db.Clientes.Update;
+
+      _Db.Clientes.SaveChanges;
+
+      //Não gosto de fazer isso, mas aqui é so um Demo!
+      buttonGetDataSet.Click;
+
+   finally
+     _Db.Destroy;
+   end;
+
+end;
+
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- Connection.Free;
+   ViewModelList.Free;
+   Connection.Free;
 end;
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
@@ -172,17 +286,12 @@ begin
    try
      _Db := TDataContext.Create( Connection  );
       E:= _Db.Clientes.Entity;
-
-      QueryAble := From( E ).Select.OrderBy ( E.Nome );
       //FDMemTable1.Close;
       //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
       DataSource1.DataSet := _Db.Clientes.
-                              //OrderBy('ID').
-                              ToDataSet(From( E ).
-                                        Select
-                                        .OrderBy(E.Nome)
-                                         );
-   finally
+                                 OrderBy('Nome').
+                                 ToDataSet( From( E ).Select);
+     finally
      _Db.Destroy;
    end;
 end;
@@ -197,9 +306,11 @@ begin
       try
         _Db := TDataContext.Create(Connection);
         E:= _Db.Clientes.Entity;
-         {QueryAble := From( E ).
+         {
+         QueryAble := From( E ).
                       Select.
-                      Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );}
+                      Where( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+         }
          //E := _Db.Clientes.Find( QueryAble );
          E := _Db.Clientes.Find( E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger  );
 
@@ -235,6 +346,11 @@ begin
   end;
 end;
 
+procedure TForm1.DBGrid1DblClick(Sender: TObject);
+begin
+  PrototypeBindSource1.Locate('ID', DataSource1.DataSet.FieldByName('ID').AsString);
+end;
+
 procedure TForm1.Button20Click(Sender: TObject);
 var
    E: TCliente;
@@ -259,7 +375,6 @@ procedure TForm1.Button2Click(Sender: TObject);
 var
    E: TCliente;
   _Db: TDataContext;
-  QueryAble: IQueryAble;
 begin
   try
     _Db := TDataContext.Create(Connection);
@@ -282,17 +397,19 @@ begin
 
      L := _Db.Clientes.Include(E.Veiculo)
                       .Include(E.Contatos)
-                      .OrderBy('ID')
                       .Where( E.Ativo = '1' )
+                      .OrderBy('ID')
                       .ToList;
      mlog.Lines.clear;
+
      L.ForEach(  procedure (C: TCliente)
                  var
                    contato:TContato;
                  begin
                     with C do
                     begin
-                      mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' + Nome.Value+'       CNPJ: ' +CPFCNPJ.Value);
+                      mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' +
+                                              Nome.Value+'       CNPJ: ' + CPFCNPJ.Value);
                       mlog.Lines.Add('Placa: ' + Veiculo.Placa.Value );
                       mlog.Lines.Add('Contatos :');
                       for contato in Contatos do
@@ -301,7 +418,7 @@ begin
                       end;
                     end;
                  end
-                 );
+              );
   finally
     _Db.Destroy;
     FreeAndNil( L );
@@ -347,12 +464,16 @@ begin
    end;
 end;
 
+procedure TForm1.btnRefreshClick(Sender: TObject);
+begin
+  LoadClientes;
+end;
+
 procedure TForm1.Button10Click(Sender: TObject);
 var
   _Db: TDataContext;
    I:integer;
    Clientes : Collection<TCliente>;
-   C: TCliente;
 begin
   try
     _Db := TDataContext.Create(Connection);
@@ -360,20 +481,18 @@ begin
     Clientes := Collection<TCliente>.create(false);
     for I := 0 to 3 do
     begin
-       C := TCliente.New( '02316937455',
-                          0,
-                          43,
-                          'JOAO Cristo '+'-'+inttostr(I),
-                          '111111',
-                          strtodate('19/04/1976'),
-                          '1',
-                          'lindemberg',
-                          '',
-                          'Fisica',
-                          'Casado',
-                          'Teste' );
-
-       Clientes.Add(C);
+       Clientes.Add( TCliente.New( '02316937455',
+                                  0,
+                                  43,
+                                  'JOAO Cristo '+'-'+inttostr(I),
+                                  '111111',
+                                  strtodate('19/04/1976'),
+                                  '1',
+                                  'lindemberg',
+                                  '',
+                                  'Fisica',
+                                  'Casado',
+                                  'Teste' ) );
     end;
 
     _Db.Clientes.AddRange(Clientes);
@@ -393,12 +512,10 @@ var
   Entities: Collection<TCliente>;
   Cliente: TCliente;
   I:integer;
-     E: TCliente;
   _Db: TDataContext;
 begin
   try
      _Db := TDataContext.Create(Connection);
-     E:= _Db.Clientes.Entity;
 
      Entities:=Collection<TCliente>.create;
 
@@ -475,16 +592,12 @@ end;
 
 procedure TForm1.Button16Click(Sender: TObject);
 var
-   E: TCliente;
   _Db: TDataContext;
   count: integer;
 begin
    try
       _Db := TDataContext.Create(Connection);
-      E:= _Db.Clientes.Entity;
-
-      count:= _Db.Clientes.Count;
-
+     count:= _Db.Clientes.Count;
       mlog.Lines.Add( count.ToString );
 
    finally
@@ -553,12 +666,10 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 var
-   E: TCliente;
   _Db: TDataContext;
 begin
   try
      _Db := TDataContext.Create(Connection);
-     E:= _Db.Clientes.Entity;
      _Db.Clientes.Entity.FromJson(mLog.Text);
      mLog.Text:= _Db.Clientes.Entity.ToJson;
   finally
@@ -594,8 +705,8 @@ begin
                       Include(E.ClienteEmpresa).
                          ThenInclude(E.ClienteEmpresa.Empresa).
                       Include(E.ClienteTabelaPreco).
-                          ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                      //      ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
+                         ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
+                      //     ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                       Load();
 
           mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
@@ -622,13 +733,12 @@ end;
 
 procedure TForm1.Button6Click(Sender: TObject);
 var
-   C: TCliente;
   _Db: TDataContext;
 begin
   try
     _Db := TDataContext.Create(Connection);
 
-    C := TCliente.New( '02316937455',
+    _Db.Clientes.Add(TCliente.New( '02316937455',
                         0,
                         43,
                         'JOAO Cristo de nazare',
@@ -639,15 +749,12 @@ begin
                         '',
                         'Fisica',
                         'Casado',
-                        'Teste');
-    //C.Clientes.Validate;
-    _Db.Clientes.Add(C);
+                        'Teste'));
 
     _Db.Clientes.SaveChanges;
 
   finally
     _Db.Destroy;
-    C.Free;
   end;
 
 end;
@@ -692,5 +799,7 @@ begin
      _Db.Destroy;
    end;
 end;
+
+
 
 end.
