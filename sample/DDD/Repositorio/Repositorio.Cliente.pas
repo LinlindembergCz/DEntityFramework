@@ -44,7 +44,7 @@ end;
 function TRepositoryCliente<T>.LoadDataSetPorNome(value: string): TDataSet;
 begin
    if value <> ''  then
-      result := dbContext.ToDataSet( From( E ).Where( E.Nome.Contains( value ) ).Select )
+      result := dbContext.ToDataSet( From( E ).Where( E.Nome.Like( value ) ).Select )
    else
       result := dbContext.ToDataSet( From( E ).Select );
 
