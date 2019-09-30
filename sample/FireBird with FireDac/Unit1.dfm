@@ -239,6 +239,15 @@ object Form1: TForm1
       TabOrder = 22
       OnClick = Button4Click
     end
+    object Button23: TButton
+      Left = 143
+      Top = 193
+      Width = 120
+      Height = 25
+      Caption = 'Import with ArrayDML'
+      TabOrder = 23
+      OnClick = Button23Click
+    end
   end
   object Panel2: TPanel
     Left = 281
@@ -283,16 +292,15 @@ object Form1: TForm1
       Height = 317
       Align = alRight
       TabOrder = 2
-      ExplicitTop = -6
       object Label1: TLabel
         Left = 16
-        Top = 16
-        Width = 51
-        Height = 13
+        Top = 4
+        Width = 75
+        Height = 19
         Caption = 'DataBind'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -16
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
@@ -415,5 +423,11 @@ object Form1: TForm1
       Control = edtCPF
       Track = True
     end
+  end
+  object OpenDialog1: TOpenDialog
+    DefaultExt = 'CSV'
+    Filter = 'CSV|*.csv|TXT|*.txt'
+    Left = 200
+    Top = 232
   end
 end
