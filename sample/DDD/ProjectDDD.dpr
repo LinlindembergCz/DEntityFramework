@@ -60,7 +60,8 @@ uses
   GenericFactory in 'Domain\Factories\GenericFactory.pas',
   EF.Schema.PostGres in '..\..\source\EF.Schema.PostGres.pas',
   EF.Core.List in '..\..\source\EF.Core.List.pas',
-  EF.QueryAble.Linq in '..\..\source\EF.QueryAble.Linq.pas';
+  EF.QueryAble.Linq in '..\..\source\EF.QueryAble.Linq.pas',
+  Domain.Entity.Endereco in 'Domain\Entities\Domain.Entity.Endereco.pas';
 
 
 
@@ -75,7 +76,7 @@ begin
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   try
     c:= TFactoryConnection.GetConnection;//(FormPrincipal.FDConnection1);
-    //A ordem de criação das tabelas que se relacionam é importante!!!!
+    //A ordem de criaÃ§Ã£o das tabelas que se relacionam Ã© importante!!!!
     c.MigrationDataBase( [ TEmpresa,
                            TCliente,
                            TClienteEmpresa,
