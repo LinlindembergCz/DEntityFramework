@@ -73,6 +73,7 @@ type
     Button22: TButton;
     Button23: TButton;
     OpenDialog1: TOpenDialog;
+    chkOffOline: TCheckBox;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -102,6 +103,8 @@ type
     procedure Button22Click(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure Button23Click(Sender: TObject);
+    procedure chkOffOlineClick(Sender: TObject);
+    procedure Button24Click(Sender: TObject);
 
   private
     ViewModelList : TObjectList<TClienteView>;
@@ -127,7 +130,8 @@ uses UDataModule, EF.Mapping.AutoMapper,  Domain.Entity.Contato, EF.Drivers.Conn
      EF.Drivers.Migration, EF.Mapping.Base, Domain.Entity.Empresa,
   Domain.Entity.ClienteEmpresa, Domain.Entity.Veiculo,
   Domain.Entity.TabelaPreco, Domain.Entity.ClienteTabelaPreco,
-  Domain.Entity.Produto, Domain.Entity.ItensTabelaPreco;
+  Domain.Entity.Produto, Domain.Entity.ItensTabelaPreco, FireDAC.Comp.Client,
+  FireDAC.Stan.Option;
 
 procedure TForm1.LoadClientes;
 var
@@ -295,29 +299,43 @@ begin
    end;
 end;
 
-procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-   ViewModelList.Free;
-   Connection.Free;
-end;
+
 
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 var
   E: TCliente;
   _Db: TDataContext;
   QueryAble: IQueryAble;
+  Q:TFDQuery;
 begin
    try
      _Db := TDataContext.Create( Connection  );
       E:= _Db.Clientes.Entity;
-    //FDMemTable1.Close;
-    //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
-      DataSource1.DataSet := _Db.Clientes.
-                                 OrderBy('Nome').
-                                 ToDataSet( From( E ).Select);
+      //FDMemTable1.Close;
+      //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
+      if (Connection.CustomConnection as TFDConnection).Connected then
+      begin
+        DataSource1.DataSet:= _Db.Clientes.
+                                OrderBy('Nome').
+                                ToDataSet( From( E ).Select);
+        TFDQuery(DataSource1.DataSet).FetchAll;
+        // TFDQuery(DataSource1.DataSet).FetchNext();
+        ///Dados ainda podem ser visualizados e alterados
+      end
+      else
+      begin
+        showmessage('Off line');
+        DataSource1.DataSet.close;
+        DataSource1.DataSet.Open;
+      end;
+
+        if chkOffOline.Checked then
+           (Connection.CustomConnection as TFDConnection).Offline()
+        else
+           (Connection.CustomConnection as TFDConnection).Online();
      finally
      _Db.Destroy;
-   end;
+     end;
 end;
 
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
@@ -368,6 +386,12 @@ begin
 
      _Db.Destroy;
   end;
+end;
+
+procedure TForm1.chkOffOlineClick(Sender: TObject);
+begin
+  if not chkOffOline.Checked then
+    (Connection.CustomConnection as TFDConnection).Online();
 end;
 
 procedure TForm1.DBGrid1DblClick(Sender: TObject);
@@ -824,12 +848,10 @@ begin
    end;
 end;
 
-
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+   ViewModelList.Free;
+   Connection.Free;
+end;
 
 end.
-
-
-{
-
-
-}
