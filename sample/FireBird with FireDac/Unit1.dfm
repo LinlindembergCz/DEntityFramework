@@ -25,7 +25,7 @@ object Form1: TForm1
   object panelButtons: TPanel
     Left = 0
     Top = 0
-    Width = 281
+    Width = 289
     Height = 557
     Align = alLeft
     BevelKind = bkTile
@@ -42,7 +42,7 @@ object Form1: TForm1
     end
     object buttonGetSQL: TButton
       Left = 14
-      Top = 193
+      Top = 217
       Width = 120
       Height = 25
       Caption = 'BuildQuery'
@@ -51,7 +51,7 @@ object Form1: TForm1
     end
     object buttonGetEntity: TButton
       Left = 14
-      Top = 59
+      Top = 83
       Width = 120
       Height = 25
       Caption = 'Find'
@@ -60,7 +60,7 @@ object Form1: TForm1
     end
     object Button2: TButton
       Left = 14
-      Top = 383
+      Top = 407
       Width = 120
       Height = 25
       Caption = 'ToJson'
@@ -69,7 +69,7 @@ object Form1: TForm1
     end
     object Button3: TButton
       Left = 14
-      Top = 412
+      Top = 436
       Width = 120
       Height = 25
       Caption = 'FromJson'
@@ -79,7 +79,7 @@ object Form1: TForm1
     end
     object Button5: TButton
       Left = 14
-      Top = 112
+      Top = 136
       Width = 120
       Height = 25
       Caption = 'Include/Single'
@@ -87,7 +87,7 @@ object Form1: TForm1
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 143
+      Left = 161
       Top = 4
       Width = 120
       Height = 25
@@ -96,7 +96,7 @@ object Form1: TForm1
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 143
+      Left = 161
       Top = 85
       Width = 120
       Height = 25
@@ -105,7 +105,7 @@ object Form1: TForm1
       OnClick = Button7Click
     end
     object Button8: TButton
-      Left = 143
+      Left = 161
       Top = 166
       Width = 120
       Height = 25
@@ -115,7 +115,7 @@ object Form1: TForm1
     end
     object Button9: TButton
       Left = 14
-      Top = 81
+      Top = 110
       Width = 120
       Height = 25
       Caption = 'ToList + ForEach'
@@ -123,7 +123,7 @@ object Form1: TForm1
       OnClick = Button9Click
     end
     object Button10: TButton
-      Left = 143
+      Left = 161
       Top = 31
       Width = 120
       Height = 25
@@ -132,7 +132,7 @@ object Form1: TForm1
       OnClick = Button10Click
     end
     object Button11: TButton
-      Left = 143
+      Left = 161
       Top = 112
       Width = 120
       Height = 25
@@ -141,7 +141,7 @@ object Form1: TForm1
       TabOrder = 11
     end
     object Button12: TButton
-      Left = 143
+      Left = 161
       Top = 139
       Width = 120
       Height = 25
@@ -151,7 +151,7 @@ object Form1: TForm1
     end
     object Button13: TButton
       Left = 14
-      Top = 166
+      Top = 190
       Width = 120
       Height = 25
       Caption = 'FromSQL'
@@ -159,7 +159,7 @@ object Form1: TForm1
       OnClick = Button13Click
     end
     object Button14: TButton
-      Left = 143
+      Left = 161
       Top = 59
       Width = 120
       Height = 25
@@ -169,7 +169,7 @@ object Form1: TForm1
     end
     object Button15: TButton
       Left = 14
-      Top = 355
+      Top = 379
       Width = 120
       Height = 25
       Caption = 'Any'
@@ -178,7 +178,7 @@ object Form1: TForm1
     end
     object Button16: TButton
       Left = 14
-      Top = 219
+      Top = 243
       Width = 120
       Height = 25
       Caption = 'Count'
@@ -187,7 +187,7 @@ object Form1: TForm1
     end
     object Button17: TButton
       Left = 14
-      Top = 246
+      Top = 270
       Width = 120
       Height = 25
       Caption = 'Sum'
@@ -196,7 +196,7 @@ object Form1: TForm1
     end
     object Button18: TButton
       Left = 14
-      Top = 273
+      Top = 297
       Width = 120
       Height = 25
       Caption = 'Min'
@@ -205,7 +205,7 @@ object Form1: TForm1
     end
     object Button19: TButton
       Left = 14
-      Top = 300
+      Top = 324
       Width = 120
       Height = 25
       Caption = 'Max'
@@ -214,7 +214,7 @@ object Form1: TForm1
     end
     object Button20: TButton
       Left = 14
-      Top = 328
+      Top = 352
       Width = 120
       Height = 25
       Caption = 'Avg'
@@ -232,7 +232,7 @@ object Form1: TForm1
     end
     object Button4: TButton
       Left = 14
-      Top = 139
+      Top = 163
       Width = 120
       Height = 25
       Caption = 'Entry/Load'
@@ -240,7 +240,7 @@ object Form1: TForm1
       OnClick = Button4Click
     end
     object Button23: TButton
-      Left = 143
+      Left = 161
       Top = 193
       Width = 120
       Height = 25
@@ -248,11 +248,20 @@ object Form1: TForm1
       TabOrder = 23
       OnClick = Button23Click
     end
+    object chkOffOline: TCheckBox
+      Left = 14
+      Top = 62
+      Width = 97
+      Height = 17
+      Caption = 'OffLine'
+      TabOrder = 24
+      OnClick = chkOffOlineClick
+    end
   end
   object Panel2: TPanel
-    Left = 281
+    Left = 289
     Top = 0
-    Width = 641
+    Width = 633
     Height = 557
     Align = alClient
     BevelKind = bkTile
@@ -262,7 +271,7 @@ object Form1: TForm1
     object DBGrid1: TDBGrid
       Left = 0
       Top = 0
-      Width = 384
+      Width = 376
       Height = 317
       Align = alClient
       DataSource = DataSource1
@@ -277,16 +286,14 @@ object Form1: TForm1
     object mLog: TMemo
       Left = 0
       Top = 317
-      Width = 637
+      Width = 629
       Height = 236
       Align = alBottom
       ScrollBars = ssVertical
       TabOrder = 1
-      ExplicitLeft = 4
-      ExplicitTop = 323
     end
     object Panel1: TPanel
-      Left = 384
+      Left = 376
       Top = 0
       Width = 253
       Height = 317
@@ -310,6 +317,7 @@ object Form1: TForm1
         Top = 100
         Width = 217
         Height = 21
+        CharCase = ecUpperCase
         EditLabel.Width = 27
         EditLabel.Height = 13
         EditLabel.Caption = 'Nome'
@@ -361,7 +369,7 @@ object Form1: TForm1
       end
     end
     object BindNavigator1: TBindNavigator
-      Left = 451
+      Left = 444
       Top = 179
       Width = 132
       Height = 25
@@ -401,7 +409,7 @@ object Form1: TForm1
     Methods = <>
     OutputConverters = <>
     Left = 380
-    Top = 237
+    Top = 229
     object LinkControlToField1: TLinkControlToField
       Category = 'Quick Bindings'
       DataSource = PrototypeBindSource1
@@ -427,7 +435,7 @@ object Form1: TForm1
   object OpenDialog1: TOpenDialog
     DefaultExt = 'CSV'
     Filter = 'CSV|*.csv|TXT|*.txt'
-    Left = 200
-    Top = 232
+    Left = 384
+    Top = 296
   end
 end
