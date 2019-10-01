@@ -78,6 +78,8 @@ Entry;<br>
 Load;<br>
 OrderBy;<br>
 Where;<br>
+Import with ArrayDML;<br>
+Query Off-Line<br>
 
 
 
