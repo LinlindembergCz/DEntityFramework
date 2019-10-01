@@ -24,6 +24,8 @@ type
   private
     procedure BeforeConnect(Sender: TObject);
     procedure FillDataBase(aDriver: FDConn);
+    procedure conRecover(ASender, AInitiator: TObject; AException: Exception;
+      var AAction: TFDPhysConnectionRecoverAction);
   public
     procedure GetTableNames(var List: TStringList); override;
     procedure GetFieldNames(var List: TStringList; Table: string); override;
@@ -43,7 +45,7 @@ uses
  EF.Schema.MSSQL,
  EF.Schema.Firebird,
  EF.Schema.MySQL,
- EF.Schema.PostGres, EF.Schema.SQLite;
+ EF.Schema.PostGres, EF.Schema.SQLite, Vcl.Dialogs, System.UITypes;
 
 resourcestring
   StrMyQL = 'MySQL';
@@ -63,6 +65,8 @@ begin
   qryVariavel := TFDQuery.Create(Application);
   with TFDQuery(qryVariavel) do
   begin
+    // FetchOptions.RowsetSize := 3;
+    // FetchOptions.Mode :=fmManual;
     CachedUpdates:= true;
 
     Connection := CustomConnection as TFDConnection;
@@ -116,6 +120,23 @@ begin
   TFDConnection(CustomConnection).Params.LoadFromFile(IniFileName);
 end;
 
+
+procedure TEntityFDConnection.conRecover(
+  ASender, AInitiator: TObject; AException: Exception;
+  var AAction: TFDPhysConnectionRecoverAction);
+var
+  res: Integer;
+begin
+  res := MessageDlg(
+    'Conexão foi perdida. Offline = Yes, Retry = Ok, Fail = Cancel',
+    mtConfirmation, [mbYes, mbOK, mbCancel], 0);
+  case res of
+    mrYes:    AAction := faOfflineAbort;
+    mrOk:     AAction := faRetry;
+    mrCancel: AAction := faFail;
+  end;
+end;
+
 constructor TEntityFDConnection.Create(aDriver: FDConn; aUser,aPassword,aServer,aDataBase: string);
 begin
   inherited;
@@ -123,6 +144,8 @@ begin
 
   CustomConnection.LoginPrompt:= false;
   CustomConnection.BeforeConnect:= BeforeConnect;
+  (CustomConnection as TFDConnection).ResourceOptions.AutoReconnect:= true;
+  (CustomConnection as TFDConnection).OnRecover := conRecover;
 
 
   FServer   := aServer;
