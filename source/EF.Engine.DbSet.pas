@@ -166,13 +166,19 @@ var
 begin
   try
     //FreeDbSet;
-    if FDatabase.CustomTypeDataBase is TPostGres then
-       QueryAble.Prepare;
+    result := nil;
+    //if FDatabase.CustomConnection.Connected then
+    begin
+      if FDatabase.CustomTypeDataBase is TPostGres then
+         QueryAble.Prepare;
 
-       DataSet :=  FDatabase.CreateDataSet( QueryAble.BuildQuery(QueryAble) );
-       DataSet.IndexFieldNames:= FOrderBy;
-       DataSet.Open;
-       result := DataSet;
+
+      DataSet :=  FDatabase.CreateDataSet( QueryAble.BuildQuery(QueryAble) );
+
+      DataSet.IndexFieldNames:= FOrderBy;
+      DataSet.Open;
+      result := DataSet;
+    end;
   except
     on E: Exception do
     begin
