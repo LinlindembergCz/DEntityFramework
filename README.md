@@ -47,6 +47,9 @@ Add/SaveChanges<br>
 MigrationBuilder<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF4.png"></img><br><br>
 
+ToJson<br>
+<img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/ToJson.png"></img><br><br>
+
 Other:
 
 TDbContext;<br>
