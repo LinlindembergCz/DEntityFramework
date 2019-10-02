@@ -11,7 +11,12 @@ uses
   EF.Drivers.FireDac, Data.Bind.Components, Data.Bind.DBScope,
   Data.Bind.ObjectScope, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
   Data.Bind.EngExt, Vcl.Bind.DBEngExt, Data.Bind.Controls, Vcl.Buttons,
-  Vcl.Bind.Navigator;
+  Vcl.Bind.Navigator, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, FireDAC.Phys.SQLiteVDataSet, FireDAC.Stan.ExprFuncs,
+  FireDAC.Phys.SQLiteDef, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.UI.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.VCLUI.Wait;
 
 type
     //View Model
@@ -74,6 +79,9 @@ type
     Button23: TButton;
     OpenDialog1: TOpenDialog;
     chkOffOline: TCheckBox;
+    Button24: TButton;
+    FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
+    FDMemTable1: TFDMemTable;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -130,8 +138,7 @@ uses UDataModule, EF.Mapping.AutoMapper,  Domain.Entity.Contato, EF.Drivers.Conn
      EF.Drivers.Migration, EF.Mapping.Base, Domain.Entity.Empresa,
   Domain.Entity.ClienteEmpresa, Domain.Entity.Veiculo,
   Domain.Entity.TabelaPreco, Domain.Entity.ClienteTabelaPreco,
-  Domain.Entity.Produto, Domain.Entity.ItensTabelaPreco, FireDAC.Comp.Client,
-  FireDAC.Stan.Option;
+  Domain.Entity.Produto, Domain.Entity.ItensTabelaPreco;
 
 procedure TForm1.LoadClientes;
 var
@@ -299,8 +306,6 @@ begin
    end;
 end;
 
-
-
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 var
   E: TCliente;
@@ -324,15 +329,16 @@ begin
       end
       else
       begin
-        showmessage('Off line');
+        //showmessage('Off line');
         DataSource1.DataSet.close;
         DataSource1.DataSet.Open;
       end;
 
-        if chkOffOline.Checked then
-           (Connection.CustomConnection as TFDConnection).Offline()
-        else
-           (Connection.CustomConnection as TFDConnection).Online();
+      if chkOffOline.Checked then
+         (Connection.CustomConnection as TFDConnection).Offline()
+      else
+         (Connection.CustomConnection as TFDConnection).Online();
+
      finally
      _Db.Destroy;
      end;
@@ -426,7 +432,7 @@ var
 begin
   try
     _Db := TDataContext.Create(Connection);
-     E := _Db.Clientes.Find( _Db.Clientes.Entity.Id = DataSource1.DataSet.FieldByName('ID').AsInteger );
+     E := _Db.Clientes.Find( _Db.Clientes.Entity.Id = 1 );
      mLog.Text:= E.ToJson;
   finally
     _Db.Destroy;
@@ -846,6 +852,39 @@ begin
    finally
      _Db.Destroy;
    end;
+end;
+
+procedure TForm1.Button24Click(Sender: TObject);
+var
+  _Db: TDataContext;
+  DataSet1,DataSet2:TFDQuery;
+  E:TCliente;
+  C:TContato;
+begin
+  try
+    _Db := TDataContext.Create( Connection  );
+
+     E:= TCliente.Create;
+     C:= TContato.Create;
+
+     DataSet1:= _Db.Clientes.ToDataSet(  From(E).Select );
+     DataSet2:= _Db.Clientes.ToDataSet(  From(C).Select );
+
+     _Db.LocalSQL.Add(DataSet1,'LISTA_DE_CLIENTES');
+     _Db.LocalSQL.Add(DataSet2,'LISTA_DE_CONTATOS');
+
+     FDMemTable1.Data:= _Db.LocalSQL.OpenSQL( 'Select count(*) from LISTA_DE_CLIENTES Union Select count(*) from LISTA_DE_CONTATOS ' );
+
+     DataSource1.DataSet:= FDMemTable1;
+
+  finally
+    E.Free;
+    C.Free;
+    DataSet1.Free;
+    DataSet2.Free;
+    _Db.Destroy;
+
+  end;
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
