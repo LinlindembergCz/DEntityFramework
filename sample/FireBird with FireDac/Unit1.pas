@@ -860,17 +860,12 @@ procedure TForm1.Button24Click(Sender: TObject);
 var
   _Db: TDataContext;
   DataSet1,DataSet2:TFDQuery;
-  E:TCliente;
-  C:TContato;
 begin
   try
     _Db := TDataContext.Create( Connection  );
 
-     E:= TCliente.Create;
-     C:= TContato.Create;
-
-     DataSet1:= _Db.Clientes.ToDataSet(  From(E).Select );
-     DataSet2:= _Db.Contatos.ToDataSet(  From(C).Select );
+     DataSet1:= _Db.Clientes.ToDataSet(  From(_Db.Clientes.Entity).Select );
+     DataSet2:= _Db.Contatos.ToDataSet(  From(_Db.Contatos.Entity).Select );
 
      _Db.LocalSQL.Add(DataSet1,'LISTA_DE_CLIENTES');
      _Db.LocalSQL.Add(DataSet2,'LISTA_DE_CONTATOS');
@@ -879,8 +874,6 @@ begin
 
      DataSource1.DataSet:= FDMemTable1;
   finally
-    E.Free;
-    C.Free;
     DataSet1.Free;
     DataSet2.Free;
     _Db.Destroy;
