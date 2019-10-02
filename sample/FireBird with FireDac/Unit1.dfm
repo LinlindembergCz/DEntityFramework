@@ -257,6 +257,15 @@ object Form1: TForm1
       TabOrder = 24
       OnClick = chkOffOlineClick
     end
+    object Button24: TButton
+      Left = 161
+      Top = 217
+      Width = 120
+      Height = 25
+      Caption = 'LocalSQL'
+      TabOrder = 25
+      OnClick = Button24Click
+    end
   end
   object Panel2: TPanel
     Left = 289
@@ -437,5 +446,20 @@ object Form1: TForm1
     Filter = 'CSV|*.csv|TXT|*.txt'
     Left = 384
     Top = 296
+  end
+  object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
+    Left = 385
+    Top = 352
+  end
+  object FDMemTable1: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 505
+    Top = 352
   end
 end
