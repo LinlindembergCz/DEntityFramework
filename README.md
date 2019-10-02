@@ -41,6 +41,9 @@ Include/ThenInclude<br>
 FromSQL<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF2.png"></img><br><br>
 
+LocalSQL<br>
+<img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/LocalSQL.png"></img><br><br>
+
 Add/SaveChanges<br>
 <img src="https://github.com/LinlindembergCz/DEntityFramework/blob/master/DEF3.png"></img><br><br>
 
