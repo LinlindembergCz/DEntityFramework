@@ -18,6 +18,7 @@ uses
   FireDAC.Phys.SQLiteDef, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.UI.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.VCLUI.Wait;
 
+
 type
     //View Model
     TClienteView = class
@@ -323,7 +324,8 @@ begin
         DataSource1.DataSet:= _Db.Clientes.
                                 OrderBy('Nome').
                                 ToDataSet( From( E ).Select);
-        TFDQuery(DataSource1.DataSet).FetchAll;
+        //TFDQuery(DataSource1.DataSet).FetchAll;
+        //TFDQuery(DataSource1.DataSet).FetchOptions.RecsMax:=2;
         // TFDQuery(DataSource1.DataSet).FetchNext();
         ///Dados ainda podem ser visualizados e alterados
       end
@@ -868,7 +870,7 @@ begin
      C:= TContato.Create;
 
      DataSet1:= _Db.Clientes.ToDataSet(  From(E).Select );
-     DataSet2:= _Db.Clientes.ToDataSet(  From(C).Select );
+     DataSet2:= _Db.Contatos.ToDataSet(  From(C).Select );
 
      _Db.LocalSQL.Add(DataSet1,'LISTA_DE_CLIENTES');
      _Db.LocalSQL.Add(DataSet2,'LISTA_DE_CONTATOS');
@@ -876,14 +878,12 @@ begin
      FDMemTable1.Data:= _Db.LocalSQL.OpenSQL( 'Select count(*) from LISTA_DE_CLIENTES Union Select count(*) from LISTA_DE_CONTATOS ' );
 
      DataSource1.DataSet:= FDMemTable1;
-
   finally
     E.Free;
     C.Free;
     DataSet1.Free;
     DataSet2.Free;
     _Db.Destroy;
-
   end;
 end;
 
