@@ -81,7 +81,6 @@ type
     OpenDialog1: TOpenDialog;
     chkOffOline: TCheckBox;
     Button24: TButton;
-    FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
     FDMemTable1: TFDMemTable;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
@@ -147,10 +146,7 @@ var
    _Db: TDataContext;
 begin
    try
-     if ViewModelList = nil then
-        ViewModelList := TObjectList<TClienteView>.create
-     else
-        ViewModelList.clear;
+     ViewModelList.clear;
 
      _Db := TDataContext.Create( Connection );
 
@@ -184,6 +180,9 @@ begin
                                             'LocalHost',
                                             extractfilepath(application.ExeName)+
                                             '..\..\DataBase\DBLINQ.FDB');
+
+   ViewModelList := TObjectList<TClienteView>.create;
+
    LoadClientes;
 
    ABindSourceAdapter := TListBindSourceAdapter<TClienteView>.Create(Self, ViewModelList, false );
@@ -323,7 +322,7 @@ begin
       begin
         DataSource1.DataSet:= _Db.Clientes.
                                 OrderBy('Nome').
-                                ToDataSet( From( E ).Select);
+                                ToDataSet( From( E ).Select );
         //TFDQuery(DataSource1.DataSet).FetchAll;
         //TFDQuery(DataSource1.DataSet).FetchOptions.RecsMax:=2;
         // TFDQuery(DataSource1.DataSet).FetchNext();
@@ -762,7 +761,6 @@ begin
                          ThenInclude(E.ClienteEmpresa.Empresa).
                       Include(E.ClienteTabelaPreco).
                          ThenInclude(E.ClienteTabelaPreco.TabelaPreco).
-                      //     ThenInclude(E.ClienteTabelaPreco.TabelaPreco.ItensTabelaPreco).
                       Load();
 
           mlog.Lines.Add('Empresa : ' + C.ClienteEmpresa.Empresa.Descricao.Value);
@@ -862,7 +860,7 @@ var
   DataSet1,DataSet2:TFDQuery;
 begin
   try
-    _Db := TDataContext.Create( Connection  );
+     _Db := TDataContext.Create( Connection  );
 
      DataSet1:= _Db.Clientes.ToDataSet(  From(_Db.Clientes.Entity).Select );
      DataSet2:= _Db.Contatos.ToDataSet(  From(_Db.Contatos.Entity).Select );
@@ -870,7 +868,12 @@ begin
      _Db.LocalSQL.Add(DataSet1,'LISTA_DE_CLIENTES');
      _Db.LocalSQL.Add(DataSet2,'LISTA_DE_CONTATOS');
 
-     FDMemTable1.Data:= _Db.LocalSQL.OpenSQL( 'Select count(*) from LISTA_DE_CLIENTES Union Select count(*) from LISTA_DE_CONTATOS ' );
+     FDMemTable1.Close;
+     FDMemTable1.Data:= _Db.LocalSQL.OpenSQL( 'Select count(*) from '+
+                                              ' LISTA_DE_CLIENTES '+
+                                              ' Union '+
+                                              'Select count(*) from '+
+                                              'LISTA_DE_CONTATOS ' );
 
      DataSource1.DataSet:= FDMemTable1;
   finally
