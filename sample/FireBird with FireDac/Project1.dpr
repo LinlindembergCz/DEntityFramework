@@ -42,15 +42,16 @@ uses
   EF.Engine.DbContext in '..\..\source\EF.Engine.DbContext.pas',
   EF.QueryAble.Linq in '..\..\source\EF.QueryAble.Linq.pas',
   EF.Schema.SQLite in '..\..\source\EF.Schema.SQLite.pas',
-  Domain.Entity.Endereco in '..\DDD\Domain\Entities\Domain.Entity.Endereco.pas';
+  Domain.Entity.Endereco in '..\DDD\Domain\Entities\Domain.Entity.Endereco.pas',
+  EF.Drivers.Migration in '..\..\source\EF.Drivers.Migration.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  //ReportMemoryLeaksOnShutdown:= true;
+  ReportMemoryLeaksOnShutdown:= true;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TDataModule1, DataModule1);
+  AApplication.CreateForm(TDataModule1, DataModule1);
   Application.CreateForm(TForm1, Form1);
-  Application.Run;
+  pplication.Run;
 end.
