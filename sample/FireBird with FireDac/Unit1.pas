@@ -16,7 +16,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, FireDAC.Phys.SQLiteVDataSet, FireDAC.Stan.ExprFuncs,
   FireDAC.Phys.SQLiteDef, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.UI.Intf,
-  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.VCLUI.Wait;
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.VCLUI.Wait, System.threading;
 
 
 type
@@ -79,9 +79,11 @@ type
     Button22: TButton;
     Button23: TButton;
     OpenDialog1: TOpenDialog;
-    chkOffOline: TCheckBox;
     Button24: TButton;
     FDMemTable1: TFDMemTable;
+    pnlOnline: TPanel;
+    chkOffOline: TCheckBox;
+    FDConnection1: TFDConnection;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -143,12 +145,12 @@ uses UDataModule, EF.Mapping.AutoMapper,  Domain.Entity.Contato, EF.Drivers.Conn
 procedure TForm1.LoadClientes;
 var
    L: Collection<TCliente>;
-   _Db: TDataContext;
+   _Db: TDataContextPessoal;
 begin
    try
      ViewModelList.clear;
 
-     _Db := TDataContext.Create( Connection );
+     _Db := TDataContextPessoal.Create( Connection );
 
       L:= _Db.Clientes.
               Where( '0=0' ).
@@ -255,7 +257,7 @@ end;
 
 procedure TForm1.Button22Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 
    E: TClienteView;
 begin
@@ -265,7 +267,7 @@ begin
 
       E := ViewModelList.Items[ PrototypeBindSource1.ItemIndex ];
 
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
 
       _Db.Clientes.Find( _Db.Clientes.Entity.Id = E.ID );
 
@@ -290,16 +292,16 @@ end;
 
 procedure TForm1.Button23Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   E:TCliente;
 begin
    OpenDialog1.Execute;
    if OpenDialog1.FileName <> '' then
    begin
      try
-       _Db := TDataContext.Create( Connection  );
+       _Db := TDataContextPessoal.Create( Connection  );
         E:= _Db.Clientes.Entity;
-       _Db.Clientes.Import( OpenDialog1.FileName, [E.Nome, E.NomeFantasia , E.CPFCNPJ]);
+       _Db.Clientes.ImportCSV( OpenDialog1.FileName, [E.Nome, E.NomeFantasia , E.CPFCNPJ],';');
      finally
        _Db.Destroy;
      end;
@@ -309,17 +311,20 @@ end;
 procedure TForm1.buttonGetDataSetClick(Sender: TObject);
 var
   E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   QueryAble: IQueryAble;
   Q:TFDQuery;
 begin
    try
-     _Db := TDataContext.Create( Connection  );
+     _Db := TDataContextPessoal.Create( Connection  );
       E:= _Db.Clientes.Entity;
       //FDMemTable1.Close;
       //FDMemTable1.CloneCursor( _Db.Clientes.ToDataSet( QueryAble ) );
       if (Connection.CustomConnection as TFDConnection).Connected then
       begin
+        // _Db.Clientes.FetchOptions.
+        //_Db.Clientes.FetchOptions:=
+
         DataSource1.DataSet:= _Db.Clientes.
                                 OrderBy('Nome').
                                 ToDataSet( From( E ).Select );
@@ -331,8 +336,12 @@ begin
       else
       begin
         //showmessage('Off line');
-        DataSource1.DataSet.close;
-        DataSource1.DataSet.Open;
+        {_Db.LocalSQL.Add(TFDQuery(DataSource1.DataSet),'Consulta');
+
+        //FDMemTable1.Close;
+        FDMemTable1.Data:= _Db.LocalSQL.OpenSQL( 'Select * from '+
+                                              ' Consulta ' );
+        DataSource1.DataSet := FDMemTable1;}
       end;
 
       if chkOffOline.Checked then
@@ -348,12 +357,12 @@ end;
 procedure TForm1.buttonGetEntityClick(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
    if DataSource1.DataSet <> nil then
    begin
       try
-        _Db := TDataContext.Create(Connection);
+        _Db := TDataContextPessoal.Create(Connection);
         E:= _Db.Clientes.Entity;
          {
          QueryAble := From( E ).
@@ -377,12 +386,12 @@ end;
 procedure TForm1.buttonGetSQLClick(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   QueryAble: IQueryAble;
 begin
   if DataSource1.DataSet <> nil then
   begin
-     _Db := TDataContext.Create(Connection);
+     _Db := TDataContextPessoal.Create(Connection);
 
      E:= _Db.Clientes.Entity;
 
@@ -398,7 +407,14 @@ end;
 procedure TForm1.chkOffOlineClick(Sender: TObject);
 begin
   if not chkOffOline.Checked then
+  begin
+     pnlOnline.Color:= clLime;
     (Connection.CustomConnection as TFDConnection).Online();
+  end
+  else
+    pnlOnline.Color:= clred;
+
+  pnlOnline.Repaint;
 end;
 
 procedure TForm1.DBGrid1DblClick(Sender: TObject);
@@ -409,11 +425,11 @@ end;
 procedure TForm1.Button20Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   Media: Double;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
 
       Media:= _Db.Clientes.Avg(E.Idade);
@@ -429,10 +445,10 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
   try
-    _Db := TDataContext.Create(Connection);
+    _Db := TDataContextPessoal.Create(Connection);
      E := _Db.Clientes.Find( _Db.Clientes.Entity.Id = 1 );
      mLog.Text:= E.ToJson;
   finally
@@ -443,11 +459,11 @@ end;
 procedure TForm1.Button9Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   L:Collection<TCliente>;
 begin
   try
-     _Db := TDataContext.Create(Connection);
+     _Db := TDataContextPessoal.Create(Connection);
      E:= _Db.Clientes.Entity;
 
      L := _Db.Clientes.Include(E.Veiculo)
@@ -457,41 +473,39 @@ begin
                       .ToList;
      mlog.Lines.clear;
 
-     L.ForEach(  procedure (C: TCliente)
-                 var
-                   contato:TContato;
+     L.ForEach(procedure (C: TCliente)
+               var
+                 contato:TContato;
+               begin
+                 with C do
                  begin
-                    with C do
-                    begin
-                      mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' +
-                                              Nome.Value+'       CNPJ: ' + CPFCNPJ.Value);
-                      mlog.Lines.Add('Placa: ' + Veiculo.Placa.Value );
-                      mlog.Lines.Add('Contatos :');
-                      for contato in Contatos do
-                      begin
-                        mlog.Lines.Add('    ' + contato.Nome.Value);
-                      end;
-                    end;
-                 end
-              );
+                   mlog.Lines.Add('ID: ' + ID.Value.ToString +'       Nome: ' +
+                                           Nome.Value+'       CNPJ: ' + CPFCNPJ.Value);
+                   mlog.Lines.Add('Placa: ' + Veiculo.Placa.Value );
+                   mlog.Lines.Add('Contatos :');
+                   for contato in Contatos do
+                   begin
+                     mlog.Lines.Add('    ' + contato.Nome.Value);
+                   end;
+                 end;
+               end );
   finally
     _Db.Destroy;
     FreeAndNil( L );
   end;
-
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   C:TCliente;
   contato:TContato;
 begin
    if DataSource1.DataSet <> nil then
    begin
      try
-        _Db := TDataContext.Create(Connection);
+        _Db := TDataContextPessoal.Create(Connection);
         E:= _Db.Clientes.Entity;
 
         C := _Db.Clientes.Include(E.Contatos).
@@ -526,12 +540,12 @@ end;
 
 procedure TForm1.Button10Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
    I:integer;
    Clientes : Collection<TCliente>;
 begin
   try
-    _Db := TDataContext.Create(Connection);
+    _Db := TDataContextPessoal.Create(Connection);
 
     Clientes := Collection<TCliente>.create(false);
     for I := 0 to 3 do
@@ -567,10 +581,10 @@ var
   Entities: Collection<TCliente>;
   Cliente: TCliente;
   I:integer;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
   try
-     _Db := TDataContext.Create(Connection);
+     _Db := TDataContextPessoal.Create(Connection);
 
      Entities:=Collection<TCliente>.create;
 
@@ -592,10 +606,10 @@ end;
 procedure TForm1.Button13Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
 
       E:= _Db.Clientes.OrderBy('ID').FromSQL('Select * From Clientes where ID = 3');
 
@@ -611,9 +625,9 @@ end;
 
 procedure TForm1.Button14Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
-  _Db := TDataContext.Create(Connection);
+  _Db := TDataContextPessoal.Create(Connection);
 
   _Db.AddScript(Format('Insert Into Clientes (Nome, NomeFantasia) Values ( ''%s'', ''%s'')',['Joao','Joao Maria']));
   _Db.AddScript(Format('Insert Into Clientes (Nome, NomeFantasia) Values (''%s'', ''%s'')',['Maria','Maria Jose']));
@@ -626,10 +640,10 @@ end;
 procedure TForm1.Button15Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
        {QueryAble := From( E ).
                     Select.
@@ -647,11 +661,11 @@ end;
 
 procedure TForm1.Button16Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   count: integer;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
      count:= _Db.Clientes.Count;
       mlog.Lines.Add( count.ToString );
 
@@ -663,11 +677,11 @@ end;
 procedure TForm1.Button17Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   SUM: Double;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
 
       SUM:= _Db.Clientes.SUM(E.Renda);
@@ -682,11 +696,11 @@ end;
 procedure TForm1.Button18Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   Min: Double;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
 
       Min:= _Db.Clientes.Min(E.Id);
@@ -702,11 +716,11 @@ end;
 procedure TForm1.Button19Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   Max: Double;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
 
       Max:= _Db.Clientes.Max(E.Id);
@@ -721,10 +735,10 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
   try
-     _Db := TDataContext.Create(Connection);
+     _Db := TDataContextPessoal.Create(Connection);
      _Db.Clientes.Entity.FromJson(mLog.Text);
      mLog.Text:= _Db.Clientes.Entity.ToJson;
   finally
@@ -735,14 +749,14 @@ end;
 procedure TForm1.Button4Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   C:TCliente;
   contato:TContato;
 begin
    if DataSource1.DataSet <> nil then
    begin
      try
-        _Db := TDataContext.Create(Connection);
+        _Db := TDataContextPessoal.Create(Connection);
         E:= _Db.Clientes.Entity;
 
         C := _Db.Clientes.
@@ -787,10 +801,10 @@ end;
 
 procedure TForm1.Button6Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
   try
-    _Db := TDataContext.Create(Connection);
+    _Db := TDataContextPessoal.Create(Connection);
 
     _Db.Clientes.Add(TCliente.New( '02316937455',
                         0,
@@ -815,11 +829,11 @@ end;
 
 procedure TForm1.Button7Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
    E: TCliente;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
       if (DataSource1.DataSet <> nil) and (DataSource1.DataSet.RecordCount > 0) then
       begin
@@ -842,10 +856,10 @@ end;
 procedure TForm1.Button8Click(Sender: TObject);
 var
    E: TCliente;
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
 begin
    try
-      _Db := TDataContext.Create(Connection);
+      _Db := TDataContextPessoal.Create(Connection);
       E:= _Db.Clientes.Entity;
       _Db.Clientes.Remove(E.Id = DataSource1.DataSet.FieldByName('ID').AsInteger);
       DataSource1.DataSet := _Db.Clientes.ToDataSet( From( E ).Select.OrderBy ( E.Nome ) );
@@ -856,17 +870,28 @@ end;
 
 procedure TForm1.Button24Click(Sender: TObject);
 var
-  _Db: TDataContext;
+  _Db: TDataContextPessoal;
   DataSet1,DataSet2:TFDQuery;
+  Tasks: array [0..1] of ITask;
 begin
   try
-     _Db := TDataContext.Create( Connection  );
+     _Db := TDataContextPessoal.Create( Connection  );
 
-     DataSet1:= _Db.Clientes.ToDataSet(  From(_Db.Clientes.Entity).Select );
-     DataSet2:= _Db.Contatos.ToDataSet(  From(_Db.Contatos.Entity).Select );
+     Tasks[0] := TTask.Create(procedure
+                              begin
+                                DataSet1:= _Db.Clientes.ToDataSet(  From(_Db.Clientes.Entity).Select );
+                                 _Db.LocalSQL.Add(DataSet1,'LISTA_DE_CLIENTES');
+                              end );
+     Tasks[0].ExecuteWork;
 
-     _Db.LocalSQL.Add(DataSet1,'LISTA_DE_CLIENTES');
-     _Db.LocalSQL.Add(DataSet2,'LISTA_DE_CONTATOS');
+     Tasks[1] := TTask.Create(procedure
+                              begin
+                                 DataSet2:= _Db.Contatos.ToDataSet(  From(_Db.Contatos.Entity).Select );
+                                 _Db.LocalSQL.Add(DataSet2,'LISTA_DE_CONTATOS');
+                              end );
+     Tasks[1].ExecuteWork;
+
+     TTask.WaitForAll(Tasks);
 
      FDMemTable1.Close;
      FDMemTable1.Data:= _Db.LocalSQL.OpenSQL( 'Select count(*) from '+
@@ -876,6 +901,7 @@ begin
                                               'LISTA_DE_CONTATOS ' );
 
      DataSource1.DataSet:= FDMemTable1;
+
   finally
     DataSet1.Free;
     DataSet2.Free;
