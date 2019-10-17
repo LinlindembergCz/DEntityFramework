@@ -5,7 +5,7 @@ interface
 uses EF.Engine.DbSet, EF.Engine.DbContext, EF.Mapping.Base, Domain.Entity.Cliente, Domain.Entity.Contato, EF.Drivers.Connection;
 
 type
-  TDataContext = class(TDbContext)
+  TDataContextPessoal = class(TDbContext)
   public
     Clientes : TDbset<TCliente>;
     Contatos : TDbset<TContato>;
@@ -19,14 +19,14 @@ implementation
 
 { BoundContext }
 
-constructor TDataContext.Create( aDatabase: TDatabaseFacade );
+constructor TDataContextPessoal.Create( aDatabase: TDatabaseFacade );
 begin
   inherited;
   Clientes := TDbset<TCliente>.create( aDatabase );
   Contatos := TDbset<TContato>.create( aDatabase );
 end;
 
-destructor TDataContext.Destroy;
+destructor TDataContextPessoal.Destroy;
 begin
   inherited;
   Clientes.Free;
