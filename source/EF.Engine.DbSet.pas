@@ -111,7 +111,7 @@ Type
     procedure UpdateRange(entities: Array of T;AutoSaveChange:boolean = false);
     procedure RemoveRange(entities: TObjectList<T>);
 
-    procedure Import(FilenameCSV:string; Fields: array of string);
+    procedure ImportCSV(FilenameCSV:string; Fields: array of string);
 
     procedure SaveChanges;
     procedure RefreshDataSet;
@@ -390,7 +390,7 @@ begin
   end;
 end;
 
-procedure TDbSet<T>.Import(FilenameCSV: string; Fields: array of string);
+procedure TDbSet<T>.ImportCSV(FilenameCSV: string; Fields: array of string);
 var
   DataSet: TFDQuery;
 
