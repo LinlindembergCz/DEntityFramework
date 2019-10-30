@@ -255,7 +255,6 @@ object Form1: TForm1
       Height = 17
       Caption = 'OffLine'
       TabOrder = 24
-      OnClick = chkOffOlineClick
     end
     object Button24: TButton
       Left = 161
