@@ -700,7 +700,7 @@ begin
   else if TypeClassName = uppercase(cFloat) then
   begin
     fFloat := Val.AsType<TFloat>;
-    Value := fFloat.Value.ToString;
+    Value := floattostr(fFloat.Value);
   end
   else if TypeClassName = uppercase(cString) then
   begin
@@ -1401,20 +1401,20 @@ begin
     case Str_Class.Kind of
       tkString, tkLString, tkWString, tkUString:
       begin
-          Erro := Str_Class.AsString + ' Classe N„o encontrada';
+          Erro := Str_Class.AsString + ' Classe N√£o encontrada';
           instancia := (C.FindType(Str_Class.AsString) as TRttiInstanceType);
           result := T(instancia.MetaclassType.Create);
       end;
       tkClassRef:
       begin
-          Erro := 'O par‚metro passado deve ser do tipo Tclass' + sLineBreak;
+          Erro := 'O par√¢metro passado deve ser do tipo Tclass' + sLineBreak;
           p := C.GetType(Str_Class.AsClass);
           instancia := (C.FindType(p.QualifiedName) as TRttiInstanceType);
           result := T(instancia.MetaclassType.Create);
       end;
       else
       begin
-          Erro := 'O par‚metro passado n„o È v·lidado para a funÁ„o' + sLineBreak;
+          Erro := 'O par√¢metro passado n√£o √© v√°lidado para a fun√ß√£o' + sLineBreak;
           abort;
       end;
     end;
@@ -1434,20 +1434,20 @@ begin
     case Str_Class.Kind of
       tkString, tkLString, tkWString, tkUString:
       begin
-          Erro := Str_Class.AsString + ' Classe N„o encontrada';
+          Erro := Str_Class.AsString + ' Classe N√£o encontrada';
           instancia := (C.FindType(Str_Class.AsString) as TRttiInstanceType);
           result := (instancia.MetaclassType.Create);
       end;
       tkClassRef:
       begin
-          Erro := 'O par‚metro passado deve ser do tipo Tclass' + sLineBreak;
+          Erro := 'O par√¢metro passado deve ser do tipo Tclass' + sLineBreak;
           p := C.GetType(Str_Class.AsClass);
           instancia := (C.FindType(p.QualifiedName) as TRttiInstanceType);
           result := (instancia.MetaclassType.Create);
       end;
       else
       begin
-          Erro := 'O par‚metro passado n„o È v·lidado para a funÁ„o' + sLineBreak;
+          Erro := 'O par√¢metro passado n√£o √© v√°lidado para a fun√ß√£o' + sLineBreak;
           abort;
       end;
     end;
@@ -1531,4 +1531,3 @@ end;
 
 
 end.
-
