@@ -60,41 +60,41 @@ type
 
   TFloat = record
   private
-    FValue: Double;
+    FValue: Real;
     FAs: string;
     FColumn: string;
     procedure SetColumn(const Value: string);
   public
     procedure SetAs(const Value: string);
-    procedure SetValue(const Value: Double);
+    procedure SetValue(const Value: Real);
     class operator Equal(const a: TFloat; const b: TFloat): TString; overload;
-    class operator Equal(const a: TFloat; b: Double): TString; overload;
+    class operator Equal(const a: TFloat; b: Real): TString; overload;
     class operator NotEqual(const a: TFloat; const b: TFloat): TString;overload;
-    class operator NotEqual(const a: TFloat; b: Double): TString; overload;
+    class operator NotEqual(const a: TFloat; b: Real): TString; overload;
     class operator LogicalAnd(a: TFloat; b: TFloat): TString; overload;
-    class operator LogicalAnd(a: TFloat; b: Double): TString; overload;
+    class operator LogicalAnd(a: TFloat; b: Real): TString; overload;
     class operator LogicalOr(a: TFloat; b: TFloat): TString; overload;
-    class operator LogicalOr(a: TFloat; b: Double): TString; overload;
+    class operator LogicalOr(a: TFloat; b: Real): TString; overload;
     class operator GreaterThan(a: TFloat; b: TFloat): TString; overload;
-    class operator GreaterThan(a: TFloat; b: Double): TString; overload;
+    class operator GreaterThan(a: TFloat; b: Real): TString; overload;
     class operator LessThan(a: TFloat; b: TFloat): TString; overload;
-    class operator LessThan(a: TFloat; b: Double): TString; overload;
+    class operator LessThan(a: TFloat; b: Real): TString; overload;
     class operator GreaterThanOrEqual(a: TFloat; b: TFloat): TString; overload;
-    class operator GreaterThanOrEqual(a: TFloat; b: Double): TString; overload;
+    class operator GreaterThanOrEqual(a: TFloat; b: Real): TString; overload;
     class operator LessThanOrEqual(a: TFloat; b: TFloat): TString; overload;
-    class operator LessThanOrEqual(a: TFloat; b: Double): TString; overload;
-    class operator Implicit(const a: Double): TFloat; overload;
-    class operator Implicit(const a: TFloat): Double; overload;
+    class operator LessThanOrEqual(a: TFloat; b: Real): TString; overload;
+    class operator Implicit(const a: Real): TFloat; overload;
+    class operator Implicit(const a: TFloat): Real; overload;
     class operator Implicit(const a: TFloat): string; overload;
     class operator Add(const a, b: TFloat): TString; overload;
-    class operator Add(const a: TFloat; b: Double): TString; overload;
+    class operator Add(const a: TFloat; b: Real): TString; overload;
     class operator Divide(const a, b: TFloat): TString; overload;
-    class operator Divide(const a: TFloat; b: Double): TString; overload;
+    class operator Divide(const a: TFloat; b: Real): TString; overload;
     class operator Multiply(const a, b: TFloat): TString; overload;
-    class operator Multiply(const a: TFloat; b: Double): TString; overload;
+    class operator Multiply(const a: TFloat; b: Real): TString; overload;
     class operator Subtract(const a, b: TFloat): TString; overload;
-    class operator Subtract(const a: TFloat; b: Double): TString; overload;
-    property Value: Double read FValue write SetValue;
+    class operator Subtract(const a: TFloat; b: Real): TString; overload;
+    property Value: Real read FValue write SetValue;
     function &As(_as: string = ''): string;
     property Column: string read FColumn write SetColumn;
   end;
@@ -445,7 +445,7 @@ begin
   result := fEqual(a.FAs, b.FAs);
 end;
 
-class operator TFloat.Equal(const a: TFloat; b: Double): TString;
+class operator TFloat.Equal(const a: TFloat; b: Real): TString;
 begin
   result := fEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
@@ -456,7 +456,7 @@ begin
   result := fGreaterThan(a.FAs, b.FAs);
 end;
 
-class operator TFloat.GreaterThan(a: TFloat; b: Double): TString;
+class operator TFloat.GreaterThan(a: TFloat; b: Real): TString;
 begin
   result := fGreaterThan(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
@@ -467,7 +467,7 @@ begin
   result := fGreaterThanOrEqual(a.FAs, b.FAs);
 end;
 
-class operator TFloat.GreaterThanOrEqual(a: TFloat; b: Double): TString;
+class operator TFloat.GreaterThanOrEqual(a: TFloat; b: Real): TString;
 begin
   result := fGreaterThanOrEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
@@ -475,12 +475,12 @@ end;
 
 class operator TFloat.LogicalAnd(a, b: TFloat): TString;
 begin
-  result := fLogicalAnd(a.Value.ToString, b.Value.ToString);
+  result := fLogicalAnd(floattostr(a.Value), floattostr(b.Value));
 end;
 
-class operator TFloat.LogicalAnd(a: TFloat; b: Double): TString;
+class operator TFloat.LogicalAnd(a: TFloat; b: Real): TString;
 begin
-  result := fLogicalAnd(a.Value.ToString, floattostr(b));
+  result := fLogicalAnd(floattostr(a.Value), floattostr(b));
 end;
 
 class operator TFloat.LessThan(a, b: TFloat): TString;
@@ -488,7 +488,7 @@ begin
   result := fLessThan(a.FAs, b.FAs);
 end;
 
-class operator TFloat.LessThan(a: TFloat; b: Double): TString;
+class operator TFloat.LessThan(a: TFloat; b: Real): TString;
 begin
   result := fLessThan(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
@@ -499,7 +499,7 @@ begin
   result := fLessThanOrEqual(a.FAs, b.FAs);
 end;
 
-class operator TFloat.LessThanOrEqual(a: TFloat; b: Double): TString;
+class operator TFloat.LessThanOrEqual(a: TFloat; b: Real): TString;
 begin
   result := fLessThanOrEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
@@ -507,12 +507,12 @@ end;
 
 class operator TFloat.LogicalOr(a, b: TFloat): TString;
 begin
-  result := fLogicalOr(a.Value.ToString, b.Value.ToString);
+  result := fLogicalOr(floattostr(a.Value), floattostr(b.Value));
 end;
 
-class operator TFloat.LogicalOr(a: TFloat; b: Double): TString;
+class operator TFloat.LogicalOr(a: TFloat; b: Real): TString;
 begin
-  result := fLogicalOr(a.Value.ToString, floattostr(b));
+  result := fLogicalOr(floattostr(a.Value), floattostr(b));
 end;
 
 class operator TFloat.NotEqual(const a, b: TFloat): TString;
@@ -520,18 +520,18 @@ begin
   result := fNotEqual(a.FAs, b.FAs);
 end;
 
-class operator TFloat.NotEqual(const a: TFloat; b: Double): TString;
+class operator TFloat.NotEqual(const a: TFloat; b: Real): TString;
 begin
   result := fNotEqual(a.FAs, FormatFloat(MaskFloat, b).Replace('.', '')
     .Replace(',', '.'));
 end;
 
-class operator TFloat.Implicit(const a: Double): TFloat;
+class operator TFloat.Implicit(const a: Real): TFloat;
 begin
   result.FValue := a;
 end;
 
-class operator TFloat.Implicit(const a: TFloat): Double;
+class operator TFloat.Implicit(const a: TFloat): Real;
 begin
   result := a.FValue;
 end;
@@ -551,7 +551,7 @@ begin
   FColumn := Value;
 end;
 
-procedure TFloat.SetValue(const Value: Double);
+procedure TFloat.SetValue(const Value: Real);
 begin
   FValue := Value;
 end;
@@ -570,7 +570,7 @@ begin
   result := fGetAs(FAs, _as);
 end;
 
-class operator TFloat.Add(const a: TFloat; b: Double): TString;
+class operator TFloat.Add(const a: TFloat; b: Real): TString;
 begin
   result := fAdd(a.FAs, floattostr(b));
 end;
@@ -580,7 +580,7 @@ begin
   result := fSubtract(a.FAs, b.FAs);
 end;
 
-class operator TFloat.Subtract(const a: TFloat; b: Double): TString;
+class operator TFloat.Subtract(const a: TFloat; b: Real): TString;
 begin
   result := fSubtract(a.FAs, floattostr(b));
 end;
@@ -590,7 +590,7 @@ begin
   result := fDivide(a.FAs, b.FAs);
 end;
 
-class operator TFloat.Divide(const a: TFloat; b: Double): TString;
+class operator TFloat.Divide(const a: TFloat; b: Real): TString;
 begin
   result := fDivide(a.FAs, floattostr(b));
 end;
@@ -600,7 +600,7 @@ begin
   result := fMultiply(a.FAs, b.FAs);
 end;
 
-class operator TFloat.Multiply(const a: TFloat; b: Double): TString;
+class operator TFloat.Multiply(const a: TFloat; b: Real): TString;
 begin
   result := fMultiply(a.FAs, floattostr(b));
 end;
@@ -866,7 +866,7 @@ end;
 
 class operator TInteger.LogicalAnd(a, b: TInteger): TString;
 begin
-  result := fLogicalAnd(a.Value.ToString, b.Value.ToString);
+  result := fLogicalAnd(floattostr(a.Value), floattostr(b.Value));
 end;
 
 class operator TInteger.LessThan(a, b: TInteger): TString;
@@ -891,17 +891,17 @@ end;
 
 class operator TInteger.LogicalAnd(a: TInteger; b: integer): TString;
 begin
-  result := fLogicalAnd(a.Value.ToString, inttostr(b));
+  result := fLogicalAnd(floattostr(a.Value), inttostr(b));
 end;
 
 class operator TInteger.LogicalOr(a, b: TInteger): TString;
 begin
-  result := fLogicalOr(a.Value.ToString, b.Value.ToString);
+  result := fLogicalOr(floattostr(a.Value), floattostr(b.Value));
 end;
 
 class operator TInteger.LogicalOr(a: TInteger; b: integer): TString;
 begin
-  result := fLogicalOr(a.Value.ToString, inttostr(b));
+  result := fLogicalOr(floattostr(a.Value), inttostr(b));
 end;
 
 class operator TInteger.Implicit(const a: integer): TInteger;
