@@ -51,7 +51,7 @@ begin
   Application.Initialize;
   ReportMemoryLeaksOnShutdown:= true;
   Application.MainFormOnTaskbar := True;
-  AApplication.CreateForm(TDataModule1, DataModule1);
-  Application.CreateForm(TForm1, Form1);
-  pplication.Run;
+  Application.CreateForm(TDataModule1, DataModule1);
+  pplication.CreateForm(TForm1, Form1);
+  Application.Run;
 end.
