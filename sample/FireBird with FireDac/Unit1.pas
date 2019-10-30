@@ -81,9 +81,7 @@ type
     OpenDialog1: TOpenDialog;
     Button24: TButton;
     FDMemTable1: TFDMemTable;
-    pnlOnline: TPanel;
     chkOffOline: TCheckBox;
-    FDConnection1: TFDConnection;
     procedure buttonGetDataSetClick(Sender: TObject);
     procedure buttonGetEntityClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -113,7 +111,6 @@ type
     procedure Button22Click(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure Button23Click(Sender: TObject);
-    procedure chkOffOlineClick(Sender: TObject);
     procedure Button24Click(Sender: TObject);
 
   private
@@ -301,7 +298,7 @@ begin
      try
        _Db := TDataContextPessoal.Create( Connection  );
         E:= _Db.Clientes.Entity;
-       _Db.Clientes.ImportCSV( OpenDialog1.FileName, [E.Nome, E.NomeFantasia , E.CPFCNPJ],';');
+       _Db.Clientes.ImportCSV( OpenDialog1.FileName, [E.Nome, E.NomeFantasia , E.CPFCNPJ]);
      finally
        _Db.Destroy;
      end;
@@ -402,19 +399,6 @@ begin
 
      _Db.Destroy;
   end;
-end;
-
-procedure TForm1.chkOffOlineClick(Sender: TObject);
-begin
-  if not chkOffOline.Checked then
-  begin
-     pnlOnline.Color:= clLime;
-    (Connection.CustomConnection as TFDConnection).Online();
-  end
-  else
-    pnlOnline.Color:= clred;
-
-  pnlOnline.Repaint;
 end;
 
 procedure TForm1.DBGrid1DblClick(Sender: TObject);
